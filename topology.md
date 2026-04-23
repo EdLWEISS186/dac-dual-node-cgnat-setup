@@ -62,9 +62,13 @@ Windows → Official → primary sync path
 WSL → Official → secondary sync path
 
 🚀 Design Goals
+
 ✔ Stable under CGNAT conditions
+
 ✔ No dependency on inbound connections
+
 ✔ Redundant peer paths
+
 ✔ Consistent long-running node behavior
 
 🧠 Insight
