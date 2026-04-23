@@ -28,3 +28,11 @@ DAC Official Nodes
 ## Commands
 
 ### Windows
+.\dacnode.exe --testnet --syncmode fast --miner.etherbase YOUR_ADDRESS --datadir "YOUR_PATH" --port 28657 --nat extip:192.168.100.7
+
+### WSL
+cd "/mnt/d/..." && ./dacnode --testnet --syncmode fast --miner.etherbase YOUR_ADDRESS --datadir ~/dac-chaindata-wsl --port 30304
+
+## Notes
+- CGNAT handled via internal IP peering
+- Static nodes used for stability
