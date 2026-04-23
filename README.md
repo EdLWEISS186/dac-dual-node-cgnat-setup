@@ -59,3 +59,14 @@ cd "/mnt/d/..." && ./dacnode --testnet --syncmode fast --miner.etherbase YOUR_AD
 ## Notes
 - CGNAT handled via internal IP peering
 - Static nodes used for stability
+
+## Verification
+
+Check node status:
+eth.syncing
+net.peerCount
+admin.peers
+
+Expected:
+- syncing: false
+- peerCount: ≥1
