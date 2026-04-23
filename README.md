@@ -53,7 +53,6 @@ This setup enables stable DAC testnet participation from a CGNAT-constrained env
 ```
                   [ DAC Official Nodes ]
                             ↑
-                            |
              ┌──────────────┴──────────────┐
              ↑                             ↑
      [ Windows Node ]       ⇄        [ WSL Node ]
