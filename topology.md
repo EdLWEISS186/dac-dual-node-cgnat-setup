@@ -80,5 +80,7 @@ A minimal P2P cluster simulation under constrained network conditions (CGNAT)
 Suitable for:
 
 Infrastructure testing
+
 Peer stability observation
+
 Network behavior analysis
