@@ -1,86 +1,99 @@
-# 🔗 DAC Dual-Node Topology (CGNAT Setup)
+# DAC Dual-Node Topology (CGNAT Setup)
 
-## 🎯 Overview
-This setup uses a **dual-node architecture (Windows + WSL)** under **CGNAT conditions (no inbound connectivity)** with the following approach:
-- Outbound-only connectivity
-- Static peers for stability
-- Internal peering for redundancy
+## Overview
+
+This document describes the network topology for running a dual DAC node setup (Windows + WSL) under **CGNAT conditions**, where inbound connectivity is unavailable. The architecture relies on outbound-only connections, static peering, and internal LAN routing for redundancy.
 
 ---
 
-## 🧭 Network Topology
+## Network Diagram
 
-         [ DAC Official Nodes ]
-                  ↑
-                  │
-    ┌─────────────┴─────────────┐
-    │                           │
-    [ Windows Node ] ⇄ [ WSL Node ]
+```
+              [ DAC Official Nodes ]
+                       ↑
+             ┌─────────┴─────────┐
+             ↑                   ↑
+     [ Windows Node ]   ⇄   [ WSL Node ]
+     192.168.100.7:28657     192.168.100.7:30304
+         (Primary)               (Secondary)
+```
 
 ---
 
-## 🔌 Connection Rules
+## Connection Rules
 
 ### Windows Node
-- Connects to:
-  - ✅ Official nodes
-  - ✅ WSL node (internal LAN)
+
+| Destination       | Status    | Description              |
+|-------------------|-----------|--------------------------|
+| DAC Official Nodes | ✅ Active | Primary sync path        |
+| WSL Node          | ✅ Active | Internal LAN redundancy  |
 
 ### WSL Node
-- Connects to:
-  - ✅ Official nodes
-  - ✅ Windows node (via host IP)
+
+| Destination        | Status    | Description              |
+|--------------------|-----------|--------------------------|
+| DAC Official Nodes  | ✅ Active | Secondary sync path      |
+| Windows Node        | ✅ Active | Via host IP, internal LAN |
 
 ---
 
-## ⚙️ Address Mapping
+## Address Mapping
 
-| Node     | Enode Address Source | External IP Used        |
-|----------|---------------------|--------------------------|
-| Windows  | Native              | `192.168.100.7:28657`    |
-| WSL      | NAT via Windows     | `192.168.100.7:30304`    |
+| Node         | Enode Source   | Advertised Address        | Port  |
+|--------------|----------------|---------------------------|-------|
+| Windows Node | Native         | `192.168.100.7`           | 28657 |
+| WSL Node     | NAT via Windows | `192.168.100.7`          | 30304 |
 
 ---
 
-## ⚠️ Important Notes
+## Connectivity Model
 
-- Do NOT use `127.0.0.1` for inter-node peering
-- WSL must expose its external IP using:
-  ```bash
-  --nat extip:192.168.100.7
-  
-Static peers are required to:
+```
+Windows ⇄ WSL          →  Internal redundancy
+Windows → Official     →  Primary sync path
+WSL     → Official     →  Secondary sync path
+```
 
-Maintain stable connections
-Reduce reliance on discovery
+---
 
-🔁 Connectivity Model
-Windows ⇄ WSL → internal redundancy
+## Configuration Requirements
 
-Windows → Official → primary sync path
+### NAT Setting (Both Nodes)
 
-WSL → Official → secondary sync path
+WSL must explicitly advertise the Windows host IP to avoid using the WSL-internal address:
 
-🚀 Design Goals
+```bash
+--nat extip:192.168.100.7
+```
 
-✔ Stable under CGNAT conditions
+### Static Peers
 
-✔ No dependency on inbound connections
+Static peers are required on both nodes to:
 
-✔ Redundant peer paths
+- Maintain persistent connections without relying on discovery
+- Reduce connection instability under CGNAT
+- Ensure both internal and external paths remain active
 
-✔ Consistent long-running node behavior
+> ⚠️ Do **not** use `127.0.0.1` for inter-node peering. Always use `192.168.100.7`.
 
-🧠 Insight
+---
 
-This is not just a dual-node setup, but:
+## Design Goals
 
-A minimal P2P cluster simulation under constrained network conditions (CGNAT)
+| Goal                                  | Status       |
+|---------------------------------------|--------------|
+| Stable operation under CGNAT          | ✅ Achieved   |
+| No dependency on inbound connections  | ✅ Achieved   |
+| Redundant peer paths                  | ✅ Achieved   |
+| Consistent long-running node behavior | ✅ Achieved   |
 
-Suitable for:
+---
 
-Infrastructure testing
+## Architecture Insight
 
-Peer stability observation
+This setup functions as a **minimal P2P cluster simulation under constrained network conditions**. Beyond basic testnet participation, it is suitable for:
 
-Network behavior analysis
+- **Infrastructure testing** — validating node behavior in restricted environments
+- **Peer stability observation** — monitoring connection persistence over time
+- **Network behavior analysis** — studying sync and propagation under CGNAT
