@@ -22,18 +22,18 @@ This repository documents my setup running dual DAC nodes on:
 
 ## 🧭 Topology
 
-    +----------------------+
-    |  DAC Official Nodes |
-    +----------+-----------+
-               ↑
-               │
-    +----------+-----------+
-    |                      |
-    |                      |
-    +----------+-----------+
- Windows Node   ⇄   WSL Node
-192.168.100.7      port: 30304
- port: 28657       via Windows
+               +----------------------+
+               |  DAC Official Nodes |
+               +----------+-----------+
+                          ↑
+                          │
+    +---------------------+-------------------+
+    |      Windows Node         WSL Node      |
+    |     192.168.100.7   ⇄   port: 30304     |
+    |      port: 28657        via Windows     |
+    |                                         |
+    +---------------------+-------------------+
+
 
 ### 🔌 Connection Summary
 
