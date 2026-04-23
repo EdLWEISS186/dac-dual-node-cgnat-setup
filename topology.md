@@ -56,7 +56,9 @@ Reduce reliance on discovery
 
 🔁 Connectivity Model
 Windows ⇄ WSL → internal redundancy
+
 Windows → Official → primary sync path
+
 WSL → Official → secondary sync path
 
 🚀 Design Goals
