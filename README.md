@@ -51,12 +51,13 @@ This setup enables stable DAC testnet participation from a CGNAT-constrained env
 ## Network Topology
 
 ```
-         [ DAC Official Nodes ]
-                  ↑
-          ┌───────┴───────┐
-          ↑               ↑
-  [ Windows Node ] ⇄ [ WSL Node ]
-  192.168.100.7:28657  192.168.100.7:30304
+                  [ DAC Official Nodes ]
+                            ↑
+                            |
+             ┌──────────────┴──────────────┐
+             ↑                             ↑
+     [ Windows Node ]       ⇄        [ WSL Node ]
+   192.168.100.7:28657            192.168.100.7:30304
 ```
 
 ### Connection Summary
