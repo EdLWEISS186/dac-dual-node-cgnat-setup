@@ -19,11 +19,19 @@ This repository documents my setup running dual DAC nodes on:
 - Sync completed
 
 ## Topology
-Windows Node (192.168.100.7:28657)
-        ↕
-WSL Node (30304)
-        ↕
-DAC Official Nodes
+
+            +----------------------+
+            |  DAC Official Nodes |
+            +----------+-----------+
+                       ↑
+                       │
+    +------------------+------------------+
+    |                                     |
+    +---------------+ +---------------+
+| Windows Node | ⇄ internal LAN ⇄ | WSL Node |
+| 192.168.100.7 | | port: 30304 |
+| port: 28657 | | via Windows |
++---------------+ +---------------+
 
 ## Commands
 
