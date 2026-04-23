@@ -50,6 +50,7 @@ This setup uses a **dual-node architecture (Windows + WSL)** under **CGNAT condi
   --nat extip:192.168.100.7
   
 Static peers are required to:
+
 Maintain stable connections
 Reduce reliance on discovery
 
