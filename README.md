@@ -63,9 +63,9 @@ cd "/mnt/d/..." && ./dacnode --testnet --syncmode fast --miner.etherbase YOUR_AD
 ## Verification
 
 Check node status:
-eth.syncing
-net.peerCount
-admin.peers
+- eth.syncing
+- net.peerCount
+- admin.peers
 
 Expected:
 - syncing: false
