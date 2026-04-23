@@ -20,18 +20,34 @@ This repository documents my setup running dual DAC nodes on:
 
 ## Topology
 
-            +----------------------+
-            |  DAC Official Nodes |
-            +----------+-----------+
-                       ↑
-                       │
-    +------------------+------------------+
-    |                                     |
-    +---------------+ +---------------+
-| Windows Node | ⇄ internal LAN ⇄ | WSL Node |
-| 192.168.100.7 | | port: 30304 |
-| port: 28657 | | via Windows |
-+---------------+ +---------------+
+## 🧭 Topology
+
+    +----------------------+
+    |  DAC Official Nodes |
+    +----------+-----------+
+               ↑
+               │
+    +----------+-----------+
+    |                      |
+    |                      |
+    +----------+-----------+
+ Windows Node   ⇄   WSL Node
+192.168.100.7      port: 30304
+ port: 28657       via Windows
+
+### 🔌 Connection Summary
+
+- Windows Node → DAC Official Nodes  
+- WSL Node → DAC Official Nodes  
+- Windows Node ⇄ WSL Node (internal LAN)  
+
+### ⚙️ Network Details
+
+| Component      | Address             | Notes               |
+|----------------|---------------------|---------------------|
+| Windows Node   | 192.168.100.7:28657 | Main outbound node |
+| WSL Node       | 192.168.100.7:30304 | Routed via Windows |
+| Official Nodes | Public enodes       | Static peers       |
 
 ## Commands
 
