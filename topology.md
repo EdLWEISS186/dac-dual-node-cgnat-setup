@@ -9,13 +9,13 @@ This document describes the network topology for running a dual DAC node setup (
 ## Network Diagram
 
 ```
-              [ DAC Official Nodes ]
-                       ↑
-             ┌─────────┴─────────┐
-             ↑                   ↑
-     [ Windows Node ]   ⇄   [ WSL Node ]
-     192.168.100.7:28657     192.168.100.7:30304
-         (Primary)               (Secondary)
+                 [ DAC Official Nodes ]
+                           ↑
+             ┌─────────────┴─────────────┐
+             ↑                           ↑
+     [ Windows Node ]      ⇄       [ WSL Node ]
+   192.168.100.7:28657          192.168.100.7:30304
+         (Primary)                  (Secondary)
 ```
 
 ---
