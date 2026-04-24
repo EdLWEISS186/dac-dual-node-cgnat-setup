@@ -29,6 +29,8 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 
 ## Overview
 
+**DAC (Dual Asset Chain)** is a fork of the Quadrans technology developed by the Quadrans Foundation — a blockchain initiative focused on decentralization, scientific progress, and ethical responsibility, aimed at delivering sustainable and innovative infrastructure for real-world applications.
+
 This repository documents a dual-node DAC testnet setup running simultaneously on a **Windows host** and **WSL (Linux)** — both operating under a **CGNAT-constrained network** where inbound connectivity is unavailable.
 
 The architecture is designed around a fundamental constraint: the ISP operates Carrier-Grade NAT, making traditional inbound peer discovery impossible. Every design decision in this setup — static peers, internal LAN routing, dual-node redundancy — exists as a direct response to that constraint.
@@ -107,6 +109,20 @@ Full setup details and deep-dive explanations are available in the Wiki:
 
 ## Startup Commands
 
+### Why `--syncmode fast`?
+
+This setup uses `fast` sync mode — a deliberate choice based on the network constraints of this environment.
+
+| Mode | Behavior | Suitability |
+|------|----------|-------------|
+| `snap` | Faster but depends heavily on peers that support snap protocol | ❌ Unreliable under limited peers |
+| `fast` | Downloads block headers + state, less peer-dependent | ✅ Stable under CGNAT + static peers |
+| `full` | Full block verification from genesis | ❌ Too heavy for this setup |
+
+> Stability improved after switching from `snap` to `fast` — under CGNAT with limited static peers, `fast` is the practical sweet spot.
+
+---
+
 ### Windows Node
 
 ```powershell
@@ -116,7 +132,7 @@ Full setup details and deep-dive explanations are available in the Wiki:
   --miner.etherbase 0xYourWalletAddressHere `
   --datadir "D:\DAC\chaindata" `
   --port 28657 `
-  --nat extip:192.168.100.7
+  --nat extip:YOUR_LOCAL_IP
 ```
 
 ### WSL Node
@@ -129,10 +145,17 @@ cd "/mnt/d/DAC/Linux" && \
   --miner.etherbase 0xYourWalletAddressHere \
   --datadir ~/dac-chaindata-wsl \
   --port 30304 \
-  --nat extip:192.168.100.7
+  --nat extip:YOUR_LOCAL_IP
 ```
 
-> Replace `0xYourWalletAddressHere` with your actual wallet address.
+### Parameter Reference
+
+| Parameter | Description | How to Obtain |
+|-----------|-------------|---------------|
+| `--miner.etherbase` | Your wallet address | From your DAC wallet |
+| `--datadir` | Path where chain data is stored | Choose any local directory |
+| `--port` | P2P port for this node | Any available port — must be unique per node |
+| `--nat extip` | IP advertised to peers | Run `ipconfig` (Windows) or `ip addr` (WSL) → use your LAN IP |
 
 ---
 
@@ -293,6 +316,7 @@ This asymmetry suggests that under CGNAT, the anchor node (Windows) naturally at
 
 Not here to prove the theory — that belongs at the protocol layer.
 What I'm testing is whether it holds under real-world conditions.
+
 If DAC is built to be quantum-ready, resilience should also hold at the network edge.
 
 **Testing that assumption — at the edges.**
