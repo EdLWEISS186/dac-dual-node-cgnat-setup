@@ -1,5 +1,12 @@
 # DAC Dual Node Setup (Windows + WSL)
 
+![Network](https://img.shields.io/badge/network-CGNAT-red)
+![Nodes](https://img.shields.io/badge/nodes-2%20active-blue)
+![Sync](https://img.shields.io/badge/sync-complete-brightgreen)
+![Platform](https://img.shields.io/badge/platform-Windows%20%2B%20WSL-informational)
+![Testnet](https://img.shields.io/badge/testnet-DAC-blueviolet)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with static peering, internal LAN routing, and verified stability.
 
 ---
@@ -33,25 +40,25 @@ The architecture is designed around a fundamental constraint: the ISP operates C
 ## Network Topology
 
 ```
-                                    ┌─────────────────────────┐
-                                    │      Official Nodes      │
-                                    │  DAC Testnet · Static    │
-                                    │         Enode Set        │
-                                     └────────────┬────────────┘
-                                                  │
-                                            outbound only
-                                        (CGNAT — no inbound)
-                                                  │
-               ┌──────────────────────────────────┴────────────────────────────────────┐
-               │                                                                       │
-    ┌──────────▼──────────┐                                               ┌────────────▼────────────┐
-    │     Windows Node     │                                             │          WSL Node        │
-    │     Hub · Anchor     │◄──────────────────────────────────────────► │    Support · Secondary   │
-    │     .bat scripts     │              (static · persist)             │       shell scripts      │
-    │  192.168.100.7:28657 │                                             │    192.168.100.7:30304   │
-    └──────────────────────┘                                             └──────────────────────────┘
+                    ┌─────────────────────────┐
+                    │      Official Nodes      │
+                    │  DAC Testnet · Static    │
+                    │      Enode Set           │
+                    └────────────┬────────────┘
+                                 │
+                         outbound only
+                       (CGNAT — no inbound)
+                                 │
+               ┌─────────────────┴──────────────────┐
+               │                                    │
+    ┌──────────▼──────────┐          ┌──────────────▼──────────┐
+    │    Windows Node      │          │       WSL Node           │
+    │   Hub · Anchor       │◄────────►│   Support · Secondary    │
+    │   .bat scripts       │ static · │   shell scripts          │
+    │  192.168.100.7:28657 │ persist  │  192.168.100.7:30304    │
+    └──────────────────────┘          └──────────────────────────┘
 
-                 ── outbound peer       ◄──► internal peering       • junction point
+    ── outbound peer       ◄──► internal peering       • junction point
 ```
 
 > For a detailed architectural diagram, see [`topology-architectural.png`](assets/topology-architectural.png).
