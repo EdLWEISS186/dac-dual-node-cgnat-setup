@@ -29,16 +29,14 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 
 ## Overview
 
-**DAC (Dual Asset Chain)** is a fork of the Quadrans technology developed by the Quadrans Foundation — a blockchain initiative focused on decentralization, scientific progress, and ethical responsibility, aimed at delivering sustainable and innovative infrastructure for real-world applications.
-
-This repository documents a dual-node DAC testnet setup running simultaneously on a **Windows host** and **WSL (Linux)** — both operating under a **CGNAT-constrained network** where inbound connectivity is unavailable.
+**DAC (Dual Asset Chain)** is a fork of the Quadrans technology developed by the Quadrans Foundation — a blockchain initiative focused on decentralization, scientific progress, and ethical responsibility, aimed at delivering sustainable and innovative infrastructure for real-world applications. This repository documents a dual-node DAC testnet setup running simultaneously on a **Windows host** and **WSL (Linux)** — both operating under a **CGNAT-constrained network** where inbound connectivity is unavailable.
 
 The architecture is designed around a fundamental constraint: the ISP operates Carrier-Grade NAT, making traditional inbound peer discovery impossible. Every design decision in this setup — static peers, internal LAN routing, dual-node redundancy — exists as a direct response to that constraint.
 
-| Node         | Platform     | Role          | Port  | Address           |
-|--------------|--------------|---------------|-------|-------------------|
-| Windows Node | Windows Host | Hub / Anchor  | 28657 | 192.168.100.7     |
-| WSL Node     | WSL (Linux)  | Support Node  | 30304 | via Windows host  |
+| Node         | Platform     | Role          | Port             | Address             |
+|--------------|--------------|---------------|------------------|---------------------|
+| Windows Node | Windows Host | Hub / Anchor  | e.g. `28657`     | Your LAN IP         |
+| WSL Node     | WSL (Linux)  | Support Node  | e.g. `30304`     | via Windows host    |
 
 ---
 
@@ -72,25 +70,25 @@ Full setup details and deep-dive explanations are available in the Wiki:
 ## Network Topology
 
 ```
-                                    ┌─────────────────────────┐
-                                    │      Official Nodes      │
-                                    │  DAC Testnet · Static    │
-                                    │         Enode Set        │
+                                     ┌─────────────────────────┐
+                                     │      Official Nodes      │
+                                     │  DAC Testnet · Static    │
+                                     │      Enode Set           │
                                      └────────────┬────────────┘
                                                   │
                                             outbound only
                                         (CGNAT — no inbound)
                                                   │
-               ┌──────────────────────────────────┴────────────────────────────────────┐
-               │                                                                       │
-    ┌──────────▼──────────┐                                               ┌────────────▼────────────┐
-    │     Windows Node     │                                             │          WSL Node        │
-    │     Hub · Anchor     │◄──────────────────────────────────────────► │    Support · Secondary   │
-    │     .bat scripts     │              (static · persist)             │       shell scripts      │
-    │  192.168.100.7:28657 │                                             │    192.168.100.7:30304   │
-    └──────────────────────┘                                             └──────────────────────────┘
+               ┌──────────────────────────────────┴───────────────────────────────────┐
+               │                                                                      │
+    ┌──────────▼──────────┐                                            ┌──────────────▼──────────┐
+    │    Windows Node      │                                           │          WSL Node        │
+    │    Hub · Anchor      │◄─────────────────────────────────────────►│    Support · Secondary   │
+    │    .bat scripts      │               static · persist            │       shell scripts      │
+    │ 192.168.100.7:28657  │                                           │    192.168.100.7:30304   │
+    └──────────────────────┘                                           └──────────────────────────┘
 
-                 ── outbound peer       ◄──► internal peering       • junction point
+               ── outbound peer       ◄──► internal peering       • junction point
 ```
 
 > For a detailed architectural diagram, see [`topology-architectural.png`](assets/topology-architectural.png).
@@ -99,11 +97,11 @@ Full setup details and deep-dive explanations are available in the Wiki:
 
 ## Node Configuration
 
-| Component      | Address               | Role                          |
-|----------------|-----------------------|-------------------------------|
-| Windows Node   | `192.168.100.7:28657` | Primary anchor, hub node      |
-| WSL Node       | `192.168.100.7:30304` | Secondary, routed via host    |
-| Official Nodes | Public enodes         | Static peers (authority)      |
+| Component      | Address                        | Role                          |
+|----------------|--------------------------------|-------------------------------|
+| Windows Node   | `YOUR_LAN_IP:WINDOWS_PORT`     | Primary anchor, hub node      |
+| WSL Node       | `YOUR_LAN_IP:WSL_PORT`         | Secondary, routed via host    |
+| Official Nodes | Public enodes                  | Static peers (authority)      |
 
 ---
 
@@ -179,9 +177,10 @@ Port forwarding was configured on the router (Huawei HG8145V5) — mapping exter
 
 ### Key Rules
 
-- Do **not** use `127.0.0.1` for inter-node peering
-- Both nodes must advertise the Windows host IP: `--nat extip:192.168.100.7`
-- WSL routes all external traffic through the Windows host
+- Do **not** use `localhost` or loopback address for inter-node peering — WSL and Windows are on different network interfaces
+- Both nodes must advertise the same LAN IP using `--nat extip:YOUR_LOCAL_IP`
+- WSL routes all external traffic through the Windows host — use the Windows host LAN IP for both nodes
+- To find your LAN IP: run `ipconfig` on Windows and look for **IPv4 Address** under your active network adapter
 
 ---
 
