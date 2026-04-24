@@ -21,6 +21,7 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 - [Why This Setup Matters](#why-this-setup-matters)
 - [Observations](#observations)
 - [Future Improvements](#future-improvements)
+- [📖 Full Documentation (Wiki)](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki)
 
 ---
 
