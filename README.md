@@ -54,7 +54,7 @@ The architecture is designed around a fundamental constraint: the ISP operates C
                  ── outbound peer       ◄──► internal peering       • junction point
 ```
 
-> For detailed architectural diagrams, see [`assets/`](assets/).
+> For a detailed architectural diagram, see [`topology-architectural.png`](assets/topology-architectural.png).
 
 ---
 
