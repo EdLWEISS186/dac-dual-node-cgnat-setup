@@ -113,8 +113,8 @@ Full setup details and deep-dive explanations are available in the Wiki:
 .\dacnode.exe `
   --testnet `
   --syncmode fast `
-  --miner.etherbase YOUR_ADDRESS `
-  --datadir "YOUR_DATADIR_PATH" `
+  --miner.etherbase 0xYourWalletAddressHere `
+  --datadir "D:\DAC\chaindata" `
   --port 28657 `
   --nat extip:192.168.100.7
 ```
@@ -122,17 +122,17 @@ Full setup details and deep-dive explanations are available in the Wiki:
 ### WSL Node
 
 ```bash
-cd "/mnt/d/YOUR_PATH" && \
+cd "/mnt/d/DAC/Linux" && \
 ./dacnode \
   --testnet \
   --syncmode fast \
-  --miner.etherbase YOUR_ADDRESS \
+  --miner.etherbase 0xYourWalletAddressHere \
   --datadir ~/dac-chaindata-wsl \
   --port 30304 \
   --nat extip:192.168.100.7
 ```
 
-> Replace `YOUR_ADDRESS`, `YOUR_DATADIR_PATH`, and `/mnt/d/YOUR_PATH` with your actual values.
+> Replace `0xYourWalletAddressHere` with your actual wallet address.
 
 ---
 
@@ -273,6 +273,8 @@ WSL node mirrors Windows block progression within seconds — confirming that in
 | Internal peer type  | —           | `static`    |
 | Sync status         | ✅ Complete | ✅ Complete  |
 
+This asymmetry suggests that under CGNAT, the anchor node (Windows) naturally attracts more outbound peer connections, while the support node (WSL) behaves as a stabilized follower relying on fewer, higher-quality peers.
+
 ---
 
 ## Future Improvements
@@ -284,3 +286,13 @@ WSL node mirrors Windows block progression within seconds — confirming that in
 | Monitoring | Basic peer count and sync status logging over time |
 | WSL peer count | Investigate increasing WSL peer connections beyond 2 |
 | Mermaid topology | Upgrade ASCII diagram to rendered Mermaid diagram |
+
+---
+
+## Closing Note
+
+Not here to prove the theory — that belongs at the protocol layer.
+What I'm testing is whether it holds under real-world conditions.
+If DAC is built to be quantum-ready, resilience should also hold at the network edge.
+
+**Testing that assumption — at the edges.**
