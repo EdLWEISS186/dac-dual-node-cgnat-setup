@@ -33,25 +33,25 @@ The architecture is designed around a fundamental constraint: the ISP operates C
 ## Network Topology
 
 ```
-                    ┌─────────────────────────┐
-                    │      Official Nodes      │
-                    │  DAC Testnet · Static    │
-                    │      Enode Set           │
-                    └────────────┬────────────┘
-                                 │
-                         outbound only
-                       (CGNAT — no inbound)
-                                 │
-               ┌─────────────────┴────────────────────┐
-               │                                      │
-    ┌──────────▼──────────┐            ┌──────────────▼──────────┐
-    │    Windows Node      │           │       WSL Node           │
-    │   Hub · Anchor       │◄────────► │   Support · Secondary    │
-    │   .bat scripts       │ static ·  │   shell scripts          │
-    │  192.168.100.7:28657 │ persist   │  192.168.100.7:30304     │
-    └──────────────────────┘           └──────────────────────────┘
+                                    ┌─────────────────────────┐
+                                    │      Official Nodes      │
+                                    │  DAC Testnet · Static    │
+                                    │      Enode Set           │
+                                     └────────────┬────────────┘
+                                                  │
+                                            outbound only
+                                        (CGNAT — no inbound)
+                                                  │
+               ┌──────────────────────────────────┴────────────────────────────────────┐
+               │                                                                       │
+    ┌──────────▼──────────┐                                               ┌────────────▼────────────┐
+    │     Windows Node     │                                             │          WSL Node        │
+    │     Hub · Anchor     │◄──────────────────────────────────────────► │    Support · Secondary   │
+    │     .bat scripts     │              (static · persist)             │       shell scripts      │
+    │  192.168.100.7:28657 │                                             │    192.168.100.7:30304   │
+    └──────────────────────┘                                             └──────────────────────────┘
 
-    ── outbound peer       ◄──► internal peering       • junction point
+                 ── outbound peer       ◄──► internal peering       • junction point
 ```
 
 > For detailed architectural diagrams, see [`assets/`](assets/).
