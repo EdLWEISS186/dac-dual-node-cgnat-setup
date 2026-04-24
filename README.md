@@ -14,6 +14,9 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 ## Table of Contents
 
 - [Overview](#overview)
+- [🧪 What This Repo Demonstrates](#-what-this-repo-demonstrates)
+- [🧠 Key Insights](#-key-insights)
+- [📚 Documentation](#-documentation)
 - [Network Topology](#network-topology)
 - [Node Configuration](#node-configuration)
 - [Startup Commands](#startup-commands)
@@ -21,7 +24,6 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 - [Why This Setup Matters](#why-this-setup-matters)
 - [Observations](#observations)
 - [Future Improvements](#future-improvements)
-- [📖 Full Documentation (Wiki)](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki)
 
 ---
 
@@ -35,6 +37,33 @@ The architecture is designed around a fundamental constraint: the ISP operates C
 |--------------|--------------|---------------|-------|-------------------|
 | Windows Node | Windows Host | Hub / Anchor  | 28657 | 192.168.100.7     |
 | WSL Node     | WSL (Linux)  | Support Node  | 30304 | via Windows host  |
+
+---
+
+## 🧪 What This Repo Demonstrates
+
+This setup validates DAC node behavior under **constrained network conditions (CGNAT)**, focusing on peer stability, redundancy, and real-world sync reliability — without VPS, tunneling, or inbound access.
+
+> This is not just a setup guide — it is a field report on running a minimal P2P cluster under residential network constraints.
+
+---
+
+## 🧠 Key Insights
+
+- Under CGNAT, **peer quality > peer quantity** — 2 stable static peers outperform 10 unstable discovered peers
+- **Static peers significantly improve stability** over relying on dynamic peer discovery
+- **Internal node peering** between Windows and WSL improves block propagation consistency
+- Port forwarding at the router level is **insufficient** when CGNAT is active at the ISP level
+
+---
+
+## 📚 Documentation
+
+Full setup details and deep-dive explanations are available in the Wiki:
+
+- [🏠 Home](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki)
+- [🗺️ Network Topology](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Network-Topology)
+- [🔌 Static Peer Configuration](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Static-Peer-Configuration)
 
 ---
 
