@@ -36,7 +36,7 @@ The architecture is designed around a fundamental constraint: the ISP operates C
                                     ┌─────────────────────────┐
                                     │      Official Nodes      │
                                     │  DAC Testnet · Static    │
-                                    │      Enode Set           │
+                                    │         Enode Set        │
                                      └────────────┬────────────┘
                                                   │
                                             outbound only
