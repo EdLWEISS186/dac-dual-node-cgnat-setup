@@ -20,6 +20,7 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 - [Network Topology](#network-topology)
 - [Node Configuration](#node-configuration)
 - [Startup Commands](#startup-commands)
+- [Scripts](#scripts)
 - [CGNAT Constraints](#cgnat-constraints)
 - [Why This Setup Matters](#why-this-setup-matters)
 - [Observations](#observations)
@@ -90,7 +91,7 @@ Full setup details and deep-dive explanations are available in the Wiki:
     │ 192.168.100.7:28657  │                                           │    192.168.100.7:30304   │
     └──────────────────────┘                                           └──────────────────────────┘
 
-               ── outbound peer       ◄──► internal peering       • junction point
+                              ── outbound peer       ◄──► internal peering       
 ```
 
 > The constraints shown above — outbound-only, no inbound, static peering — directly shaped every decision in this setup. See [Why This Setup Matters](#why-this-setup-matters) for the reasoning, and [Observations](#observations) for field validation.
@@ -161,7 +162,36 @@ cd "/mnt/d/DAC/Linux" && \
 
 ---
 
-## CGNAT Constraints
+## Scripts
+
+Utility scripts for running and monitoring both nodes are available in the [`scripts/`](scripts/) folder.
+
+```
+scripts/
+├── windows/
+│   ├── start-node.bat   — launch Windows node with auto-restart
+│   ├── monitor.bat      — live status display (sync, block, peers)
+│   └── logging.bat      — continuous logging with peer change color indicator
+└── wsl/
+    ├── start-node.bat   — launch WSL node via Windows terminal with auto-restart
+    ├── monitor.bat      — live WSL node status via Windows terminal
+    └── logging.bat      — continuous WSL logging to file
+```
+
+### Before Using the Scripts
+
+Each script contains placeholder values that must be replaced with your own before running:
+
+| Placeholder | Description | How to Obtain |
+|-------------|-------------|---------------|
+| `YOUR_WINDOWS_NODE_PATH` | Full path to your Windows node folder | e.g. `D:\DAC\Windows` |
+| `YOUR_WSL_NODE_PATH` | Full path to your WSL node folder | e.g. `/mnt/d/DAC/Linux` |
+| `YOUR_WALLET_ADDRESS` | Your DAC wallet address | From your DAC wallet |
+| `YOUR_NODE_IDENTITY` | Label shown in peer list | Any name e.g. `MY-WSL-NODE` |
+
+> Open each `.bat` file with a text editor, find the placeholders, and replace with your actual values before running.
+
+---
 
 This setup operates under **Carrier-Grade NAT (CGNAT)** — a network condition imposed at the ISP level where multiple subscribers share a single public IP. The consequence is that **no inbound connections are possible**, regardless of local router configuration.
 
@@ -311,9 +341,9 @@ This consistent disparity reinforces the assumption that under CGNAT conditions,
 
 | Item | Description |
 |------|-------------|
-| Startup automation | `.bat` / shell scripts to launch both nodes with one command |
 | Monitoring | Basic peer count and sync status logging over time |
 | WSL peer count | Investigate increasing WSL peer connections beyond 2 |
+| Mermaid topology | Upgrade ASCII diagram to rendered Mermaid diagram |
 
 ---
 
