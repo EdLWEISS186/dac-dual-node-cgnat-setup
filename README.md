@@ -329,6 +329,7 @@ This asymmetry suggests that under CGNAT, the anchor node (Windows) naturally at
 ## Closing Note
 
 Not here to prove the theory — that belongs at the protocol layer.
+
 What I'm testing is whether it holds under real-world conditions.
 
 If DAC is built to be quantum-ready, resilience should also hold at the network edge.
