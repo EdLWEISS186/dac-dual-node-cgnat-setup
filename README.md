@@ -73,7 +73,7 @@ Full setup details and deep-dive explanations are available in the Wiki:
 ## Network Topology
 
 ```
-                                     ┌─────────────────────────┐
+                                      ┌─────────────────────────┐
                                      │      Official Nodes      │
                                      │  DAC Testnet · Static    │
                                      │      Enode Set           │
@@ -91,7 +91,7 @@ Full setup details and deep-dive explanations are available in the Wiki:
     │ 192.168.100.7:28657  │                                           │    192.168.100.7:30304   │
     └──────────────────────┘                                           └──────────────────────────┘
 
-                              ── outbound peer       ◄──► internal peering       
+                              ── outbound peer       ◄──► internal peering 
 ```
 
 > The constraints shown above — outbound-only, no inbound, static peering — directly shaped every decision in this setup. See [Why This Setup Matters](#why-this-setup-matters) for the reasoning, and [Observations](#observations) for field validation.
@@ -192,6 +192,8 @@ Each script contains placeholder values that must be replaced with your own befo
 > Open each `.bat` file with a text editor, find the placeholders, and replace with your actual values before running.
 
 ---
+
+## CGNAT Constraints
 
 This setup operates under **Carrier-Grade NAT (CGNAT)** — a network condition imposed at the ISP level where multiple subscribers share a single public IP. The consequence is that **no inbound connections are possible**, regardless of local router configuration.
 
@@ -343,7 +345,6 @@ This consistent disparity reinforces the assumption that under CGNAT conditions,
 |------|-------------|
 | Monitoring | Basic peer count and sync status logging over time |
 | WSL peer count | Investigate increasing WSL peer connections beyond 2 |
-| Mermaid topology | Upgrade ASCII diagram to rendered Mermaid diagram |
 
 ---
 
