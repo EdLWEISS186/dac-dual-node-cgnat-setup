@@ -24,7 +24,6 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 - [CGNAT Constraints](#cgnat-constraints)
 - [Why This Setup Matters](#why-this-setup-matters)
 - [Observations](#observations)
-- [Future Improvements](#future-improvements)
 
 ---
 
@@ -90,8 +89,7 @@ Full setup details and deep-dive explanations are available in the Wiki:
     │    .bat scripts      │               static · persist            │       shell scripts      │
     │ 192.168.100.7:28657  │                                           │    192.168.100.7:30304   │
     └──────────────────────┘                                           └──────────────────────────┘
-
-                              ── outbound peer       ◄──► internal peering 
+                              ── outbound peer       ◄──► internal peering
 ```
 
 > The constraints shown above — outbound-only, no inbound, static peering — directly shaped every decision in this setup. See [Why This Setup Matters](#why-this-setup-matters) for the reasoning, and [Observations](#observations) for field validation.
@@ -399,12 +397,6 @@ Under CGNAT conditions:
 - Static peer configuration provides a reliable baseline for connectivity
 - Internal peering contributes to consistency across nodes
 - Nodes can reach a natural equilibrium state without inbound connectivity
-
-## Future Improvements
-
-| Item | Description |
-|------|-------------|
-| WSL peer count | Investigate increasing WSL peer connections beyond 2 |
 
 ---
 
