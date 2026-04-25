@@ -33,6 +33,8 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 
 The architecture is designed around a fundamental constraint: the ISP operates Carrier-Grade NAT, making traditional inbound peer discovery impossible. Every design decision in this setup — static peers, internal LAN routing, dual-node redundancy — exists as a direct response to that constraint.
 
+**This setup is not built despite CGNAT — it is built because of it.**
+
 | Node         | Platform     | Role          | Port             | Address             |
 |--------------|--------------|---------------|------------------|---------------------|
 | Windows Node | Windows Host | Hub / Anchor  | e.g. `28657`     | Your LAN IP         |
@@ -44,7 +46,7 @@ The architecture is designed around a fundamental constraint: the ISP operates C
 
 This setup validates DAC node behavior under **constrained network conditions (CGNAT)**, focusing on peer stability, redundancy, and real-world sync reliability — without VPS, tunneling, or inbound access.
 
-> This is not just a setup guide — it is a field report on running a minimal P2P cluster under residential network constraints.
+> This is not just a setup guide — it is a field report on running a minimal P2P cluster under residential network constraints — based on direct observation under constrained real-world conditions.
 
 ---
 
@@ -91,32 +93,9 @@ Full setup details and deep-dive explanations are available in the Wiki:
                ── outbound peer       ◄──► internal peering       • junction point
 ```
 
-> For a detailed architectural diagram, see [`topology-architectural.png`](assets/topology-architectural.png).
-
----
-
-## Network Topology (Mermaid)
-
-```mermaid
-graph TD
-
-    A["DAC Official Nodes<br/>Static Enodes"]
-
-    B["Windows Node<br/>Anchor · Primary<br/>LAN_IP:WINDOWS_PORT"]
-    C["WSL Node<br/>Support · Secondary<br/>LAN_IP:WSL_PORT"]
-
-    A -->|Outbound Only (CGNAT)| B
-    A -->|Outbound Only (CGNAT)| C
-
-    B <-->|Static · Persistent Internal Peering| C
-
-    subgraph "Local Environment (CGNAT — No Inbound)"
-        B
-        C
-    end
-```
-
 > The constraints shown above — outbound-only, no inbound, static peering — directly shaped every decision in this setup. See [Why This Setup Matters](#why-this-setup-matters) for the reasoning, and [Observations](#observations) for field validation.
+
+> For detailed architectural diagrams, see [`assets/`](assets/topology-architectural.png).
 
 ---
 
@@ -221,6 +200,8 @@ The dual-node architecture also goes beyond basic participation. By running two 
 
 This is directly applicable to anyone running nodes on residential ISPs, mobile broadband, or shared infrastructure where CGNAT is common.
 
+This challenges the common assumption that meaningful network participation requires public exposure — demonstrating instead that constrained environments can still contribute reliably to network stability.
+
 ---
 
 ## Observations
@@ -322,6 +303,8 @@ WSL node mirrors Windows block progression within seconds — confirming that in
 
 This asymmetry suggests that under CGNAT, the anchor node (Windows) naturally attracts more outbound peer connections, while the support node (WSL) behaves as a stabilized follower relying on fewer, higher-quality peers.
 
+This consistent disparity reinforces the assumption that under CGNAT conditions, outbound connection initiation and network positioning significantly influence peer acquisition behavior.
+
 ---
 
 ## Future Improvements
@@ -329,7 +312,6 @@ This asymmetry suggests that under CGNAT, the anchor node (Windows) naturally at
 | Item | Description |
 |------|-------------|
 | Startup automation | `.bat` / shell scripts to launch both nodes with one command |
-| Auto-restart | Service wrapper (NSSM / systemd) for node recovery on crash |
 | Monitoring | Basic peer count and sync status logging over time |
 | WSL peer count | Investigate increasing WSL peer connections beyond 2 |
 
