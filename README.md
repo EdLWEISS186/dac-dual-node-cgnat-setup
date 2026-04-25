@@ -15,7 +15,9 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 
 - [Overview](#overview)
 - [🧪 What This Repo Demonstrates](#-what-this-repo-demonstrates)
+- [🔁 Reproducibility](#-reproducibility)
 - [🧠 Key Insights](#-key-insights)
+- [⚠️ Limitations](#️-limitations)
 - [📚 Documentation](#-documentation)
 - [Network Topology](#network-topology)
 - [Node Configuration](#node-configuration)
@@ -52,12 +54,34 @@ This setup validates DAC node behavior under **constrained network conditions (C
 
 ---
 
+## 🔁 Reproducibility
+
+This repository is structured to allow replication of the setup under similar conditions — CGNAT environment, no inbound connectivity, and static peer configuration.
+
+While results may vary depending on network environment and peer availability, the architecture, configuration steps, and scripts provided are sufficient to reproduce the core setup and observe comparable node behavior.
+
+Community validation is encouraged to further assess reproducibility across different environments.
+
+---
+
 ## 🧠 Key Insights
 
 - Under CGNAT, **peer quality > peer quantity** — 2 stable static peers outperform 10 unstable discovered peers
 - **Static peers significantly improve stability** over relying on dynamic peer discovery
 - **Internal node peering** between Windows and WSL improves block propagation consistency
 - Port forwarding at the router level is **insufficient** when CGNAT is active at the ISP level
+
+---
+
+## ⚠️ Limitations
+
+This setup and its observations are subject to the following scope boundaries:
+
+- **Single-machine environment** — both nodes run on the same physical host (Windows + WSL); not validated on multi-host or distributed systems
+- **CGNAT-specific conditions** — behavior is observed exclusively under CGNAT; results may differ under public IP or full inbound connectivity
+- **Limited static peer set** — results are based on a small number of static peers; behavior may vary with different peer configurations or network conditions
+- **Testnet only** — observations are based on DAC testnet; not validated on mainnet environments
+- **Observation window** — monitoring duration (~2.5 hours) captures steady-state behavior, but does not represent long-term stability such as multi-day uptime
 
 ---
 
@@ -388,6 +412,16 @@ This demonstrates that synchronization quality is not directly dependent on peer
 - **Internal peering acts as a stabilizing bridge** — The persistent connection between Windows and WSL ensures reliable block propagation, even when external peer availability is limited.
 - **Asymmetric topology by design** — The Windows node functions as the network anchor with higher peer count, while the WSL node operates as a support node with hybrid connectivity (internal + external peers).
 - **Peer fluctuation does not impact synchronization** — Minor variations in peer count did not affect block consistency or sync performance.
+
+---
+
+#### Observational Boundaries
+
+The observations presented focus on steady-state behavior after node stabilization.
+
+Transient conditions such as initial peer discovery, node startup synchronization, and temporary peer drops outside the observed window are intentionally excluded from analysis.
+
+Additionally, behavior under conditions such as complete loss of external peers, extended network instability, or changes in static peer availability has not been evaluated in this report.
 
 ---
 
