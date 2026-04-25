@@ -95,6 +95,22 @@ Full setup details and deep-dive explanations are available in the Wiki:
 
 ---
 
+## Network Topology (Mermaid)
+
+```mermaid
+graph TD
+    A["DAC Official Nodes<br/>Static Enodes"] -->|Outbound Only - CGNAT| B
+    A -->|Outbound Only - CGNAT| C
+    B["Windows Node<br/>Hub · Anchor<br/>LAN_IP:WINDOWS_PORT"] <-->|Static · Persistent Internal Peering| C["WSL Node<br/>Support · Secondary<br/>LAN_IP:WSL_PORT"]
+
+    subgraph "Local Environment — CGNAT, no inbound"
+        B
+        C
+    end
+```
+
+---
+
 ## Node Configuration
 
 | Component      | Address                        | Role                          |
@@ -307,7 +323,6 @@ This asymmetry suggests that under CGNAT, the anchor node (Windows) naturally at
 | Auto-restart | Service wrapper (NSSM / systemd) for node recovery on crash |
 | Monitoring | Basic peer count and sync status logging over time |
 | WSL peer count | Investigate increasing WSL peer connections beyond 2 |
-| Mermaid topology | Upgrade ASCII diagram to rendered Mermaid diagram |
 
 ---
 
