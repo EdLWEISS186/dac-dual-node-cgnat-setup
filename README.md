@@ -99,15 +99,24 @@ Full setup details and deep-dive explanations are available in the Wiki:
 
 ```mermaid
 graph TD
-    A["DAC Official Nodes<br/>Static Enodes"] -->|Outbound Only - CGNAT| B
-    A -->|Outbound Only - CGNAT| C
-    B["Windows Node<br/>Hub · Anchor<br/>LAN_IP:WINDOWS_PORT"] <-->|Static · Persistent Internal Peering| C["WSL Node<br/>Support · Secondary<br/>LAN_IP:WSL_PORT"]
 
-    subgraph "Local Environment — CGNAT, no inbound"
+    A["DAC Official Nodes<br/>Static Enodes"]
+
+    B["Windows Node<br/>Anchor · Primary<br/>LAN_IP:WINDOWS_PORT"]
+    C["WSL Node<br/>Support · Secondary<br/>LAN_IP:WSL_PORT"]
+
+    A -->|Outbound Only (CGNAT)| B
+    A -->|Outbound Only (CGNAT)| C
+
+    B <-->|Static · Persistent Internal Peering| C
+
+    subgraph "Local Environment (CGNAT — No Inbound)"
         B
         C
     end
 ```
+
+> The constraints shown above — outbound-only, no inbound, static peering — directly shaped every decision in this setup. See [Why This Setup Matters](#why-this-setup-matters) for the reasoning, and [Observations](#observations) for field validation.
 
 ---
 
@@ -202,7 +211,7 @@ Port forwarding was configured on the router (Huawei HG8145V5) — mapping exter
 
 ## Why This Setup Matters
 
-Most node documentation assumes a clean network environment with inbound connectivity. This setup proves that **stable, productive DAC testnet participation is achievable under CGNAT** — without a VPS, without port tunneling, and without any inbound access.
+The constraints illustrated in the topology above are not theoretical — they are active network conditions that required deliberate architectural decisions. Most node documentation assumes a clean network environment with inbound connectivity. This setup proves that **stable, productive DAC testnet participation is achievable under CGNAT** — without a VPS, without port tunneling, and without any inbound access.
 
 The dual-node architecture also goes beyond basic participation. By running two nodes on the same machine — one as anchor, one as support — this setup creates a **minimal P2P cluster** that demonstrates:
 
@@ -216,7 +225,7 @@ This is directly applicable to anyone running nodes on residential ISPs, mobile 
 
 ## Observations
 
-All observations recorded on **April 24, 2026**, with both nodes running simultaneously.
+The claims made in [Why This Setup Matters](#why-this-setup-matters) are validated below with field data. All observations recorded on **April 24, 2026**, with both nodes running simultaneously.
 
 ---
 
