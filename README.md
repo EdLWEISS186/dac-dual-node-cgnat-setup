@@ -29,7 +29,9 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 
 ## Overview
 
-**DAC (Dual Asset Chain)** is a fork of the Quadrans technology developed by the Quadrans Foundation — a blockchain initiative focused on decentralization, scientific progress, and ethical responsibility, aimed at delivering sustainable and innovative infrastructure for real-world applications. This repository documents a dual-node DAC testnet setup running simultaneously on a **Windows host** and **WSL (Linux)** — both operating under a **CGNAT-constrained network** where inbound connectivity is unavailable.
+**DAC (Dual Asset Chain)** is a fork of the Quadrans technology developed by the Quadrans Foundation — a blockchain initiative focused on decentralization, scientific progress, and ethical responsibility, aimed at delivering sustainable and innovative infrastructure for real-world applications.
+
+This repository documents a dual-node DAC testnet setup running simultaneously on a **Windows host** and **WSL (Linux)** — both operating under a **CGNAT-constrained network** where inbound connectivity is unavailable. Both nodes operate within a single physical machine (shared host environment), forming a minimal internal P2P cluster rather than a distributed multi-host network.
 
 The architecture is designed around a fundamental constraint: the ISP operates Carrier-Grade NAT, making traditional inbound peer discovery impossible. Every design decision in this setup — static peers, internal LAN routing, dual-node redundancy — exists as a direct response to that constraint.
 
@@ -178,7 +180,7 @@ scripts/
 
 ### Before Using the Scripts
 
-Each script contains placeholder values that must be replaced with your own before running:
+Scripts are parameterized using placeholder values and must be adjusted to match the local environment before execution. The following placeholders are used across all scripts:
 
 | Placeholder | Description | How to Obtain |
 |-------------|-------------|---------------|
@@ -186,8 +188,6 @@ Each script contains placeholder values that must be replaced with your own befo
 | `YOUR_WSL_NODE_PATH` | Full path to your WSL node folder | e.g. `/mnt/d/DAC/Linux` |
 | `YOUR_WALLET_ADDRESS` | Your DAC wallet address | From your DAC wallet |
 | `YOUR_NODE_IDENTITY` | Label shown in peer list | Any name e.g. `MY-WSL-NODE` |
-
-> Open each `.bat` file with a text editor, find the placeholders, and replace with your actual values before running.
 
 ---
 
@@ -231,6 +231,8 @@ The dual-node architecture also goes beyond basic participation. By running two 
 This is directly applicable to anyone running nodes on residential ISPs, mobile broadband, or shared infrastructure where CGNAT is common.
 
 This challenges the common assumption that meaningful network participation requires public exposure — demonstrating instead that constrained environments can still contribute reliably to network stability.
+
+This demonstrates that meaningful network participation does not require inbound connectivity — only stable and well-defined peer relationships.
 
 ---
 
