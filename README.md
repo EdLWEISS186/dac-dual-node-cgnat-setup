@@ -327,23 +327,83 @@ WSL node mirrors Windows block progression within seconds — confirming that in
 | Metric              | Windows Node | WSL Node    |
 |---------------------|-------------|-------------|
 | `eth.syncing`       | `false`     | `false`     |
-| `net.peerCount`     | 4           | 2           |
-| Official peers      | 3           | 1           |
+| `net.peerCount`     | 4           | 2–3         |
+| Official peers      | 3           | 1–2         |
 | Internal peers      | 1 (WSL)     | 1 (Win)     |
 | Internal peer type  | —           | `static`    |
 | Sync status         | ✅ Complete | ✅ Complete  |
-
-This asymmetry suggests that under CGNAT, the anchor node (Windows) naturally attracts more outbound peer connections, while the support node (WSL) behaves as a stabilized follower relying on fewer, higher-quality peers.
-
-This consistent disparity reinforces the assumption that under CGNAT conditions, outbound connection initiation and network positioning significantly influence peer acquisition behavior.
+| Uptime (2h 26m)     | 100%        | 100%        |
 
 ---
+
+### 📊 Observational Insight
+
+#### Methodology
+
+Nodes were allowed a 1-hour warm-up period prior to data collection to ensure peer stabilization and complete synchronization under steady-state conditions. Observations were recorded after stabilization to avoid transient behaviors during initial peer discovery and sync phases.
+
+**Logging Period:** 25 April 2026, 15:21 — 17:47 WIB (±2 hours 26 minutes)
+
+---
+
+#### Data Summary
+
+| Metric | Windows Node | WSL Node |
+|--------|-------------|----------|
+| Duration | 2h 26m | 2h 26m |
+| Blocks imported | 585 | 585 |
+| Block start → end | 14,722,271 → 14,722,856 | 14,722,272 → 14,722,856 |
+| Avg block time | ~15 seconds | ~15 seconds |
+| Peer count (stable) | 4 (≈99.9%) | 2 (≈97%) |
+| Peer count (transient) | 5 — 2 brief spikes | 3 — initial ~4 minutes only |
+| Sync interruptions | 0 | 0 |
+| Uptime | 100% | 100% |
+
+---
+
+#### Live Logging — Both Nodes
+
+![Windows and WSL Logging Side-by-Side](assets/Logging_both.png)
+
+Both nodes captured running simultaneously with continuous logging output — Windows (left) and WSL (right). Peer counts and block heights are consistent across both terminals, confirming synchronized operation throughout the logging period.
+
+---
+
+#### Interpretation
+
+The Windows node maintained a highly stable peer count of 4 throughout the observation window, with only two brief and self-resolving spikes to 5 peers. In both cases, the peer count returned to baseline within the next polling interval, indicating a natural equilibrium under CGNAT conditions.
+
+The WSL node initially connected to 3 peers, but lost one within the first few minutes and stabilized at 2 peers for the remainder of the session. This transient peer was not part of the static configuration, and its failure to reconnect suggests that non-static peers in this setup are observed to be less stable under CGNAT constraints.
+
+Despite the asymmetry in peer count, both nodes processed an identical number of blocks (585) at a consistent ~15-second interval. No sync interruptions or divergence in block height were observed.
+
+This demonstrates that synchronization quality is not directly dependent on peer count. A node maintaining a smaller set of stable, high-quality peers can achieve full sync equivalence with a node connected to a larger peer set.
+
+---
+
+#### Key Observations
+
+- **Steady-state behavior achieved after warm-up** — Peer counts stabilized into consistent ranges, confirming that measurements taken immediately after startup would not have been representative.
+- **Peer quality outweighs peer quantity** — Despite maintaining fewer peers, the WSL node remained fully synchronized and operational throughout the observation period.
+- **Internal peering acts as a stabilizing bridge** — The persistent connection between Windows and WSL ensures reliable block propagation, even when external peer availability is limited.
+- **Asymmetric topology by design** — The Windows node functions as the network anchor with higher peer count, while the WSL node operates as a support node with hybrid connectivity (internal + external peers).
+- **Peer fluctuation does not impact synchronization** — Minor variations in peer count did not affect block consistency or sync performance.
+
+---
+
+#### Key Takeaway
+
+Under CGNAT conditions:
+
+- Stable operation emerges from peer quality and persistence, not peer quantity
+- Static peer configuration provides a reliable baseline for connectivity
+- Internal peering contributes to consistency across nodes
+- Nodes can reach a natural equilibrium state without inbound connectivity
 
 ## Future Improvements
 
 | Item | Description |
 |------|-------------|
-| Monitoring | Basic peer count and sync status logging over time |
 | WSL peer count | Investigate increasing WSL peer connections beyond 2 |
 
 ---
