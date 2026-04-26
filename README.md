@@ -383,6 +383,10 @@ Nodes were allowed a 1-hour warm-up period prior to data collection to ensure pe
 | Sync interruptions | 0 | 0 |
 | Uptime | 100% | 100% |
 
+> Raw log data is available for verification:
+> - 📄 [monitor.log](logs/monitor.log) — Windows Node
+> - 📄 [monitor_wsl.log](logs/monitor_wsl.log) — WSL Node
+
 ---
 
 #### Live Logging — Both Nodes
