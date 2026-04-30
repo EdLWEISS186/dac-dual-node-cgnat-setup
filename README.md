@@ -26,6 +26,7 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 - [CGNAT Constraints](#cgnat-constraints)
 - [Why This Setup Matters](#why-this-setup-matters)
 - [Observations](#observations)
+- [🖥️ Dashboard App](#️-dashboard-app)
 
 ---
 
@@ -437,6 +438,14 @@ Under CGNAT conditions:
 - Static peer configuration provides a reliable baseline for connectivity
 - Internal peering contributes to consistency across nodes
 - Nodes can reach a natural equilibrium state without inbound connectivity
+
+---
+
+## 🖥️ Dashboard App
+
+Based on this dual-node setup, a companion desktop application was built to run both nodes — Windows and WSL — along with monitoring and logging, all from a single interface. No more managing multiple terminal windows separately.
+
+👉 [DAC Node Dashboard](DAC-Node-Dashboard/)
 
 ---
 
