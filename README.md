@@ -443,10 +443,10 @@ Under CGNAT conditions:
 
 ## 🖥️ Dashboard App
 
-Based on this dual-node setup, a companion desktop application was built to run both nodes — Windows and WSL — along with monitoring and logging, all from a single interface. No more managing multiple terminal windows separately.
+Based on this dual-node setup, a companion desktop application was developed to consolidate node management into a single interface, 
+enabling both ((Windows and WSL) nodes to be started, monitored, and logged simultaneously without the overhead of managing multiple terminal sessions.
 
 👉 [DAC Node Dashboard](DAC-Node-Dashboard/)
-
 ---
 
 ## Closing Note
