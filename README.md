@@ -14,11 +14,11 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 ## Table of Contents
 
 - [Overview](#overview)
-- [🧪 What This Repo Demonstrates](#-what-this-repo-demonstrates)
-- [🔁 Reproducibility](#-reproducibility)
-- [🧠 Key Insights](#-key-insights)
-- [⚠️ Limitations](#️-limitations)
-- [📚 Documentation](#-documentation)
+- [What This Repo Demonstrates](#-what-this-repo-demonstrates)
+- [Reproducibility](#-reproducibility)
+- [Key Insights](#-key-insights)
+- [Limitations](#️-limitations)
+- [Documentation](#-documentation)
 - [Network Topology](#network-topology)
 - [Node Configuration](#node-configuration)
 - [Startup Commands](#startup-commands)
@@ -26,7 +26,7 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 - [CGNAT Constraints](#cgnat-constraints)
 - [Why This Setup Matters](#why-this-setup-matters)
 - [Observations](#observations)
-- [🖥️ Dashboard App](#️-dashboard-app)
+- [Dashboard App](#️-dashboard-app)
 
 ---
 
@@ -47,7 +47,7 @@ The architecture is designed around a fundamental constraint: the ISP operates C
 
 ---
 
-## 🧪 What This Repo Demonstrates
+## What This Repo Demonstrates
 
 This setup validates DAC node behavior under **constrained network conditions (CGNAT)**, focusing on peer stability, redundancy, and real-world sync reliability — without VPS, tunneling, or inbound access.
 
@@ -55,7 +55,7 @@ This setup validates DAC node behavior under **constrained network conditions (C
 
 ---
 
-## 🔁 Reproducibility
+## Reproducibility
 
 This repository is structured to allow replication of the setup under similar conditions — CGNAT environment, no inbound connectivity, and static peer configuration.
 
@@ -65,7 +65,7 @@ Community validation is encouraged to further assess reproducibility across diff
 
 ---
 
-## 🧠 Key Insights
+## Key Insights
 
 - Under CGNAT, **peer quality > peer quantity** — 2 stable static peers outperform 10 unstable discovered peers
 - **Static peers significantly improve stability** over relying on dynamic peer discovery
@@ -74,7 +74,7 @@ Community validation is encouraged to further assess reproducibility across diff
 
 ---
 
-## ⚠️ Limitations
+## Limitations
 
 This setup and its observations are subject to the following scope boundaries:
 
@@ -86,13 +86,13 @@ This setup and its observations are subject to the following scope boundaries:
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 Full setup details and deep-dive explanations are available in the Wiki:
 
-- [🏠 Home](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki)
-- [🗺️ Network Topology](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Network-Topology)
-- [🔌 Static Peer Configuration](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Static-Peer-Configuration)
+- [Home](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki)
+- [Network Topology](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Network-Topology)
+- [Static Peer Configuration](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Static-Peer-Configuration)
 
 ---
 
@@ -356,12 +356,12 @@ WSL node mirrors Windows block progression within seconds — confirming that in
 | Official peers      | 3           | 1–2         |
 | Internal peers      | 1 (WSL)     | 1 (Win)     |
 | Internal peer type  | —           | `static`    |
-| Sync status         | ✅ Complete | ✅ Complete  |
+| Sync status         | Complete    | Complete    |
 | Uptime (2h 26m)     | 100%        | 100%        |
 
 ---
 
-### 📊 Observational Insight
+### Observational Insight
 
 #### Methodology
 
@@ -385,8 +385,8 @@ Nodes were allowed a 1-hour warm-up period prior to data collection to ensure pe
 | Uptime | 100% | 100% |
 
 > Raw log data is available for verification:
-> - 📄 [monitor.log](logs/monitor.log) — Windows Node
-> - 📄 [monitor_wsl.log](logs/monitor_wsl.log) — WSL Node
+> - [monitor.log](logs/monitor.log) — Windows Node
+> - [monitor_wsl.log](logs/monitor_wsl.log) — WSL Node
 
 ---
 
@@ -441,12 +441,11 @@ Under CGNAT conditions:
 
 ---
 
-## 🖥️ Dashboard App
+## Dashboard App
 
-Based on this dual-node setup, a companion desktop application was developed to consolidate node management into a single interface, 
-enabling both ((Windows and WSL) nodes to be started, monitored, and logged simultaneously without the overhead of managing multiple terminal sessions.
+Based on this dual-node setup, a companion desktop application was built to run both nodes — Windows and WSL — along with monitoring and logging, all from a single interface. No more managing multiple terminal windows separately.
 
-👉 [DAC Node Dashboard](DAC-Node-Dashboard/)
+→ [DAC Node Dashboard](DAC-Node-Dashboard/)
 
 ---
 
