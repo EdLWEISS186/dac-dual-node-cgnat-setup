@@ -127,11 +127,13 @@ Full setup details and deep-dive explanations are available in the Wiki:
 
 ## Node Configuration
 
-| Component      | Address                        | Role                          |
-|----------------|--------------------------------|-------------------------------|
-| Windows Node   | `YOUR_LAN_IP:WINDOWS_PORT`     | Primary anchor, hub node      |
-| WSL Node       | `YOUR_LAN_IP:WSL_PORT`         | Secondary, routed via host    |
-| Official Nodes | Public enodes                  | Static peers (authority)      |
+| Component      | Address                        | Identity                | Role                          |
+|----------------|--------------------------------|-------------------------|-------------------------------|
+| Windows Node   | `YOUR_LAN_IP:28657`            | `YOUR_WIN_IDENTITY`     | Primary anchor, hub node      |
+| WSL Node       | `YOUR_LAN_IP:30304`            | `YOUR_WSL_IDENTITY`     | Secondary, routed via host    |
+| Official Nodes | Public enodes                  | DAC Testnet Authorities | Static peers (authority)      |
+
+> Static peers are configured via `config.toml` placed in `--datadir/gdacnode/config.toml`. This replaces the deprecated `static-nodes.json` format.
 
 ---
 
@@ -155,11 +157,14 @@ This setup uses `fast` sync mode — a deliberate choice based on the network co
 
 ```powershell
 .\dacnode.exe `
+  --identity "YOUR_NODE_IDENTITY" `
+  --config "YOUR_DATADIR\gdacnode\config.toml" `
   --testnet `
   --syncmode fast `
   --miner.etherbase 0xYourWalletAddressHere `
-  --datadir "D:\DAC\chaindata" `
+  --datadir "YOUR_DATADIR" `
   --port 28657 `
+  --maxpeers 12 `
   --nat extip:YOUR_LOCAL_IP
 ```
 
@@ -168,11 +173,14 @@ This setup uses `fast` sync mode — a deliberate choice based on the network co
 ```bash
 cd "/mnt/d/DAC/Linux" && \
 ./dacnode \
+  --config ~/dac-chaindata-wsl/gdacnode/config.toml \
   --testnet \
   --syncmode fast \
   --miner.etherbase 0xYourWalletAddressHere \
   --datadir ~/dac-chaindata-wsl \
+  --identity "YOUR_NODE_IDENTITY" \
   --port 30304 \
+  --maxpeers 12 \
   --nat extip:YOUR_LOCAL_IP
 ```
 
@@ -180,10 +188,15 @@ cd "/mnt/d/DAC/Linux" && \
 
 | Parameter | Description | How to Obtain |
 |-----------|-------------|---------------|
+| `--identity` | Node display name visible in peer list | Any unique name e.g. `MY-WIN-NODE` |
+| `--config` | Path to TOML config file containing static peers | Place `config.toml` in `--datadir/gdacnode/` |
 | `--miner.etherbase` | Your wallet address | From your DAC wallet |
 | `--datadir` | Path where chain data is stored | Choose any local directory |
 | `--port` | P2P port for this node | Any available port — must be unique per node |
-| `--nat extip` | IP advertised to peers | Run `ipconfig` (Windows) or `ip addr` (WSL) → use your LAN IP |
+| `--maxpeers` | Maximum number of peer connections | Recommended: `12` |
+| `--nat extip` | IP advertised to peers | Run `ipconfig` (Windows) → use your LAN IPv4 Address |
+
+> `--nat extip` must be updated every time you switch networks.
 
 ---
 
