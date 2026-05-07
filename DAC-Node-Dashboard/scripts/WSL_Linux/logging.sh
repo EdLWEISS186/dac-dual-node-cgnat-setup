@@ -1,7 +1,8 @@
 #!/bin/bash
-DACDIR="/mnt/d/AE - 903/APP/Miner/Airdrop/DAC/Linux"
+# Edit DACDIR to match your Linux dacnode folder
+DACDIR="/mnt/d/YOUR_NODE_PATH/Linux"
 IPC="$HOME/dac-chaindata-wsl/gdacnode.ipc"
-LOGDIR="/mnt/d/dac-node-dashboard/logs"
+LOGDIR="/mnt/d/YOUR_APP_PATH/logs"
 LOG="$LOGDIR/monitor_wsl.log"
 mkdir -p "$LOGDIR"
 cd "$DACDIR"
