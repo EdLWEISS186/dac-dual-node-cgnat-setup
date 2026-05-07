@@ -14,11 +14,11 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 ## Table of Contents
 
 - [Overview](#overview)
-- [What This Repo Demonstrates](#-what-this-repo-demonstrates)
-- [Reproducibility](#-reproducibility)
-- [Key Insights](#-key-insights)
-- [Limitations](#️-limitations)
-- [Documentation](#-documentation)
+- [What This Repo Demonstrates](#what-this-repo-demonstrates)
+- [Reproducibility](#reproducibility)
+- [Key Insights](#key-insights)
+- [Limitations](#limitations)
+- [Documentation](#documentation)
 - [Network Topology](#network-topology)
 - [Node Configuration](#node-configuration)
 - [Startup Commands](#startup-commands)
@@ -26,7 +26,7 @@ Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with s
 - [CGNAT Constraints](#cgnat-constraints)
 - [Why This Setup Matters](#why-this-setup-matters)
 - [Observations](#observations)
-- [Dashboard App](#️-dashboard-app)
+- [Dashboard App](#dashboard-app)
 
 ---
 
@@ -305,11 +305,18 @@ Windows node fully synced with **4 active peers** — 3 official DAC authority n
 
 ![Windows Node — admin.peers](assets/Windows_Peers.png)
 
-Confirmed connections to:
+Full peer data — [admin_peers_windows_2026-05-06.json](assets/admin_peers_windows_2026-05-06.json)
+
+Confirmed connections as of 2026-05-06 (7 peers):
 - `157.173.127.30:28657` — DAC Testnet Authority 2
 - `157.173.127.21:28657` — DAC Testnet Authority 3
 - `157.173.127.31:28657` — DAC Testnet Authority 1
-- `192.168.100.7`        — WSL Node (internal, static)
+- `156.67.104.212:28657` — whale-vps2
+- `152.228.141.231:28657` — DAC Testnet node
+- `5.104.86.129:28657`   — x0rabbit
+- `192.168.100.7`        — WSL Node (internal, inbound)
+
+> Peer count has grown as more official nodes joined the testnet network since initial setup.
 
 ---
 
@@ -319,10 +326,10 @@ Confirmed connections to:
 
 ```
 eth.syncing   → false
-net.peerCount → 2
+net.peerCount → 6
 ```
 
-WSL node fully synced with **2 active peers** — the Windows host node and 1 official DAC authority node.
+WSL node fully synced with **6 active peers** — the Windows host node and 5 official DAC authority nodes.
 
 ---
 
@@ -330,15 +337,19 @@ WSL node fully synced with **2 active peers** — the Windows host node and 1 of
 
 ![WSL Node — admin.peers](assets/WSL_Peers.png)
 
-Confirmed connections to:
-- `192.168.100.7:28657`  — Windows Node (internal, static)
-- `157.173.127.22:28657` — DAC Testnet RPC Node (official)
+Full peer data — [admin_peers_wsl_2026-05-06.json](assets/admin_peers_wsl_2026-05-06.json)
+
+Confirmed connections as of 2026-05-06 (6 peers):
+- `192.168.100.7:28657`    — Windows Node (internal, static)
+- `157.173.127.30:28657`   — DAC Testnet Authority 2
+- `157.173.127.31:28657`   — DAC Testnet Authority 1
+- `156.67.104.212:28657`   — whale-vps2
+- `206.189.127.204:28657`  — DAC-Node 05
+- `161.97.89.27:28657`     — whale-vps3
 
 ---
 
 ### Internal Peering — Persistent & Static
-
-![Internal Peering Proof](assets/Internal_Peering.jpg)
 
 WSL ↔ Windows bidirectional connection confirmed active. Both nodes show each other in `admin.peers` with `static: true` on the WSL side — confirming the internal peer connection is persistent and does not depend on discovery.
 
