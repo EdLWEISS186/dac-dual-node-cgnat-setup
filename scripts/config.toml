@@ -1,0 +1,34 @@
+# DAC Testnet — Static Peer Configuration
+# Format: TOML (replaces deprecated static-nodes.json)
+#
+# Official peer list source:
+# https://enodes.dachain.tech/testnet/
+#
+# -------------------------------------------------------
+# INTERNAL PEERING (optional but recommended)
+# If you run dual nodes (Windows + WSL), add your other
+# node's enode here for internal peering.
+#
+# Example:
+#   "enode://YOUR_OTHER_NODE_ENODE@YOUR_LAN_IP:PORT",
+#
+# Replace YOUR_LAN_IP with your local IPv4 address.
+# Run 'ipconfig' in PowerShell to find it.
+# -------------------------------------------------------
+
+[Node.P2P]
+StaticNodes = [
+
+  # --- Official DAC Testnet Peers ---
+  "enode://ebd435865436e4be01b51da0bda417e5777a2a37e059addb8e5adec96929ed7ae15b7266d2567c39c13f212708f4dc6911d0cc01699169a98ecf024b0a1596ac@1.54.141.126:28657",
+  "enode://9652549979785c10c4d6bbedb7e15d333764498a33d0bcf4b56c1ec695d8dd0a128ee19cf114d6954f1a355f24ba680f4f9c69e5c25c471d9b394c1436d4e8a1@157.173.127.30:28657",
+  "enode://17ebcf83522d384c9119f1b5dba9618f1fc1573921f934e0b754455808eb97c49a4fd25ba30fbf83fe0c6ac05c06ca5dd1f206f1aa50afe478026db6fe46bcbe@156.67.104.212:28657",
+  "enode://4ff5ceea9cf9b240cf8aa921812635b8012f7da2dc55a8312aaab9af251f8d2eeb4ca865ab744af57bcec8b00005fdadcf34edf7950ba64398ab1fbd0dcedecf@152.228.141.231:28657",
+  "enode://2f4ed550404eefdd15ae2b2dc1be2c86fa81df2ab76c753c4c028549ea838fcf60225e4385fbddd6ecec6851989a9be44224dd6be0c14380cc39a0975ce5792f@5.104.86.129:28657",
+  "enode://27386ed9cc211266c676c2b9098d98f42e5381041f59cc7f93bba654afcbfaf385bed32070317f4403d477b66ce2f6df76424064b72dbcdfae8eac05b02c098d@157.173.127.21:28657",
+  "enode://a59112afa48142b6a9ab998c5e292ea433a6c38d45bc0fb79d038e38be9694de2b38532e893acde9672ecccd02c73df408142bb0230394d5d0af50b0ea0225e3@157.173.127.31:28657",
+  "enode://b3158fbb361298135c2e03d2ea9a1b10362a12c0d84ccbed92fb60af721b5a73bdaa66f82916012cdb187aea9ea4185bae8dd443ede10e26bb41811bdd8060c5@95.216.70.180:28657",
+  "enode://09b8b08d7154745cc501d03eb562a35b1bd08509d992c25266e80c558eb97c53a90df0069e637463ed85b4df072e76f0d516bb4cc16d21269570b0370a6a5c4c@206.189.127.204:28657",
+  "enode://98910c2d5647bde2628982cb70480f445ccc7ad61c3aabdfe65893c186bd7bc5723806259b4631df4c53c43fbb45d499b6a73a6c267f1f343b697f5a88bcbd3c@161.97.89.27:28657"
+
+]
