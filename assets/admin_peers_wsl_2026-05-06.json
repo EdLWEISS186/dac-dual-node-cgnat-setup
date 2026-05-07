@@ -1,0 +1,100 @@
+[
+  {
+    "date": "2026-05-06",
+    "node": "JERUZZALEM LINUX",
+    "peerCount": 6,
+    "peers": [
+      {
+        "caps": [
+          "eth/65",
+          "eth/66",
+          "snap/1"
+        ],
+        "enode": "enode://9652549979785c10c4d6bbedb7e15d333764498a33d0bcf4b56c1ec695d8dd0a128ee19cf114d6954f1a355f24ba680f4f9c69e5c25c471d9b394c1436d4e8a1@157.173.127.30:28657",
+        "name": "gdacnode/DAC Testnet Authority 2/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "172.18.191.92:40018",
+          "remoteAddress": "157.173.127.30:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": [
+          "eth/65",
+          "eth/66",
+          "snap/1"
+        ],
+        "enode": "enode://17ebcf83522d384c9119f1b5dba9618f1fc1573921f934e0b754455808eb97c49a4fd25ba30fbf83fe0c6ac05c06ca5dd1f206f1aa50afe478026db6fe46bcbe@156.67.104.212:28657",
+        "name": "gdacnode/whale-vps2/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "172.18.191.92:49502",
+          "remoteAddress": "156.67.104.212:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": [
+          "eth/65",
+          "eth/66",
+          "snap/1"
+        ],
+        "enode": "enode://d51b44fe0ec122c083179d524085d25f65decc2c112726197b71a2432acdd73e149f0b2e6995a3e55e2aba520870b4c69af6cd385c1393e4d2d4372080869d70@192.168.100.7:28657",
+        "name": "gdacnode/JERUZZALEM WINDOWS/v1.10.5-stable-e4023222/windows-amd64/go1.21.8",
+        "network": {
+          "inbound": false,
+          "localAddress": "172.18.191.92:44140",
+          "remoteAddress": "192.168.100.7:28657",
+          "static": true,
+          "note": "Internal peer \u2014 Windows node"
+        }
+      },
+      {
+        "caps": [
+          "eth/65",
+          "eth/66",
+          "snap/1"
+        ],
+        "enode": "enode://a59112afa48142b6a9ab998c5e292ea433a6c38d45bc0fb79d038e38be9694de2b38532e893acde9672ecccd02c73df408142bb0230394d5d0af50b0ea0225e3@157.173.127.31:28657",
+        "name": "gdacnode/DAC Testnet Authority 1/v1.10.5-stable-29a62a5e/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "172.18.191.92:60006",
+          "remoteAddress": "157.173.127.31:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": [
+          "eth/65",
+          "eth/66",
+          "snap/1"
+        ],
+        "enode": "enode://09b8b08d7154745cc501d03eb562a35b1bd08509d992c25266e80c558eb97c53a90df0069e637463ed85b4df072e76f0d516bb4cc16d21269570b0370a6a5c4c@206.189.127.204:28657",
+        "name": "gdacnode/DAC-Node 05/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "172.18.191.92:37996",
+          "remoteAddress": "206.189.127.204:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": [
+          "eth/65",
+          "eth/66",
+          "snap/1"
+        ],
+        "enode": "enode://98910c2d5647bde2628982cb70480f445ccc7ad61c3aabdfe65893c186bd7bc5723806259b4631df4c53c43fbb45d499b6a73a6c267f1f343b697f5a88bcbd3c@161.97.89.27:28657",
+        "name": "gdacnode/whale-vps3/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "172.18.191.92:52742",
+          "remoteAddress": "161.97.89.27:28657",
+          "static": true
+        }
+      }
+    ]
+  }
+]
