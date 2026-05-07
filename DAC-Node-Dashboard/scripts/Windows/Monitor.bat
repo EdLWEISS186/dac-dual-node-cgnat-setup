@@ -1,5 +1,6 @@
 @echo off
-cd /d "D:\AE - 903\APP\Miner\Airdrop\DAC\Windows"
+REM Edit NODE_PATH to match your Windows dacnode folder
+cd /d "D:\YOUR_NODE_PATH\Windows"
 echo Starting Win DAC Monitor...
 
 :loop

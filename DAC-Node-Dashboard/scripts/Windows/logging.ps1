@@ -1,6 +1,6 @@
-$AppDir = "D:\dac-node-dashboard"
-$LogDir = "$AppDir\logs"
-$NodeDir = "D:\AE - 903\APP\Miner\Airdrop\DAC\Windows"
+$NodeDir = "D:\YOUR_NODE_PATH\Windows"
+$AppDir  = "D:\YOUR_APP_PATH"
+$LogDir  = "$AppDir\logs"
 if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir | Out-Null }
 Set-Location $NodeDir
 while ($true) {
