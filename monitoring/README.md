@@ -17,7 +17,7 @@ A locally hosted infrastructure monitoring stack built with **Prometheus**, **Gr
 - [Dashboard Overview](#dashboard-overview)
 - [Prerequisites](#prerequisites)
 - [Setup](#setup)
-- [Screenshots](#screenshots)
+- [Preview](#preview)
 
 ---
 
@@ -167,7 +167,7 @@ Import `dac-dashboard-final.json` via **Dashboards → Import**.
 
 ---
 
-## Screenshots
+## Preview
 
 ### Prometheus Target Health
 ![targets](assets/targets.png)
