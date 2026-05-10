@@ -22,6 +22,44 @@ Before using this application, make sure you have:
 
 ---
 
+## Application Preview
+
+All features have been tested and confirmed working under real testnet conditions.
+
+### Monitoring Mode
+
+Real-time sync status, block number, and peer count — refreshed every 5 seconds across both nodes simultaneously.
+
+![DAC Node Dashboard — Monitoring](../assets/Monitoring.jpg)
+
+> Both Windows and WSL nodes running simultaneously. Monitor panels display live sync status (`false` = fully synced), current block number, and active peer count. Node log panels stream real-time output with color-coded entries (INFO / WARN / ERROR).
+
+---
+
+### Logging Mode
+
+Continuous structured logging to file at 5-second intervals — useful for long-running sessions and post-session review.
+
+![DAC Node Dashboard — Logging](../assets/Logging.jpg)
+
+> Logging panels output timestamped entries in the format `LOG: HH:MM:SS | syncing: false | block: XXXXXXXX | peers: N` for both nodes. Log files are saved automatically to the application's `logs/` directory.
+
+---
+
+## Features
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| Dual node control | Start and stop both Windows and WSL nodes simultaneously | ✅ Working |
+| Graceful shutdown | STOP NODE sends proper interrupt signal — node saves state cleanly before stopping | ✅ Working |
+| Force stop | FORCE STOP ! immediately kills node processes if graceful stop is unresponsive | ✅ Working |
+| Live node logs | Real-time log streaming with color coding (INFO / WARN / ERROR) | ✅ Working |
+| Monitoring | Live sync status, block number, and peer count — refreshes every 5 seconds | ✅ Working |
+| Logging | Continuous logging to file with 5-second intervals | ✅ Working |
+| Zoom per panel | `Ctrl+Scroll` or `+` / `−` buttons to adjust font size per panel | ✅ Working |
+
+---
+
 ## Configuration
 
 After installation, open the scripts folder at:
@@ -99,7 +137,7 @@ A ready-to-use template with all current official DAC testnet peers is available
 
 → [scripts/config.toml](../scripts/config.toml)
 
-> Add your other node's enode to this file for internal peering between Windows and WSL.
+> Add your other node's enode to this file for internal peering between Windows and WSL.  
 > Official peer list: [https://enodes.dachain.tech/testnet/](https://enodes.dachain.tech/testnet/)
 
 ---
@@ -113,20 +151,6 @@ Run `ipconfig` in PowerShell and look for **IPv4 Address** on your active adapte
 Files to edit when switching networks:
 - `scripts/Windows/start-node.bat` → `set NAT_IP=YOUR_NEW_IP`
 - `scripts/WSL_Linux/start-node.bat` → `--nat extip:YOUR_NEW_IP`
-
----
-
-## Features
-
-| Feature | Description |
-|---------|-------------|
-| Dual node control | Start and stop both Windows and WSL nodes simultaneously |
-| Graceful shutdown | STOP NODE sends proper interrupt signal — node saves state cleanly before stopping |
-| Force stop | FORCE STOP ! immediately kills node processes if graceful stop is unresponsive |
-| Live node logs | Real-time log streaming with color coding (INFO / WARN / ERROR) |
-| Monitoring | Live sync status, block number, and peer count — refreshes every 5 seconds |
-| Logging | Continuous logging to file with 5-second intervals |
-| Zoom per panel | `Ctrl+Scroll` or `+` / `−` buttons to adjust font size per panel |
 
 ---
 
