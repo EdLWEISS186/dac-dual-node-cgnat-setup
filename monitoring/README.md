@@ -170,7 +170,7 @@ Import `dac-dashboard-final.json` via **Dashboards → Import**.
 ## Screenshots
 
 ### Prometheus Target Health
-![targets](screenshots/targets.png)
+![targets](assets/targets.png)
 
 ### Grafana Dashboard
-![dashboard](screenshots/dashboard.png)
+![dashboard](assets/dashboard.png)
