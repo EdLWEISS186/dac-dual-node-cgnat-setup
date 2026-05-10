@@ -1,0 +1,153 @@
+[
+  {
+    "date": "2026-05-08",
+    "node": "JERUZZALEM WINDOWS",
+    "peerCount": 13,
+    "peers": [
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://637ec7dff7ce720bda6484d10103ce249787b3b98a226eb348b15f605ed9f17fbb24fc3c330cc182f1f92aeb0be3fce49f83f2aaa174a2691be170655df179f9@213.136.82.243:28657",
+        "name": "gdacnode/SAPInode/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58236",
+          "remoteAddress": "213.136.82.243:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://52a3c25ccb600ef17b49f0d12877b41c69203fe318ec67252651e5fe008dafe15e4c3c19004e6b451ca6bda572c1fb933db71d56890f00f9b20cb3f2c1982272@217.76.53.98:28657",
+        "name": "gdacnode/whale-vps1/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58235",
+          "remoteAddress": "217.76.53.98:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://62edc699f3b15e36259ba7524264bd6079c0dac5ba0ede577a94af0f132071da51ff998eb05588646da43a9c5de28d6eaf0e12b4635139b84bc8f22e8e503412@192.168.100.7:53009",
+        "name": "gdacnode/JERUZZALEM LINUX/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": true,
+          "localAddress": "192.168.100.7:28657",
+          "remoteAddress": "192.168.100.7:53009",
+          "static": false,
+          "note": "Internal peer \u2014 WSL node"
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://9652549979785c10c4d6bbedb7e15d333764498a33d0bcf4b56c1ec695d8dd0a128ee19cf114d6954f1a355f24ba680f4f9c69e5c25c471d9b394c1436d4e8a1@157.173.127.30:28657",
+        "name": "gdacnode/DAC Testnet Authority 2/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58239",
+          "remoteAddress": "157.173.127.30:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://17ebcf83522d384c9119f1b5dba9618f1fc1573921f934e0b754455808eb97c49a4fd25ba30fbf83fe0c6ac05c06ca5dd1f206f1aa50afe478026db6fe46bcbe@156.67.104.212:28657",
+        "name": "gdacnode/whale-vps2/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58238",
+          "remoteAddress": "156.67.104.212:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://4ff5ceea9cf9b240cf8aa921812635b8012f7da2dc55a8312aaab9af251f8d2eeb4ca865ab744af57bcec8b00005fdadcf34edf7950ba64398ab1fbd0dcedecf@152.228.141.231:28657",
+        "name": "gdacnode/v1.10.5-stable-29a62a5e/linux-amd64/go1.21.13",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58241",
+          "remoteAddress": "152.228.141.231:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://2f4ed550404eefdd15ae2b2dc1be2c86fa81df2ab76c753c4c028549ea838fcf60225e4385fbddd6ecec6851989a9be44224dd6be0c14380cc39a0975ce5792f@5.104.86.129:28657",
+        "name": "gdacnode/x0rabbit/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58240",
+          "remoteAddress": "5.104.86.129:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://27386ed9cc211266c676c2b9098d98f42e5381041f59cc7f93bba654afcbfaf385bed32070317f4403d477b66ce2f6df76424064b72dbcdfae8eac05b02c098d@157.173.127.21:28657",
+        "name": "gdacnode/DAC Testnet Authority 3/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58243",
+          "remoteAddress": "157.173.127.21:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://a59112afa48142b6a9ab998c5e292ea433a6c38d45bc0fb79d038e38be9694de2b38532e893acde9672ecccd02c73df408142bb0230394d5d0af50b0ea0225e3@157.173.127.31:28657",
+        "name": "gdacnode/DAC Testnet Authority 1/v1.10.5-stable-29a62a5e/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58242",
+          "remoteAddress": "157.173.127.31:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66"],
+        "enode": "enode://87fb360486f50640169422d07d0b7153777b97a79234163ec361104345e37bd1b8f876a895ec2778db20caf0bf7b0eac11caa6d89cbe4d8c3f27085a00bffd77@84.46.253.182:28657",
+        "name": "gdacnode/DAC Testnet RPC 03/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58244",
+          "remoteAddress": "84.46.253.182:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://b3158fbb361298135c2e03d2ea9a1b10362a12c0d84ccbed92fb60af721b5a73bdaa66f82916012cdb187aea9ea4185bae8dd443ede10e26bb41811bdd8060c5@95.216.70.180:28657",
+        "name": "gdacnode/Fertal/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58246",
+          "remoteAddress": "95.216.70.180:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://09b8b08d7154745cc501d03eb562a35b1bd08509d992c25266e80c558eb97c53a90df0069e637463ed85b4df072e76f0d516bb4cc16d21269570b0370a6a5c4c@206.189.127.204:28657",
+        "name": "gdacnode/DAC-Node 05/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58245",
+          "remoteAddress": "206.189.127.204:28657",
+          "static": true
+        }
+      },
+      {
+        "caps": ["eth/65", "eth/66", "snap/1"],
+        "enode": "enode://98910c2d5647bde2628982cb70480f445ccc7ad61c3aabdfe65893c186bd7bc5723806259b4631df4c53c43fbb45d499b6a73a6c267f1f343b697f5a88bcbd3c@161.97.89.27:28657",
+        "name": "gdacnode/whale-vps3/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+        "network": {
+          "inbound": false,
+          "localAddress": "192.168.100.7:58247",
+          "remoteAddress": "161.97.89.27:28657",
+          "static": true
+        }
+      }
+    ]
+  }
+]
