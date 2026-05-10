@@ -11,6 +11,7 @@ The following reports document technical findings from field testing conducted d
 | 1 | [Critical RPC Availability Issue & Network Access Bottleneck](./1.%20Critical%20RPC%20Availability%20Issue%20%26%20Network%20Access%20Bottleneck.pdf) | May 5, 2026 |
 | 2 | [Testnet Infrastructure Validation Report](./2.%20Testnet%20Infrastructure%20Validation%20Report.pdf) | May 7, 2026 |
 | 3 | [EIP-1559 Compatibility & Txpool Analysis](./3.%20EIP-1559%20Compatibility%20%26%20Txpool%20Analysis.pdf) | May 9, 2026 |
+| 4 | [Frontend–Blockchain State Desynchronization After Successful NFT Mint](./4.%20Frontend%E2%80%93Blockchain%20State%20Desynchronization%20After%20Successful%20NFT%20Mint.pdf) | May 10, 2026 |
 
 ---
 
@@ -24,6 +25,9 @@ The following reports document technical findings from field testing conducted d
 
 **3. EIP-1559 Compatibility & Txpool Analysis** — *May 9, 2026*
 > Root cause investigation into persistent MetaMask transaction failures. Inspection via `eth.getTransaction()` confirmed that MetaMask submits Type-2 (EIP-1559) transactions with `gasPrice: 0`, which DAC Testnet validators do not reliably include. Repeated `eth_feeHistory` unmarshal errors in node logs confirmed incomplete EIP-1559 implementation. Network-wide txpool congestion (4,600–5,600 pending) was identified as a secondary contributing factor.
+
+**4. Frontend–Blockchain State Desynchronization After Successful NFT Mint** — *May 10, 2026*
+> Investigation into a community-reported issue where the DAC Inception dashboard continued displaying badges as unminted despite successful on-chain execution. On-chain verification via the DAC blockchain explorer confirmed NFT ownership, while the frontend UI retained stale pre-mint state. Findings point to delayed or incomplete synchronization between the backend indexer and the dashboard rendering system — a discrepancy between blockchain truth and application-layer state.
 
 ---
 
