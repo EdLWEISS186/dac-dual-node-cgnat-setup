@@ -1,0 +1,13 @@
+[Unit]
+Description=Node Exporter
+After=network.target
+
+[Service]
+Type=simple
+User=jeruzzalem
+ExecStart=/usr/local/bin/node_exporter --web.listen-address=":9100"
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

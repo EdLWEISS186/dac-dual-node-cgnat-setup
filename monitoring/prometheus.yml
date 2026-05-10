@@ -1,0 +1,88 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+  scrape_timeout: 20s
+
+rule_files:
+  # - "alerts.yml"
+
+scrape_configs:
+  # =========================================
+  # PROMETHEUS SELF MONITORING
+  # =========================================
+  - job_name: 'prometheus'
+    static_configs:
+      - targets:
+          - 'prometheus:9090'
+
+  # =========================================
+  # DAC WINDOWS NODE
+  # =========================================
+  - job_name: 'dac-windows'
+    metrics_path: /debug/metrics/prometheus
+    scrape_interval: 30s
+    scrape_timeout: 20s
+    static_configs:
+      - targets:
+          - '192.168.100.7:6060'
+        labels:
+          node: windows
+          role: validator
+
+  # =========================================
+  # DAC WSL NODE
+  # =========================================
+  - job_name: 'dac-wsl'
+    metrics_path: /debug/metrics/prometheus
+    scrape_interval: 30s
+    scrape_timeout: 20s
+    static_configs:
+      - targets:
+          - 'host.docker.internal:6061'
+        labels:
+          node: wsl
+          role: fullnode
+
+  # =========================================
+  # BLACKBOX RPC CHECKS
+  # =========================================
+  - job_name: 'blackbox-rpc'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://192.168.100.7:8545          # Local Windows RPC
+          - http://host.docker.internal:8546    # Local WSL RPC
+          - https://rpctest.dachain.tech        # Official DAC Testnet RPC
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  # =========================================
+  # NODE EXPORTER (WSL Linux)
+  # =========================================
+  - job_name: 'node-wsl'
+    scrape_interval: 30s
+    scrape_timeout: 20s
+    static_configs:
+      - targets:
+          - 'host.docker.internal:9100'
+        labels:
+          node: wsl
+
+  # =========================================
+  # WINDOWS EXPORTER (Windows Host)
+  # =========================================
+  - job_name: 'windows-host'
+    scrape_interval: 30s
+    scrape_timeout: 20s
+    static_configs:
+      - targets:
+          - '192.168.100.7:9182'
+        labels:
+          node: windows
