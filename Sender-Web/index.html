@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DAC Testnet — Send DACC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface2: #1c1c1c;
+    --border: #2a2a2a;
+    --border-bright: #3a3a3a;
+    --text: #f0ede8;
+    --text-muted: #7a7672;
+    --text-dim: #4a4846;
+    --accent: #e8631a;
+    --accent-dim: rgba(232,99,26,0.15);
+    --accent-glow: rgba(232,99,26,0.08);
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --blue: #3b9eff;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── CONNECT OVERLAY ─────────────────────────────── */
+  #overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    backdrop-filter: blur(18px) brightness(0.4);
+    -webkit-backdrop-filter: blur(18px) brightness(0.4);
+    background: rgba(10,10,10,0.55);
+    transition: opacity 0.5s ease;
+  }
+  #overlay.hidden { opacity: 0; pointer-events: none; }
+
+  .overlay-logo {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  .overlay-title {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .overlay-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  #btn-connect {
+    margin-top: 8px;
+    padding: 14px 40px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  #btn-connect:hover { opacity: 0.85; transform: translateY(-1px); }
+  #btn-connect:active { transform: translateY(0); }
+  #btn-connect:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* ── LAYOUT ──────────────────────────────────────── */
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-brand {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--text);
+  }
+  .topbar-brand span { color: var(--accent); }
+
+  #wallet-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    transition: border-color 0.2s;
+  }
+  #wallet-pill.connected { border-color: var(--green); }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .dot.on { background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 40px;
+    gap: 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* ── LEFT: BROWSER WINDOW / TX LOG ──────────────── */
+  .browser-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .browser-frame {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 1;
+  }
+  .browser-bar {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .traffic { display: flex; gap: 6px; }
+  .traffic-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .td-red { background: #e25459; }
+  .td-yellow { background: #e2b340; }
+  .td-green { background: #4dba57; }
+
+  .browser-url {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: 8px;
+  }
+
+  .tx-log {
+    padding: 16px;
+    min-height: 380px;
+    max-height: 480px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .tx-log::-webkit-scrollbar { width: 4px; }
+  .tx-log::-webkit-scrollbar-track { background: transparent; }
+  .tx-log::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+  .tx-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1px;
+    min-height: 340px;
+  }
+  .tx-empty-icon {
+    font-size: 32px;
+    opacity: 0.3;
+  }
+
+  .tx-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .tx-card.pending { border-color: #e2b340; }
+  .tx-card.success { border-color: #2ecc71; }
+  .tx-card.failed  { border-color: var(--red); }
+
+  .tx-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .tx-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .tx-badge.pending { background: rgba(226,179,64,0.15); color: #e2b340; }
+  .tx-badge.success { background: rgba(46,204,113,0.12); color: #2ecc71; }
+  .tx-badge.failed  { background: rgba(231,76,60,0.12); color: var(--red); }
+
+  .tx-amount {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .tx-hash-link {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    word-break: break-all;
+    line-height: 1.4;
+  }
+  .tx-hash-link:hover { text-decoration: underline; }
+  .tx-to {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    word-break: break-all;
+  }
+  .tx-time {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+  }
+
+  /* ── RIGHT: FORM ─────────────────────────────────── */
+  .form-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .form-title {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  .form-title span { color: var(--accent); }
+
+  .network-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(232,99,26,0.3);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 8px; }
+
+  .field-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .amount-input-wrap { position: relative; }
+  #amount-input {
+    width: 100%;
+    padding: 14px 60px 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+  #amount-input::-webkit-outer-spin-button,
+  #amount-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  #amount-input:focus { border-color: var(--accent); }
+
+  .amount-symbol {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    pointer-events: none;
+  }
+
+  .balance-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .balance-label { font-size: 12px; color: var(--text-muted); }
+  #balance-val { font-family: var(--mono); font-size: 12px; color: var(--text); }
+
+  .quick-btns { display: flex; gap: 8px; }
+  .quick-btn {
+    flex: 1;
+    padding: 8px 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    text-align: center;
+  }
+  .quick-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .quick-btn:active { transform: scale(0.97); }
+
+  #recipient-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #recipient-input:focus { border-color: var(--accent); }
+  #recipient-input::placeholder { color: var(--text-dim); }
+
+  .action-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  #btn-random {
+    padding: 13px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+
+  #btn-send {
+    flex: 1;
+    padding: 13px 24px;
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  #btn-random:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); transform: translateY(-1px); }
+  #btn-random:active { transform: scale(0.97); }
+  #btn-send:hover { opacity: 0.85; transform: translateY(-1px); }
+  #btn-send:active { transform: translateY(0); }
+  #btn-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #toast {
+    padding: 10px 16px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: var(--mono);
+    letter-spacing: 0.5px;
+    display: none;
+    border: 1px solid;
+  }
+  #toast.info    { background: rgba(59,158,255,0.1); border-color: rgba(59,158,255,0.3); color: var(--blue); }
+  #toast.success { background: rgba(46,204,113,0.1); border-color: rgba(46,204,113,0.3); color: var(--green); }
+  #toast.error   { background: rgba(231,76,60,0.1);  border-color: rgba(231,76,60,0.3);  color: var(--red); }
+
+  /* ── BOTTOM STRIP ────────────────────────────────── */
+  .strip {
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow: hidden;
+    height: 120px;
+  }
+  .strip-segment {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .strip-segment:last-child { border-right: none; }
+
+  .strip-logo {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: -2px;
+  }
+  .strip-logo b { color: var(--accent); }
+
+  .strip-chain-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+  }
+  .strip-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .strip-rpc {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .strip-chainid {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .strip-live {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+  .strip-live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  .strip-live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+  .strip-inception {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────── */
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; padding: 20px; }
+    .topbar { padding: 14px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CONNECT OVERLAY -->
+<div id="overlay">
+  <div class="overlay-logo">DAC Quantum Chain</div>
+  <div class="overlay-title">DACC SENDER</div>
+  <div class="overlay-sub">Connect your EVM wallet to continue</div>
+  <button id="btn-connect" onclick="connectWallet()">⬡ &nbsp;Connect Wallet</button>
+  <div id="overlay-status" style="font-size:11px;color:#7a7672;font-family:monospace;display:none;"></div>
+</div>
+
+<div class="page">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-brand">DAC<span>•</span>SENDER</div>
+    <div id="wallet-pill">
+      <div class="dot" id="dot"></div>
+      <span id="wallet-addr">Not connected</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- LEFT: TX LOG -->
+    <div class="browser-wrap">
+      <div class="section-label">Transaction Log</div>
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <div class="traffic">
+            <div class="traffic-dot td-red"></div>
+            <div class="traffic-dot td-yellow"></div>
+            <div class="traffic-dot td-green"></div>
+          </div>
+          <div class="browser-url">exptest.dachain.tech / tx</div>
+        </div>
+        <div class="tx-log" id="tx-log">
+          <div class="tx-empty" id="tx-empty">
+            <div class="tx-empty-icon">◈</div>
+            <div>NO TRANSACTIONS YET</div>
+            <div style="font-size:10px;color:var(--text-dim)">Hashes will appear here</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: FORM -->
+    <div class="form-wrap">
+      <div>
+        <div class="form-title">SEND <span>DACC</span> TOKEN</div>
+        <div style="margin-top:10px;">
+          <div class="network-badge">
+            <div class="dot on" style="width:5px;height:5px;"></div>
+            DAC TESTNET · CHAIN 21894
+          </div>
+        </div>
+      </div>
+
+      <!-- AMOUNT -->
+      <div class="field">
+        <div class="field-label">Amount of DACC Token</div>
+        <div class="amount-input-wrap">
+          <input type="number" id="amount-input" placeholder="0.0" min="0" step="any" />
+          <div class="amount-symbol">DACC</div>
+        </div>
+        <div class="balance-row">
+          <span class="balance-label">Balance</span>
+          <span id="balance-val">—</span>
+        </div>
+        <div class="quick-btns">
+          <button class="quick-btn" onclick="setAmount('0.001')">0.001</button>
+          <button class="quick-btn" onclick="setAmount('0.01')">0.01</button>
+          <button class="quick-btn" onclick="setAmount('0.1')">0.1</button>
+          <button class="quick-btn" onclick="setMax()">MAX</button>
+        </div>
+      </div>
+
+      <!-- RECIPIENT -->
+      <div class="field">
+        <div class="field-label">Recipient Address</div>
+        <input
+          type="text"
+          id="recipient-input"
+          placeholder="0x...."
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <!-- ACTION ROW -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="action-row">
+          <button id="btn-random" onclick="pickRandom()">⚄ &nbsp;Random</button>
+          <button id="btn-send" onclick="sendTx()">
+            <div class="spinner" id="spinner"></div>
+            <span id="send-label">SEND</span>
+          </button>
+        </div>
+        <div id="toast"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM STRIP -->
+  <div class="strip">
+    <div class="strip-segment">
+      <div class="strip-logo">D<b>A</b>C</div>
+    </div>
+    <div class="strip-segment">
+      <div class="strip-live">
+        <div class="strip-live-badge">
+          <div class="strip-live-dot"></div>
+          TESTNET LIVE
+        </div>
+        <div class="strip-inception">DAC QUANTUM CHAIN</div>
+      </div>
+    </div>
+    <div class="strip-segment">
+      <div class="strip-chain-info">
+        <div class="strip-tag">Network</div>
+        <div class="strip-rpc">rpctest.dachain.tech</div>
+        <div class="strip-chainid">Chain ID · 21894</div>
+      </div>
+    </div>
+    <div class="strip-segment">
+      <div class="strip-chain-info">
+        <div class="strip-tag">Block Explorer</div>
+        <div class="strip-rpc" style="font-size:10px;">exptest.dachain.tech</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── CONFIG ────────────────────────────────────────
+  const DAC_CHAIN_ID = 21894;
+  const DAC_CHAIN_HEX = '0x5586';
+  const EXPLORER = 'https://exptest.dachain.tech';
+
+  const DAC_CHAIN_PARAMS = {
+    chainId: DAC_CHAIN_HEX,
+    chainName: 'DAC Testnet',
+    nativeCurrency: { name: 'DACC', symbol: 'DACC', decimals: 18 },
+    rpcUrls: ['https://rpctest.dachain.tech'],
+    blockExplorerUrls: [EXPLORER]
+  };
+
+  // ─── RANDOM ADDRESS LIST ─────────────────────────
+  // Tambahkan address di sini setelah disiapkan:
+  const RANDOM_ADDRESSES = [
+    "0xFb93EED6c4BC0686513c2d585fD54d7e517Da32c",
+    "0x10100e4f09066DbF80296e76a5749fae3BcB71EF",
+    "0x6d9b29b9cf7df34034ec4f581853498ecfddb810",
+    "0xAe5A068bB07faEd0f5F5c7AD920222eeE2eeB49e",
+    "0xb0ad7E506CEc1eBB10d105D30BFCa7B859813107",
+    "0x5ad576DeB74C70cEDb16BA2f8aDD576Ec366A5d2",
+    "0x06eB3adE67733F01dA75c160288a06EC44597565",
+    "0x062B8920Bf397Db30aEC4306AFCe314650aeA21a",
+    "0x312271DA2387cF95932a1E0420fD2aB456Bd629e",
+    "0x1302a0D0b027C0afD535a31570d3D17D1009c3Ff",
+    "0x9E798170Cf6ABf98A9BCd57Bf02CFC118F38E7f5",
+    "0x8937a1b7D4739f3de2F8C8DDd3dB88CE84c07cA4",
+    "0x0000001b28eba98118b5477d4b6e206d0e680de6",
+    "0x3a4De26dbaE732DBf103DB650b98FD8c881D4349",
+    "0xd5b463097261339cF65516A4A5c707AA24c11A9f",
+    "0xfEBeea539C85cA426a6b69b7d00d5bF3388527e0",
+    "0x64b80FECd389084066E77bC9cfA172869B33114A",
+    "0x84bb1fC03877974AC6d1384ce03a0C07C64cc505",
+    "0x0A180B39a208d1D69be6c039C8bd0b2e742De17e",
+    "0x41AAE0FA84476001dfC6A0F36236304FDEd72e60",
+    "0xba94cc89DFF08aA5C5812482832C116E0426Df09",
+    "0x7B90F51F5A59ea437F5e5f91fDD7208f186D5450",
+    "0x7DFacd85B72b8B5F0e19a21D53000c4B5ee53DCE",
+    "0x52Be40663D591b2007c5D08Dc86760f8d28b4128",
+    "0x1C54039Acc17705C48D760dB940F02aF5ACf9A53",
+    "0xeA732e82FE244bb784FA485901B60562C7BeDEBB",
+    "0x7F0031C8f0edaf99452015dF769106860CA3C45A",
+    "0x7fF7AC3fd1291FfA00CdB0A6033e69C0513C551E",
+    "0x27D6Bf863DabaA56dC3C37F66F38D1Fc77964af5",
+    "0x486C4D995A7D59a4b8E7d63CF8A6d457B4dd28A0",
+    "0x9d5fb7A72bc652C8dC5FdE9750e4a05b4B62376C",
+    "0xDe9C75A40aA0AA32301661A0d59326557656b1ED",
+    "0x88D015F5d33676b051f0670C4eaf341147B9f16E",
+    "0xd34f006E576715a2B5C7CAF53D2A49031A72c38d",
+    "0x3C67E5Efe9D2582D2a6a7563b513Fbe0C1061C20",
+    "0x5709b4B7C56565DaB0c2750Cc56Fed703357d818",
+    "0xF5E337a52Da88c3b65F91205b930D6D1689b4243",
+    "0xa196cBc8Ac3A419D5b0A5C593072D18Ea7631CE5",
+    "0x577D87B943FDacDB454B15d60C3cCC6391442d2b",
+    "0x5C0B0b8cf941404eb6F6D178c71d148FD3783941",
+    "0xA7f01411BE93607d8f9C22ECdF8b4f9f70e6A6c5",
+    "0xae8CB229F3b73328FBC8109528c71B176FD08584",
+    "0x023590Ee8587d2EdFD16f772dFfEd25A2F442D83",
+    "0xbf089331D1A75B4DA80e090579e3F9Ec14f172a5",
+    "0xa5AD8891e7Af0a5ed86F34abB1BEF696018CCB06",
+    "0xaCB63C29F0BB6b178a6bfC73174d90C60ED5471e",
+    "0x00000032aecda4df89af9a0401e2e5609724876e",
+    "0x1eBBB259393D0de6704617Faa31F833d54c50513",
+    "0x6E4A28175632Aa2A85c7Cc6288895Fbb4dec72b1",
+    "0xC531763292c3A9bE33DF4E05af4b6135459b3a64",
+    "0xAD37d5a23B5E976127C602c99542c57FE728E7db",
+    "0x5657572D8Ea4E46630fb839C771792019256e122",
+    "0x8Fae6d140cB1a5745e708f8eb105c916B35D81Fc",
+    "0xCD5366c74cC4F2F00FfA5c259F5DC2d58b07d5BD",
+    "0xa28EB624Bf69F03D4AE5794c435d7948c8CB33CA",
+    "0x18289850cdccB98d54B6BaBaC990725D25192bD8",
+    "0xE16073cdf647BFc8dA30AE5f00728479d6339560",
+    "0x06183A4d60a132D053194034faA93A7c500FbeE7",
+    "0xf3F8cD08E25C90eBcf83a75Efe21C6f310E4e127",
+    "0x43887680d0308Fa8261BBB50C05676F2F73e39ac",
+    "0xFfbBf8ad1F7B03806dC144170F1Af26bBEa01AB4",
+    "0x725c628072e246eD6e60380D317DeC25D910d25A",
+    "0x312dE7e418d4e64a242fC99576c6934AD688eAfe",
+    "0x5c52bba198e75a56719e6e02eacf16cfc714516f",
+    "0xeD56E5b3B297021d3cdfA98e6384D096BDCbBF4F",
+    "0x92Dffa770508a3EEf4dD5d0E2dEC09B09573C897",
+    "0xBFf002B908b108811aaABA6542c8081DB9f2e3dF",
+    "0x74D00fB6e5DbA28a57AaB12999E3Be7f6E4303c7",
+    "0x3Fc4DaE53A56766D88f1755969e00492d50c1dd0",
+    "0xEdF1b5624910E9dED419fcEE500C19AE03A88CdE",
+    "0xbC18d723C2dF267634643DEAC83b35665833D5Ed",
+    "0x0013B693831f197881A58779E06De0860eE7bF5D",
+    "0xec6FC60bf564C83290B044Cb334d92f22e714Fd1",
+    "0xa30862a3d871DF2A09Ad855B431B4eFCc030B770",
+    "0x973f5ad4afb7a90457165ed4ca31679f51f15d07",
+    "0xf46e461F345a4045EbC62D55b92788f401985491",
+    "0xd55fe643121BD74faF28826025978698B4b47de5",
+    "0x1Ff1B41624aac187069405c10099069126D2d585",
+    "0xb90eb4f7988f47ec8C902D8B8a40e3c81f165DBa",
+    "0xB0031F37D40AaB761aD15968915eD6f5dA6b3f96",
+    "0x41d3F06727D9D1f8B515CEffdF01A4E2A38e0CE3",
+    "0xFFf9c87e7f6075f3153e49817b7e37f7Aa2ac84A",
+    "0xd2eBF94d2cAdc219bEf811B0306511f59511dbe2",
+    "0xEf0b2Bc47Ed050211442909f8Ab144f8715219D3",
+    "0x7e5BdCCAFD5816dd5a9C4EBb56E25720e7d6241A",
+    "0xa4597CE744bceB1b72CA5FcC4407B848aeB64a2A",
+    "0xdc29978d3f2764CC5613eA6755dA871fAf913C38",
+    "0x667d980de911bcc94192de52de9e30907e4ca269",
+    "0x0203B3ff0aa3E72eE03D048dD262f85B95ea620C",
+    "0xFCa187Ce520A04b94f47a0396a34DA1680f6bB0f",
+    "0x393242463908d3463EE6305585a5380084205605",
+  ];
+
+  // ── STATE ──────────────────────────────────────────
+  let provider = null;
+  let signer = null;
+  let connectedAddress = null;
+  let txCount = 0;
+
+  // ── CONNECT WALLET ─────────────────────────────────
+  async function connectWallet() {
+    const btn = document.getElementById('btn-connect');
+    const status = document.getElementById('overlay-status');
+    if (!window.ethereum) {
+      showOverlayStatus('No EVM wallet detected. Install Rabby or MetaMask.', true);
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Connecting...';
+    showOverlayStatus('Requesting account access...', false);
+    try {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      showOverlayStatus('Checking network...', false);
+      await ensureNetwork();
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+      connectedAddress = await signer.getAddress();
+      onConnected();
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = '⬡  Connect Wallet';
+      showOverlayStatus(err.message || 'Connection failed.', true);
+    }
+  }
+
+  async function ensureNetwork() {
+    const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
+    const chainId = parseInt(chainIdHex, 16);
+    if (chainId !== DAC_CHAIN_ID) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: DAC_CHAIN_HEX }]
+        });
+      } catch (switchErr) {
+        if (switchErr.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [DAC_CHAIN_PARAMS]
+          });
+        } else {
+          throw switchErr;
+        }
+      }
+    }
+  }
+
+  function onConnected() {
+    const overlay = document.getElementById('overlay');
+    overlay.classList.add('hidden');
+    document.getElementById('dot').classList.add('on');
+    const pill = document.getElementById('wallet-pill');
+    pill.classList.add('connected');
+    document.getElementById('wallet-addr').textContent = shortAddr(connectedAddress);
+    refreshBalance();
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length === 0) location.reload();
+      else { connectedAddress = accounts[0]; document.getElementById('wallet-addr').textContent = shortAddr(connectedAddress); refreshBalance(); }
+    });
+    window.ethereum.on('chainChanged', () => location.reload());
+  }
+
+  // ── BALANCE ────────────────────────────────────────
+  async function refreshBalance() {
+    if (!provider || !connectedAddress) return;
+    try {
+      const bal = await provider.getBalance(connectedAddress);
+      const fmt = parseFloat(ethers.formatEther(bal)).toFixed(4);
+      document.getElementById('balance-val').textContent = fmt + ' DACC';
+    } catch { document.getElementById('balance-val').textContent = '—'; }
+  }
+
+  // ── QUICK AMOUNT ───────────────────────────────────
+  function setAmount(val) {
+    document.getElementById('amount-input').value = val;
+  }
+  function setMax() {
+    const raw = document.getElementById('balance-val').textContent.replace(' DACC','').trim();
+    if (raw && raw !== '—') {
+      const maxVal = Math.max(0, parseFloat(raw) - 0.001).toFixed(6);
+      document.getElementById('amount-input').value = maxVal;
+    }
+  }
+
+  // ── RANDOM ADDRESS ──────────────────────────────────
+  function pickRandom() {
+    if (RANDOM_ADDRESSES.length === 0) {
+      showToast('No addresses in list yet. Add them to RANDOM_ADDRESSES array.', 'info');
+      return;
+    }
+    const addr = RANDOM_ADDRESSES[Math.floor(Math.random() * RANDOM_ADDRESSES.length)];
+    document.getElementById('recipient-input').value = addr;
+  }
+
+  // ── SEND TX ────────────────────────────────────────
+  async function sendTx() {
+    if (!signer) { showToast('Wallet not connected.', 'error'); return; }
+    const amountStr = document.getElementById('amount-input').value.trim();
+    const toAddr = document.getElementById('recipient-input').value.trim();
+
+    if (!amountStr || isNaN(parseFloat(amountStr)) || parseFloat(amountStr) <= 0) {
+      showToast('Enter a valid amount.', 'error'); return;
+    }
+    if (!ethers.isAddress(toAddr)) {
+      showToast('Invalid recipient address.', 'error'); return;
+    }
+
+    setSending(true);
+    const cardId = 'tx-' + (++txCount);
+    addTxCard(cardId, amountStr, toAddr, null, 'pending');
+
+    try {
+      const tx = await signer.sendTransaction({
+        to: toAddr,
+        value: ethers.parseEther(amountStr)
+      });
+      updateTxCard(cardId, tx.hash, 'pending');
+      showToast('TX sent! Waiting for confirmation...', 'info');
+      const receipt = await tx.wait();
+      const status = receipt.status === 1 ? 'success' : 'failed';
+      updateTxCard(cardId, tx.hash, status);
+      showToast(status === 'success' ? 'Transaction confirmed!' : 'Transaction failed.', status === 'success' ? 'success' : 'error');
+      refreshBalance();
+
+    } catch (err) {
+      updateTxCard(cardId, null, 'failed');
+      const msg = err?.info?.error?.message || err?.message || 'Transaction rejected.';
+      showToast(msg, 'error');
+    } finally {
+      setSending(false);
+    }
+  }
+
+
+
+  // ── TX CARDS ──────────────────────────────────────
+  function addTxCard(id, amount, to, hash, status) {
+    const log = document.getElementById('tx-log');
+    const empty = document.getElementById('tx-empty');
+    if (empty) empty.remove();
+    const time = new Date().toLocaleTimeString();
+    const card = document.createElement('div');
+    card.id = id;
+    card.className = 'tx-card ' + status;
+    card.innerHTML = `
+      <div class="tx-row">
+        <span class="tx-badge ${status}">${status.toUpperCase()}</span>
+        <span class="tx-amount">${parseFloat(amount).toFixed(6)} DACC</span>
+        <span class="tx-time">${time}</span>
+      </div>
+      <div class="tx-to">To: ${shortAddr(to, 12)}</div>
+      <div class="tx-hash" id="${id}-hash" style="font-size:10px;color:var(--text-dim);font-family:monospace;">Waiting for hash...</div>
+    `;
+    log.prepend(card);
+  }
+
+  function updateTxCard(id, hash, status) {
+    const card = document.getElementById(id);
+    if (!card) return;
+    card.className = 'tx-card ' + status;
+    const badge = card.querySelector('.tx-badge');
+    badge.className = 'tx-badge ' + status;
+    badge.textContent = status.toUpperCase();
+    const hashEl = document.getElementById(id + '-hash');
+    if (hash) {
+      const url = `${EXPLORER}/tx/${hash}`;
+      hashEl.innerHTML = `<a class="tx-hash-link" href="${url}" target="_blank">${hash}</a>`;
+    } else {
+      hashEl.textContent = 'Failed — no hash';
+    }
+  }
+
+  // ── UI HELPERS ─────────────────────────────────────
+  function setSending(on) {
+    const btn = document.getElementById('btn-send');
+    const spinner = document.getElementById('spinner');
+    const label = document.getElementById('send-label');
+    btn.disabled = on;
+    spinner.style.display = on ? 'block' : 'none';
+    label.textContent = on ? 'SENDING...' : 'SEND';
+  }
+
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = type;
+    t.style.display = 'block';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => { t.style.display = 'none'; }, 5000);
+  }
+
+  function showOverlayStatus(msg, isErr) {
+    const el = document.getElementById('overlay-status');
+    el.style.display = 'block';
+    el.textContent = msg;
+    el.style.color = isErr ? '#e74c3c' : '#7a7672';
+  }
+
+  function shortAddr(addr, len = 8) {
+    if (!addr) return '';
+    return addr.slice(0, len) + '...' + addr.slice(-4);
+  }
+</script>
+</body>
+</html>
