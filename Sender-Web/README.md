@@ -7,9 +7,50 @@ A client-side web interface for submitting native DACC token transactions on the
 
 ---
 
-## Why Transaction Volume Matters on Testnet
+## Table of Contents
 
-The DAC Testnet is not just a staging environment — it is an active stress-testing ground. A blockchain behaves fundamentally differently under real multi-user traffic compared to isolated internal testing. The goal of this tool is to make it easy for community members to contribute genuine transaction activity, which directly supports the following engineering objectives:
+- [Overview](#overview)
+- [Screenshots](#screenshots)
+- [Why Transaction Volume Matters on Testnet](#why-transaction-volume-matters-on-testnet)
+  - [1. Network Throughput and Stability](#1-network-throughput-and-stability)
+  - [2. RPC Infrastructure Resilience](#2-rpc-infrastructure-resilience)
+  - [3. Consensus Under Pressure](#3-consensus-under-pressure)
+  - [4. Block Propagation and Network Latency](#4-block-propagation-and-network-latency)
+  - [5. Smart Contract and dApp Ecosystem Validation](#5-smart-contract-and-dapp-ecosystem-validation)
+  - [6. Mainnet Simulation](#6-mainnet-simulation)
+  - [7. Bug Discovery Beyond Internal Testing](#7-bug-discovery-beyond-internal-testing)
+  - [8. Telemetry Collection](#8-telemetry-collection)
+  - [9. Geographic Distribution Testing](#9-geographic-distribution-testing)
+  - [10. Tokenomics and UX Verification](#10-tokenomics-and-ux-verification)
+- [Why Multi-Wallet Traffic Specifically](#why-multi-wallet-traffic-specifically)
+- [What This Gives the Development Team](#what-this-gives-the-development-team)
+- [Network Configuration](#network-configuration)
+- [Features](#features)
+- [Local Usage](#local-usage)
+- [Technical Notes](#technical-notes)
+- [Repository Context](#repository-context)
+
+---
+
+## Overview
+
+The DAC Testnet is not just a staging environment — it is an active stress-testing ground. A blockchain behaves fundamentally differently under real multi-user traffic compared to isolated internal testing. The goal of this tool is to make it easy for community members to contribute genuine transaction activity, which directly supports pre-mainnet engineering validation objectives.
+
+---
+
+## Screenshots
+
+**Transaction in progress — PENDING state with live confirmation waiting:**
+
+![Sending Transaction](assets/screenshot-sending.png)
+
+**Transaction confirmed — SUCCESS state with hash logged:**
+
+![Transaction Confirmed](assets/screenshot-confirmed.png)
+
+---
+
+## Why Transaction Volume Matters on Testnet
 
 ### 1. Network Throughput and Stability
 High transaction volume puts real pressure on validator nodes. Key metrics that only become visible under load:
