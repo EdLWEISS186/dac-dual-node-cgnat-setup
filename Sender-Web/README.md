@@ -17,6 +17,14 @@ One-click smart contract deployment directly from the browser. No Hardhat, no Re
 **Protocol Fee Toggle**
 An opt-in protocol fee mechanism available on both Send and Deploy tabs. When enabled, transactions are routed through a proxy smart contract that applies a 5% fee on gas cost. Disclosed transparently via the ⓘ indicator. Users retain full control over whether to enable it.
 
+**Why this feature exists**
+
+Beyond the fee mechanism itself, routing transactions through a proxy smart contract serves a direct infrastructure testing purpose. A direct native token transfer (`EOA → EOA`) is the simplest possible transaction type — it exercises only the most basic execution path on the EVM. When transactions are routed through a smart contract intermediary, the execution profile changes significantly: the EVM must parse and execute contract bytecode, process internal calls, handle state writes, emit events, and manage value forwarding across contract boundaries. This produces a fundamentally different load pattern on the network.
+
+In practice, this means the Protocol Fee toggle enables the collection of behavioral data that a plain transfer cannot provide — specifically around smart contract execution performance, internal transaction handling, gas accounting under contract call overhead, and the accuracy of block explorer indexing for complex transaction types. Validator nodes must process not just the outer transaction but also resolve the internal call stack, which stresses the execution layer in ways that are representative of how real dApp interactions will behave on mainnet.
+
+The Deploy Contract feature follows the same reasoning: deploying a contract generates a contract creation transaction, which exercises a different and heavier EVM code path than any transfer or call. Combined, these features allow testnet participants to contribute transaction load that spans the full spectrum of EVM execution types — native transfers, contract calls, and contract creation — producing a more complete picture of network readiness before mainnet.
+
 ---
 
 ## Table of Contents
