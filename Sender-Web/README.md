@@ -30,6 +30,7 @@ The Deploy Contract feature follows the same reasoning: deploying a contract gen
 ## Table of Contents
 
 - [Overview](#overview)
+- [Architecture](#architecture)
 - [Screenshots](#screenshots)
 - [Why Transaction Volume Matters on Testnet](#why-transaction-volume-matters-on-testnet)
   - [1. Network Throughput and Stability](#1-network-throughput-and-stability)
@@ -48,7 +49,10 @@ The Deploy Contract feature follows the same reasoning: deploying a contract gen
 - [Features](#features)
 - [Local Usage](#local-usage)
 - [Technical Notes](#technical-notes)
+- [Security](#security)
+- [Future Work](#future-work)
 - [Changelog](#changelog)
+- [License](#license)
 - [Repository Context](#repository-context)
 
 ---
@@ -56,6 +60,44 @@ The Deploy Contract feature follows the same reasoning: deploying a contract gen
 ## Overview
 
 The DAC Testnet is not just a staging environment — it is an active stress-testing ground. A blockchain behaves fundamentally differently under real multi-user traffic compared to isolated internal testing. The goal of this tool is to make it easy for community members to contribute genuine transaction activity, which directly supports pre-mainnet engineering validation objectives.
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        User Browser                         │
+│                                                             │
+│   ┌──────────────┐        ┌──────────────────────────────┐  │
+│   │ EVM Wallet   │◄──────►│     DAC Sender (index.html)  │  │
+│   │ Rabby/MM     │  sign  │  ethers.js v6 · static HTML  │  │
+│   └──────────────┘        └──────────────┬───────────────┘  │
+└──────────────────────────────────────────┼──────────────────┘
+                                           │
+                    ┌──────────────────────┼──────────────────────┐
+                    │                      │                       │
+                    ▼                      ▼                       ▼
+          ┌─────────────────┐   ┌──────────────────┐   ┌─────────────────┐
+          │   Direct Send   │   │  Proxy Contract  │   │ Deploy Contract │
+          │   EOA → EOA     │   │  DACSendProxy    │   │ DACInception    │
+          └────────┬────────┘   └────────┬─────────┘   └────────┬────────┘
+                   │                     │                        │
+                   └─────────────────────┴────────────────────────┘
+                                         │
+                                         ▼
+                            ┌────────────────────────┐
+                            │    DAC Testnet (EVM)   │
+                            │    Chain ID: 21894      │
+                            │    RPC: rpctest...      │
+                            └────────────┬───────────┘
+                                         │
+                                         ▼
+                            ┌────────────────────────┐
+                            │   Block Explorer        │
+                            │   exptest.dachain.tech  │
+                            └────────────────────────┘
+```
 
 ---
 
@@ -282,6 +324,43 @@ python -m http.server 8080
 
 ---
 
+## Security
+
+- **Private keys never leave the wallet.** The application never requests, stores, or transmits private keys. All transaction signing is performed exclusively by the connected wallet extension.
+- **No backend.** This is a fully static application. There is no server, no database, and no data collection of any kind.
+- **No external dependencies at runtime.** The only external resource loaded is `ethers.js` from a CDN and Google Fonts. No analytics, no tracking scripts.
+- **Smart contract interactions are transparent.** When the Protocol Fee toggle is enabled, the proxy contract address and its internal transactions are fully visible on the block explorer. Users can verify all on-chain behavior independently.
+
+---
+
+## Future Work
+
+### v1.3.0 — Multi-Send (Planned)
+
+A `MultiSend` smart contract will accept a single signed transaction containing a list of recipient addresses and amounts. The contract distributes DACC to all recipients within a single block execution. Users sign once — the contract handles distribution.
+
+This is the most efficient mechanism for generating high-volume transaction load on the testnet: a single user action can populate an entire block with internal transfers, directly stressing mempool handling, block gas limits, and validator throughput in a way that sequential single sends cannot replicate.
+
+### v1.4.0 — Metrics Export (Planned)
+
+A session summary export feature that compiles transaction history from the current session into a downloadable CSV file. Fields will include transaction hash, recipient address, amount, status, confirmation time, and gas used. Intended to support structured reporting of testnet activity.
+
+### v1.5.0 — NFT Deployment (Planned)
+
+A dedicated tab for deploying ERC-721 NFT contracts directly from the browser. Users will be able to configure collection name, ticker, description, max supply, and mint limit per wallet, then upload artwork to IPFS before deploying. Requires a Pinata API key for IPFS storage.
+
+### v2.0.0 — Bridge (Pending DAC Team Infrastructure)
+
+Cross-chain bridging between DAC Testnet and external testnets (e.g., Ethereum Sepolia) requires infrastructure that cannot be built at the application layer alone. Specifically:
+
+- **Bridge smart contracts** must be deployed on both chains by the DAC development team, as they require coordinated deployment with privileged administrative access.
+- **A relayer service** — a backend process running 24/7 that monitors events on both chains and triggers cross-chain message execution — must be operated by a party with persistent uptime, which is beyond the scope of a community-hosted static frontend.
+- **Liquidity provisioning** on both sides of the bridge must be initialized and maintained.
+
+This feature is planned for implementation once the DAC team publishes their official bridge contract addresses and relayer infrastructure. The frontend integration can be completed on this end once those dependencies are available.
+
+---
+
 ## Changelog
 
 ### v1.2.0
@@ -300,6 +379,12 @@ python -m http.server 8080
 
 ### v1.0.0
 - Initial release — native DACC token send interface
+
+---
+
+## License
+
+This project is part of the [dac-dual-node-cgnat-setup](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup) repository and is covered by the [LICENSE](../LICENSE) file in the root of that repository.
 
 ---
 
