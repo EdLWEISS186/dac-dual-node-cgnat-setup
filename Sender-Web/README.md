@@ -7,6 +7,18 @@ A client-side web interface for submitting native DACC token transactions on the
 
 ---
 
+## Latest Version
+
+### v1.2.0
+
+**Deploy Contract**
+One-click smart contract deployment directly from the browser. No Hardhat, no Remix, no CLI. Connect wallet, click Deploy, sign — contract is live on DAC Testnet.
+
+**Protocol Fee Toggle**
+An opt-in protocol fee mechanism available on both Send and Deploy tabs. When enabled, transactions are routed through a proxy smart contract that applies a 5% fee on gas cost. Disclosed transparently via the ⓘ indicator. Users retain full control over whether to enable it.
+
+---
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -28,6 +40,7 @@ A client-side web interface for submitting native DACC token transactions on the
 - [Features](#features)
 - [Local Usage](#local-usage)
 - [Technical Notes](#technical-notes)
+- [Changelog](#changelog)
 - [Repository Context](#repository-context)
 
 ---
@@ -40,13 +53,67 @@ The DAC Testnet is not just a staging environment — it is an active stress-tes
 
 ## Screenshots
 
-**Transaction in progress — PENDING state with live confirmation waiting:**
+### Direct Send
 
-![Sending Transaction](assets/screenshot-sending.png)
+**Pending — transaction submitted, awaiting confirmation:**
 
-**Transaction confirmed — SUCCESS state with hash logged:**
+![Direct Sending Pending](assets/DirectSending-Pending.png)
 
-![Transaction Confirmed](assets/screenshot-confirmed.png)
+**Success — transaction confirmed:**
+
+![Direct Sending Success](assets/DirectSending-Success.png)
+
+**Block Explorer — confirmed on-chain:**
+
+![Direct Sending Explorer](assets/DirectSending-Success-Exp.png)
+
+---
+
+### Send via Protocol Contract
+
+**Pending — transaction routed through proxy smart contract:**
+
+![Smart Contract Send Pending](assets/SendingThroughSmartContract-Pending.png)
+
+**Success — confirmed, internal fee transfer visible:**
+
+![Smart Contract Send Success](assets/SendingThroughSmartContract-Success.png)
+
+**Block Explorer — internal transactions visible:**
+
+![Smart Contract Send Explorer](assets/SendingThroughSmartContract-Success-Exp.png)
+
+---
+
+### Deploy Contract
+
+**Pending — DACInception deployment submitted:**
+
+![Deploy Contract Pending](assets/DeployContract-Pending.png)
+
+**Success — contract address returned:**
+
+![Deploy Contract Success](assets/DeployContract-Success.png)
+
+**Block Explorer — contract creation confirmed:**
+
+![Deploy Contract Explorer](assets/DeployContract-Success-Exp.png)
+
+---
+
+### Deploy via Protocol Contract
+
+**Pending — deployment routed through proxy:**
+
+![Deploy Through Smart Contract Pending](assets/DeployContractThroughSmartContract-Pending.png)
+
+**Success — contract deployed with fee processed:**
+
+![Deploy Through Smart Contract Success](assets/DeployContractThroughSmartContract-Success.png)
+
+**Block Explorer — internal transactions visible alongside deployment:**
+
+![Deploy Through Smart Contract Explorer](assets/DeployContractThroughSmartContract-Success-Exp.png)
 
 ---
 
@@ -172,9 +239,12 @@ The wallet is automatically prompted to switch to or register the DAC Testnet ne
 - **EVM Wallet Integration** — Connects to any `window.ethereum`-compatible wallet via the standard provider API
 - **Live Balance Display** — Fetches and displays the connected account's native DACC balance
 - **Quick Amount Presets** — One-click shortcuts for `0.001`, `0.01`, `0.1`, and `MAX`
-- **Random Recipient Selection** — Picks a recipient from a curated address pool on demand, enabling varied transaction destinations across sessions
+- **Random Recipient Selection** — Picks a recipient from a curated address pool on demand
 - **Transaction Log Panel** — Real-time status tracking (`PENDING` → `SUCCESS` / `FAILED`) with per-hash block explorer links
 - **Auto Network Switch** — Issues `wallet_switchEthereumChain` / `wallet_addEthereumChain` automatically on connect
+- **Disconnect Wallet** — Click the wallet address in the topbar to reveal the disconnect option
+- **Deploy Contract** — One-click deployment of the `DACInception` contract directly from the browser
+- **Protocol Fee Toggle** — Opt-in mechanism on both Send and Deploy tabs; routes transactions through a proxy smart contract when enabled
 
 ---
 
@@ -198,7 +268,30 @@ python -m http.server 8080
 - Transaction signing delegated entirely to the connected wallet via `ethers.js v6` (`BrowserProvider` + `Signer`)
 - Gas estimation handled by the wallet and RPC node — no manual configuration exposed
 - Amount parsing uses `ethers.parseEther()` — correct handling of 18-decimal EVM precision
+- Contract bytecode compiled with `evmVersion: london` — compatible with chains that have not implemented the Shanghai hard fork (`PUSH0` opcode not present)
+- JavaScript logic obfuscated — source is not human-readable on inspection
 - Hosted on GitHub Pages — HTTPS enforced, no server-side logic
+
+---
+
+## Changelog
+
+### v1.2.0
+- Added **Deploy Contract** tab — one-click `DACInception` contract deployment
+- Added **Protocol Fee toggle** on Send and Deploy tabs — opt-in proxy routing with ⓘ disclosure tooltip
+- Added **Disconnect Wallet** — click wallet pill in topbar to disconnect
+- Fixed decimal separator — amount input now correctly uses `.` regardless of system locale
+- Added version indicator in topbar
+- JavaScript obfuscation applied
+
+### v1.1.0
+- Random recipient selection from curated address pool
+- Transaction log panel with block explorer links
+- Auto network switch to DAC Testnet on connect
+- Deployed to GitHub Pages
+
+### v1.0.0
+- Initial release — native DACC token send interface
 
 ---
 
