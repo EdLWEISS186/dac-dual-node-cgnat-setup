@@ -2,27 +2,30 @@
 
 A client-side web interface for submitting native DACC token transactions on the DAC Quantum Chain Testnet. Built as part of an ongoing infrastructure testing effort to evaluate network behavior under realistic transaction load prior to mainnet deployment.
 
-**Live:**
-> `https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/Sender-Web/`
+**Live:** [DAC Sender — GitHub Pages](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/Sender-Web/)
+
+![Version](https://img.shields.io/badge/version-v1.3.1-orange?style=flat-square)
+![License](https://img.shields.io/badge/license-see%20root-lightgrey?style=flat-square)
+![Testnet Only](https://img.shields.io/badge/network-testnet%20only-yellow?style=flat-square)
+![Static Site](https://img.shields.io/badge/hosted-GitHub%20Pages-blue?style=flat-square)
+![Chain ID](https://img.shields.io/badge/chain%20ID-21894-blueviolet?style=flat-square)
+![ethers.js](https://img.shields.io/badge/ethers.js-v6-green?style=flat-square)
+![No Build](https://img.shields.io/badge/build-none%20required-brightgreen?style=flat-square)
+![Last Commit](https://img.shields.io/github/last-commit/EdLWEISS186/dac-dual-node-cgnat-setup?style=flat-square)
 
 ---
 
 ## Latest Version
 
-### v1.3.1
+### v1.3.0 — Multi-Send & Metrics Export
 
-Fixed alignment of recipient address rows in the Multi-Send section. All input fields now use a consistent CSS Grid layout — number column, address input, and randomize button are properly aligned regardless of recipient count.
+**Multi-Send**
+Batch token distribution to multiple recipients in a single signed transaction. Users configure the recipient count, enter or randomize each address individually, set a per-address amount, and submit — the `DACMultiSend` smart contract handles distribution within a single block execution. No repeated signing. Directly applicable for generating high-volume, multi-destination transaction load on the testnet.
+
+**Metrics Export**
+Session transaction history is exportable as a CSV file at any point during an active session. Fields include transaction type, hash, recipient addresses, amount, total dispatched, confirmation status, ISO timestamp, and gas consumed.
 
 ---
-
-### v1.3.1
-- Fixed Multi-Send address row alignment — CSS Grid layout applied for consistent column structure
-
-### v1.3.0
-- Added **Multi-Send** — batch dispatch to N recipients via `DACMultiSend` smart contract, single wallet signature
-- Per-row address inputs with individual and bulk randomize options
-- Added **Metrics Export** — CSV download of full session transaction history
-- Version indicator updated to v1.3.0
 
 ### v1.2.0
 
@@ -435,7 +438,6 @@ This feature is planned for implementation once the DAC team publishes their off
 - Added **Multi-Send** — batch dispatch to N recipients via `DACMultiSend` smart contract, single wallet signature
 - Per-row address inputs with individual and bulk randomize options
 - Added **Metrics Export** — CSV download of full session transaction history
-- Version indicator updated to v1.3.0
 
 ### v1.2.0
 - Added **Deploy Contract** tab — one-click `DACInception` contract deployment
