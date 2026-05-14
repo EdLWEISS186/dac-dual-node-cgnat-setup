@@ -9,6 +9,15 @@ A client-side web interface for submitting native DACC token transactions on the
 
 ## Latest Version
 
+### v1.3.1
+
+Fixed alignment of recipient address rows in the Multi-Send section. All input fields now use a consistent CSS Grid layout — number column, address input, and randomize button are properly aligned regardless of recipient count.
+
+---
+
+### v1.3.1
+- Fixed Multi-Send address row alignment — CSS Grid layout applied for consistent column structure
+
 ### v1.3.0
 - Added **Multi-Send** — batch dispatch to N recipients via `DACMultiSend` smart contract, single wallet signature
 - Per-row address inputs with individual and bulk randomize options
@@ -405,7 +414,7 @@ Key observations from this session:
 
 A dedicated tab for deploying ERC-721 NFT contracts directly from the browser. Users will be able to configure collection name, ticker, description, max supply, and mint limit per wallet, then upload artwork to IPFS before deploying. Requires a Pinata API key for IPFS storage.
 
-### v2.0.0 — Bridge (Pending DAC Team Infrastructure)
+### v1.5.0 — Bridge (Pending DAC Team Infrastructure)
 
 Cross-chain bridging between DAC Testnet and external testnets (e.g., Ethereum Sepolia) requires infrastructure that cannot be built at the application layer alone. Specifically:
 
@@ -418,6 +427,9 @@ This feature is planned for implementation once the DAC team publishes their off
 ---
 
 ## Changelog
+
+### v1.3.1
+- Fixed Multi-Send address row alignment — CSS Grid layout applied for consistent column structure
 
 ### v1.3.0
 - Added **Multi-Send** — batch dispatch to N recipients via `DACMultiSend` smart contract, single wallet signature
