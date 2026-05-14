@@ -200,6 +200,8 @@ Sample export from an active session (`dac-sender-metrics.csv`):
 
 Each row captures: transaction type, full hash, all recipient addresses, per-address amount, total dispatched, confirmation status, ISO timestamp, and gas consumed. Intended for structured documentation of testnet activity.
 
+**Sample export file:** [dac-sender-metrics-1778672188075.csv](assets/dac-sender-metrics-1778672188075.csv)
+
 ---
 
 ## Why Transaction Volume Matters on Testnet
@@ -399,17 +401,7 @@ Key observations from this session:
 
 ## Future Work
 
-### v1.3.0 — Multi-Send (Planned)
-
-A `MultiSend` smart contract will accept a single signed transaction containing a list of recipient addresses and amounts. The contract distributes DACC to all recipients within a single block execution. Users sign once — the contract handles distribution.
-
-This is the most efficient mechanism for generating high-volume transaction load on the testnet: a single user action can populate an entire block with internal transfers, directly stressing mempool handling, block gas limits, and validator throughput in a way that sequential single sends cannot replicate.
-
-### v1.4.0 — Metrics Export (Planned)
-
-A session summary export feature that compiles transaction history from the current session into a downloadable CSV file. Fields will include transaction hash, recipient address, amount, status, confirmation time, and gas used. Intended to support structured reporting of testnet activity.
-
-### v1.5.0 — NFT Deployment (Planned)
+### v1.4.0 — NFT Deployment (Planned)
 
 A dedicated tab for deploying ERC-721 NFT contracts directly from the browser. Users will be able to configure collection name, ticker, description, max supply, and mint limit per wallet, then upload artwork to IPFS before deploying. Requires a Pinata API key for IPFS storage.
 
