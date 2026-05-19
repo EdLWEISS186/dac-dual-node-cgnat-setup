@@ -4,7 +4,7 @@ A client-side web interface for submitting native DACC token transactions on the
 
 **Live:** [DAC Sender — GitHub Pages](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/Sender-Web/)
 
-![Version](https://img.shields.io/badge/version-v1.3.1-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-v1.4.3-orange?style=flat-square)
 ![License](https://img.shields.io/badge/license-see%20root-lightgrey?style=flat-square)
 ![Testnet Only](https://img.shields.io/badge/network-testnet%20only-yellow?style=flat-square)
 ![Static Site](https://img.shields.io/badge/hosted-GitHub%20Pages-blue?style=flat-square)
@@ -16,6 +16,18 @@ A client-side web interface for submitting native DACC token transactions on the
 ---
 
 ## Latest Version
+
+### v1.4.3 — Real-time Stats & NFT Launchpad Polish
+
+This patch release completes the NFT Launchpad infrastructure and adds live network monitoring across both `index.html` and `mint.html`.
+
+**Real-time Stats Bar** — Block height, TPS (averaged from last 5 blocks), block time, RPC latency with color-coded health indicators (green/yellow/red), and live gas price in Gwei. Pre-loads 5 blocks on init for immediate data without waiting for the next polling cycle.
+
+**NFT Launchpad** (`mint.html`) — Rebuilt with a proper two-tab interface: Collections (reads from on-chain `DACNFTRegistry`) and My Collections (reads `mintedPerWallet` for the connected address across all registered collections). Includes a connect wallet overlay consistent with `index.html`, improved error handling for RPC failures with retry, and a contextual empty state for wallets with no mints.
+
+**Connect Overlay** — Both `index.html` and `mint.html` now open with a consistent blur overlay showing `DAC•SENDER`, version, and connect prompt. `mint.html` adds an NFT Launchpad subtitle and a "Browse without connecting" option.
+
+---
 
 ### v1.3.0 — Multi-Send & Metrics Export
 
@@ -93,15 +105,15 @@ The DAC Testnet is not just a staging environment — it is an active stress-tes
 │   └──────────────┘        └──────────────┬───────────────┘  │
 └──────────────────────────────────────────┼──────────────────┘
                                            │
-                    ┌──────────────────────┼───────────────────────┐
-                    │                      │                       │
-                    ▼                      ▼                       ▼
-          ┌─────────────────┐   ┌──────────────────┐   ┌──────────────────┐
-          │   Direct Send   │   │  Proxy Contract  │   │ Deploy Contract  │
-          │   EOA → EOA     │   │  DACSendProxy    │   │ DACInception     │
-          └────────┬────────┘   └────────┬─────────┘   └──────────┬───────┘
-                   │                     │                        │
-                   └─────────────────────┴────────────────────────┘
+              ┌─────────────────────┼────────────────────┐────────────────────┐
+              │                     │                    │                    │
+              ▼                     ▼                    ▼                    ▼
+          ┌─────────────┐  ┌──────────────────┐  ┌──────────────┐  ┌─────────────┐
+          │ Direct Send │  │  Proxy Contract  │  │   Deploy     │  │  Deploy NFT │
+          │  EOA → EOA  │  │  DACSendProxy    │  │  Contract    │  │  ERC-721    │
+          └──────┬──────┘  └────────┬─────────┘  └──────┬───────┘  └──────┬──────┘
+                 │                  │                   │                 │
+                 └──────────────────┴───────────────────┴─────────────────┘
                                          │
                                          ▼
                             ┌────────────────────────┐
@@ -213,6 +225,67 @@ Sample export from an active session (`dac-sender-metrics.csv`):
 Each row captures: transaction type, full hash, all recipient addresses, per-address amount, total dispatched, confirmation status, ISO timestamp, and gas consumed. Intended for structured documentation of testnet activity.
 
 **Sample export file:** [dac-sender-metrics-1778672188075.csv](assets/dac-sender-metrics-1778672188075.csv)
+
+
+---
+
+### Deploy NFT
+
+**Pending — DACInceptionNFT contract deployment submitted:**
+
+![Deploy NFT Pending](assets/DeployNFT-Pending.png)
+
+**Success — contract deployed, mint link generated:**
+
+![Deploy NFT Success](assets/DeployNFT-Success.png)
+
+**Block Explorer — contract creation confirmed:**
+
+![Deploy NFT Explorer](assets/DeployNFT-Success-Exp.png)
+
+---
+
+### Deploy NFT via Protocol Contract
+
+**Pending — deployment routed through proxy:**
+
+![Deploy NFT Through Smart Contract Pending](assets/DeployNFT-ThroughSmartContract-Pending.png)
+
+**Success — contract deployed with fee processed:**
+
+![Deploy NFT Through Smart Contract Success](assets/DeployNFT-ThroughSmartContract-Success.png)
+
+**Block Explorer — internal transactions visible:**
+
+![Deploy NFT Through Smart Contract Explorer](assets/DeployNFT-ThroughSmartContract-Success-Exp.png)
+
+---
+
+### NFT Launchpad (mint.html)
+
+**Collections page — all NFTs deployed through DAC•Sender listed from on-chain registry:**
+
+![Launchpad](assets/Launchpad.png)
+
+**Pending — mint transaction submitted:**
+
+![Mint NFT Pending](assets/Launchpad-MintNFT-Pending.png)
+
+**Success — mint confirmed:**
+
+![Mint NFT Success](assets/Launchpad-MintNFT-Success.png)
+
+**Block Explorer — mint transaction confirmed:**
+
+![Mint NFT Explorer](assets/Launchpad-MintNFT-Success-Exp.png)
+
+**Block Explorer — NFT token view:**
+
+![Mint NFT Token Explorer](assets/Launchpad-MintNFT-Success-Exp-NFT.png)
+
+**NFT visible in wallet:**
+
+![Show on Wallet](assets/Show%20on%20wallet.png)
 
 ---
 
@@ -346,6 +419,9 @@ The wallet is automatically prompted to switch to or register the DAC Testnet ne
 - **Protocol Fee Toggle** — Opt-in mechanism on both Send and Deploy tabs; routes transactions through a proxy smart contract when enabled
 - **Multi-Send (Batch)** — Send to multiple recipients in a single signed transaction via `DACMultiSend` contract; each recipient address is individually configurable or randomized from the pool
 - **Metrics Export** — Download session transaction history as CSV (hash, recipients, amount, status, timestamp, gas used)
+- **Deploy NFT** — Full ERC-721 collection deployment with IPFS artwork and metadata upload via Pinata
+- **NFT Launchpad** (`mint.html`) — Shared public page for browsing and minting all NFT collections deployed through DAC•Sender, powered by an on-chain registry contract
+- **Real-time Network Stats** — Live TPS, block time, RPC latency, gas price, and block height displayed in the stats bar
 
 ---
 
@@ -413,10 +489,6 @@ Key observations from this session:
 
 ## Future Work
 
-### v1.4.0 — NFT Deployment (Planned)
-
-A dedicated tab for deploying ERC-721 NFT contracts directly from the browser. Users will be able to configure collection name, ticker, description, max supply, and mint limit per wallet, then upload artwork to IPFS before deploying. Requires a Pinata API key for IPFS storage.
-
 ### v1.5.0 — Bridge (Pending DAC Team Infrastructure)
 
 Cross-chain bridging between DAC Testnet and external testnets (e.g., Ethereum Sepolia) requires infrastructure that cannot be built at the application layer alone. Specifically:
@@ -430,6 +502,33 @@ This feature is planned for implementation once the DAC team publishes their off
 ---
 
 ## Changelog
+
+### v1.4.3
+- Added **Real-time Stats Bar** to both `index.html` and `mint.html` — TPS, block time, RPC latency, gas price
+- **NFT Launchpad** (`mint.html`) rebuilt with two-tab layout: Collections + My Collections
+- Added **Connect Wallet overlay** to `mint.html` matching `index.html` style
+- Improved error handling for RPC failures with Retry button
+- Fixed transaction log panel height — viewport-based, scrollable inside fixed frame
+- Stats bar repositioned to below topbar on both pages
+
+### v1.4.2
+- Added **Deploy NFT** tab with IPFS upload via Pinata and ERC-721 deployment
+- Added **NFT Launchpad** (`mint.html`) with on-chain registry (`DACNFTRegistry`)
+- Added **Mint Link** generation after NFT deploy
+- Added "Built by Communities for Communities" subtitle in topbar
+- Updated proxy contract fee cap to 1 DACC absolute maximum
+
+### v1.4.0
+- Added **Deploy NFT** tab — ERC-721 collection deployment with IPFS artwork upload via Pinata
+- Added **NFT Launchpad** (`mint.html`) with on-chain `DACNFTRegistry` contract
+- Added **Mint Link** generation post-deploy
+- Added **MY COLLECTIONS** tab in `mint.html`
+- Added **Connect Wallet overlay** to `mint.html`
+- Added "Built by Communities for Communities" subtitle in topbar
+
+### v1.4.1
+- Fixed protocol fee proxy contract — replaced percentage-based cap with 1 DACC absolute cap
+- Prevents excessive fees during gas price spikes
 
 ### v1.3.1
 - Fixed Multi-Send address row alignment — CSS Grid layout applied for consistent column structure
