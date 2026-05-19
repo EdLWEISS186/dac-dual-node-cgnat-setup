@@ -2,7 +2,9 @@
 
 A client-side web interface for submitting native DACC token transactions on the DAC Quantum Chain Testnet. Built as part of an ongoing infrastructure testing effort to evaluate network behavior under realistic transaction load prior to mainnet deployment.
 
-**Live:** [DAC Sender — GitHub Pages](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/Sender-Web/)
+**Live:**
+- [DAC•SENDER](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/Sender-Web/) — Main interface: Send, Deploy Contract, Deploy NFT
+- [DAC•SENDER NFT Launchpad](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/Sender-Web/mint.html) — Browse and mint NFT collections deployed through DAC•SENDER
 
 ![Version](https://img.shields.io/badge/version-v1.4.3-orange?style=flat-square)
 ![License](https://img.shields.io/badge/license-see%20root-lightgrey?style=flat-square)
@@ -91,6 +93,41 @@ The Deploy Contract feature follows the same reasoning: deploying a contract gen
 
 The DAC Testnet is not just a staging environment — it is an active stress-testing ground. A blockchain behaves fundamentally differently under real multi-user traffic compared to isolated internal testing. The goal of this tool is to make it easy for community members to contribute genuine transaction activity, which directly supports pre-mainnet engineering validation objectives.
 
+
+---
+
+## Interface Overview
+
+### DAC•SENDER — index.html
+
+**Send DACC — native token transfer with single and batch (Multi-Send) dispatch:**
+
+![Send DACC Tab](assets/index-send.png)
+
+**Deploy Contract — one-click `DACInception` contract deployment:**
+
+![Deploy Contract Tab](assets/index-deploySC.png)
+
+**Deploy NFT — ERC-721 collection deployment with IPFS upload and mint link generation:**
+
+![Deploy NFT Tab](assets/index-DeployNFT.png)
+
+**Bridge — pending DAC team infrastructure, documentation and status disclosed:**
+
+![Bridge Tab](assets/index-Bridge.png)
+
+---
+
+### DAC•SENDER NFT Launchpad — mint.html
+
+**Collections — all NFT collections deployed through DAC•SENDER, read from on-chain registry with live supply data:**
+
+![Collections Tab](assets/mint-collection.png)
+
+**My Collections — NFTs minted by the connected wallet, resolved against the on-chain registry:**
+
+![My Collections Tab](assets/mint-mycollection.png)
+
 ---
 
 ## Architecture
@@ -105,15 +142,15 @@ The DAC Testnet is not just a staging environment — it is an active stress-tes
 │   └──────────────┘        └──────────────┬───────────────┘  │
 └──────────────────────────────────────────┼──────────────────┘
                                            │
-              ┌─────────────────────┼────────────────────┐────────────────────┐
-              │                     │                    │                    │
-              ▼                     ▼                    ▼                    ▼
+          ┌──────────────────────────┬─────┴────────────┬─────────────────┐
+          │                          │                  │                 │
+          ▼                          ▼                  ▼                 ▼
           ┌─────────────┐  ┌──────────────────┐  ┌──────────────┐  ┌─────────────┐
           │ Direct Send │  │  Proxy Contract  │  │   Deploy     │  │  Deploy NFT │
           │  EOA → EOA  │  │  DACSendProxy    │  │  Contract    │  │  ERC-721    │
           └──────┬──────┘  └────────┬─────────┘  └──────┬───────┘  └──────┬──────┘
                  │                  │                   │                 │
-                 └──────────────────┴───────────────────┴─────────────────┘
+                 └────────────────────────────┴───────────────────────────┘
                                          │
                                          ▼
                             ┌────────────────────────┐
@@ -263,7 +300,7 @@ Each row captures: transaction type, full hash, all recipient addresses, per-add
 
 ### NFT Launchpad (mint.html)
 
-**Collections page — all NFTs deployed through DAC•Sender listed from on-chain registry:**
+**NFT Launchpad — the public-facing mint portal generated from a DAC•SENDER deploy. Each deployed collection automatically receives a shareable mint link that opens this interface, displaying collection metadata, live supply, and a mint form connected directly to the on-chain contract:**
 
 ![Launchpad](assets/Launchpad.png)
 
@@ -518,6 +555,10 @@ This feature is planned for implementation once the DAC team publishes their off
 - Added "Built by Communities for Communities" subtitle in topbar
 - Updated proxy contract fee cap to 1 DACC absolute maximum
 
+### v1.4.1
+- Fixed protocol fee proxy contract — replaced percentage-based cap with 1 DACC absolute cap
+- Prevents excessive fees during gas price spikes
+
 ### v1.4.0
 - Added **Deploy NFT** tab — ERC-721 collection deployment with IPFS artwork upload via Pinata
 - Added **NFT Launchpad** (`mint.html`) with on-chain `DACNFTRegistry` contract
@@ -525,10 +566,6 @@ This feature is planned for implementation once the DAC team publishes their off
 - Added **MY COLLECTIONS** tab in `mint.html`
 - Added **Connect Wallet overlay** to `mint.html`
 - Added "Built by Communities for Communities" subtitle in topbar
-
-### v1.4.1
-- Fixed protocol fee proxy contract — replaced percentage-based cap with 1 DACC absolute cap
-- Prevents excessive fees during gas price spikes
 
 ### v1.3.1
 - Fixed Multi-Send address row alignment — CSS Grid layout applied for consistent column structure
