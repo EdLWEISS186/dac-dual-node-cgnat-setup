@@ -510,7 +510,7 @@ Key observations from this session:
 - Gas estimation handled by the wallet and RPC node — no manual configuration exposed
 - Amount parsing uses `ethers.parseEther()` — correct handling of 18-decimal EVM precision
 - Contract bytecode compiled with `evmVersion: london` — compatible with chains that have not implemented the Shanghai hard fork (`PUSH0` opcode not present)
-- JavaScript logic obfuscated — source is not human-readable on inspection
+- JavaScript source is fully obfuscated — the client-side logic, including sensitive constants and contract interaction code, is not human-readable on inspection. Applied as a deterrent against unauthorized extraction of embedded credentials and contract parameters
 - Hosted on GitHub Pages — HTTPS enforced, no server-side logic
 
 ---
