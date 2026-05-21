@@ -545,7 +545,7 @@ This feature is planned for implementation once the DAC team publishes their off
 - **NFT Launchpad** (`mint.html`) rebuilt with two-tab layout: Collections + My Collections
 - Added **Connect Wallet overlay** to `mint.html` matching `index.html` style
 - Improved error handling for RPC failures with Retry button
-- Fixed transaction log panel height — viewport-based, scrollable inside fixed frame
+- Fixed transaction log panel height — fixed pixel height (560px), consistent across all zoom levels, scrollable inside panel
 - Stats bar repositioned to below topbar on both pages
 
 ### v1.4.2
