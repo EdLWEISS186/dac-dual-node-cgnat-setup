@@ -24,10 +24,6 @@ This contribution focuses on structured wallet profiling and testnet activity in
 
 https://github.com/dacblockchain/truebit-etherscan-api-task-library/pull/2
 
-## Related Repository
-
-https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup
-
 ## Author
 
 JERUZZALEM | DAC Infra Tester
