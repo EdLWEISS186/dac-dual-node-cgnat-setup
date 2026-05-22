@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAC Wallet Intelligence Layer v1</title>
+  <link rel="stylesheet" href="./wallet-intelligence.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">DAC Testnet • Client-side Intelligence</p>
+        <h1>Wallet Intelligence Layer v1</h1>
+        <p class="subtitle">
+          Paste a DAC testnet wallet address and check native funds, NFT ownership,
+          activity analytics, portfolio intelligence, reputation score, and Sybil risk.
+        </p>
+      </div>
+
+      <div class="network-card">
+        <span class="network-dot"></span>
+        <div>
+          <strong>DAC Testnet</strong>
+          <small>Chain ID 21894</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="checker-card">
+      <label for="walletInput">Wallet address</label>
+      <div class="input-row">
+        <input
+          id="walletInput"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="0x..."
+        />
+        <button id="checkButton" type="button">Check</button>
+        <button id="retryButton" type="button" class="secondary hidden">Retry</button>
+      </div>
+      <p class="hint">
+        No wallet connection. No signing. This checker only reads public DAC testnet data.
+      </p>
+    </section>
+
+    <section id="statusPanel" class="status-panel idle">
+      <div>
+        <span id="statusLabel" class="status-label">Idle</span>
+        <p id="statusMessage">Paste a wallet address to begin.</p>
+      </div>
+    </section>
+
+    <section id="resultPanel" class="hidden">
+      <div class="result-header">
+        <div>
+          <p class="eyebrow">Result</p>
+          <h2 id="resultTitle">Wallet Profile</h2>
+          <p id="resultSubtitle"></p>
+        </div>
+        <div class="mode-pill" id="modePill">Explorer Primary</div>
+      </div>
+
+      <section class="metric-grid">
+        <article class="metric-card">
+          <span>Native Balance</span>
+          <strong id="nativeBalanceValue">—</strong>
+          <small id="nativeBalanceSource">—</small>
+        </article>
+
+        <article class="metric-card">
+          <span>Transactions</span>
+          <strong id="transactionsValue">—</strong>
+          <small id="transactionsSource">—</small>
+        </article>
+
+        <article class="metric-card">
+          <span>NFT Collections</span>
+          <strong id="collectionsValue">—</strong>
+          <small id="collectionsSource">—</small>
+        </article>
+
+        <article class="metric-card">
+          <span>NFT Holdings</span>
+          <strong id="nftHoldingsValue">—</strong>
+          <small id="nftHoldingsSource">—</small>
+        </article>
+      </section>
+
+      <section class="module-grid">
+        <article class="module-card">
+          <div class="module-title">
+            <span>📊</span>
+            <h3>Activity Analytics v1</h3>
+          </div>
+          <dl>
+            <div>
+              <dt>Activity Level</dt>
+              <dd id="activityLevelValue">—</dd>
+            </div>
+            <div>
+              <dt>Engagement Type</dt>
+              <dd id="engagementTypeValue">—</dd>
+            </div>
+            <div>
+              <dt>NFT Participation</dt>
+              <dd id="nftParticipationValue">—</dd>
+            </div>
+            <div>
+              <dt>Diversity Score</dt>
+              <dd id="diversityScoreValue">—</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="module-card">
+          <div class="module-title">
+            <span>💼</span>
+            <h3>Portfolio Intelligence v1</h3>
+          </div>
+          <dl>
+            <div>
+              <dt>Portfolio Style</dt>
+              <dd id="portfolioStyleValue">—</dd>
+            </div>
+            <div>
+              <dt>Wallet Archetype</dt>
+              <dd id="walletArchetypeValue">—</dd>
+            </div>
+            <div>
+              <dt>Top Collection</dt>
+              <dd id="topCollectionValue">—</dd>
+            </div>
+            <div>
+              <dt>Concentration</dt>
+              <dd id="concentrationValue">—</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="module-card highlight">
+          <div class="module-title">
+            <span>🏆</span>
+            <h3>Reputation Scoring v1</h3>
+          </div>
+          <dl>
+            <div>
+              <dt>Reputation Score</dt>
+              <dd id="reputationScoreValue">—</dd>
+            </div>
+            <div>
+              <dt>Reputation Level</dt>
+              <dd id="reputationLevelValue">—</dd>
+            </div>
+            <div>
+              <dt>Trust Profile</dt>
+              <dd id="trustProfileValue">—</dd>
+            </div>
+            <div>
+              <dt>Sybil Risk</dt>
+              <dd id="sybilRiskValue">—</dd>
+            </div>
+          </dl>
+        </article>
+      </section>
+
+      <section class="table-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Proof of Assets Engine</p>
+            <h3>NFT Collections</h3>
+          </div>
+          <small id="collectionCountLabel">—</small>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Collection</th>
+                <th>Symbol</th>
+                <th>Holdings</th>
+                <th>Contract</th>
+              </tr>
+            </thead>
+            <tbody id="collectionsTableBody">
+              <tr>
+                <td colspan="5" class="empty-cell">No data yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="json-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Raw Output</p>
+            <h3>Wallet Intelligence JSON</h3>
+          </div>
+          <button id="copyJsonButton" type="button" class="secondary">Copy JSON</button>
+        </div>
+        <pre id="rawJsonOutput">{}</pre>
+      </section>
+    </section>
+  </main>
+
+  <script src="./wallet-intelligence.js"></script>
+</body>
+</html>
