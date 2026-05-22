@@ -693,4 +693,3 @@ is intended as an archive and continuation of DAC contribution work related to w
 ---
 
 *Authored by **JERUZZALEM** — DAC Infra Tester*  
-*Built by Communities for Communities*
