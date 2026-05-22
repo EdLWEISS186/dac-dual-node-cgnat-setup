@@ -1,28 +1,25 @@
-# DAC Node Runner Guide — Dual-Node + CGNAT
+# Node Runner Guide — Dual-Node + CGNAT
 
-This directory documents a DAC infrastructure contribution focused on node runner operations under constrained network environments.
-
-The contribution covers a dual-node setup using:
-
-- Windows host
-- WSL/Linux environment
-- CGNAT workaround
-- static peering
-- monitoring practices
-- stability testing
-- practical node runner troubleshooting
-
-## Purpose
-
-This contribution was created to support DAC testnet participants who want to run stable nodes with limited hardware or constrained network conditions.
-
-It also serves as an archive of practical infrastructure observations gathered during DAC testnet participation.
+Archive of the DAC documentation contribution related to node operation in CGNAT environments using Dual-Node Single Machine architecture.
 
 ## Related Pull Request
 
-Documentation PR:
-
 https://github.com/dacblockchain/documentation/pull/2
+
+## Included Documents
+
+- running-a-node.md
+- advanced-cgnat-dual-node.md
+
+## Topics
+
+- DAC node operation
+- Windows + WSL2 setup
+- Dual-node architecture
+- CGNAT workaround
+- Static peering
+- Stability optimization
+- Infrastructure best practices
 
 ## Author
 
