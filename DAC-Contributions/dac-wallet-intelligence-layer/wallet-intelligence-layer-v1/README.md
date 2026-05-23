@@ -1,4 +1,4 @@
-# DAC Wallet Intelligence Layer v1 — Community Wallet Checker
+# DAC Wallet Intelligence Layer v1.1.1 — Community Wallet Checker
 
 A client-side wallet intelligence interface for the DAC Quantum Chain Testnet.
 
@@ -9,9 +9,9 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 > The naming, scoring labels, thresholds, and interpretation logic are experimental community-defined heuristics created for testnet observation, reporting, and infrastructure research.
 
 **Live:**  
-- [DAC•Wallet Intelligence Layer v1](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/)
+- [DAC•Wallet Intelligence Layer](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/)
 
-![Version](https://img.shields.io/badge/version-v1-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-v1.1.1-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-see%20root-lightgrey?style=flat-square)
 ![Testnet Only](https://img.shields.io/badge/network-testnet%20only-yellow?style=flat-square)
 ![Static Site](https://img.shields.io/badge/hosted-GitHub%20Pages-blue?style=flat-square)
@@ -23,21 +23,14 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 
 ## Latest Version
 
-### v1 — Wallet Intelligence Layer
+### v1.1.1 — NFT Participation Percentage Display Fix
 
-Initial release of the DAC Wallet Intelligence Layer as a client-side community checker.
+This release keeps the v1.1.0 Transparent Scoring UI and applies a small readability improvement:
 
-This version introduces:
-
-- **No-connect wallet checking** — users paste an address; no wallet connection, no signing.
-- **Proof of Native Funds** — reads native DAC testnet balance from the DAC Explorer.
-- **Proof of Assets Engine** — reads ERC-721 ownership through the DAC Explorer `tokenlist` module.
-- **Activity Analytics v1** — evaluates transaction count, NFT transfer count, NFT participation ratio, and collection diversity.
-- **Portfolio Intelligence v1** — evaluates NFT holdings, collection concentration, top collection, portfolio style, and wallet archetype.
-- **Reputation Scoring v1** — generates a community-defined score from verified explorer metrics.
-- **Failure-safe output policy** — no random, mock, or fabricated score if the explorer/RPC data is unavailable.
-- **Retry flow** — user can retry when the DAC Explorer or RPC endpoint is temporarily unavailable.
-- **Live chain stats** — block height, TPS estimate, block time, RPC latency, and gas price.
+- **NFT Participation** is now displayed as a percentage instead of a decimal ratio.
+- Example: `0.19` is now shown as `19.00%`.
+- The value is reflected both in the UI and in the raw JSON output.
+- Scoring policy metadata is updated to `WIL-v1.1.1`.
 
 ---
 
@@ -49,6 +42,7 @@ This version introduces:
 - [Interface Overview](#interface-overview)
 - [Architecture](#architecture)
 - [Scoring and Label Definitions](#scoring-and-label-definitions)
+- [Transparent Scoring UI](#transparent-scoring-ui)
 - [Failure Handling Policy](#failure-handling-policy)
 - [Network Configuration](#network-configuration)
 - [Features](#features)
@@ -75,7 +69,7 @@ In simple terms:
 DAC•SENDER
 → helps create testnet activity
 
-DAC Wallet Intelligence Layer v1
+DAC Wallet Intelligence Layer
 → helps observe, classify, and document wallet activity
 ```
 
@@ -161,7 +155,7 @@ The state after the DAC Explorer returns all required wallet data and the full p
 
 ### Wallet Output
 
-The main wallet output panel containing balance, transaction metrics, activity analytics, portfolio intelligence, and reputation scoring.
+The main wallet output panel containing balance, transaction metrics, activity analytics, portfolio intelligence, reputation scoring, and scoring breakdown.
 
 ![Wallet Output](assets/WalletOutput.png)
 
@@ -229,7 +223,7 @@ The current web implementation is shipped as static files, but the internal logi
                               │
                               ▼
 ┌──────────────────────────────────────────────────────────────┐
-│ Wallet Intelligence Layer v1                                 │
+│ Wallet Intelligence Layer                                    │
 │ final wallet profile + raw JSON output                       │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -258,7 +252,7 @@ wallet-intelligence.js
         └── Reputation Scoring v1
         │
         ▼
-Wallet Intelligence Layer v1 output
+Wallet Intelligence Layer output
 ```
 
 ### Primary Data Source
@@ -346,15 +340,23 @@ The label `ADVANCED TESTNET USER` means the wallet has shown high activity and b
 
 ---
 
-### NFT Participation Ratio
+### NFT Participation
+
+NFT Participation is shown as a percentage.
 
 ```text
-nftParticipationRatio = nftTransfers / txCount
+nftParticipation = nftTransfers / txCount * 100
 ```
 
-If `txCount` is zero, the ratio is shown as `0.00`.
+Example:
 
-This ratio is meant to show how much of the wallet's activity is related to NFT transfer behavior.
+```text
+0.19 ratio → 19.00%
+```
+
+If `txCount` is zero, the value is shown as `0.00%`.
+
+This value is meant to show how much of the wallet's total activity is related to NFT transfer behavior.
 
 ---
 
@@ -506,6 +508,44 @@ It only uses the public wallet metrics available through the DAC Explorer module
 
 ---
 
+## Transparent Scoring UI
+
+Version `v1.1.0` introduced a transparent scoring panel.  
+Version `v1.1.1` keeps that panel and improves NFT Participation readability.
+
+The UI now shows how the reputation score is built from four visible components:
+
+```text
+Transaction Score      /40
+NFT Diversity Score    /25
+NFT Holdings Score     /20
+Native Balance Score   /15
+```
+
+Each component displays:
+
+- points earned
+- maximum possible points
+- metric value used
+- rule/condition matched
+
+The raw JSON output also includes scoring policy metadata:
+
+```json
+{
+  "scoringPolicy": {
+    "version": "WIL-v1.1.1",
+    "model": "transparent-reputation-scoring-v1.1.1",
+    "maxScore": 100,
+    "note": "Community-defined scoring heuristic. Not an official DAC reputation or Sybil system."
+  }
+}
+```
+
+This makes the score easier to audit and reduces ambiguity for users reviewing their wallet status.
+
+---
+
 ## Failure Handling Policy
 
 This tool follows a strict fail-safe rule:
@@ -587,9 +627,10 @@ No random score, mock score, or fabricated wallet profile is generated.
 - **Read-only design** — no transaction signing, no wallet prompt, no private key access.
 - **Proof of Native Funds** — reads native balance from DAC Explorer.
 - **Proof of Assets Engine** — reads ERC-721 ownership from `tokenlist`.
-- **Activity Analytics v1** — generates activity level, engagement type, NFT participation ratio, and diversity score.
+- **Activity Analytics v1** — generates activity level, engagement type, NFT participation percentage, and diversity score.
 - **Portfolio Intelligence v1** — generates portfolio style, wallet archetype, top collection, concentration, and holdings summary.
 - **Reputation Scoring v1** — generates a community-defined score from verified data.
+- **Transparent Scoring UI** — displays each score component, matched rule, and earned points.
 - **Sybil-risk estimation** — lightweight score-based label, clearly marked as experimental.
 - **Raw JSON Output** — export-ready structured profile for reporting.
 - **Live Chain Stats** — block height, TPS estimate, block time, RPC latency, and gas price.
@@ -652,21 +693,33 @@ Example test wallet:
 
 Potential future directions, depending on available explorer data, contract design, and verification requirements.
 
-- **Mintable intelligence badge** — an optional NFT badge layer based on wallet status.
-- **More transparent scoring UI** — show per-category point breakdown.
-- **Known collection registry** — supplement explorer data with curated DAC NFT collection metadata.
+- **Known collection registry** — supplement explorer data with curated DAC NFT collection metadata, beginning with known official/community-visible collections such as DAC Inception Rank when appropriate.
 - **Historical activity windowing** — classify recent activity separately from lifetime activity.
-- **More advanced Sybil analysis** — add funding source, timing, cluster, and repeated behavior analysis if reliable public data becomes available.
+- **Explorer-only Sybil heuristics** — improve Sybil-risk estimation using logic derived from public explorer data, without depending on a custom backend.
 - **Versioned scoring policy** — publish each scoring model as a locked version to make future changes auditable.
+- **Mintable / dynamic intelligence badge** — optional future NFT badge layer based on wallet status, preferably designed as an updateable or evolving badge rather than a static one.
 - **Truebit function-task mode** — optionally compare browser output with a verified function-task execution path.
 
 ---
 
 ## Changelog
 
+### v1.1.1 — NFT Participation Percentage Display Fix
+
+- Changed NFT Participation display from decimal ratio to percentage format.
+- Example: `0.19` → `19.00%`.
+- Updated scoring policy metadata to `WIL-v1.1.1`.
+
+### v1.1.0 — Transparent Scoring UI
+
+- Added visible scoring breakdown panel.
+- Added per-category score components.
+- Added rule/condition display for each score component.
+- Added scoring policy metadata to raw JSON output.
+
 ### v1 — Initial Release
 
-Initial release of the community-built DAC Wallet Intelligence Layer v1.
+Initial release of the community-built DAC Wallet Intelligence Layer.
 
 ---
 
@@ -693,3 +746,4 @@ is intended as an archive and continuation of DAC contribution work related to w
 ---
 
 *Authored by **JERUZZALEM** — DAC Infra Tester*  
+*Built by Communities for Communities*
