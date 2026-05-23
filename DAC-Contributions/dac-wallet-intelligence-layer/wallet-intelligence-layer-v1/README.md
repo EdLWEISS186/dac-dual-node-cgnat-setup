@@ -52,9 +52,89 @@ Max Score      : 100
 
 ---
 
+## Major Release Highlights
+
+This section summarizes the major milestones across the Wallet Intelligence Layer releases.  
+For detailed per-version changes, see the [Changelog](#changelog).
+
+### v1.3.x — Official Participation Signals
+
+The v1.3.x series turns Wallet Intelligence Layer from a general wallet profiler into a more DAC-specific participation analyzer.
+
+Major additions:
+
+- **Known Collection Registry** — identifies DAC Inception Rank as a known DAC ecosystem collection.
+- **DAC Inception Rank Signal** — treats RANK badge ownership as a strong participation signal.
+- **Rank-aware scoring** — infers rank from the number of DAC Inception Rank badges held.
+- **Rank highlight UI** — displays inferred rank clearly in the Official Rank Signal panel and Wallet Intelligence Profile.
+- **Native Funds tiers** — adds DACC balance tiers as part of the scoring model.
+- **DACC Stake Signal** — adds the official staking contract as a participation signal.
+- **Stake Flow Classifier** — estimates current stake using recognized stake-in and decoded unstake-out transaction flow instead of simple wallet-to-contract value totals.
+
+The main goal of this series is to make the wallet checker more aligned with actual DAC Inception participation behavior.
+
+---
+
+### v1.2.0 — Versioned Scoring Policy
+
+This release introduced a locked scoring policy object.
+
+Major additions:
+
+- **Policy ID**
+- **Policy Version**
+- **Policy Status**
+- **Scoring Engine**
+- **Max Score**
+- **Versioned threshold definitions**
+- **Policy metadata in Raw JSON**
+
+This makes the scoring model auditable. If thresholds or point allocation change in future versions, older results can still be interpreted according to the policy version that produced them.
+
+---
+
+### v1.1.x — Transparent Scoring UI
+
+The v1.1.x series improves score readability and user trust.
+
+Major additions:
+
+- **Scoring Breakdown panel**
+- **Per-category score components**
+- **Matched rule / condition display**
+- **Points earned vs maximum points**
+- **NFT Participation percentage display**
+
+This makes the reputation score easier to understand and reduces ambiguity around how wallet status is generated.
+
+---
+
+### v1 — Initial Wallet Intelligence Layer
+
+The initial release established the base wallet checker.
+
+Major additions:
+
+- **No-connect wallet checking**
+- **Proof of Native Funds**
+- **Proof of Assets Engine**
+- **Activity Analytics**
+- **Portfolio Intelligence**
+- **Reputation Scoring**
+- **Sybil-risk estimation**
+- **Raw JSON Output**
+- **Live Chain Stats**
+- **Failure-safe output handling**
+
+This version created the foundation for a client-side, read-only DAC testnet wallet intelligence interface.
+
+
+---
+
 ## Table of Contents
 
 - [Overview](#overview)
+- [Major Release Highlights](#major-release-highlights)
 - [Why This Exists](#why-this-exists)
 - [Community Disclaimer](#community-disclaimer)
 - [Interface Overview](#interface-overview)
