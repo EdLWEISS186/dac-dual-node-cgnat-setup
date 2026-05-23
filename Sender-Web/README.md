@@ -31,39 +31,92 @@ This patch release completes the NFT Launchpad infrastructure and adds live netw
 
 ---
 
-### v1.3.0 — Multi-Send & Metrics Export
+## Major Release Highlights
 
-**Multi-Send**
-Batch token distribution to multiple recipients in a single signed transaction. Users configure the recipient count, enter or randomize each address individually, set a per-address amount, and submit — the `DACMultiSend` smart contract handles distribution within a single block execution. No repeated signing. Directly applicable for generating high-volume, multi-destination transaction load on the testnet.
+This section summarizes the major milestones across DAC•SENDER releases.  
+For detailed per-version changes, see the [Changelog](#changelog).
 
-**Metrics Export**
-Session transaction history is exportable as a CSV file at any point during an active session. Fields include transaction type, hash, recipient addresses, amount, total dispatched, confirmation status, ISO timestamp, and gas consumed.
+### v1.4.x — NFT Launchpad, On-Chain Registry & Real-time Monitoring
+
+The v1.4.x series turns DAC•SENDER from a transaction sender into a broader community-facing dApp tooling suite.
+
+Major additions:
+
+- **Deploy NFT** — ERC-721 collection deployment directly from the browser.
+- **IPFS integration** — artwork and metadata upload through Pinata.
+- **DACNFTRegistry** — shared on-chain registry for deployed NFT collections.
+- **NFT Launchpad** (`mint.html`) — public mint portal for collections deployed through DAC•SENDER.
+- **My Collections tab** — reads `mintedPerWallet` across registered collections.
+- **Connect Wallet overlay** — consistent entry flow across `index.html` and `mint.html`.
+- **Protocol fee safety fix** — 1 DACC absolute cap replacing percentage-only cap behavior.
+- **Real-time Stats Bar** — block height, TPS, block time, RPC latency, and gas price across both interfaces.
+- **RPC failure handling** — contextual unavailable states and retry flows for public RPC instability.
+
+The main goal of this series is to make DAC•SENDER usable not only for transaction generation, but also for NFT deployment, discovery, minting, and live network observation.
+
+---
+
+### v1.3.x — Multi-Send & Metrics Export
+
+The v1.3.x series expands DAC•SENDER from single-recipient interaction into batch transaction generation and structured reporting.
+
+Major additions:
+
+- **Multi-Send** — batch dispatch to multiple recipients in a single signed transaction through `DACMultiSend`.
+- **Randomize All** — bulk random recipient generation for faster multi-wallet traffic simulation.
+- **Per-row recipient editing** — configurable recipient and amount structure.
+- **Metrics Export** — CSV export of session transaction history.
+- **Multi-Send alignment fix** — CSS Grid layout for consistent row structure.
+
+The main goal of this series is to generate higher-volume, multi-destination transaction activity that better resembles real network usage than repeated single transfers.
 
 ---
 
-### v1.2.0
+### v1.2.x — Contract Deployment & Protocol Fee Routing
 
-**Deploy Contract**
-One-click smart contract deployment directly from the browser. No Hardhat, no Remix, no CLI. Connect wallet, click Deploy, sign — contract is live on DAC Testnet.
+The v1.2.x series introduces smart contract execution paths into the testnet workflow.
 
-**Protocol Fee Toggle**
-An opt-in protocol fee mechanism available on both Send and Deploy tabs. When enabled, transactions are routed through a proxy smart contract that applies a 5% fee on gas cost. Disclosed transparently via the ⓘ indicator. Users retain full control over whether to enable it.
+Major additions:
 
-**Why this feature exists**
+- **Deploy Contract** — one-click `DACInception` contract deployment from the browser.
+- **Protocol Fee Toggle** — optional proxy routing through `DACSendProxy`.
+- **Internal transaction visibility** — proxy routing creates internal value movement visible on the explorer.
+- **Disconnect Wallet** — wallet session control from the topbar.
+- **Decimal separator fix** — amount input uses `.` consistently across locales.
+- **JavaScript obfuscation** — client-side logic obfuscated as a deterrent against casual extraction.
 
-Beyond the fee mechanism itself, routing transactions through a proxy smart contract serves a direct infrastructure testing purpose. A direct native token transfer (`EOA → EOA`) is the simplest possible transaction type — it exercises only the most basic execution path on the EVM. When transactions are routed through a smart contract intermediary, the execution profile changes significantly: the EVM must parse and execute contract bytecode, process internal calls, handle state writes, emit events, and manage value forwarding across contract boundaries. This produces a fundamentally different load pattern on the network.
-
-In practice, this means the Protocol Fee toggle enables the collection of behavioral data that a plain transfer cannot provide — specifically around smart contract execution performance, internal transaction handling, gas accounting under contract call overhead, and the accuracy of block explorer indexing for complex transaction types. Validator nodes must process not just the outer transaction but also resolve the internal call stack, which stresses the execution layer in ways that are representative of how real dApp interactions will behave on mainnet.
-
-The Deploy Contract feature follows the same reasoning: deploying a contract generates a contract creation transaction, which exercises a different and heavier EVM code path than any transfer or call. Combined, these features allow testnet participants to contribute transaction load that spans the full spectrum of EVM execution types — native transfers, contract calls, and contract creation — producing a more complete picture of network readiness before mainnet.
+The main goal of this series is to move beyond simple `EOA → EOA` transfers and create more diverse EVM execution patterns, including contract calls, state writes, internal transfers, and contract deployment.
 
 ---
+
+### v1.1.x / v1.0.0 — Initial Sender Foundation
+
+The initial series establishes the base DAC•SENDER interface.
+
+Major additions:
+
+- **Native DACC transfer interface**
+- **Wallet connection**
+- **Quick amount presets**
+- **Balance display**
+- **Random recipient selection**
+- **Transaction log panel**
+- **Explorer links**
+- **Auto network switch**
+- **GitHub Pages deployment**
+
+This created the foundation for a no-build, no-backend testnet transaction interface.
+
+---
+
+
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Major Release Highlights](#major-release-highlights)
+- [Interface Overview](#interface-overview)
 - [Architecture](#architecture)
-- [Screenshots](#screenshots)
 - [Why Transaction Volume Matters on Testnet](#why-transaction-volume-matters-on-testnet)
   - [1. Network Throughput and Stability](#1-network-throughput-and-stability)
   - [2. RPC Infrastructure Resilience](#2-rpc-infrastructure-resilience)
@@ -80,6 +133,7 @@ The Deploy Contract feature follows the same reasoning: deploying a contract gen
 - [Network Configuration](#network-configuration)
 - [Features](#features)
 - [Local Usage](#local-usage)
+- [Node-Level Evidence](#node-level-evidence)
 - [Technical Notes](#technical-notes)
 - [Security](#security)
 - [Future Work](#future-work)
