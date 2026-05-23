@@ -1,6 +1,6 @@
 # Testnet (Inception) — Technical Reports
 
-The following reports document technical findings from field testing conducted during active contribution to the **DAC Testnet (Inception)** campaign. Each report covers a distinct infrastructure or compatibility issue identified through independent observation, diagnostics, and validation testing.
+The following reports document technical findings from field testing conducted during active contribution to the **DAC Testnet (Inception)** campaign. Each report covers a distinct infrastructure, compatibility, application-layer, or on-chain tooling issue identified through independent observation, diagnostics, development, and validation testing.
 
 ---
 
@@ -13,6 +13,7 @@ The following reports document technical findings from field testing conducted d
 | 3 | [EIP-1559 Compatibility & Txpool Analysis](./3.%20EIP-1559%20Compatibility%20%26%20Txpool%20Analysis.pdf) | May 9, 2026 |
 | 4 | [Frontend–Blockchain State Desynchronization After Successful NFT Mint](./4.%20Frontend%E2%80%93Blockchain%20State%20Desynchronization%20After%20Successful%20NFT%20Mint.pdf) | May 10, 2026 |
 | 5 | [Official Enode Evolution Analysis — Infrastructure Rotation & Network Maturation](./5.%20Official%20Enode%20Evolution%20Analysis%20%E2%80%94%20Infrastructure%20Rotation%20%26%20Network%20Maturation.pdf) | May 11, 2026 |
+| 6 | [DAC SENDER — Testnet Transaction Interface](./6.%20DAC%20SENDER%20%E2%80%94%20Testnet%20Transaction%20Interface.pdf) | May 22, 2026 |
 
 ---
 
@@ -32,6 +33,9 @@ The following reports document technical findings from field testing conducted d
 
 **5. Official Enode Evolution Analysis — Infrastructure Rotation & Network Maturation** — *May 11, 2026*
 > Infrastructure analysis documenting the evolution of the official DAC Testnet enode registry since before the Inception campaign began and continuing through the campaign. The enode list followed the pattern 2 → 5 → 9 → 10 → 8 (current), reflecting a deliberate infrastructure lifecycle of bootstrap, expansion, and consolidation. Active peer topology data captured via `admin.peers` revealed official node identities (DAC Testnet Authority 1/2/3, DAC Testnet RPC 03), a previously undocumented internal node (84.46.253.182), and confirmed that removed nodes may continue peering beyond their removal from the published list. A real-time enode count change from 6 to 8 — observed precisely while this report was being prepared — directly validated the dynamic nature of the registry.
+
+**6. DAC SENDER — Testnet Transaction Interface** — *May 22, 2026*
+> Application development report documenting the design, deployment, and operational validation of **DAC•SENDER v1.4.3**, a static no-build, no-backend client-side web interface built to support DAC Quantum Chain Testnet infrastructure testing. The tool generates diverse, measurable EVM activity across native transfers, proxy transfers, multi-send batch transfers, contract deployment, NFT deployment, registry registration, and NFT minting. The report also documents technical findings observed during development, including the 2,824 Gwei gas price anomaly, the DACSendProxy protocol fee cap bug and fix, EVM London compatibility constraints caused by the absence of the PUSH0 opcode, recurring public RPC 502/504 failures, and the implementation of an on-chain NFT registry architecture for the NFT Launchpad. This report marks a transition from pure infrastructure diagnostics into community-built on-chain tooling for reproducible testnet activity generation and application-layer validation.
 
 ---
 
