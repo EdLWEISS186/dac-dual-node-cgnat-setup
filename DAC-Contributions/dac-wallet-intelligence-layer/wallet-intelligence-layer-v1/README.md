@@ -1,8 +1,8 @@
-# DAC Wallet Intelligence Layer v1.2.0 — Community Wallet Checker
+# DAC Wallet Intelligence Layer v1.3.3 — Community Wallet Checker
 
 A client-side wallet intelligence interface for the DAC Quantum Chain Testnet.
 
-This tool allows users to paste a wallet address and generate a read-only wallet profile from public DAC testnet data: native funds, NFT ownership, activity metrics, portfolio behavior, reputation scoring, and Sybil-risk estimation.
+This tool allows users to paste a wallet address and generate a read-only wallet profile from public DAC testnet data: native funds, DACC staking flow, NFT ownership, official DAC Inception Rank signal, activity metrics, portfolio behavior, reputation scoring, and Sybil-risk estimation.
 
 > **Important:** This is a community-built checker by **JERUZZALEM — DAC Infra Tester**.  
 > It is **not an official DAC checker**, not an official Sybil detector, and not an official reputation system.  
@@ -11,7 +11,7 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 **Live:**  
 - [DAC•Wallet Intelligence Layer](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/)
 
-![Version](https://img.shields.io/badge/version-v1.2.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-v1.3.3-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-see%20root-lightgrey?style=flat-square)
 ![Testnet Only](https://img.shields.io/badge/network-testnet%20only-yellow?style=flat-square)
 ![Static Site](https://img.shields.io/badge/hosted-GitHub%20Pages-blue?style=flat-square)
@@ -23,24 +23,32 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 
 ## Latest Version
 
-### v1.2.0 — Versioned Scoring Policy
+### v1.3.3 — Stake Flow Classifier
 
-This release introduces a versioned scoring policy layer on top of the Transparent Scoring UI.
+This release improves the DACC stake signal by replacing simple wallet-to-contract value estimation with a stake/unstake transaction-flow classifier.
 
-The purpose of this update is to make scoring easier to audit over time. If thresholds or scoring logic change in the future, older results can still be interpreted according to the policy version that generated them.
+The purpose of this update is to separate real stake position changes from reward or fee transfers returned by the staking contract.
 
 This version introduces:
 
-- **Policy ID:** `WIL-2026-05-v1.2.0`
-- **Policy Version:** `WIL-v1.2.0`
-- **Policy Status:** `LOCKED`
-- **Scoring Engine:** `versioned-reputation-scoring-v1.2.0`
-- **Max Score:** `100`
-- **Versioned scoring metadata in Raw JSON**
-- **Locked threshold definitions for score components and labels**
+- **Stake selector detection:** `0x3a4b66f1`
+- **Unstake selector detection:** `0x2e17de78`
+- **Stake-in detection:** wallet → staking contract, value > 0
+- **Unstake-out decoding:** unstake amount decoded from calldata
+- **Reward/fee separation:** contract → wallet internal transfers are tracked separately and are not automatically subtracted from stake
+- **Estimated current stake:** `totalStakeIn - totalUnstakeOut`
+- **Stake confidence metadata:** `VERY_HIGH`, `HIGH`, or `MEDIUM_HIGH`
+- **Stake-flow metadata in Raw JSON**
 
-The v1.1.1 NFT Participation percentage display remains included.
+Current scoring policy:
 
+```text
+Policy ID      : WIL-2026-05-v1.3.3
+Policy Version : WIL-v1.3.3
+Status         : LOCKED
+Engine         : stake-flow-classifier-scoring-v1.3.3
+Max Score      : 100
+```
 
 ---
 
@@ -51,6 +59,8 @@ The v1.1.1 NFT Participation percentage display remains included.
 - [Community Disclaimer](#community-disclaimer)
 - [Interface Overview](#interface-overview)
 - [Architecture](#architecture)
+- [Official Participation Signals](#official-participation-signals)
+- [Stake Flow Classifier](#stake-flow-classifier)
 - [Scoring and Label Definitions](#scoring-and-label-definitions)
 - [Transparent Scoring UI](#transparent-scoring-ui)
 - [Versioned Scoring Policy](#versioned-scoring-policy)
@@ -126,9 +136,9 @@ All labels such as:
 ```text
 VERY HIGH
 ADVANCED TESTNET USER
-ECOSYSTEM PARTICIPANT
+VERIFIED INCEPTION PARTICIPANT
+ADVANCED TESTNET PARTICIPANT
 NFT HEAVY
-ADVANCED ECOSYSTEM USER
 ELITE
 LOW SYBIL RISK
 ```
@@ -138,7 +148,7 @@ are **community-defined interpretation labels** created by **JERUZZALEM — DAC 
 The same applies to the thresholds used to generate those labels.  
 They are not official DAC thresholds.
 
-This tool should be understood as an experimental observation layer for testnet analytics, not as a formal identity, ranking, or reward mechanism.
+This tool should be understood as an experimental observation layer for testnet analytics, not as a formal identity, ranking, reward, or Sybil-verification mechanism.
 
 ---
 
@@ -166,7 +176,7 @@ The state after the DAC Explorer returns all required wallet data and the full p
 
 ### Wallet Output
 
-The main wallet output panel containing balance, transaction metrics, activity analytics, portfolio intelligence, reputation scoring, scoring breakdown, and versioned scoring policy metadata.
+The main wallet output panel containing balance, estimated stake, transaction metrics, activity analytics, portfolio intelligence, reputation scoring, scoring breakdown, and versioned scoring policy metadata.
 
 ![Wallet Output](assets/WalletOutput.png)
 
@@ -205,13 +215,25 @@ The current web implementation is shipped as static files, but the internal logi
                               ▼
 ┌──────────────────────────────────────────────────────────────┐
 │ proof-native-funds.js                                        │
-│ eth_getBalance / native tDACC balance                        │
+│ eth_getBalance / native DACC balance                         │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│ stake-flow-classifier.js                                     │
+│ DACC stake-in / unstake-out / reward-flow estimation         │
 └──────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌──────────────────────────────────────────────────────────────┐
 │ proof-assets-engine.js                                       │
 │ NFT ownership / collections / assets                         │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│ known-collection-registry.js                                 │
+│ DAC Inception Rank / known official collection signal        │
 └──────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -254,19 +276,131 @@ wallet-intelligence.js
         │   ├── balance
         │   ├── tokenlist
         │   ├── txlist
+        │   ├── txlistinternal
         │   └── tokennfttx
         │
+        ├── DAC RPC
+        │   ├── eth_getBalance
+        │   ├── eth_getTransactionCount
+        │   └── eth_call fallback attempt
+        │
         ├── Proof of Native Funds
+        ├── Stake Flow Classifier
         ├── Proof of Assets Engine
+        ├── Known Collection Registry
         ├── Activity Analytics v1
         ├── Portfolio Intelligence v1
-        └── Reputation Scoring v1
+        └── Reputation Scoring v1.3.3
         │
         ▼
 Wallet Intelligence Layer output
 ```
 
-### Primary Data Source
+---
+
+## Official Participation Signals
+
+Version `v1.3.x` introduces official participation signal awareness.
+
+The checker treats the following signals as more meaningful than ordinary NFT or transaction count alone:
+
+### DAC Inception Rank
+
+```text
+Collection : DAC Inception Rank
+Symbol     : RANK
+Standard   : DRC-721
+Contract   : 0xB36ab4c2Bd6aCfC36e9D6c53F39F4301901Bd647
+Role       : Progress badge / rank NFT
+```
+
+Since users can mint a new RANK badge when they reach a new progress threshold, the checker uses the **number of RANK badges held** as an inferred rank signal.
+
+### DACC Stake Signal
+
+```text
+Contract : 0x3691A78bE270dB1f3b1a86177A8f23F89A8Cef24
+Role     : DACC staking / QE pool interaction
+```
+
+The official staking interface is flexible. Users can stake, add more stake, or unstake without a fixed lock duration.  
+Because reward or fee transfers may be returned by the contract during stake and unstake activity, v1.3.3 uses a transaction-flow classifier instead of simply subtracting every contract-to-wallet transfer.
+
+---
+
+## Stake Flow Classifier
+
+Version `v1.3.3` classifies stake and unstake activity using transaction selectors and calldata.
+
+### Stake
+
+```text
+selector : 0x3a4b66f1
+from     : wallet
+to       : staking contract
+value    : > 0 DACC
+```
+
+Stake amount is read from the top-level transaction value.
+
+```text
+totalStakeIn += tx.value
+```
+
+Any internal transfer from the staking contract back to the wallet during this transaction is treated as reward/fee flow, not as an unstake.
+
+### Unstake
+
+```text
+selector : 0x2e17de78
+from     : wallet
+to       : staking contract
+value    : 0 DACC
+```
+
+Unstake amount is decoded from the first `uint256` argument in calldata.
+
+```text
+totalUnstakeOut += decodedAmountFromInput
+```
+
+Internal transfers from the staking contract back to the wallet may include both reward/fee and principal return.  
+The principal unstake amount is not inferred by subtracting internal transfers; it is decoded from the unstake calldata.
+
+### Estimated Current Stake
+
+```text
+estimatedCurrentStake = totalStakeIn - totalUnstakeOut
+```
+
+If the result is below zero, the checker displays `0`.
+
+### Reward / Fee Flow
+
+If internal transaction data is available, the checker also calculates:
+
+```text
+rewardReceived
+contractOutTotal
+rewardTraceAvailable
+rewardReadMode
+```
+
+This is shown as supporting metadata. It does not directly reduce the estimated current stake unless the unstake amount is decoded from calldata.
+
+### Confidence
+
+The stake signal includes confidence metadata:
+
+| Confidence | Meaning |
+|---|---|
+| `VERY_HIGH` | Direct contract read matches usable stake data or returns a positive value |
+| `HIGH` | Stake-flow classifier works and internal reward trace is available |
+| `MEDIUM_HIGH` | Stake-flow classifier works, but internal reward trace is unavailable |
+
+---
+
+## Primary Data Source
 
 ```text
 https://exptest.dachain.tech/api
@@ -275,10 +409,11 @@ https://exptest.dachain.tech/api
 Used for:
 
 ```text
-balance     → native DAC testnet balance
-tokenlist   → ERC-721 NFT ownership
-txlist      → transaction history count
-tokennfttx  → NFT transfer activity count
+balance         → native DAC testnet balance
+tokenlist       → ERC-721 NFT ownership
+txlist          → transaction history and stake/unstake classifier
+txlistinternal  → reward/fee flow when available
+tokennfttx      → NFT transfer activity count
 ```
 
 ### RPC Fallback
@@ -287,16 +422,17 @@ tokennfttx  → NFT transfer activity count
 https://rpctest.dachain.tech/
 ```
 
-Used only when the explorer is unavailable.
+Used only when explorer modules are unavailable.
 
 RPC fallback can provide:
 
 ```text
 eth_getBalance          → native balance
 eth_getTransactionCount → outgoing transaction count / nonce
+eth_call                → optional staking contract read attempt
 ```
 
-RPC fallback cannot fully replace the explorer because standard RPC does not provide complete NFT inventory or NFT transfer history.
+RPC fallback cannot fully replace the explorer because standard RPC does not provide complete NFT inventory, NFT transfer history, or full wallet-level stake-flow history.
 
 ---
 
@@ -308,15 +444,17 @@ It is designed to turn observable testnet metrics into a readable wallet profile
 
 ### Input Metrics
 
-The full score requires all of the following verified explorer data:
+The full score requires verified explorer data for:
 
 | Metric | Source | Description |
 |---|---|---|
-| Native Balance | `balance` | Native DAC testnet token balance |
+| Native Balance | `balance` / RPC fallback | Native DAC testnet token balance |
+| Estimated Current Stake | `txlist` + selector classifier | Estimated current DACC stake |
 | Transaction Count | `txlist` | Number of explorer-indexed transactions |
 | NFT Transfers | `tokennfttx` | Number of NFT transfer events involving the wallet |
 | Total Collections | `tokenlist` | Number of ERC-721 collections held |
 | Total NFT Holdings | `tokenlist` | Total ERC-721 items held across collections |
+| RANK Badge Count | `tokenlist` | Number of DAC Inception Rank badges held |
 
 If one or more required explorer modules fail, the full reputation score is not generated.
 
@@ -337,20 +475,6 @@ These labels are not official DAC labels. They are community-defined categories 
 
 ---
 
-### Engagement Type
-
-Engagement type combines transaction activity with NFT participation.
-
-| Condition | Label |
-|---|---|
-| `txCount > 1000` and `totalNFTs > 100` | `ADVANCED TESTNET USER` |
-| `txCount > 500` and `totalCollections >= 10` | `ECOSYSTEM PARTICIPANT` |
-| otherwise | `CASUAL USER` |
-
-The label `ADVANCED TESTNET USER` means the wallet has shown high activity and broad NFT interaction under this scoring model. It does not imply official DAC recognition.
-
----
-
 ### NFT Participation
 
 NFT Participation is shown as a percentage.
@@ -367,105 +491,76 @@ Example:
 
 If `txCount` is zero, the value is shown as `0.00%`.
 
-This value is meant to show how much of the wallet's total activity is related to NFT transfer behavior.
+---
+
+### Native Funds Score
+
+Native funds are scored using DACC balance tiers.
+
+| Condition | Points |
+|---|---:|
+| `nativeBalance >= 100` | `15` |
+| `nativeBalance >= 75` | `14` |
+| `nativeBalance >= 50` | `12` |
+| `nativeBalance >= 25` | `9` |
+| `nativeBalance >= 10` | `6` |
+| `nativeBalance >= 5` | `4` |
+| below `5` | `2` |
 
 ---
 
-### Diversity Score
+### DACC Stake Score
 
-Diversity score is based on the number of ERC-721 collections held.
+DACC stake score is based on the estimated current stake.
 
-| Condition | Label |
-|---|---|
-| `totalCollections >= 10` | `HIGH` |
-| `totalCollections >= 5` | `MEDIUM` |
-| below `5` | `LOW` |
-
-This is a simple collection-diversity heuristic. It does not evaluate rarity, quality, legitimacy, floor price, or official collection status.
-
----
-
-### Portfolio Style
-
-Portfolio style is based on NFT holdings and collection count.
-
-| Condition | Label |
-|---|---|
-| `totalNFTs > 100` and `totalCollections > 10` | `NFT HEAVY` |
-| `totalNFTs > 0` | `BALANCED` |
-| `totalNFTs = 0` | `NO NFT ASSETS` |
-
-`NFT HEAVY` means the wallet has a large testnet NFT footprint under this model.
+| Condition | Points |
+|---|---:|
+| `stakedDacc >= 200` | `20` |
+| `stakedDacc >= 150` | `18` |
+| `stakedDacc >= 100` | `15` |
+| `stakedDacc >= 50` | `11` |
+| `stakedDacc >= 20` | `7` |
+| `stakedDacc >= 10` | `4` |
+| below `10` | `0` |
 
 ---
 
-### Wallet Archetype
+### DAC Inception Rank Score
 
-Wallet archetype combines native balance and NFT holdings.
+DAC Inception Rank score is based on the number of RANK badges held.
 
-| Condition | Label |
-|---|---|
-| `nativeBalance > 5` and `totalNFTs > 100` | `ADVANCED ECOSYSTEM USER` |
-| otherwise | `STANDARD USER` |
-
-This label is observational and not official.
-
----
-
-### Concentration
-
-Collection concentration measures how dominant the top NFT collection is inside the wallet.
-
-```text
-concentration = topCollectionAmount / totalNFTs * 100
-```
-
-| Condition | Label |
-|---|---|
-| `concentration >= 50%` | `HIGH` |
-| `concentration >= 25%` | `MEDIUM` |
-| below `25%` | `LOW` |
-
-A higher concentration means the wallet's NFT holdings are more heavily focused on a single collection.
+| Badge Count | Inferred Rank | Points |
+|---:|---|---:|
+| `13+` | `CROWN` | `25` |
+| `12` | `CIPHER` | `24` |
+| `11` | `PHANTOM` | `23` |
+| `10` | `INTERCEPTOR` | `21` |
+| `9` | `ARCHITECT` | `20` |
+| `8` | `WARRIOR` | `18` |
+| `7` | `SOVEREIGN` | `16` |
+| `6` | `SENTINEL` | `14` |
+| `5` | `VANGUARD` | `11` |
+| `4` | `SHADOW UNIT` | `9` |
+| `3` | `SEAL` | `7` |
+| `2` | `COMMANDO` | `5` |
+| `1` | `CADET` | `3` |
+| `0` | `NONE` | `0` |
 
 ---
 
 ### Reputation Score
 
-The reputation score is a 100-point community heuristic.
+Version `v1.3.3` uses six visible score components:
 
-#### Transaction Score
-
-| Condition | Points |
+| Component | Max Points |
 |---|---:|
-| `txCount >= 1000` | `40` |
-| `txCount >= 500` | `30` |
-| `txCount >= 100` | `20` |
-| below `100` | `10` |
-
-#### NFT Diversity Score
-
-| Condition | Points |
-|---|---:|
-| `totalCollections >= 10` | `25` |
-| `totalCollections >= 5` | `15` |
-| below `5` | `5` |
-
-#### NFT Holdings Score
-
-| Condition | Points |
-|---|---:|
-| `totalNFTs >= 200` | `20` |
-| `totalNFTs >= 100` | `15` |
-| below `100` | `5` |
-
-#### Native Balance Score
-
-| Condition | Points |
-|---|---:|
-| `nativeBalance >= 5` | `15` |
-| `nativeBalance >= 1` | `10` |
-| below `1` | `5` |
+| Transaction Score | `20` |
+| NFT Diversity Score | `10` |
+| NFT Holdings Score | `10` |
+| Native Funds Score | `15` |
+| DACC Stake Score | `20` |
+| DAC Inception Rank Score | `25` |
+| **Total** | **100** |
 
 ---
 
@@ -484,9 +579,12 @@ Again, these are community-defined labels for testnet analytics only.
 
 ### Trust Profile
 
+Trust profile is based on a combination of activity, official rank signal, and stake signal.
+
 | Condition | Label |
 |---|---|
-| `txCount > 1000` and `totalCollections > 10` | `ADVANCED TESTNET PARTICIPANT` |
+| `txCount > 1000`, `totalCollections > 10`, `rankBadgeCount >= 6`, and `stakedDacc >= 100` | `ADVANCED TESTNET PARTICIPANT` |
+| `rankBadgeCount >= 6` and `stakedDacc >= 50` | `VERIFIED INCEPTION PARTICIPANT` |
 | otherwise | `STANDARD USER` |
 
 This is not an identity verification system. It only summarizes observable activity under the current scoring logic.
@@ -506,16 +604,14 @@ It should not be treated as a definitive Sybil detection result.
 
 The model does not inspect:
 
-- wallet funding graph
-- shared funding sources
-- timing clusters
-- gas behavior similarity
 - device/IP data
 - social identity
 - off-chain proof
-- official campaign rules
+- official campaign eligibility
+- private user data
+- centralized backend data
 
-It only uses the public wallet metrics available through the DAC Explorer modules listed above.
+It only uses public wallet metrics available through DAC Explorer/RPC modules.
 
 ---
 
@@ -523,15 +619,18 @@ It only uses the public wallet metrics available through the DAC Explorer module
 
 Version `v1.1.0` introduced a transparent scoring panel.  
 Version `v1.1.1` improved NFT Participation readability by changing decimal ratio output into percentage format.  
-Version `v1.2.0` keeps both improvements and adds a versioned scoring policy layer.
+Version `v1.2.0` added a versioned scoring policy layer.  
+Version `v1.3.x` added official participation signals.
 
-The UI shows how the reputation score is built from four visible components:
+The UI shows how the reputation score is built from visible components:
 
 ```text
-Transaction Score      /40
-NFT Diversity Score    /25
-NFT Holdings Score     /20
-Native Balance Score   /15
+Transaction Score          /20
+NFT Diversity Score        /10
+NFT Holdings Score         /10
+Native Funds Score         /15
+DACC Stake Score           /20
+DAC Inception Rank Score   /25
 ```
 
 Each component displays:
@@ -547,57 +646,21 @@ This makes the score easier to audit and reduces ambiguity for users reviewing t
 
 ## Versioned Scoring Policy
 
-Version `v1.2.0` introduces a locked scoring policy object.
+Version `v1.3.3` uses a locked scoring policy object.
 
 The purpose is to make future scoring changes auditable. If a future version changes thresholds, labels, or point allocation, older outputs can still be interpreted according to the policy version that produced them.
 
 Current policy metadata:
 
 ```text
-Policy ID      : WIL-2026-05-v1.2.0
-Policy Version : WIL-v1.2.0
+Policy ID      : WIL-2026-05-v1.3.3
+Policy Version : WIL-v1.3.3
 Status         : LOCKED
-Engine         : versioned-reputation-scoring-v1.2.0
+Engine         : stake-flow-classifier-scoring-v1.3.3
 Max Score      : 100
 ```
 
-The raw JSON output includes scoring policy metadata:
-
-```json
-{
-  "scoringPolicy": {
-    "version": "WIL-v1.2.0",
-    "policyId": "WIL-2026-05-v1.2.0",
-    "status": "LOCKED",
-    "model": "versioned-reputation-scoring-v1.2.0",
-    "maxScore": 100,
-    "components": {
-      "transactionScore": {
-        "maxPoints": 40,
-        "thresholds": [
-          { "condition": "txCount >= 1000", "points": 40 },
-          { "condition": "txCount >= 500", "points": 30 },
-          { "condition": "txCount >= 100", "points": 20 },
-          { "condition": "txCount < 100", "points": 10 }
-        ]
-      },
-      "nftDiversityScore": {
-        "maxPoints": 25
-      },
-      "nftHoldingsScore": {
-        "maxPoints": 20
-      },
-      "nativeBalanceScore": {
-        "maxPoints": 15
-      }
-    },
-    "labels": {
-      "reputationLevel": "versioned label thresholds",
-      "sybilRisk": "versioned label thresholds"
-    }
-  }
-}
-```
+The raw JSON output includes scoring policy metadata, score components, threshold definitions, official rank signal, native funds signal, and official stake signal.
 
 This policy is still a **community-defined heuristic** and should not be interpreted as an official DAC reputation, eligibility, or Sybil system.
 
@@ -615,16 +678,7 @@ Full data        → full wallet intelligence
 
 ### Full Explorer Data
 
-If all required explorer modules return valid data:
-
-```text
-balance
-tokenlist
-txlist
-tokennfttx
-```
-
-the tool generates the full wallet intelligence profile.
+If all required explorer modules return valid data, the tool generates the full wallet intelligence profile.
 
 ### Partial Explorer Data
 
@@ -638,20 +692,16 @@ If the DAC Explorer is unavailable, the tool attempts RPC fallback.
 
 ### RPC Fallback
 
-RPC fallback can only generate a limited native proof:
+RPC fallback can only generate a limited native proof and outgoing transaction count.
 
-```text
-native balance
-outgoing transaction count / nonce
-```
-
-The following are not generated in RPC fallback mode:
+The following are not fully generated in RPC fallback mode:
 
 ```text
 NFT portfolio
 NFT transfer count
 full activity analytics
 portfolio intelligence
+complete stake-flow history
 reputation score
 Sybil-risk label
 ```
@@ -674,7 +724,8 @@ No random score, mock score, or fabricated wallet profile is generated.
 | Explorer | `https://exptest.dachain.tech` |
 | Explorer API | `https://exptest.dachain.tech/api` |
 | Native Symbol | `DACC` |
-| Displayed Testnet Token | `tDACC` |
+| Staking Contract | `0x3691A78bE270dB1f3b1a86177A8f23F89A8Cef24` |
+| DAC Inception Rank Contract | `0xB36ab4c2Bd6aCfC36e9D6c53F39F4301901Bd647` |
 
 ---
 
@@ -682,11 +733,14 @@ No random score, mock score, or fabricated wallet profile is generated.
 
 - **No wallet connection required** — users paste an address only.
 - **Read-only design** — no transaction signing, no wallet prompt, no private key access.
-- **Proof of Native Funds** — reads native balance from DAC Explorer.
+- **Proof of Native Funds** — reads native DACC balance from DAC Explorer/RPC.
+- **Stake Flow Classifier** — estimates current DACC stake from recognized stake and unstake transaction flow.
 - **Proof of Assets Engine** — reads ERC-721 ownership from `tokenlist`.
+- **Known Collection Registry** — identifies DAC Inception Rank ownership.
+- **Official Rank Signal** — infers rank from RANK badge count.
 - **Activity Analytics v1** — generates activity level, engagement type, NFT participation percentage, and diversity score.
 - **Portfolio Intelligence v1** — generates portfolio style, wallet archetype, top collection, concentration, and holdings summary.
-- **Reputation Scoring v1** — generates a community-defined score from verified data.
+- **Reputation Scoring v1.3.3** — generates a community-defined score from verified data.
 - **Transparent Scoring UI** — displays each score component, matched rule, and earned points.
 - **Versioned Scoring Policy** — includes locked policy metadata, policy ID, engine version, and threshold definitions in the raw JSON output.
 - **Sybil-risk estimation** — lightweight score-based label, clearly marked as experimental.
@@ -731,8 +785,12 @@ Example test wallet:
 - Does not use random/mock data in production.
 - All scoring is performed locally in the browser.
 - `Proof of Assets Engine` currently focuses on ERC-721 ownership.
-- There is currently only one primary DAC Explorer endpoint used by this checker.
-- Raw JSON now includes versioned scoring policy metadata.
+- `Stake Flow Classifier` currently uses known staking selectors:
+  - stake: `0x3a4b66f1`
+  - unstake: `0x2e17de78`
+- Reward/fee flow is tracked separately when internal transaction data is available.
+- Estimated current stake is calculated as `totalStakeIn - totalUnstakeOut`.
+- Raw JSON includes versioned scoring policy metadata and stake-flow metadata.
 - The current implementation is shipped in `index.html`, `wallet-intelligence.css`, and `wallet-intelligence.js`; the module names in the architecture section describe the conceptual separation of logic.
 
 ---
@@ -752,7 +810,8 @@ Example test wallet:
 
 Potential future directions, depending on available explorer data, contract design, and verification requirements.
 
-- **Known collection registry** — supplement explorer data with curated DAC NFT collection metadata, beginning with known official/community-visible collections such as DAC Inception Rank when appropriate.
+- **Stake classifier refinement** — improve principal/reward separation if verified ABI, event names, or official staking getter data becomes available.
+- **Known collection registry expansion** — add more verified DAC ecosystem collections when appropriate.
 - **Historical activity windowing** — classify recent activity separately from lifetime activity.
 - **Explorer-only Sybil heuristics** — improve Sybil-risk estimation using logic derived from public explorer data, without depending on a custom backend.
 - **Mintable / dynamic intelligence badge** — optional future NFT badge layer based on wallet status, preferably designed as an updateable or evolving badge rather than a static one.
@@ -761,6 +820,39 @@ Potential future directions, depending on available explorer data, contract desi
 ---
 
 ## Changelog
+
+### v1.3.3 — Stake Flow Classifier
+
+- Replaced simple staking value estimate with stake/unstake transaction-flow classification.
+- Added stake selector detection: `0x3a4b66f1`.
+- Added unstake selector detection: `0x2e17de78`.
+- Added decoded unstake amount from calldata.
+- Added estimated current stake formula: `totalStakeIn - totalUnstakeOut`.
+- Added reward/fee flow separation from stake position calculation.
+- Added stake confidence metadata.
+- Added stake-flow metadata to raw JSON output.
+- Updated policy engine to `stake-flow-classifier-scoring-v1.3.3`.
+
+### v1.3.2 — Stake-Aware Scoring
+
+- Added Native Funds Score tiers.
+- Added DACC Stake Score tiers.
+- Added staking contract signal.
+- Added estimated stake field to UI and Wallet Intelligence Profile.
+- Updated policy engine to `stake-aware-reputation-scoring-v1.3.2`.
+
+### v1.3.1 — Rank Highlight UI
+
+- Highlighted inferred DAC Inception Rank in the Official Rank Signal panel.
+- Added Inception Rank to the Wallet Intelligence Profile panel.
+
+### v1.3.0 — Known Collection Registry + DAC Inception Rank Scoring
+
+- Added Known Collection Registry.
+- Added DAC Inception Rank detection.
+- Added DAC Inception Rank as a scoring component.
+- Added inferred rank from RANK badge count.
+- Updated scoring model to include official rank signal.
 
 ### v1.2.0 — Versioned Scoring Policy
 
