@@ -1,4 +1,4 @@
-# DAC Wallet Intelligence Layer v1.1.1 — Community Wallet Checker
+# DAC Wallet Intelligence Layer v1.2.0 — Community Wallet Checker
 
 A client-side wallet intelligence interface for the DAC Quantum Chain Testnet.
 
@@ -11,7 +11,7 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 **Live:**  
 - [DAC•Wallet Intelligence Layer](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/)
 
-![Version](https://img.shields.io/badge/version-v1.1.1-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-v1.2.0-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-see%20root-lightgrey?style=flat-square)
 ![Testnet Only](https://img.shields.io/badge/network-testnet%20only-yellow?style=flat-square)
 ![Static Site](https://img.shields.io/badge/hosted-GitHub%20Pages-blue?style=flat-square)
@@ -23,14 +23,24 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 
 ## Latest Version
 
-### v1.1.1 — NFT Participation Percentage Display Fix
+### v1.2.0 — Versioned Scoring Policy
 
-This release keeps the v1.1.0 Transparent Scoring UI and applies a small readability improvement:
+This release introduces a versioned scoring policy layer on top of the Transparent Scoring UI.
 
-- **NFT Participation** is now displayed as a percentage instead of a decimal ratio.
-- Example: `0.19` is now shown as `19.00%`.
-- The value is reflected both in the UI and in the raw JSON output.
-- Scoring policy metadata is updated to `WIL-v1.1.1`.
+The purpose of this update is to make scoring easier to audit over time. If thresholds or scoring logic change in the future, older results can still be interpreted according to the policy version that generated them.
+
+This version introduces:
+
+- **Policy ID:** `WIL-2026-05-v1.2.0`
+- **Policy Version:** `WIL-v1.2.0`
+- **Policy Status:** `LOCKED`
+- **Scoring Engine:** `versioned-reputation-scoring-v1.2.0`
+- **Max Score:** `100`
+- **Versioned scoring metadata in Raw JSON**
+- **Locked threshold definitions for score components and labels**
+
+The v1.1.1 NFT Participation percentage display remains included.
+
 
 ---
 
@@ -43,6 +53,7 @@ This release keeps the v1.1.0 Transparent Scoring UI and applies a small readabi
 - [Architecture](#architecture)
 - [Scoring and Label Definitions](#scoring-and-label-definitions)
 - [Transparent Scoring UI](#transparent-scoring-ui)
+- [Versioned Scoring Policy](#versioned-scoring-policy)
 - [Failure Handling Policy](#failure-handling-policy)
 - [Network Configuration](#network-configuration)
 - [Features](#features)
@@ -155,7 +166,7 @@ The state after the DAC Explorer returns all required wallet data and the full p
 
 ### Wallet Output
 
-The main wallet output panel containing balance, transaction metrics, activity analytics, portfolio intelligence, reputation scoring, and scoring breakdown.
+The main wallet output panel containing balance, transaction metrics, activity analytics, portfolio intelligence, reputation scoring, scoring breakdown, and versioned scoring policy metadata.
 
 ![Wallet Output](assets/WalletOutput.png)
 
@@ -511,9 +522,10 @@ It only uses the public wallet metrics available through the DAC Explorer module
 ## Transparent Scoring UI
 
 Version `v1.1.0` introduced a transparent scoring panel.  
-Version `v1.1.1` keeps that panel and improves NFT Participation readability.
+Version `v1.1.1` improved NFT Participation readability by changing decimal ratio output into percentage format.  
+Version `v1.2.0` keeps both improvements and adds a versioned scoring policy layer.
 
-The UI now shows how the reputation score is built from four visible components:
+The UI shows how the reputation score is built from four visible components:
 
 ```text
 Transaction Score      /40
@@ -529,20 +541,65 @@ Each component displays:
 - metric value used
 - rule/condition matched
 
-The raw JSON output also includes scoring policy metadata:
+This makes the score easier to audit and reduces ambiguity for users reviewing their wallet status.
+
+---
+
+## Versioned Scoring Policy
+
+Version `v1.2.0` introduces a locked scoring policy object.
+
+The purpose is to make future scoring changes auditable. If a future version changes thresholds, labels, or point allocation, older outputs can still be interpreted according to the policy version that produced them.
+
+Current policy metadata:
+
+```text
+Policy ID      : WIL-2026-05-v1.2.0
+Policy Version : WIL-v1.2.0
+Status         : LOCKED
+Engine         : versioned-reputation-scoring-v1.2.0
+Max Score      : 100
+```
+
+The raw JSON output includes scoring policy metadata:
 
 ```json
 {
   "scoringPolicy": {
-    "version": "WIL-v1.1.1",
-    "model": "transparent-reputation-scoring-v1.1.1",
+    "version": "WIL-v1.2.0",
+    "policyId": "WIL-2026-05-v1.2.0",
+    "status": "LOCKED",
+    "model": "versioned-reputation-scoring-v1.2.0",
     "maxScore": 100,
-    "note": "Community-defined scoring heuristic. Not an official DAC reputation or Sybil system."
+    "components": {
+      "transactionScore": {
+        "maxPoints": 40,
+        "thresholds": [
+          { "condition": "txCount >= 1000", "points": 40 },
+          { "condition": "txCount >= 500", "points": 30 },
+          { "condition": "txCount >= 100", "points": 20 },
+          { "condition": "txCount < 100", "points": 10 }
+        ]
+      },
+      "nftDiversityScore": {
+        "maxPoints": 25
+      },
+      "nftHoldingsScore": {
+        "maxPoints": 20
+      },
+      "nativeBalanceScore": {
+        "maxPoints": 15
+      }
+    },
+    "labels": {
+      "reputationLevel": "versioned label thresholds",
+      "sybilRisk": "versioned label thresholds"
+    }
   }
 }
 ```
 
-This makes the score easier to audit and reduces ambiguity for users reviewing their wallet status.
+This policy is still a **community-defined heuristic** and should not be interpreted as an official DAC reputation, eligibility, or Sybil system.
 
 ---
 
@@ -631,6 +688,7 @@ No random score, mock score, or fabricated wallet profile is generated.
 - **Portfolio Intelligence v1** — generates portfolio style, wallet archetype, top collection, concentration, and holdings summary.
 - **Reputation Scoring v1** — generates a community-defined score from verified data.
 - **Transparent Scoring UI** — displays each score component, matched rule, and earned points.
+- **Versioned Scoring Policy** — includes locked policy metadata, policy ID, engine version, and threshold definitions in the raw JSON output.
 - **Sybil-risk estimation** — lightweight score-based label, clearly marked as experimental.
 - **Raw JSON Output** — export-ready structured profile for reporting.
 - **Live Chain Stats** — block height, TPS estimate, block time, RPC latency, and gas price.
@@ -674,6 +732,7 @@ Example test wallet:
 - All scoring is performed locally in the browser.
 - `Proof of Assets Engine` currently focuses on ERC-721 ownership.
 - There is currently only one primary DAC Explorer endpoint used by this checker.
+- Raw JSON now includes versioned scoring policy metadata.
 - The current implementation is shipped in `index.html`, `wallet-intelligence.css`, and `wallet-intelligence.js`; the module names in the architecture section describe the conceptual separation of logic.
 
 ---
@@ -696,13 +755,21 @@ Potential future directions, depending on available explorer data, contract desi
 - **Known collection registry** — supplement explorer data with curated DAC NFT collection metadata, beginning with known official/community-visible collections such as DAC Inception Rank when appropriate.
 - **Historical activity windowing** — classify recent activity separately from lifetime activity.
 - **Explorer-only Sybil heuristics** — improve Sybil-risk estimation using logic derived from public explorer data, without depending on a custom backend.
-- **Versioned scoring policy** — publish each scoring model as a locked version to make future changes auditable.
 - **Mintable / dynamic intelligence badge** — optional future NFT badge layer based on wallet status, preferably designed as an updateable or evolving badge rather than a static one.
 - **Truebit function-task mode** — optionally compare browser output with a verified function-task execution path.
 
 ---
 
 ## Changelog
+
+### v1.2.0 — Versioned Scoring Policy
+
+- Added locked scoring policy metadata.
+- Added Policy ID: `WIL-2026-05-v1.2.0`.
+- Added policy status: `LOCKED`.
+- Added scoring engine label: `versioned-reputation-scoring-v1.2.0`.
+- Added versioned component thresholds and label definitions to raw JSON output.
+- Added policy metadata panel to the scoring breakdown section.
 
 ### v1.1.1 — NFT Participation Percentage Display Fix
 
@@ -746,4 +813,3 @@ is intended as an archive and continuation of DAC contribution work related to w
 ---
 
 *Authored by **JERUZZALEM** — DAC Infra Tester*  
-*Built by Communities for Communities*
