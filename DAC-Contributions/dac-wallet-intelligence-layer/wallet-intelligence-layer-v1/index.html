@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wallet Intelligence Layer v1.1.0 — DAC Testnet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./wallet-intelligence.css" />
+</head>
+
+<body>
+<div class="page">
+  <div class="side-label side-label-left">INTELLIGENCE</div>
+  <div class="side-label side-label-right">INCEPTION</div>
+
+  <header class="topbar">
+    <a class="brand-link" href="./" aria-label="DAC Wallet Intelligence Layer home">
+      <div class="brand-name">DAC<span>&bull;</span>WALLET INTELLIGENCE LAYER v1</div>
+      <div class="brand-sub">Wallet Checker</div>
+    </a>
+
+    <div class="topbar-center" aria-hidden="true">
+      <div class="topbar-made">Made by <strong>JERUZZALEM</strong> <span>&mdash; DAC Infra Tester</span></div>
+      <div class="topbar-built">Built by Communities for Communities</div>
+    </div>
+
+    <div class="topbar-right">
+      <a class="topbar-back" href="../../../Sender-Web/">&#x2190; DAC&bull;Sender</a>
+      <div class="read-pill">
+        <span class="dot on"></span>
+        <span>Read Only</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="stats-bar" id="stats-bar" aria-label="DAC chain live stats">
+    <div class="stats-live">
+      <div class="stats-live-dot dead" id="s-dot"></div>
+      <span class="stats-live-lbl" id="s-live">CONNECTING</span>
+    </div>
+    <div class="stats-items">
+      <div class="stats-item"><span class="skey">BLOCK</span><span class="sval" id="s-block">—</span></div>
+      <div class="stats-item"><span class="skey">TPS</span><span class="sval" id="s-tps">—</span></div>
+      <div class="stats-item"><span class="skey">BLOCK TIME</span><span class="sval" id="s-bt">—</span></div>
+      <div class="stats-item"><span class="skey">RPC LATENCY</span><span class="sval" id="s-lat">—</span></div>
+      <div class="stats-item"><span class="skey">GAS</span><span class="sval" id="s-gas">—</span></div>
+    </div>
+  </section>
+
+  <main class="main">
+    <section class="hero-grid">
+      <div class="hero-copy">
+        <div class="network-badge"><span class="dot on"></span>DAC TESTNET &middot; CHAIN 21894</div>
+        <h1>Wallet Intelligence Layer v1.1.0</h1>
+        <p>
+          Paste a wallet address and let the checker read public DAC testnet data:
+          native funds, NFT ownership, activity metrics, portfolio profile,
+          reputation score, and Sybil risk.
+        </p>
+
+        <div class="pipeline">
+          <div><span>01</span>Proof of Native Funds</div>
+          <div><span>02</span>Proof of Assets Engine</div>
+          <div><span>03</span>Activity Analytics</div>
+          <div><span>04</span>Portfolio Intelligence</div>
+          <div><span>05</span>Reputation Scoring</div>
+        </div>
+      </div>
+
+      <section class="check-card" aria-label="Wallet address checker">
+        <div class="check-head">
+          <div>
+            <p class="eyebrow">Check Wallet</p>
+            <h2>No connect wallet required</h2>
+          </div>
+          <div class="mini-orb">&#x25C8;</div>
+        </div>
+
+        <label for="walletInput">Wallet Address</label>
+        <div class="input-row">
+          <input
+            id="walletInput"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="0x..."
+          />
+          <button id="checkButton" type="button">Check</button>
+        </div>
+
+        <div class="check-actions">
+          <button id="retryButton" type="button" class="btn-ghost hidden">&#x21BA; Retry</button>
+          <button id="copyJsonButton" type="button" class="btn-ghost hidden">Copy JSON</button>
+        </div>
+
+        <p class="hint">
+          No signing. No private key. The result is generated only from public DAC Explorer/RPC data.
+        </p>
+      </section>
+    </section>
+
+    <section id="statusPanel" class="status-panel idle">
+      <div class="status-icon" id="statusIcon">&#x25C8;</div>
+      <div>
+        <span id="statusLabel" class="status-label">Idle</span>
+        <p id="statusMessage">Paste a wallet address to begin.</p>
+      </div>
+    </section>
+
+    <section id="resultPanel" class="results hidden">
+      <div class="result-topline">
+        <div>
+          <p class="eyebrow">Wallet Output</p>
+          <h2 id="resultTitle">Wallet Profile</h2>
+          <p id="resultSubtitle" class="result-subtitle"></p>
+        </div>
+        <div class="mode-pill" id="modePill">Explorer Primary</div>
+      </div>
+
+      <section class="scoreboard">
+        <article class="score-card hero-score">
+          <span class="score-label">Reputation</span>
+          <strong id="reputationScoreValue">—</strong>
+          <small id="reputationLevelValue">—</small>
+        </article>
+        <article class="score-card">
+          <span class="score-label">Native Balance</span>
+          <strong id="nativeBalanceValue">—</strong>
+          <small id="nativeBalanceSource">—</small>
+        </article>
+        <article class="score-card">
+          <span class="score-label">Transactions</span>
+          <strong id="transactionsValue">—</strong>
+          <small id="transactionsSource">—</small>
+        </article>
+        <article class="score-card">
+          <span class="score-label">NFT Holdings</span>
+          <strong id="nftHoldingsValue">—</strong>
+          <small id="nftHoldingsSource">—</small>
+        </article>
+      </section>
+
+      <section class="module-grid">
+        <article class="module-card">
+          <div class="module-title">
+            <span>&#x25C8;</span>
+            <h3>Activity Analytics v1</h3>
+          </div>
+          <dl>
+            <div><dt>Activity Level</dt><dd id="activityLevelValue">—</dd></div>
+            <div><dt>Engagement Type</dt><dd id="engagementTypeValue">—</dd></div>
+            <div><dt>NFT Participation</dt><dd id="nftParticipationValue">—</dd></div>
+            <div><dt>Diversity Score</dt><dd id="diversityScoreValue">—</dd></div>
+          </dl>
+        </article>
+
+        <article class="module-card">
+          <div class="module-title">
+            <span>&#x2726;</span>
+            <h3>Portfolio Intelligence v1</h3>
+          </div>
+          <dl>
+            <div><dt>Total Collections</dt><dd id="collectionsValue">—</dd></div>
+            <div><dt>Portfolio Style</dt><dd id="portfolioStyleValue">—</dd></div>
+            <div><dt>Wallet Archetype</dt><dd id="walletArchetypeValue">—</dd></div>
+            <div><dt>Top Collection</dt><dd id="topCollectionValue">—</dd></div>
+            <div><dt>Concentration</dt><dd id="concentrationValue">—</dd></div>
+          </dl>
+          <small class="source-note" id="collectionsSource">—</small>
+        </article>
+
+        <article class="module-card accent-card">
+          <div class="module-title">
+            <span>&#x265B;</span>
+            <h3>Reputation Scoring v1</h3>
+          </div>
+          <dl>
+            <div><dt>Trust Profile</dt><dd id="trustProfileValue">—</dd></div>
+            <div><dt>Sybil Risk</dt><dd id="sybilRiskValue">—</dd></div>
+            <div><dt>Score Policy</dt><dd>Verified data only</dd></div>
+            <div><dt>Fallback Rule</dt><dd>No mock score</dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section class="scoring-card" id="scoringBreakdownCard">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Transparent Scoring UI</p>
+            <h3>Scoring Breakdown</h3>
+          </div>
+          <small id="scoringPolicyLabel">WIL-v1.1.0</small>
+        </div>
+
+        <div class="score-breakdown-grid" id="scoreBreakdownGrid">
+          <div class="empty-state compact">
+            <div class="empty-icon">&#x25C8;</div>
+            <div class="empty-title">No scoring data yet</div>
+            <div class="empty-sub">Score components will appear after a full explorer check.</div>
+          </div>
+        </div>
+
+        <div class="score-explain" id="scoreExplanation">
+          Full reputation scoring is generated only when all required explorer modules are verified.
+        </div>
+      </section>
+
+      <section class="assets-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Proof of Assets Engine</p>
+            <h3>NFT Collections</h3>
+          </div>
+          <small id="collectionCountLabel">—</small>
+        </div>
+
+        <div class="collection-list" id="collectionsList">
+          <div class="empty-state">
+            <div class="empty-icon">&#x2726;</div>
+            <div class="empty-title">No data yet</div>
+            <div class="empty-sub">NFT collections will appear after a successful explorer check.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="json-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Raw Output</p>
+            <h3>Wallet Intelligence JSON</h3>
+          </div>
+          <small>Export-ready</small>
+        </div>
+        <pre id="rawJsonOutput">{}</pre>
+      </section>
+    </section>
+  </main>
+
+  <footer class="strip">
+    <div class="strip-seg"><div class="strip-dot"></div>DAC TESTNET LIVE</div>
+    <div class="strip-seg">exptest.dachain.tech/api</div>
+    <div class="strip-seg">rpctest.dachain.tech</div>
+    <div class="strip-seg">Chain ID &middot; 21894</div>
+    <div class="strip-seg"><a href="../../../Sender-Web/">&#x2190; DAC&bull;SENDER</a></div>
+  </footer>
+</div>
+
+<script src="./wallet-intelligence.js"></script>
+</body>
+</html>
