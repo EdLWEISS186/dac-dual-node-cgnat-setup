@@ -1,8 +1,8 @@
-# DAC Wallet Intelligence Layer v1.3.3 — Community Wallet Checker
+# DAC Wallet Intelligence Layer v1.4.2 — Community Wallet Checker
 
 A client-side wallet intelligence interface for the DAC Quantum Chain Testnet.
 
-This tool allows users to paste a wallet address and generate a read-only wallet profile from public DAC testnet data: native funds, DACC staking flow, NFT ownership, official DAC Inception Rank signal, activity metrics, portfolio behavior, reputation scoring, and Sybil-risk estimation.
+This tool allows users to paste a wallet address and generate a read-only wallet profile from public DAC testnet data: native funds, DACC staking flow, NFT ownership, official DAC Inception Rank signal, historical activity windows, activity metrics, portfolio behavior, reputation scoring, and Sybil-risk estimation.
 
 > **Important:** This is a community-built checker by **JERUZZALEM — DAC Infra Tester**.  
 > It is **not an official DAC checker**, not an official Sybil detector, and not an official reputation system.  
@@ -11,7 +11,7 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 **Live:**  
 - [DAC•Wallet Intelligence Layer](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/)
 
-![Version](https://img.shields.io/badge/version-v1.3.3-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-v1.4.2-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-see%20root-lightgrey?style=flat-square)
 ![Testnet Only](https://img.shields.io/badge/network-testnet%20only-yellow?style=flat-square)
 ![Static Site](https://img.shields.io/badge/hosted-GitHub%20Pages-blue?style=flat-square)
@@ -23,24 +23,25 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 
 ## Latest Version
 
-### v1.3.3 — Stake Flow Classifier
+### v1.4.2 — Historical Windowing Label Polish
 
-This release improves the DACC stake signal by replacing simple wallet-to-contract value estimation with a stake/unstake transaction-flow classifier.
+This patch release improves the wording in the Historical Activity Windowing panel.
 
-The purpose of this update is to separate real stake position changes from reward or fee transfers returned by the staking contract.
+The underlying v1.4.0 historical windowing logic remains the same, but the UI now uses more community-friendly language:
 
-This version introduces:
+- **Net Stake Delta** was renamed to **Net Staked**.
+- **Stake Tx Count** remains used for transaction count.
+- **Unstake Tx Count** remains used for unstake transaction count.
+- **Estimated Current Stake** remains used for the All Time window.
+- The explanatory note now clarifies that **Stake Tx Count** is transaction count, while **Net Staked** is the net DACC amount staked.
 
-- **Stake selector detection:** `0x3a4b66f1`
-- **Unstake selector detection:** `0x2e17de78`
-- **Stake-in detection:** wallet → staking contract, value > 0
-- **Unstake-out decoding:** unstake amount decoded from calldata
-- **Reward/fee separation:** contract → wallet internal transfers are tracked separately and are not automatically subtracted from stake
-- **Estimated current stake:** `totalStakeIn - totalUnstakeOut`
-- **Stake confidence metadata:** `VERY_HIGH`, `HIGH`, or `MEDIUM_HIGH`
-- **Stake-flow metadata in Raw JSON**
+Current app version:
 
-Current scoring policy:
+```text
+App Version : v1.4.2
+```
+
+Current scoring policy remains unchanged:
 
 ```text
 Policy ID      : WIL-2026-05-v1.3.3
@@ -50,12 +51,33 @@ Engine         : stake-flow-classifier-scoring-v1.3.3
 Max Score      : 100
 ```
 
+The scoring policy remains `WIL-v1.3.3` because v1.4.x adds historical windowing and UI wording improvements, not a scoring formula change.
+
 ---
 
 ## Major Release Highlights
 
 This section summarizes the major milestones across the Wallet Intelligence Layer releases.  
 For detailed per-version changes, see the [Changelog](#changelog).
+
+### v1.4.x — Historical Activity Windowing
+
+The v1.4.x series adds time-based activity analysis to the Wallet Intelligence Layer.
+
+Major additions:
+
+- **7D / 30D / All Time windows** — separates recent wallet activity from lifetime activity.
+- **Timestamp-based detection** — uses explorer timestamps when available.
+- **Block timestamp fallback** — attempts limited RPC-based block timestamp resolution when explorer timestamps are not available.
+- **Horizontal activity window UI** — displays 7D, 30D, and All Time as one horizontal activity variable.
+- **Stake Tx Count / Unstake Tx Count** — separates event count from amount-based stake movement.
+- **Net Staked** — shows the net DACC amount staked within a time window.
+- **Estimated Current Stake** — shown in the All Time window as the lifetime stake-in minus decoded stake-out estimate.
+- **Historical metadata in Raw JSON** — includes mode, confidence, data coverage, and window-level metrics.
+
+The main goal of this series is to help users and community testers understand whether a wallet is currently active, recently active, or mainly historically active.
+
+---
 
 ### v1.3.x — Official Participation Signals
 
@@ -141,6 +163,7 @@ This version created the foundation for a client-side, read-only DAC testnet wal
 - [Architecture](#architecture)
 - [Official Participation Signals](#official-participation-signals)
 - [Stake Flow Classifier](#stake-flow-classifier)
+- [Historical Activity Windowing](#historical-activity-windowing)
 - [Scoring and Label Definitions](#scoring-and-label-definitions)
 - [Transparent Scoring UI](#transparent-scoring-ui)
 - [Versioned Scoring Policy](#versioned-scoring-policy)
@@ -256,7 +279,7 @@ The state after the DAC Explorer returns all required wallet data and the full p
 
 ### Wallet Output
 
-The main wallet output panel containing balance, estimated stake, transaction metrics, activity analytics, portfolio intelligence, reputation scoring, scoring breakdown, and versioned scoring policy metadata.
+The main wallet output panel containing balance, estimated stake, historical activity windows, transaction metrics, activity analytics, portfolio intelligence, reputation scoring, scoring breakdown, and versioned scoring policy metadata.
 
 ![Wallet Output](assets/WalletOutput.png)
 
@@ -302,6 +325,12 @@ The current web implementation is shipped as static files, but the internal logi
 ┌──────────────────────────────────────────────────────────────┐
 │ stake-flow-classifier.js                                     │
 │ DACC stake-in / unstake-out / reward-flow estimation         │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│ historical-activity-windowing.js                             │
+│ 7D / 30D / All Time activity windows                         │
 └──────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -366,6 +395,7 @@ wallet-intelligence.js
         │
         ├── Proof of Native Funds
         ├── Stake Flow Classifier
+        ├── Historical Activity Windowing
         ├── Proof of Assets Engine
         ├── Known Collection Registry
         ├── Activity Analytics v1
@@ -480,6 +510,96 @@ The stake signal includes confidence metadata:
 
 ---
 
+
+## Historical Activity Windowing
+
+Version `v1.4.0` introduced time-based wallet activity windows.
+
+The checker separates activity into:
+
+```text
+7D
+30D
+All Time
+```
+
+This helps distinguish recent activity from lifetime wallet behavior.
+
+### Window Metrics
+
+Each window can show:
+
+| Metric | Meaning |
+|---|---|
+| `Transactions` | Number of transactions in the selected time window |
+| `NFT Transfers` | Number of NFT transfer events in the selected time window |
+| `Stake Tx Count` | Number of detected stake transactions |
+| `Unstake Tx Count` | Number of detected unstake transactions |
+| `Net Staked` | Net DACC staked within the time window |
+| `Stake In` | Total DACC sent into the staking contract |
+| `Stake Out` | Total DACC decoded from unstake calldata |
+
+For `7D` and `30D`, **Net Staked** means:
+
+```text
+Net Staked = Stake In - Stake Out
+```
+
+For `All Time`, the UI also displays:
+
+```text
+Estimated Current Stake = All Time Stake In - All Time Stake Out
+```
+
+This distinction is important because transaction count and DACC amount are different metrics.
+
+### Timestamp Modes
+
+The checker auto-detects which historical mode is possible from explorer data.
+
+| Mode | Meaning |
+|---|---|
+| `TIMESTAMP_BASED` | Explorer rows include timestamp data, so windows are calculated directly |
+| `BLOCK_TIMESTAMP_FALLBACK` | Explorer rows do not fully include timestamps, so block timestamps are resolved through RPC |
+| `BLOCK_TIMESTAMP_FALLBACK_LIMITED` | Only a limited number of block timestamps are resolved to avoid excessive RPC calls |
+| `NO_TIMESTAMP_AVAILABLE` | Explorer rows do not include usable timestamp or block data |
+| `NO_ACTIVITY_RETURNED` | Explorer returned no activity rows for the wallet |
+
+### Confidence
+
+Historical windows include confidence metadata:
+
+| Confidence | Meaning |
+|---|---|
+| `HIGH` | Direct timestamp data is available |
+| `MEDIUM` | Block timestamp fallback is used |
+| `LOW_MEDIUM` | Limited block timestamp fallback is used |
+| `LOW` | Historical windows are unavailable or insufficient |
+
+### Raw JSON
+
+The raw JSON output includes:
+
+```json
+{
+  "historicalActivity": {
+    "status": "READY",
+    "mode": "TIMESTAMP_BASED",
+    "confidence": "HIGH",
+    "windows": {
+      "7d": {},
+      "30d": {},
+      "allTime": {}
+    },
+    "dataCoverage": {}
+  }
+}
+```
+
+Historical activity is informational and does not modify the locked `WIL-v1.3.3` scoring policy.
+
+---
+
 ## Primary Data Source
 
 ```text
@@ -491,7 +611,7 @@ Used for:
 ```text
 balance         → native DAC testnet balance
 tokenlist       → ERC-721 NFT ownership
-txlist          → transaction history and stake/unstake classifier
+txlist          → transaction history, historical windows, and stake/unstake classifier
 txlistinternal  → reward/fee flow when available
 tokennfttx      → NFT transfer activity count
 ```
@@ -700,7 +820,8 @@ It only uses public wallet metrics available through DAC Explorer/RPC modules.
 Version `v1.1.0` introduced a transparent scoring panel.  
 Version `v1.1.1` improved NFT Participation readability by changing decimal ratio output into percentage format.  
 Version `v1.2.0` added a versioned scoring policy layer.  
-Version `v1.3.x` added official participation signals.
+Version `v1.3.x` added official participation signals.  
+Version `v1.4.x` added historical activity windows without changing the scoring formula.
 
 The UI shows how the reputation score is built from visible components:
 
@@ -782,6 +903,7 @@ NFT transfer count
 full activity analytics
 portfolio intelligence
 complete stake-flow history
+historical activity windows
 reputation score
 Sybil-risk label
 ```
@@ -815,6 +937,7 @@ No random score, mock score, or fabricated wallet profile is generated.
 - **Read-only design** — no transaction signing, no wallet prompt, no private key access.
 - **Proof of Native Funds** — reads native DACC balance from DAC Explorer/RPC.
 - **Stake Flow Classifier** — estimates current DACC stake from recognized stake and unstake transaction flow.
+- **Historical Activity Windowing** — displays 7D / 30D / All Time activity windows with transaction, NFT transfer, stake, unstake, and Net Staked metrics.
 - **Proof of Assets Engine** — reads ERC-721 ownership from `tokenlist`.
 - **Known Collection Registry** — identifies DAC Inception Rank ownership.
 - **Official Rank Signal** — infers rank from RANK badge count.
@@ -870,6 +993,8 @@ Example test wallet:
   - unstake: `0x2e17de78`
 - Reward/fee flow is tracked separately when internal transaction data is available.
 - Estimated current stake is calculated as `totalStakeIn - totalUnstakeOut`.
+- `Historical Activity Windowing` uses timestamp data when available and limited block timestamp fallback when needed.
+- `Net Staked` means `Stake In - Stake Out` for each historical window.
 - Raw JSON includes versioned scoring policy metadata and stake-flow metadata.
 - The current implementation is shipped in `index.html`, `wallet-intelligence.css`, and `wallet-intelligence.js`; the module names in the architecture section describe the conceptual separation of logic.
 
@@ -892,7 +1017,6 @@ Potential future directions, depending on available explorer data, contract desi
 
 - **Stake classifier refinement** — improve principal/reward separation if verified ABI, event names, or official staking getter data becomes available.
 - **Known collection registry expansion** — add more verified DAC ecosystem collections when appropriate.
-- **Historical activity windowing** — classify recent activity separately from lifetime activity.
 - **Explorer-only Sybil heuristics** — improve Sybil-risk estimation using logic derived from public explorer data, without depending on a custom backend.
 - **Mintable / dynamic intelligence badge** — optional future NFT badge layer based on wallet status, preferably designed as an updateable or evolving badge rather than a static one.
 - **Truebit function-task mode** — optionally compare browser output with a verified function-task execution path.
@@ -900,6 +1024,35 @@ Potential future directions, depending on available explorer data, contract desi
 ---
 
 ## Changelog
+
+### v1.4.2 — Net Staked Label Polish
+
+- Renamed `Net Stake Delta` to `Net Staked`.
+- Kept `Estimated Current Stake` unchanged for the All Time window.
+- Updated the historical window note to clarify that `Stake Tx Count` is transaction count, while `Net Staked` is the net DACC amount staked.
+- App version updated to `v1.4.2`.
+- Scoring policy remains `WIL-v1.3.3`.
+
+### v1.4.1 — Historical Windowing Wording Polish
+
+- Renamed `Stake Events` to `Stake Tx Count`.
+- Renamed `Unstake Events` to `Unstake Tx Count`.
+- Renamed `Net stake flow` to `Net Stake Delta`.
+- Renamed `In / Out` to `Stake In / Stake Out`.
+- Added `Estimated Current Stake` highlight for the All Time window.
+- App version updated to `v1.4.1`.
+- Scoring policy remains `WIL-v1.3.3`.
+
+### v1.4.0 — Historical Activity Windowing
+
+- Added 7D / 30D / All Time activity windows.
+- Added horizontal historical activity panel.
+- Added timestamp-based window calculation.
+- Added block timestamp fallback mode.
+- Added historical window metrics: transactions, NFT transfers, stake events, unstake events, stake in, stake out, and net stake flow.
+- Added historical activity metadata to raw JSON output.
+- App version updated to `v1.4.0`.
+- Scoring policy remains `WIL-v1.3.3`.
 
 ### v1.3.3 — Stake Flow Classifier
 
