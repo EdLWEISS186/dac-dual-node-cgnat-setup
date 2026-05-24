@@ -1,43 +1,32 @@
-# DAC Wallet Intelligence Layer v1.5.2 — Community Wallet Checker
+# DAC Wallet Intelligence Layer v1.5.2
 
-A client-side wallet intelligence interface for the DAC Quantum Chain Testnet.
+Client-side wallet intelligence interface for the **DAC Quantum Chain Testnet**.
 
-This tool allows users to paste a wallet address and generate a read-only wallet profile from public DAC testnet data: native funds, DACC staking flow, NFT ownership, official DAC Inception Rank signal, historical activity windows, activity metrics, portfolio behavior, reputation scoring, Sybil heuristics, stress-testing links, and Sybil-risk estimation.
+The checker reads public DAC testnet data from the explorer and RPC, then converts a pasted wallet address into a structured profile covering native funds, NFT ownership, activity metrics, portfolio profile, reputation scoring, Sybil heuristics, DAC Inception Rank signal, DACC stake signal, stress-testing links, and raw JSON output.
 
-> **Important:** This is a community-built checker by **JERUZZALEM — DAC Infra Tester**.  
-> It is **not an official DAC checker**, not an official Sybil detector, and not an official reputation system.  
-> The naming, scoring labels, thresholds, and interpretation logic are experimental community-defined heuristics created for testnet observation, reporting, and infrastructure research.
+> This is a community-built engineering tool by **JERUZZALEM — DAC Infra Tester**.  
+> It is not an official DAC product, not an official eligibility checker, and not a definitive Sybil detection system.
 
-**Live:**  
-- [DAC•Wallet Intelligence Layer](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/)
+**Live Interface**
+
+- [DAC Wallet Intelligence Layer](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/)
 
 ![Version](https://img.shields.io/badge/version-v1.5.2-blue?style=flat-square)
-![License](https://img.shields.io/badge/license-see%20root-lightgrey?style=flat-square)
-![Testnet Only](https://img.shields.io/badge/network-testnet%20only-yellow?style=flat-square)
-![Static Site](https://img.shields.io/badge/hosted-GitHub%20Pages-blue?style=flat-square)
+![Network](https://img.shields.io/badge/network-DAC%20testnet-yellow?style=flat-square)
 ![Chain ID](https://img.shields.io/badge/chain%20ID-21894-blueviolet?style=flat-square)
-![Read Only](https://img.shields.io/badge/mode-read%20only-brightgreen?style=flat-square)
-![No Wallet Connect](https://img.shields.io/badge/wallet%20connect-not%20required-brightgreen?style=flat-square)
+![Mode](https://img.shields.io/badge/mode-read%20only-brightgreen?style=flat-square)
+![Wallet Connect](https://img.shields.io/badge/wallet%20connect-not%20required-brightgreen?style=flat-square)
+![Backend](https://img.shields.io/badge/backend-none-lightgrey?style=flat-square)
 
 ---
 
 ## Latest Version
 
-### v1.5.2 — Sybil Heuristics Naming & UI Consistency
+### v1.5.2 — Wallet Quality Policy, Sybil Heuristics, and UI Consistency
 
-This patch finalizes the v1.5.x Sybil Heuristics interface and keeps the module versioning audit-friendly.
+Version `v1.5.2` is the current stable version of the Wallet Intelligence Layer.
 
-Changes in this release:
-
-- **Sybil Heuristics** heading simplified from `Explorer-only Sybil Heuristics`.
-- The mode label remains `EOH-v1.5.2 · EXPLORER_ONLY`, so the explorer-only nature is still visible.
-- Topbar branding now follows the active product version: `Wallet Intelligence Layer v1.5.2`.
-- Wallet Age in the Sybil Heuristics metric row is normalized to match neighboring cards.
-- First Transaction keeps the special compact age format with separate number/unit colors.
-- `known-collection-registry-v1.3.3` remains unchanged because the registry logic has not changed since v1.3.3.
-- The policy version remains locked under `WIL-v1.5.2`.
-
-Current app and policy metadata:
+Current metadata:
 
 ```text
 App Version     : v1.5.2
@@ -49,650 +38,347 @@ Sybil Mode      : EXPLORER_ONLY
 Registry Module : known-collection-registry-v1.3.3
 ```
 
----
+Key updates in v1.5.2:
 
-## Major Release Highlights
-
-This section summarizes the major milestones across the Wallet Intelligence Layer releases.  
-For detailed per-version changes, see the [Changelog](#changelog).
-
-### v1.5.x — Sybil Heuristics & Wallet Behavior Analysis
-
-The v1.5.x series adds a separate wallet behavior analysis layer on top of reputation scoring.
-
-Major additions:
-
-- **Sybil Heuristics** — explorer-only wallet behavior analysis without backend dependency.
-- **Pattern Health Score** — a 100-point behavior-health score separate from the reputation score.
-- **Sybil Risk Estimate** — LOW / MEDIUM / HIGH estimate based on explorer-visible behavior patterns.
-- **Activity Archetype** — classifies wallets as stress testers, builders, ecosystem participants, repetitive transfer wallets, low-data wallets, or mixed-pattern wallets.
-- **First Transaction output** — shows the first observed DAC Testnet transaction, age, date, block, type, and shortened hash.
-- **Wallet Maturity / Early Signal** — gives special weight to early DAC Testnet participation phases.
-- **Builder / Tester Signal** — protects stress testers, deployers, NFT launchers, DAC•SENDER users, and developer dummy wallets from being misread as repetitive farmers.
-- **Stress Testing links** — adds quick links to DAC•SENDER and DAC•SENDER NFT Launchpad.
-
-The main goal of this series is to separate constructive testnet behavior from low-diversity repetitive behavior while avoiding a backend dependency.
-
----
-
-### v1.4.x — Historical Activity Windowing
-
-The v1.4.x series adds time-based activity analysis to the Wallet Intelligence Layer.
-
-Major additions:
-
-- **7D / 30D / All Time windows** — separates recent wallet activity from lifetime activity.
-- **Timestamp-based detection** — uses explorer timestamps when available.
-- **Block timestamp fallback** — attempts limited RPC-based block timestamp resolution when explorer timestamps are not available.
-- **Horizontal activity window UI** — displays 7D, 30D, and All Time as one horizontal activity variable.
-- **Stake Tx Count / Unstake Tx Count** — separates event count from amount-based stake movement.
-- **Net Staked** — shows the net DACC amount staked within a time window.
-- **Estimated Current Stake** — shown in the All Time window as the lifetime stake-in minus decoded stake-out estimate.
-- **Historical metadata in Raw JSON** — includes mode, confidence, data coverage, and window-level metrics.
-
-The main goal of this series is to help users and community testers understand whether a wallet is currently active, recently active, or mainly historically active.
-
----
-
-### v1.3.x — Official Participation Signals
-
-The v1.3.x series turns Wallet Intelligence Layer from a general wallet profiler into a more DAC-specific participation analyzer.
-
-Major additions:
-
-- **Known Collection Registry** — identifies DAC Inception Rank as a known DAC ecosystem collection.
-- **DAC Inception Rank Signal** — treats RANK badge ownership as a strong participation signal.
-- **Rank-aware scoring** — infers rank from the number of DAC Inception Rank badges held.
-- **Rank highlight UI** — displays inferred rank clearly in the Official Rank Signal panel and Wallet Intelligence Profile.
-- **Native Funds tiers** — adds DACC balance tiers as part of the scoring model.
-- **DACC Stake Signal** — adds the official staking contract as a participation signal.
-- **Stake Flow Classifier** — estimates current stake using recognized stake-in and decoded unstake-out transaction flow instead of simple wallet-to-contract value totals.
-
-The main goal of this series is to make the wallet checker more aligned with actual DAC Inception participation behavior.
-
----
-
-### v1.2.0 — Versioned Scoring Policy
-
-This release introduced a locked scoring policy object.
-
-Major additions:
-
-- **Policy ID**
-- **Policy Version**
-- **Policy Status**
-- **Scoring Engine**
-- **Max Score**
-- **Versioned threshold definitions**
-- **Policy metadata in Raw JSON**
-
-This makes the scoring model auditable. If thresholds or point allocation change in future versions, older results can still be interpreted according to the policy version that produced them.
-
----
-
-### v1.1.x — Transparent Scoring UI
-
-The v1.1.x series improves score readability and user trust.
-
-Major additions:
-
-- **Scoring Breakdown panel**
-- **Per-category score components**
-- **Matched rule / condition display**
-- **Points earned vs maximum points**
-- **NFT Participation percentage display**
-
-This makes the reputation score easier to understand and reduces ambiguity around how wallet status is generated.
-
----
-
-### v1 — Initial Wallet Intelligence Layer
-
-The initial release established the base wallet checker.
-
-Major additions:
-
-- **No-connect wallet checking**
-- **Proof of Native Funds**
-- **Proof of Assets Engine**
-- **Activity Analytics**
-- **Portfolio Intelligence**
-- **Reputation Scoring**
-- **Sybil-risk estimation**
-- **Raw JSON Output**
-- **Live Chain Stats**
-- **Failure-safe output handling**
-
-This version created the foundation for a client-side, read-only DAC testnet wallet intelligence interface.
-
+- The Sybil panel is titled **Sybil Heuristics**.
+- The mode label remains `EOH-v1.5.2 · EXPLORER_ONLY`.
+- Topbar branding follows the active product version: `Wallet Intelligence Layer v1.5.2`.
+- Topbar subtext remains `Wallet Checker`.
+- Wallet Age in the Sybil Heuristics metric row is normalized to match neighboring metric cards.
+- First Transaction keeps compact age formatting with visual separation between numeric values and time units.
+- The known collection registry remains `known-collection-registry-v1.3.3` because the registry detection logic has not changed since v1.3.3.
 
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Major Release Highlights](#major-release-highlights)
-- [Why This Exists](#why-this-exists)
-- [Community Disclaimer](#community-disclaimer)
+- [Project Context](#project-context)
+- [Community and Engineering Disclaimer](#community-and-engineering-disclaimer)
 - [Interface Overview](#interface-overview)
 - [Architecture](#architecture)
-- [Official Participation Signals](#official-participation-signals)
-- [Stake Flow Classifier](#stake-flow-classifier)
-- [Historical Activity Windowing](#historical-activity-windowing)
-- [Sybil Heuristics](#sybil-heuristics)
-- [Stress Testing Links](#stress-testing-links)
-- [Scoring and Label Definitions](#scoring-and-label-definitions)
-- [Transparent Scoring UI](#transparent-scoring-ui)
-- [Versioned Scoring Policy](#versioned-scoring-policy)
-- [Failure Handling Policy](#failure-handling-policy)
+- [Data Sources](#data-sources)
 - [Network Configuration](#network-configuration)
-- [Features](#features)
+- [Wallet Quality Policy](#wallet-quality-policy)
+- [Reputation Scoring Layer](#reputation-scoring-layer)
+- [Sybil Heuristics](#sybil-heuristics)
+- [Historical Activity Windowing](#historical-activity-windowing)
+- [DAC Inception Rank Signal](#dac-inception-rank-signal)
+- [DACC Stake Signal](#dacc-stake-signal)
+- [Stress Testing Links](#stress-testing-links)
+- [Failure Handling](#failure-handling)
+- [Security Model](#security-model)
 - [Local Usage](#local-usage)
 - [Technical Notes](#technical-notes)
-- [Security](#security)
 - [Future Work](#future-work)
 - [Changelog](#changelog)
 - [License](#license)
-- [Repository Context](#repository-context)
+- [Author](#author)
 
 ---
 
 ## Overview
 
-The DAC Testnet is not only a transaction environment; it is also a behavioral data environment.
+The DAC Testnet is not only a transaction environment. It is also a public behavioral data environment.
 
-Transaction generators such as `DAC•SENDER` help create activity.  
-This tool takes the opposite side of that workflow: it reads public activity and turns it into a structured wallet profile.
-
-In simple terms:
+`DAC•SENDER` helps generate testnet activity.  
+`DAC Wallet Intelligence Layer` reads public activity and converts it into structured wallet intelligence.
 
 ```text
 DAC•SENDER
-→ helps create testnet activity
+→ creates and routes testnet activity
 
 DAC Wallet Intelligence Layer
-→ helps observe, classify, and document wallet activity
+→ observes, classifies, and documents wallet activity
 ```
 
-The checker is designed for community-level testnet analysis. It reads public explorer data, processes it in the browser, and presents a structured view of a wallet's activity and asset footprint.
+The interface is read-only. Users paste a wallet address and press `Check`. No wallet connection, signature, private key, backend account, or server-side database is required.
 
-No backend is used. No wallet connection is required. No private key is requested.
-
----
-
-## Why This Exists
-
-The idea behind this tool comes from ongoing DAC infrastructure contributions and from the function-task concept developed for the DAC / Truebit Etherscan API task library.
-
-The related contribution introduced a `dac_wallet_intelligence` function task that takes pre-fetched wallet metrics and converts them into:
-
-- wallet activity analytics
-- NFT portfolio intelligence
-- reputation scoring
-- Sybil-risk estimation
-- DAC testnet wallet profiling
-
-This web interface extends that idea into a user-facing client-side checker.
-
-The purpose is not to create an official ranking system.  
-The purpose is to make wallet behavior easier to observe, explain, and document during testnet participation.
+The output is designed for infrastructure testing, testnet participation analysis, wallet behavior review, explorer-based reporting, public-data debugging, and community analytics.
 
 ---
 
-## Community Disclaimer
+## Project Context
 
-This project is a **community-built experimental checker**.
+The tool originated from DAC infrastructure testing work and from the function-task concept developed for the DAC / Truebit Etherscan API task library.
 
-It is not:
+The related function task, `dac_wallet_intelligence`, takes wallet metrics and converts them into wallet activity analytics, NFT portfolio intelligence, reputation scoring, Sybil-risk estimation, and DAC testnet wallet profiling.
 
-- an official DAC product
-- an official DAC reputation system
-- an official DAC Sybil detector
-- an eligibility checker for rewards, airdrops, incentives, or allowlists
-- a final authority on wallet quality
+This web interface extends that idea into a client-side tool that runs directly in the browser.
 
-All labels such as:
+Project location:
 
 ```text
-VERY HIGH
-ADVANCED TESTNET USER
-VERIFIED INCEPTION PARTICIPANT
-ADVANCED TESTNET PARTICIPANT
-NFT HEAVY
-ELITE
-LOW SYBIL RISK
+DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/
 ```
 
-are **community-defined interpretation labels** created by **JERUZZALEM — DAC Infra Tester**.
+---
 
-The same applies to the thresholds used to generate those labels.  
-They are not official DAC thresholds.
+## Community and Engineering Disclaimer
 
-This tool should be understood as an experimental observation layer for testnet analytics, not as a formal identity, ranking, reward, or Sybil-verification mechanism.
+This project is a **community-built engineering tool**.
+
+It is not an official DAC product, official DAC eligibility checker, official DAC reputation system, official DAC Sybil detector, reward checker, airdrop checker, or allowlist verification tool.
+
+All score labels, thresholds, interpretations, and policy weights are community-defined.
+
+The checker does not prove whether a wallet is Sybil or non-Sybil. It only evaluates explorer-visible behavior patterns from a single-wallet point of view.
 
 ---
 
 ## Interface Overview
 
-Screenshots are stored in the local `assets/` folder.
+Screenshots should be stored in the local `assets/` folder.
 
 ### Initial Interface
 
-The default interface when the page is first opened.
+Default interface state before a wallet check is executed.
 
-![UI Interface](assets/UIInterface.png)
+![Initial Interface](assets/InitialInterface.png)
 
 ### Check Pending
 
-The state after a user enters a wallet address and presses the check button.
+State after a wallet address is entered and the check process is running.
 
 ![Check Pending](assets/CheckPending.png)
 
 ### Full Intelligence Ready
 
-The state after the DAC Explorer returns all required wallet data and the full profile is generated.
+State after explorer/RPC modules return usable data and the profile is generated.
 
-![Full Intelligence Ready](assets/FullIntelligence-Ready.png)
+![Full Intelligence Ready](assets/FullIntelligenceReady.png)
 
 ### Wallet Output
 
-The main wallet output panel containing balance, estimated stake, historical activity windows, transaction metrics, activity analytics, portfolio intelligence, reputation scoring, scoring breakdown, and versioned scoring policy metadata.
+Main wallet output summary.
 
 ![Wallet Output](assets/WalletOutput.png)
 
-### Proof of Assets Engine
+### Sybil Heuristics
 
-The NFT ownership panel generated from DAC Explorer `tokenlist` data.
+Behavior pattern analysis, Pattern Health Score, Sybil Risk Estimate, Activity Archetype, First Transaction, Wallet Age, and core heuristic metrics.
 
-![Proof of Assets Engine](assets/ProofOfAssetEngine.png)
+![Sybil Heuristics](assets/SybilHeuritics.png)
+
+### Activity Analytics / Portfolio Intelligence / Reputation Scoring
+
+Activity Analytics v1, Portfolio Intelligence v1, and Reputation Scoring v1 summary panels.
+
+![Activity Analytics Portfolio Intelligence Reputation Scoring](assets/AA_PI_RS.png)
+
+### Wallet Quality Policy
+
+Scoring policy, component breakdown, policy ID, policy status, max score, and active scoring engine.
+
+![Wallet Quality Policy](assets/WalletQualityPolicy.png)
+
+### Stress Test / Official Rank Signal
+
+Stress testing links and DAC Inception Rank signal panel.
+
+![Stress Test Official Rank Signal](assets/StressTest_OfficialRankSignal.png)
+
+### Proof of Asset Engine
+
+NFT ownership and collection overview from explorer token list data.
+
+![Proof of Asset Engine](assets/ProofofAssetEngine.png)
 
 ### Raw Output
 
-The raw JSON output generated by the checker.
+Raw JSON profile generated by the checker.
 
-![Raw Output](assets/RAWOutput.png)
+![Raw Output](assets/RawOutput.png)
 
 ---
 
 ## Architecture
 
-The tool follows a modular client-side architecture.  
-The current web implementation is shipped as static files, but the internal logic is organized around the following conceptual modules.
+The current implementation is shipped as static frontend files:
 
 ```text
-┌──────────────────────────────────────────────────────────────┐
-│ wallet-intelligence.html                                     │
-│ UI input wallet address + result dashboard                   │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ wallet-intelligence.js                                       │
-│ orchestration layer                                          │
-│ coordinates explorer reads, fallback handling, and rendering │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ proof-native-funds.js                                        │
-│ eth_getBalance / native DACC balance                         │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ stake-flow-classifier.js                                     │
-│ DACC stake-in / unstake-out / reward-flow estimation         │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ historical-activity-windowing.js                             │
-│ 7D / 30D / All Time activity windows                         │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ proof-assets-engine.js                                       │
-│ NFT ownership / collections / assets                         │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ known-collection-registry.js                                 │
-│ DAC Inception Rank / known official collection signal        │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ activity-analytics.js                                        │
-│ transaction count + NFT transfer behavior                    │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ portfolio-intelligence.js                                    │
-│ collection diversity + NFT concentration                     │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ reputation-scoring.js                                        │
-│ score + level + Sybil risk                                   │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ sybil-heuristics.js                                          │
-│ explorer-only pattern health + behavior archetype            │
-└──────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌──────────────────────────────────────────────────────────────┐
-│ Wallet Intelligence Layer                                    │
-│ final wallet profile + raw JSON output                       │
-└──────────────────────────────────────────────────────────────┘
-```
-
-### Data Flow
-
-```text
-User pastes wallet address
-        │
-        ▼
-wallet-intelligence.html
-        │
-        ▼
+index.html
+wallet-intelligence.css
 wallet-intelligence.js
-        │
-        ├── DAC Explorer API
-        │   ├── balance
-        │   ├── tokenlist
-        │   ├── txlist
-        │   ├── txlistinternal
-        │   └── tokennfttx
-        │
-        ├── DAC RPC
-        │   ├── eth_getBalance
-        │   ├── eth_getTransactionCount
-        │   └── eth_call fallback attempt
-        │
-        ├── Proof of Native Funds
-        ├── Stake Flow Classifier
-        ├── Historical Activity Windowing
-        ├── Proof of Assets Engine
-        ├── Known Collection Registry
-        ├── Activity Analytics v1
-        ├── Portfolio Intelligence v1
-        ├── Reputation Scoring v1.5.2
-        └── Sybil Heuristics v1.5.2
-        │
-        ▼
-Wallet Intelligence Layer output + Sybil Heuristics output
+readme.md
+assets/
+```
+
+Conceptual module layout:
+
+```text
+index.html
+└── UI shell, wallet input, result panels, stress-testing links
+
+wallet-intelligence.js
+├── explorer / RPC orchestration
+├── proof-native-funds
+├── stake-flow-classifier
+├── historical-activity-windowing
+├── proof-assets-engine
+├── known-collection-registry-v1.3.3
+├── activity-analytics
+├── portfolio-intelligence
+├── reputation-scoring
+└── sybil-heuristics
+
+wallet-intelligence.css
+└── visual layout, dashboard styling, responsive behavior
 ```
 
 ---
 
-## Official Participation Signals
+## Data Sources
 
-Version `v1.3.x` introduces official participation signal awareness.
-
-The checker treats the following signals as more meaningful than ordinary NFT or transaction count alone:
-
-### DAC Inception Rank
+### Primary Explorer API
 
 ```text
-Collection : DAC Inception Rank
-Symbol     : RANK
-Standard   : DRC-721
-Contract   : 0xB36ab4c2Bd6aCfC36e9D6c53F39F4301901Bd647
-Role       : Progress badge / rank NFT
+https://exptest.dachain.tech/api
 ```
 
-Since users can mint a new RANK badge when they reach a new progress threshold, the checker uses the **number of RANK badges held** as an inferred rank signal.
-
-### DACC Stake Signal
+Used for:
 
 ```text
-Contract : 0x3691A78bE270dB1f3b1a86177A8f23F89A8Cef24
-Role     : DACC staking / QE pool interaction
+balance
+txlist
+txlistinternal
+tokenlist
+tokennfttx
 ```
 
-The official staking interface is flexible. Users can stake, add more stake, or unstake without a fixed lock duration.  
-Because reward or fee transfers may be returned by the contract during stake and unstake activity, v1.3.3 uses a transaction-flow classifier instead of simply subtracting every contract-to-wallet transfer.
+### RPC Fallback
+
+```text
+https://rpctest.dachain.tech/
+```
+
+Used for:
+
+```text
+eth_getBalance
+eth_getTransactionCount
+eth_getBlockByNumber
+eth_call
+```
+
+RPC fallback is limited. Standard RPC cannot fully replace explorer-indexed NFT ownership, NFT transfers, internal transactions, or full historical wallet activity.
 
 ---
 
-## Stake Flow Classifier
+## Network Configuration
 
-Version `v1.3.3` classifies stake and unstake activity using transaction selectors and calldata.
-
-### Stake
-
-```text
-selector : 0x3a4b66f1
-from     : wallet
-to       : staking contract
-value    : > 0 DACC
-```
-
-Stake amount is read from the top-level transaction value.
-
-```text
-totalStakeIn += tx.value
-```
-
-Any internal transfer from the staking contract back to the wallet during this transaction is treated as reward/fee flow, not as an unstake.
-
-### Unstake
-
-```text
-selector : 0x2e17de78
-from     : wallet
-to       : staking contract
-value    : 0 DACC
-```
-
-Unstake amount is decoded from the first `uint256` argument in calldata.
-
-```text
-totalUnstakeOut += decodedAmountFromInput
-```
-
-Internal transfers from the staking contract back to the wallet may include both reward/fee and principal return.  
-The principal unstake amount is not inferred by subtracting internal transfers; it is decoded from the unstake calldata.
-
-### Estimated Current Stake
-
-```text
-estimatedCurrentStake = totalStakeIn - totalUnstakeOut
-```
-
-If the result is below zero, the checker displays `0`.
-
-### Reward / Fee Flow
-
-If internal transaction data is available, the checker also calculates:
-
-```text
-rewardReceived
-contractOutTotal
-rewardTraceAvailable
-rewardReadMode
-```
-
-This is shown as supporting metadata. It does not directly reduce the estimated current stake unless the unstake amount is decoded from calldata.
-
-### Confidence
-
-The stake signal includes confidence metadata:
-
-| Confidence | Meaning |
+| Parameter | Value |
 |---|---|
-| `VERY_HIGH` | Direct contract read matches usable stake data or returns a positive value |
-| `HIGH` | Stake-flow classifier works and internal reward trace is available |
-| `MEDIUM_HIGH` | Stake-flow classifier works, but internal reward trace is unavailable |
+| Network | DAC Testnet |
+| Chain ID | `21894` |
+| Native Token | `DACC` |
+| RPC Endpoint | `https://rpctest.dachain.tech/` |
+| Explorer | `https://exptest.dachain.tech` |
+| Explorer API | `https://exptest.dachain.tech/api` |
+| DACC Staking Contract | `0x3691A78bE270dB1f3b1a86177A8f23F89A8Cef24` |
+| DAC Inception Rank Contract | `0xB36ab4c2Bd6aCfC36e9D6c53F39F4301901Bd647` |
 
 ---
 
+## Wallet Quality Policy
 
-## Historical Activity Windowing
-
-Version `v1.4.0` introduced time-based wallet activity windows.
-
-The checker separates activity into:
+v1.5.2 uses a locked wallet-quality policy.
 
 ```text
-7D
-30D
-All Time
+Policy Version : WIL-v1.5.2
+Policy ID      : WIL-2026-05-v1.5.2
+Policy Engine  : wallet-quality-scoring-v1.5.2
+Status         : LOCKED
+Max Score      : 100 reputation + 100 pattern health
 ```
 
-This helps distinguish recent activity from lifetime wallet behavior.
-
-### Window Metrics
-
-Each window can show:
-
-| Metric | Meaning |
-|---|---|
-| `Transactions` | Number of transactions in the selected time window |
-| `NFT Transfers` | Number of NFT transfer events in the selected time window |
-| `Stake Tx Count` | Number of detected stake transactions |
-| `Unstake Tx Count` | Number of detected unstake transactions |
-| `Net Staked` | Net DACC staked within the time window |
-| `Stake In` | Total DACC sent into the staking contract |
-| `Stake Out` | Total DACC decoded from unstake calldata |
-
-For `7D` and `30D`, **Net Staked** means:
+The policy contains two separate scoring layers:
 
 ```text
-Net Staked = Stake In - Stake Out
+Reputation Scoring Layer : 100 points
+Sybil Heuristics Layer   : 100 points
 ```
 
-For `All Time`, the UI also displays:
+These layers represent two different views of wallet quality:
 
-```text
-Estimated Current Stake = All Time Stake In - All Time Stake Out
-```
-
-This distinction is important because transaction count and DACC amount are different metrics.
-
-### Timestamp Modes
-
-The checker auto-detects which historical mode is possible from explorer data.
-
-| Mode | Meaning |
-|---|---|
-| `TIMESTAMP_BASED` | Explorer rows include timestamp data, so windows are calculated directly |
-| `BLOCK_TIMESTAMP_FALLBACK` | Explorer rows do not fully include timestamps, so block timestamps are resolved through RPC |
-| `BLOCK_TIMESTAMP_FALLBACK_LIMITED` | Only a limited number of block timestamps are resolved to avoid excessive RPC calls |
-| `NO_TIMESTAMP_AVAILABLE` | Explorer rows do not include usable timestamp or block data |
-| `NO_ACTIVITY_RETURNED` | Explorer returned no activity rows for the wallet |
-
-### Confidence
-
-Historical windows include confidence metadata:
-
-| Confidence | Meaning |
-|---|---|
-| `HIGH` | Direct timestamp data is available |
-| `MEDIUM` | Block timestamp fallback is used |
-| `LOW_MEDIUM` | Limited block timestamp fallback is used |
-| `LOW` | Historical windows are unavailable or insufficient |
-
-### Raw JSON
-
-The raw JSON output includes:
-
-```json
-{
-  "historicalActivity": {
-    "status": "READY",
-    "mode": "TIMESTAMP_BASED",
-    "confidence": "HIGH",
-    "windows": {
-      "7d": {},
-      "30d": {},
-      "allTime": {}
-    },
-    "dataCoverage": {}
-  }
-}
-```
-
-Historical activity is informational and does not modify the locked `WIL-v1.3.3` scoring policy.
+- reputation scoring evaluates holdings, activity, rank, funds, and stake
+- Sybil heuristics evaluate behavior patterns, maturity, burst, diversity, and local counterparty concentration
 
 ---
 
+## Reputation Scoring Layer
+
+The reputation layer is a 100-point score.
+
+| Component | Max Points |
+|---|---:|
+| Transaction Score | 20 |
+| NFT Diversity Score | 10 |
+| NFT Holdings Score | 10 |
+| Native Funds Score | 15 |
+| DACC Stake Score | 20 |
+| DAC Inception Rank Score | 25 |
+| **Total** | **100** |
+
+### Reputation Level
+
+| Score | Label |
+|---:|---|
+| `90–100` | `ELITE` |
+| `75–89` | `HIGH` |
+| `50–74` | `MEDIUM` |
+| `< 50` | `LOW` |
+
+### Reputation Sybil Risk Label
+
+| Score | Label |
+|---:|---|
+| `>= 90` | `LOW` |
+| `>= 70` | `MEDIUM` |
+| `< 70` | `HIGH` |
+
+This label is not definitive. The deeper behavior analysis is handled by the Sybil Heuristics layer.
+
+---
 
 ## Sybil Heuristics
 
-Version `v1.5.0` introduced a separate explorer-only behavior heuristic layer.
-
-The heading is shown as:
+The Sybil Heuristics layer is explorer-only.
 
 ```text
-Sybil Heuristics
+Engine : EOH-v1.5.2
+Mode   : EXPLORER_ONLY
+Score  : Pattern Health Score / 100
 ```
 
-The mode label remains:
+It does not use backend identity data, IP addresses, devices, off-chain accounts, or private user data.
 
-```text
-EOH-v1.5.2 · EXPLORER_ONLY
-```
+### Design Principle
 
-This makes the UI cleaner while still showing that the analysis does not use a backend.
+High activity is not treated as suspicious by itself.
 
-### Purpose
+High activity becomes more suspicious only when combined with low activity spread, low interaction diversity, high counterparty concentration, no builder/tester signal, no DAC ecosystem commitment, short wallet age, and repetitive transfer behavior.
 
-The purpose of this layer is not to accuse wallets or make a definitive Sybil decision.
-
-It is designed to compare observable wallet behavior patterns using only public explorer data.
-
-```text
-High activity alone is not suspicious.
-High activity becomes risky only when it is repetitive, low-diversity,
-low-commitment, and lacks builder/tester or DAC ecosystem signals.
-```
+This is important because DAC testnet participants, infra testers, and builders may intentionally create high-volume activity for stress testing.
 
 ### Output
 
-The Sybil Heuristics panel displays:
-
-| Output | Meaning |
+| Output | Description |
 |---|---|
-| `Pattern Health` | 100-point behavior-health score |
-| `Sybil Risk Estimate` | LOW / MEDIUM / HIGH estimate |
-| `Activity Archetype` | Human-readable behavior category |
-| `First Transaction` | First observed DAC Testnet transaction |
-| `Wallet Age` | Age from first transaction |
-| `Active Days` | Number of active calendar days |
-| `Unique Contracts` | Distinct contract targets touched |
-| `Counterparties` | Unique wallet counterparties |
-| `Burst Ratio` | Largest single-day share of total transactions |
-| `Gas Spent` | Estimated gas spent by the wallet |
+| Pattern Health | 100-point behavior-health score |
+| Sybil Risk Estimate | LOW / MEDIUM / HIGH estimate |
+| Activity Archetype | Behavior classification |
+| First Transaction | First observed transaction on DAC Testnet |
+| Wallet Age | Age from first transaction |
+| Active Days | Number of active calendar days |
+| Unique Contracts | Distinct contract targets touched |
+| Counterparties | Unique wallet counterparties |
+| Burst Ratio | Largest single-day share of total transactions |
+| Gas Spent | Estimated gas spent by the wallet |
 
 ### First Transaction Format
 
-The First Transaction card uses a compact age display:
-
-```text
-1Y2M13D
-7M3D
-5D
-```
-
-Only available units are displayed.  
-For example, `7M3D` is shown instead of `0Y7M3D`.
-
-The First Transaction card keeps number/unit visual separation:
-
-```text
-numbers → main text color
-Y/M/D   → highlight color
-```
-
-Example:
+Example output:
 
 ```text
 First Transaction
@@ -702,24 +388,32 @@ Block 14,589,819
 NATIVE_TRANSFER · 0x335a81...f8d0
 ```
 
-### Component Weights
+Age formatting rules:
 
-The v1.5.2 behavior-health model uses seven components:
+```text
+1Y2M13D
+7M3D
+5D
+```
 
-| Component | Max Points | Purpose |
+Unavailable units are omitted. For example, `7M3D` is used instead of `0Y7M3D`.
+
+In the First Transaction card, numeric values and time units use different colors for readability.
+
+### Pattern Health Components
+
+| Component | Max Points | Role |
 |---|---:|---|
-| Wallet Maturity | 15 | Rewards early and consistent DAC Testnet participation |
-| Activity Spread | 15 | Rewards activity across multiple days and weeks |
-| Activity Burst | 10 | Reads whether activity is concentrated into one short burst |
-| Interaction Diversity | 15 | Measures unique contracts and deployment paths |
-| Builder / Tester Signal | 20 | Protects stress testing, builder, deployer, and DAC•SENDER-like activity |
-| Counterparty Pattern | 10 | Reads local counterparty concentration |
-| DAC Ecosystem Commitment | 15 | Uses RANK badge and stake as ecosystem commitment signals |
+| Wallet Maturity | 15 | Early and consistent DAC Testnet participation |
+| Activity Spread | 15 | Activity across multiple days and weeks |
+| Activity Burst | 10 | Concentration of activity into a short period |
+| Interaction Diversity | 15 | Unique contracts and contract creation paths |
+| Builder / Tester Signal | 20 | Stress testing, deployment, NFT launch, and builder behavior |
+| Counterparty Pattern | 10 | Local counterparty concentration |
+| DAC Ecosystem Commitment | 15 | RANK badge and DACC stake signals |
 | **Total** | **100** | Pattern Health Score |
 
-### Wallet Maturity / Early Signal
-
-Wallet Maturity includes special early-phase weighting:
+### Wallet Maturity Weights
 
 | First Transaction Timing | Points |
 |---|---:|
@@ -731,411 +425,187 @@ Wallet Maturity includes special early-phase weighting:
 | `FirstTx 7+ days ago` | 1 |
 | `FirstTx below 7 days ago` | 0 |
 
-The earliest three tiers are intentionally special because they represent early community participation phases.
+The earliest three tiers are intentionally weighted higher to respect early community participation.
 
-### Policy Relationship
+### Activity Spread Weights
 
-v1.5.2 uses two score layers:
+| Condition | Points |
+|---|---:|
+| `ActiveDays >= 20 & ActiveWeeks >= 4` | 15 |
+| `ActiveDays >= 10 & ActiveWeeks >= 2` | 12 |
+| `ActiveDays >= 5` | 8 |
+| `ActiveDays >= 2` | 4 |
+| `ActiveDays = 1` | 1 |
+
+### Activity Burst Weights
+
+| Condition | Points |
+|---|---:|
+| `LargestDay <= 25% of TotalTx` | 10 |
+| `LargestDay <= 40% of TotalTx` | 7 |
+| `LargestDay <= 60% of TotalTx` | 4 |
+| `LargestDay > 60% of TotalTx` | 1 |
+| `TotalTx < 5` | 5 |
+
+### Interaction Diversity Weights
+
+| Condition | Points |
+|---|---:|
+| `ContractTouches >= 10` | 15 |
+| `ContractTouches >= 5` | 11 |
+| `ContractTouches >= 3` | 7 |
+| `ContractTouches >= 1` | 3 |
+| `No Contract Interaction` | 0 |
+
+### Builder / Tester Signal Weights
+
+| Condition | Points |
+|---|---:|
+| `ContractCreations >= 5` | 20 |
+| `ContractCreations >= 1 & GasSpent > 0` | 15 |
+| `UniqueRecipients >= 20 & TotalTx >= 100` | 15 |
+| `UniqueContracts >= 5 or GasSpent > 0.01` | 10 |
+| `TotalTx >= 50` | 5 |
+| `No Builder / Tester Signal` | 0 |
+
+### Counterparty Pattern Weights
+
+| Condition | Points |
+|---|---:|
+| `UniqueCounterparties >= 20 & TopCounterparty < 25%` | 10 |
+| `UniqueCounterparties >= 10 & TopCounterparty < 40%` | 8 |
+| `UniqueCounterparties >= 5 & TopCounterparty < 60%` | 5 |
+| `UniqueCounterparties >= 2` | 2 |
+| `Highly Concentrated or Low Counterparty Diversity` | 1 |
+| `NativeTransferTx = 0` | 6 |
+
+### DAC Ecosystem Commitment Weights
+
+| Condition | Points |
+|---|---:|
+| `RankBadges >= 6 & StakedDACC >= 50` | 15 |
+| `RankBadges >= 3 or StakedDACC >= 50` | 12 |
+| `RankBadges >= 1 or StakedDACC >= 10` | 8 |
+| `StakedDACC > 0` | 5 |
+| `No DAC Ecosystem Signal` | 0 |
+
+---
+
+## Historical Activity Windowing
+
+Historical activity is displayed across:
 
 ```text
-Reputation Scoring Layer     : 100 points
-Sybil Heuristics Layer       : 100 points
+7D
+30D
+All Time
 ```
 
-Current policy metadata:
+Each window can show transactions, NFT transfers, stake transaction count, unstake transaction count, Net Staked, Stake In, and Stake Out.
+
+### Timestamp Modes
+
+| Mode | Meaning |
+|---|---|
+| `TIMESTAMP_BASED` | Explorer rows include timestamp data |
+| `BLOCK_TIMESTAMP_FALLBACK` | Timestamp resolved from block data through RPC |
+| `BLOCK_TIMESTAMP_FALLBACK_LIMITED` | Limited block timestamp resolution to avoid excessive RPC calls |
+| `NO_TIMESTAMP_AVAILABLE` | Insufficient timestamp/block data |
+| `NO_ACTIVITY_RETURNED` | Explorer returned no usable activity rows |
+
+---
+
+## DAC Inception Rank Signal
+
+The known collection registry detects the DAC Inception Rank NFT.
 
 ```text
-Policy Version  : WIL-v1.5.2
-Policy Engine   : wallet-quality-scoring-v1.5.2
-Sybil Engine    : EOH-v1.5.2
-Sybil Mode      : EXPLORER_ONLY
+Collection : DAC Inception Rank
+Symbol     : RANK
+Standard   : DRC-721
+Contract   : 0xB36ab4c2Bd6aCfC36e9D6c53F39F4301901Bd647
+Registry   : known-collection-registry-v1.3.3
 ```
 
-The known collection registry remains:
+The registry module remains `known-collection-registry-v1.3.3` because its detection logic has not changed since v1.3.3.
+
+The RANK badge is treated as an official rank badge signal because it is tied to the DAC Inception Rank NFT and QE progress flow.
+
+---
+
+## DACC Stake Signal
+
+The DACC staking contract is read as a separate wallet-quality signal.
 
 ```text
-known-collection-registry-v1.3.3
+Contract : 0x3691A78bE270dB1f3b1a86177A8f23F89A8Cef24
 ```
 
-because the registry detection logic has not changed since v1.3.3.
+Stake is estimated through a stake/unstake classifier:
+
+```text
+Estimated Current Stake = Total Stake In - Total Unstake Out
+```
+
+The stake classifier reads:
+
+```text
+Stake selector   : 0x3a4b66f1
+Unstake selector : 0x2e17de78
+```
+
+Stake is not labeled as an official rank signal. It is displayed as a separate DACC stake metric.
 
 ---
 
 ## Stress Testing Links
 
-The interface includes a Stress Testing panel below Scoring Breakdown.
-
-It links to:
+The interface includes a Stress Testing panel that links to related DAC testnet activity tools:
 
 | Tool | URL |
 |---|---|
 | `DAC•SENDER` | `https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Sender-Web/` |
 | `DAC•SENDER NFT Launchpad` | `https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Sender-Web/mint.html` |
 
-These links connect the wallet checker with the transaction-generation and NFT-testing tools used for DAC Testnet stress testing.
+These tools are used for transaction generation, smart contract interaction, NFT deployment, and stress-testing workflows.
 
 ---
 
-## Primary Data Source
+## Failure Handling
+
+The checker follows a fail-safe output model:
 
 ```text
-https://exptest.dachain.tech/api
+Verified data      → full profile
+Partial data       → partial profile
+RPC fallback only  → limited profile
+No verified data   → no score
 ```
 
-Used for:
-
-```text
-balance         → native DAC testnet balance
-tokenlist       → ERC-721 NFT ownership
-txlist          → transaction history, historical windows, and stake/unstake classifier
-txlistinternal  → reward/fee flow when available
-tokennfttx      → NFT transfer activity count
-```
-
-### RPC Fallback
-
-```text
-https://rpctest.dachain.tech/
-```
-
-Used only when explorer modules are unavailable.
-
-RPC fallback can provide:
-
-```text
-eth_getBalance          → native balance
-eth_getTransactionCount → outgoing transaction count / nonce
-eth_call                → optional staking contract read attempt
-```
-
-RPC fallback cannot fully replace the explorer because standard RPC does not provide complete NFT inventory, NFT transfer history, or full wallet-level stake-flow history.
+No random score, mock score, fabricated profile, or placeholder analytics are generated.
 
 ---
 
-## Scoring and Label Definitions
-
-The scoring system is intentionally simple and transparent.
-
-It is designed to turn observable testnet metrics into a readable wallet profile.
-
-### Input Metrics
-
-The full score requires verified explorer data for:
-
-| Metric | Source | Description |
-|---|---|---|
-| Native Balance | `balance` / RPC fallback | Native DAC testnet token balance |
-| Estimated Current Stake | `txlist` + selector classifier | Estimated current DACC stake |
-| Transaction Count | `txlist` | Number of explorer-indexed transactions |
-| NFT Transfers | `tokennfttx` | Number of NFT transfer events involving the wallet |
-| Total Collections | `tokenlist` | Number of ERC-721 collections held |
-| Total NFT Holdings | `tokenlist` | Total ERC-721 items held across collections |
-| RANK Badge Count | `tokenlist` | Number of DAC Inception Rank badges held |
-
-If one or more required explorer modules fail, the full reputation score is not generated.
-
----
-
-### Activity Level
-
-Activity level is based on total transaction count.
-
-| Condition | Label |
-|---|---|
-| `txCount >= 1000` | `VERY HIGH` |
-| `txCount >= 500` | `HIGH` |
-| `txCount >= 100` | `MEDIUM` |
-| below `100` | `LOW` |
-
-These labels are not official DAC labels. They are community-defined categories for testnet observation.
-
----
-
-### NFT Participation
-
-NFT Participation is shown as a percentage.
-
-```text
-nftParticipation = nftTransfers / txCount * 100
-```
-
-Example:
-
-```text
-0.19 ratio → 19.00%
-```
-
-If `txCount` is zero, the value is shown as `0.00%`.
-
----
-
-### Native Funds Score
-
-Native funds are scored using DACC balance tiers.
-
-| Condition | Points |
-|---|---:|
-| `nativeBalance >= 100` | `15` |
-| `nativeBalance >= 75` | `14` |
-| `nativeBalance >= 50` | `12` |
-| `nativeBalance >= 25` | `9` |
-| `nativeBalance >= 10` | `6` |
-| `nativeBalance >= 5` | `4` |
-| below `5` | `2` |
-
----
-
-### DACC Stake Score
-
-DACC stake score is based on the estimated current stake.
-
-| Condition | Points |
-|---|---:|
-| `stakedDacc >= 200` | `20` |
-| `stakedDacc >= 150` | `18` |
-| `stakedDacc >= 100` | `15` |
-| `stakedDacc >= 50` | `11` |
-| `stakedDacc >= 20` | `7` |
-| `stakedDacc >= 10` | `4` |
-| below `10` | `0` |
-
----
-
-### DAC Inception Rank Score
-
-DAC Inception Rank score is based on the number of RANK badges held.
-
-| Badge Count | Inferred Rank | Points |
-|---:|---|---:|
-| `13+` | `CROWN` | `25` |
-| `12` | `CIPHER` | `24` |
-| `11` | `PHANTOM` | `23` |
-| `10` | `INTERCEPTOR` | `21` |
-| `9` | `ARCHITECT` | `20` |
-| `8` | `WARRIOR` | `18` |
-| `7` | `SOVEREIGN` | `16` |
-| `6` | `SENTINEL` | `14` |
-| `5` | `VANGUARD` | `11` |
-| `4` | `SHADOW UNIT` | `9` |
-| `3` | `SEAL` | `7` |
-| `2` | `COMMANDO` | `5` |
-| `1` | `CADET` | `3` |
-| `0` | `NONE` | `0` |
-
----
-
-### Reputation Score
-
-Version `v1.3.3` uses six visible score components:
-
-| Component | Max Points |
-|---|---:|
-| Transaction Score | `20` |
-| NFT Diversity Score | `10` |
-| NFT Holdings Score | `10` |
-| Native Funds Score | `15` |
-| DACC Stake Score | `20` |
-| DAC Inception Rank Score | `25` |
-| **Total** | **100** |
-
----
-
-### Reputation Level
-
-| Score | Label |
-|---|---|
-| `>= 90` | `ELITE` |
-| `>= 75` | `HIGH` |
-| `>= 50` | `MEDIUM` |
-| below `50` | `LOW` |
-
-Again, these are community-defined labels for testnet analytics only.
-
----
-
-### Trust Profile
-
-Trust profile is based on a combination of activity, official rank signal, and stake signal.
-
-| Condition | Label |
-|---|---|
-| `txCount > 1000`, `totalCollections > 10`, `rankBadgeCount >= 6`, and `stakedDacc >= 100` | `ADVANCED TESTNET PARTICIPANT` |
-| `rankBadgeCount >= 6` and `stakedDacc >= 50` | `VERIFIED INCEPTION PARTICIPANT` |
-| otherwise | `STANDARD USER` |
-
-This is not an identity verification system. It only summarizes observable activity under the current scoring logic.
-
----
-
-### Sybil Risk
-
-| Score | Label |
-|---|---|
-| `>= 90` | `LOW` |
-| `>= 70` | `MEDIUM` |
-| below `70` | `HIGH` |
-
-This Sybil-risk label is a lightweight heuristic.  
-It should not be treated as a definitive Sybil detection result.
-
-The model does not inspect:
-
-- device/IP data
-- social identity
-- off-chain proof
-- official campaign eligibility
-- private user data
-- centralized backend data
-
-It only uses public wallet metrics available through DAC Explorer/RPC modules.
-
----
-
-## Transparent Scoring UI
-
-Version `v1.1.0` introduced a transparent scoring panel.  
-Version `v1.1.1` improved NFT Participation readability by changing decimal ratio output into percentage format.  
-Version `v1.2.0` added a versioned scoring policy layer.  
-Version `v1.3.x` added official participation signals.  
-Version `v1.4.x` added historical activity windows without changing the scoring formula.
-
-The UI shows how the reputation score is built from visible components:
-
-```text
-Transaction Score          /20
-NFT Diversity Score        /10
-NFT Holdings Score         /10
-Native Funds Score         /15
-DACC Stake Score           /20
-DAC Inception Rank Score   /25
-```
-
-Each component displays:
-
-- points earned
-- maximum possible points
-- metric value used
-- rule/condition matched
-
-This makes the score easier to audit and reduces ambiguity for users reviewing their wallet status.
-
----
-
-## Versioned Scoring Policy
-
-Version `v1.3.3` uses a locked scoring policy object.
-
-The purpose is to make future scoring changes auditable. If a future version changes thresholds, labels, or point allocation, older outputs can still be interpreted according to the policy version that produced them.
-
-Current policy metadata:
-
-```text
-Policy ID       : WIL-2026-05-v1.5.2
-Policy Version  : WIL-v1.5.2
-Status          : LOCKED
-Engine          : wallet-quality-scoring-v1.5.2
-Max Score       : 100 reputation + 100 pattern health
-```
-
-The raw JSON output includes scoring policy metadata, score components, threshold definitions, official rank signal, native funds signal, and official stake signal.
-
-This policy is still a **community-defined heuristic** and should not be interpreted as an official DAC reputation, eligibility, or Sybil system.
-
----
-
-## Failure Handling Policy
-
-This tool follows a strict fail-safe rule:
-
-```text
-No verified data → no score
-Partial data     → partial profile only
-Full data        → full wallet intelligence
-```
-
-### Full Explorer Data
-
-If all required explorer modules return valid data, the tool generates the full wallet intelligence profile.
-
-### Partial Explorer Data
-
-If only some explorer modules return valid data, the UI displays the available fields and marks the output as partial.
-
-The full reputation score is not generated.
-
-### Explorer Down
-
-If the DAC Explorer is unavailable, the tool attempts RPC fallback.
-
-### RPC Fallback
-
-RPC fallback can only generate a limited native proof and outgoing transaction count.
-
-The following are not fully generated in RPC fallback mode:
-
-```text
-NFT portfolio
-NFT transfer count
-full activity analytics
-portfolio intelligence
-complete stake-flow history
-historical activity windows
-reputation score
-Sybil-risk label
-```
-
-### Explorer and RPC Down
-
-If both data sources fail, the tool displays an error state and a retry button.
-
-No random score, mock score, or fabricated wallet profile is generated.
-
----
-
-## Network Configuration
-
-| Parameter | Value |
-|---|---|
-| Network Name | DAC Testnet |
-| Chain ID | `21894` |
-| RPC Endpoint | `https://rpctest.dachain.tech/` |
-| Explorer | `https://exptest.dachain.tech` |
-| Explorer API | `https://exptest.dachain.tech/api` |
-| Native Symbol | `DACC` |
-| Staking Contract | `0x3691A78bE270dB1f3b1a86177A8f23F89A8Cef24` |
-| DAC Inception Rank Contract | `0xB36ab4c2Bd6aCfC36e9D6c53F39F4301901Bd647` |
-
----
-
-## Features
-
-- **No wallet connection required** — users paste an address only.
-- **Read-only design** — no transaction signing, no wallet prompt, no private key access.
-- **Proof of Native Funds** — reads native DACC balance from DAC Explorer/RPC.
-- **Stake Flow Classifier** — estimates current DACC stake from recognized stake and unstake transaction flow.
-- **Historical Activity Windowing** — displays 7D / 30D / All Time activity windows with transaction, NFT transfer, stake, unstake, and Net Staked metrics.
-- **Proof of Assets Engine** — reads ERC-721 ownership from `tokenlist`.
-- **Known Collection Registry** — identifies DAC Inception Rank ownership.
-- **Official Rank Signal** — infers rank from RANK badge count.
-- **Activity Analytics v1** — generates activity level, engagement type, NFT participation percentage, and diversity score.
-- **Portfolio Intelligence v1** — generates portfolio style, wallet archetype, top collection, concentration, and holdings summary.
-- **Reputation Scoring v1.3.3** — generates a community-defined score from verified data.
-- **Transparent Scoring UI** — displays each score component, matched rule, and earned points.
-- **Versioned Scoring Policy** — includes locked policy metadata, policy ID, engine version, and threshold definitions in the raw JSON output.
-- **Sybil-risk estimation** — lightweight score-based label, clearly marked as experimental.
-- **Raw JSON Output** — export-ready structured profile for reporting.
-- **Live Chain Stats** — block height, TPS estimate, block time, RPC latency, and gas price.
-- **Retry Handling** — user can retry when explorer/RPC data fails.
-- **GitHub Pages Ready** — static HTML/CSS/JS, no build step.
+## Security Model
+
+- No private keys.
+- No wallet connection.
+- No transaction signing.
+- No backend database.
+- No account login.
+- No server-side user tracking.
+- No IP/device-based scoring.
+- Public explorer/RPC data only.
+
+The tool is a static client-side application.
 
 ---
 
 ## Local Usage
 
-Serve over HTTP. Do not test only through `file://`, because browser behavior can differ.
+Run from the repository root:
 
 ```bash
-# From repository root
 python3 -m http.server 8080
 ```
 
@@ -1145,7 +615,7 @@ Then open:
 http://localhost:8080/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/
 ```
 
-Example test wallet:
+Example wallet:
 
 ```text
 0x870ad63acc507cdfd878F170606d19ae78988AFE
@@ -1155,61 +625,74 @@ Example test wallet:
 
 ## Technical Notes
 
-- Static client-side application.
-- No backend.
-- No database.
-- No wallet provider required.
-- Uses DAC Explorer API as the primary data source.
-- Uses DAC RPC only as a limited fallback.
-- Does not use random/mock data in production.
-- All scoring is performed locally in the browser.
-- `Proof of Assets Engine` currently focuses on ERC-721 ownership.
-- `Stake Flow Classifier` currently uses known staking selectors:
-  - stake: `0x3a4b66f1`
-  - unstake: `0x2e17de78`
-- Reward/fee flow is tracked separately when internal transaction data is available.
-- Estimated current stake is calculated as `totalStakeIn - totalUnstakeOut`.
-- `Historical Activity Windowing` uses timestamp data when available and limited block timestamp fallback when needed.
-- `Net Staked` means `Stake In - Stake Out` for each historical window.
-- `Sybil Heuristics` uses explorer-only wallet behavior data and does not use backend, IP, device, or private user data.
-- `known-collection-registry-v1.3.3` remains unchanged because registry logic has not changed since v1.3.3.
-- Raw JSON includes versioned scoring policy metadata and stake-flow metadata.
-- The current implementation is shipped in `index.html`, `wallet-intelligence.css`, and `wallet-intelligence.js`; the module names in the architecture section describe the conceptual separation of logic.
-
----
-
-## Security
-
-- **No private keys.** The tool never requests or accesses private keys.
-- **No wallet connection.** The tool does not call `eth_requestAccounts`.
-- **No signing.** The tool does not submit transactions or request signatures.
-- **No backend data collection.** The tool is hosted as a static GitHub Pages interface.
-- **Public data only.** The profile is built only from public explorer/RPC responses.
-- **No official eligibility claim.** The result should not be interpreted as qualification for rewards, incentives, or official recognition.
+- Static HTML/CSS/JS implementation.
+- No build step.
+- No backend service.
+- GitHub Pages compatible.
+- Explorer API is the primary data source.
+- RPC is used as fallback and for block timestamp resolution.
+- Sybil Heuristics is explorer-only.
+- Known collection registry remains `known-collection-registry-v1.3.3`.
+- Wallet Quality Policy is `WIL-v1.5.2`.
+- Policy engine is `wallet-quality-scoring-v1.5.2`.
+- Sybil engine is `EOH-v1.5.2`.
 
 ---
 
 ## Future Work
 
-Potential future directions, depending on available explorer data, contract design, and verification requirements.
+Potential future directions:
 
-- **Stake classifier refinement** — improve principal/reward separation if verified ABI, event names, or official staking getter data becomes available.
-- **Known collection registry expansion** — add more verified DAC ecosystem collections when appropriate.
-- **Explorer-only Sybil heuristics** — improve Sybil-risk estimation using logic derived from public explorer data, without depending on a custom backend.
-- **Mintable / dynamic intelligence badge** — optional future NFT badge layer based on wallet status, preferably designed as an updateable or evolving badge rather than a static one.
-- **Truebit function-task mode** — optionally compare browser output with a verified function-task execution path.
+- ABI-based staking reads if the verified staking contract ABI becomes available.
+- Additional known DAC ecosystem collections if more verified contracts are available.
+- More detailed explorer-only counterparty analysis.
+- Better distinction between contract deployment, NFT deployment, and normal contract calls.
+- Optional Truebit function-task verification path.
+- Optional mintable or updateable intelligence badge after the scoring model stabilizes.
 
 ---
 
 ## Changelog
 
+### v1.5.2 — Sybil Heuristics Naming & UI Consistency
+
+- Renamed panel heading from `Explorer-only Sybil Heuristics` to `Sybil Heuristics`.
+- Kept mode label as `EOH-v1.5.2 · EXPLORER_ONLY`.
+- Updated topbar branding to `Wallet Intelligence Layer v1.5.2`.
+- Restored topbar subtext to `Wallet Checker`.
+- Normalized Wallet Age display in the Sybil Heuristics metric row.
+- Kept First Transaction age formatting with separate number/unit colors.
+- Confirmed known collection registry logic is unchanged since v1.3.3.
+- Kept registry module version as `known-collection-registry-v1.3.3`.
+- Updated policy version to `WIL-v1.5.2`.
+- Updated policy engine to `wallet-quality-scoring-v1.5.2`.
+
+### v1.5.1 — UI Policy Refinement & Stress Testing Links
+
+- Refined First Transaction layout.
+- Added Stress Testing panel with links to DAC•SENDER and DAC•SENDER NFT Launchpad.
+- Replaced `Official Signals` wording in Scoring Breakdown with `Wallet Quality Policy`.
+- Separated Official Rank Signal from DACC Stake Signal.
+- Reworded rule labels to use cleaner user-facing formatting.
+- Bottom-aligned component score bars for visual consistency.
+
+### v1.5.0 — Sybil Heuristics
+
+- Added explorer-only Sybil Heuristics behavior layer.
+- Added Pattern Health Score.
+- Added Sybil Risk Estimate.
+- Added Activity Archetype.
+- Added First Transaction output.
+- Added Wallet Maturity / Early Signal.
+- Added Activity Spread, Activity Burst, Interaction Diversity, Builder / Tester Signal, Counterparty Pattern, and DAC Ecosystem Commitment components.
+- Updated policy to `WIL-v1.5.0`.
+- Added `EOH-v1.5.0` behavior heuristic engine.
+
 ### v1.4.2 — Net Staked Label Polish
 
 - Renamed `Net Stake Delta` to `Net Staked`.
 - Kept `Estimated Current Stake` unchanged for the All Time window.
-- Updated the historical window note to clarify that `Stake Tx Count` is transaction count, while `Net Staked` is the net DACC amount staked.
-- App version updated to `v1.4.2`.
-- Scoring policy remains `WIL-v1.3.3`.
+- Updated historical window wording.
 
 ### v1.4.1 — Historical Windowing Wording Polish
 
@@ -1217,20 +700,13 @@ Potential future directions, depending on available explorer data, contract desi
 - Renamed `Unstake Events` to `Unstake Tx Count`.
 - Renamed `Net stake flow` to `Net Stake Delta`.
 - Renamed `In / Out` to `Stake In / Stake Out`.
-- Added `Estimated Current Stake` highlight for the All Time window.
-- App version updated to `v1.4.1`.
-- Scoring policy remains `WIL-v1.3.3`.
 
 ### v1.4.0 — Historical Activity Windowing
 
 - Added 7D / 30D / All Time activity windows.
-- Added horizontal historical activity panel.
 - Added timestamp-based window calculation.
 - Added block timestamp fallback mode.
-- Added historical window metrics: transactions, NFT transfers, stake events, unstake events, stake in, stake out, and net stake flow.
 - Added historical activity metadata to raw JSON output.
-- App version updated to `v1.4.0`.
-- Scoring policy remains `WIL-v1.3.3`.
 
 ### v1.3.3 — Stake Flow Classifier
 
@@ -1238,23 +714,18 @@ Potential future directions, depending on available explorer data, contract desi
 - Added stake selector detection: `0x3a4b66f1`.
 - Added unstake selector detection: `0x2e17de78`.
 - Added decoded unstake amount from calldata.
-- Added estimated current stake formula: `totalStakeIn - totalUnstakeOut`.
-- Added reward/fee flow separation from stake position calculation.
-- Added stake confidence metadata.
-- Added stake-flow metadata to raw JSON output.
-- Updated policy engine to `stake-flow-classifier-scoring-v1.3.3`.
+- Added reward/fee flow separation.
 
 ### v1.3.2 — Stake-Aware Scoring
 
 - Added Native Funds Score tiers.
 - Added DACC Stake Score tiers.
 - Added staking contract signal.
-- Added estimated stake field to UI and Wallet Intelligence Profile.
-- Updated policy engine to `stake-aware-reputation-scoring-v1.3.2`.
+- Added estimated stake field to the interface.
 
 ### v1.3.1 — Rank Highlight UI
 
-- Highlighted inferred DAC Inception Rank in the Official Rank Signal panel.
+- Highlighted inferred DAC Inception Rank.
 - Added Inception Rank to the Wallet Intelligence Profile panel.
 
 ### v1.3.0 — Known Collection Registry + DAC Inception Rank Scoring
@@ -1263,33 +734,35 @@ Potential future directions, depending on available explorer data, contract desi
 - Added DAC Inception Rank detection.
 - Added DAC Inception Rank as a scoring component.
 - Added inferred rank from RANK badge count.
-- Updated scoring model to include official rank signal.
 
 ### v1.2.0 — Versioned Scoring Policy
 
 - Added locked scoring policy metadata.
-- Added Policy ID: `WIL-2026-05-v1.2.0`.
-- Added policy status: `LOCKED`.
-- Added scoring engine label: `versioned-reputation-scoring-v1.2.0`.
-- Added versioned component thresholds and label definitions to raw JSON output.
-- Added policy metadata panel to the scoring breakdown section.
+- Added policy ID.
+- Added scoring engine label.
+- Added versioned component thresholds and label definitions.
 
 ### v1.1.1 — NFT Participation Percentage Display Fix
 
 - Changed NFT Participation display from decimal ratio to percentage format.
-- Example: `0.19` → `19.00%`.
-- Updated scoring policy metadata to `WIL-v1.1.1`.
 
 ### v1.1.0 — Transparent Scoring UI
 
 - Added visible scoring breakdown panel.
 - Added per-category score components.
 - Added rule/condition display for each score component.
-- Added scoring policy metadata to raw JSON output.
 
 ### v1 — Initial Release
 
-Initial release of the community-built DAC Wallet Intelligence Layer.
+- Initial release of the community-built DAC Wallet Intelligence Layer.
+- Added no-connect wallet checking.
+- Added Proof of Native Funds.
+- Added Proof of Assets Engine.
+- Added Activity Analytics.
+- Added Portfolio Intelligence.
+- Added Reputation Scoring.
+- Added Raw JSON Output.
+- Added live chain stats.
 
 ---
 
@@ -1299,20 +772,7 @@ This project is part of the [`dac-dual-node-cgnat-setup`](https://github.com/EdL
 
 ---
 
-## Repository Context
+## Author
 
-This tool is part of a broader DAC infrastructure contribution archive.
-
-The `Sender-Web` folder focuses on testnet transaction generation and user-facing interaction tooling.
-
-This folder, under:
-
-```text
-DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/
-```
-
-is intended as an archive and continuation of DAC contribution work related to wallet intelligence, explorer-based analytics, and the related function-task concept from the DAC / Truebit Etherscan API task library.
-
----
-
-*Authored by **JERUZZALEM** — DAC Infra Tester*  
+**JERUZZALEM**  
+DAC Infra Tester
