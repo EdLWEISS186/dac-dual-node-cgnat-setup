@@ -1,8 +1,8 @@
-# DAC Wallet Intelligence Layer v1.4.2 — Community Wallet Checker
+# DAC Wallet Intelligence Layer v1.5.2 — Community Wallet Checker
 
 A client-side wallet intelligence interface for the DAC Quantum Chain Testnet.
 
-This tool allows users to paste a wallet address and generate a read-only wallet profile from public DAC testnet data: native funds, DACC staking flow, NFT ownership, official DAC Inception Rank signal, historical activity windows, activity metrics, portfolio behavior, reputation scoring, and Sybil-risk estimation.
+This tool allows users to paste a wallet address and generate a read-only wallet profile from public DAC testnet data: native funds, DACC staking flow, NFT ownership, official DAC Inception Rank signal, historical activity windows, activity metrics, portfolio behavior, reputation scoring, Sybil heuristics, stress-testing links, and Sybil-risk estimation.
 
 > **Important:** This is a community-built checker by **JERUZZALEM — DAC Infra Tester**.  
 > It is **not an official DAC checker**, not an official Sybil detector, and not an official reputation system.  
@@ -11,7 +11,7 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 **Live:**  
 - [DAC•Wallet Intelligence Layer](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/)
 
-![Version](https://img.shields.io/badge/version-v1.4.2-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-v1.5.2-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-see%20root-lightgrey?style=flat-square)
 ![Testnet Only](https://img.shields.io/badge/network-testnet%20only-yellow?style=flat-square)
 ![Static Site](https://img.shields.io/badge/hosted-GitHub%20Pages-blue?style=flat-square)
@@ -23,35 +23,31 @@ This tool allows users to paste a wallet address and generate a read-only wallet
 
 ## Latest Version
 
-### v1.4.2 — Historical Windowing Label Polish
+### v1.5.2 — Sybil Heuristics Naming & UI Consistency
 
-This patch release improves the wording in the Historical Activity Windowing panel.
+This patch finalizes the v1.5.x Sybil Heuristics interface and keeps the module versioning audit-friendly.
 
-The underlying v1.4.0 historical windowing logic remains the same, but the UI now uses more community-friendly language:
+Changes in this release:
 
-- **Net Stake Delta** was renamed to **Net Staked**.
-- **Stake Tx Count** remains used for transaction count.
-- **Unstake Tx Count** remains used for unstake transaction count.
-- **Estimated Current Stake** remains used for the All Time window.
-- The explanatory note now clarifies that **Stake Tx Count** is transaction count, while **Net Staked** is the net DACC amount staked.
+- **Sybil Heuristics** heading simplified from `Explorer-only Sybil Heuristics`.
+- The mode label remains `EOH-v1.5.2 · EXPLORER_ONLY`, so the explorer-only nature is still visible.
+- Topbar branding now follows the active product version: `Wallet Intelligence Layer v1.5.2`.
+- Wallet Age in the Sybil Heuristics metric row is normalized to match neighboring cards.
+- First Transaction keeps the special compact age format with separate number/unit colors.
+- `known-collection-registry-v1.3.3` remains unchanged because the registry logic has not changed since v1.3.3.
+- The policy version remains locked under `WIL-v1.5.2`.
 
-Current app version:
-
-```text
-App Version : v1.4.2
-```
-
-Current scoring policy remains unchanged:
+Current app and policy metadata:
 
 ```text
-Policy ID      : WIL-2026-05-v1.3.3
-Policy Version : WIL-v1.3.3
-Status         : LOCKED
-Engine         : stake-flow-classifier-scoring-v1.3.3
-Max Score      : 100
+App Version     : v1.5.2
+Policy Version  : WIL-v1.5.2
+Policy ID       : WIL-2026-05-v1.5.2
+Policy Engine   : wallet-quality-scoring-v1.5.2
+Sybil Engine    : EOH-v1.5.2
+Sybil Mode      : EXPLORER_ONLY
+Registry Module : known-collection-registry-v1.3.3
 ```
-
-The scoring policy remains `WIL-v1.3.3` because v1.4.x adds historical windowing and UI wording improvements, not a scoring formula change.
 
 ---
 
@@ -59,6 +55,25 @@ The scoring policy remains `WIL-v1.3.3` because v1.4.x adds historical windowing
 
 This section summarizes the major milestones across the Wallet Intelligence Layer releases.  
 For detailed per-version changes, see the [Changelog](#changelog).
+
+### v1.5.x — Sybil Heuristics & Wallet Behavior Analysis
+
+The v1.5.x series adds a separate wallet behavior analysis layer on top of reputation scoring.
+
+Major additions:
+
+- **Sybil Heuristics** — explorer-only wallet behavior analysis without backend dependency.
+- **Pattern Health Score** — a 100-point behavior-health score separate from the reputation score.
+- **Sybil Risk Estimate** — LOW / MEDIUM / HIGH estimate based on explorer-visible behavior patterns.
+- **Activity Archetype** — classifies wallets as stress testers, builders, ecosystem participants, repetitive transfer wallets, low-data wallets, or mixed-pattern wallets.
+- **First Transaction output** — shows the first observed DAC Testnet transaction, age, date, block, type, and shortened hash.
+- **Wallet Maturity / Early Signal** — gives special weight to early DAC Testnet participation phases.
+- **Builder / Tester Signal** — protects stress testers, deployers, NFT launchers, DAC•SENDER users, and developer dummy wallets from being misread as repetitive farmers.
+- **Stress Testing links** — adds quick links to DAC•SENDER and DAC•SENDER NFT Launchpad.
+
+The main goal of this series is to separate constructive testnet behavior from low-diversity repetitive behavior while avoiding a backend dependency.
+
+---
 
 ### v1.4.x — Historical Activity Windowing
 
@@ -164,6 +179,8 @@ This version created the foundation for a client-side, read-only DAC testnet wal
 - [Official Participation Signals](#official-participation-signals)
 - [Stake Flow Classifier](#stake-flow-classifier)
 - [Historical Activity Windowing](#historical-activity-windowing)
+- [Sybil Heuristics](#sybil-heuristics)
+- [Stress Testing Links](#stress-testing-links)
 - [Scoring and Label Definitions](#scoring-and-label-definitions)
 - [Transparent Scoring UI](#transparent-scoring-ui)
 - [Versioned Scoring Policy](#versioned-scoring-policy)
@@ -365,6 +382,12 @@ The current web implementation is shipped as static files, but the internal logi
                               │
                               ▼
 ┌──────────────────────────────────────────────────────────────┐
+│ sybil-heuristics.js                                          │
+│ explorer-only pattern health + behavior archetype            │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
 │ Wallet Intelligence Layer                                    │
 │ final wallet profile + raw JSON output                       │
 └──────────────────────────────────────────────────────────────┘
@@ -400,10 +423,11 @@ wallet-intelligence.js
         ├── Known Collection Registry
         ├── Activity Analytics v1
         ├── Portfolio Intelligence v1
-        └── Reputation Scoring v1.3.3
+        ├── Reputation Scoring v1.5.2
+        └── Sybil Heuristics v1.5.2
         │
         ▼
-Wallet Intelligence Layer output
+Wallet Intelligence Layer output + Sybil Heuristics output
 ```
 
 ---
@@ -597,6 +621,158 @@ The raw JSON output includes:
 ```
 
 Historical activity is informational and does not modify the locked `WIL-v1.3.3` scoring policy.
+
+---
+
+
+## Sybil Heuristics
+
+Version `v1.5.0` introduced a separate explorer-only behavior heuristic layer.
+
+The heading is shown as:
+
+```text
+Sybil Heuristics
+```
+
+The mode label remains:
+
+```text
+EOH-v1.5.2 · EXPLORER_ONLY
+```
+
+This makes the UI cleaner while still showing that the analysis does not use a backend.
+
+### Purpose
+
+The purpose of this layer is not to accuse wallets or make a definitive Sybil decision.
+
+It is designed to compare observable wallet behavior patterns using only public explorer data.
+
+```text
+High activity alone is not suspicious.
+High activity becomes risky only when it is repetitive, low-diversity,
+low-commitment, and lacks builder/tester or DAC ecosystem signals.
+```
+
+### Output
+
+The Sybil Heuristics panel displays:
+
+| Output | Meaning |
+|---|---|
+| `Pattern Health` | 100-point behavior-health score |
+| `Sybil Risk Estimate` | LOW / MEDIUM / HIGH estimate |
+| `Activity Archetype` | Human-readable behavior category |
+| `First Transaction` | First observed DAC Testnet transaction |
+| `Wallet Age` | Age from first transaction |
+| `Active Days` | Number of active calendar days |
+| `Unique Contracts` | Distinct contract targets touched |
+| `Counterparties` | Unique wallet counterparties |
+| `Burst Ratio` | Largest single-day share of total transactions |
+| `Gas Spent` | Estimated gas spent by the wallet |
+
+### First Transaction Format
+
+The First Transaction card uses a compact age display:
+
+```text
+1Y2M13D
+7M3D
+5D
+```
+
+Only available units are displayed.  
+For example, `7M3D` is shown instead of `0Y7M3D`.
+
+The First Transaction card keeps number/unit visual separation:
+
+```text
+numbers → main text color
+Y/M/D   → highlight color
+```
+
+Example:
+
+```text
+First Transaction
+1M22D
+Apr 02, 2026
+Block 14,589,819
+NATIVE_TRANSFER · 0x335a81...f8d0
+```
+
+### Component Weights
+
+The v1.5.2 behavior-health model uses seven components:
+
+| Component | Max Points | Purpose |
+|---|---:|---|
+| Wallet Maturity | 15 | Rewards early and consistent DAC Testnet participation |
+| Activity Spread | 15 | Rewards activity across multiple days and weeks |
+| Activity Burst | 10 | Reads whether activity is concentrated into one short burst |
+| Interaction Diversity | 15 | Measures unique contracts and deployment paths |
+| Builder / Tester Signal | 20 | Protects stress testing, builder, deployer, and DAC•SENDER-like activity |
+| Counterparty Pattern | 10 | Reads local counterparty concentration |
+| DAC Ecosystem Commitment | 15 | Uses RANK badge and stake as ecosystem commitment signals |
+| **Total** | **100** | Pattern Health Score |
+
+### Wallet Maturity / Early Signal
+
+Wallet Maturity includes special early-phase weighting:
+
+| First Transaction Timing | Points |
+|---|---:|
+| `FirstTx <= Mar 21, 2026 (Waitlist Phase)` | 9 |
+| `FirstTx <= Apr 11, 2026 (Keycard Claim Closed)` | 7 |
+| `FirstTx <= Apr 18, 2026 (Inception Live)` | 5 |
+| `FirstTx 30+ days ago` | 4 |
+| `FirstTx 14+ days ago` | 2 |
+| `FirstTx 7+ days ago` | 1 |
+| `FirstTx below 7 days ago` | 0 |
+
+The earliest three tiers are intentionally special because they represent early community participation phases.
+
+### Policy Relationship
+
+v1.5.2 uses two score layers:
+
+```text
+Reputation Scoring Layer     : 100 points
+Sybil Heuristics Layer       : 100 points
+```
+
+Current policy metadata:
+
+```text
+Policy Version  : WIL-v1.5.2
+Policy Engine   : wallet-quality-scoring-v1.5.2
+Sybil Engine    : EOH-v1.5.2
+Sybil Mode      : EXPLORER_ONLY
+```
+
+The known collection registry remains:
+
+```text
+known-collection-registry-v1.3.3
+```
+
+because the registry detection logic has not changed since v1.3.3.
+
+---
+
+## Stress Testing Links
+
+The interface includes a Stress Testing panel below Scoring Breakdown.
+
+It links to:
+
+| Tool | URL |
+|---|---|
+| `DAC•SENDER` | `https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Sender-Web/` |
+| `DAC•SENDER NFT Launchpad` | `https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Sender-Web/mint.html` |
+
+These links connect the wallet checker with the transaction-generation and NFT-testing tools used for DAC Testnet stress testing.
 
 ---
 
@@ -854,11 +1030,11 @@ The purpose is to make future scoring changes auditable. If a future version cha
 Current policy metadata:
 
 ```text
-Policy ID      : WIL-2026-05-v1.3.3
-Policy Version : WIL-v1.3.3
-Status         : LOCKED
-Engine         : stake-flow-classifier-scoring-v1.3.3
-Max Score      : 100
+Policy ID       : WIL-2026-05-v1.5.2
+Policy Version  : WIL-v1.5.2
+Status          : LOCKED
+Engine          : wallet-quality-scoring-v1.5.2
+Max Score       : 100 reputation + 100 pattern health
 ```
 
 The raw JSON output includes scoring policy metadata, score components, threshold definitions, official rank signal, native funds signal, and official stake signal.
@@ -995,6 +1171,8 @@ Example test wallet:
 - Estimated current stake is calculated as `totalStakeIn - totalUnstakeOut`.
 - `Historical Activity Windowing` uses timestamp data when available and limited block timestamp fallback when needed.
 - `Net Staked` means `Stake In - Stake Out` for each historical window.
+- `Sybil Heuristics` uses explorer-only wallet behavior data and does not use backend, IP, device, or private user data.
+- `known-collection-registry-v1.3.3` remains unchanged because registry logic has not changed since v1.3.3.
 - Raw JSON includes versioned scoring policy metadata and stake-flow metadata.
 - The current implementation is shipped in `index.html`, `wallet-intelligence.css`, and `wallet-intelligence.js`; the module names in the architecture section describe the conceptual separation of logic.
 
