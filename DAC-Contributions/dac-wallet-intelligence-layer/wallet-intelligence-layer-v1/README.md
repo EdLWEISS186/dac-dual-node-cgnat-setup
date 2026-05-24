@@ -772,7 +772,4 @@ This project is part of the [`dac-dual-node-cgnat-setup`](https://github.com/EdL
 
 ---
 
-## Author
-
-**JERUZZALEM**  
-DAC Infra Tester
+*Authored by **JERUZZALEM** — DAC Infra Tester*
