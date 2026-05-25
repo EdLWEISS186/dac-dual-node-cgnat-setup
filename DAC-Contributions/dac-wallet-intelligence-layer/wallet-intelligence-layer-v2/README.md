@@ -22,9 +22,9 @@ https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contribut
 
 ## Latest Version
 
-### v2.0.2 — IPFS Final Badge Metadata
+### v2.0.2 — IPFS Final Badge Metadata + ERC-5192 SBT
 
-This version finalizes the serious test path for the Wallet Status badge using IPFS-hosted artwork and collection metadata.
+This version finalizes the serious test path for the Wallet Status badge using IPFS-hosted artwork, collection metadata, and SBT-compatible locking.
 
 Key updates:
 
@@ -32,10 +32,11 @@ Key updates:
 - Final badge artwork source uses IPFS.
 - Collection metadata source uses IPFS.
 - Token metadata fields are finalized.
+- The NFT preview uses the final IPFS artwork directly.
 - The NFT preview no longer displays `One evolving badge for...` inside the card.
 - The evolving-badge target note is moved to the UI control panel before the Mint / Update button.
 - The project detail link points to the `wallet-intelligence-layer-v2` folder.
-- The frontend is protected from minting until the final contract address is inserted.
+- The final contract source is ERC-5192-compatible SBT-style: `locked(tokenId) = true`.
 
 Current metadata:
 
@@ -48,7 +49,7 @@ Network           : DAC Testnet / Chain ID 21894
 Mint Price        : 1 DACC
 Update Price      : 0.001 DACC
 Badge Rule        : One wallet = one evolving badge
-Transfer Model    : Non-transferable / soulbound-style
+Transfer Model    : SBT / non-transferable / ERC-5192 locked
 Image URI         : ipfs://bafybeihicvibazfaz6rhmz343f5i64fyzddjmjbyxpaffqpyn5arxwicde
 Collection URI    : ipfs://bafkreifiifj4mafn5rtrdebj6lipc2ndlg2pvpzbbf5ofkohntopt7cvfa
 ```
@@ -97,30 +98,24 @@ Collection metadata:
 ipfs://bafkreifiifj4mafn5rtrdebj6lipc2ndlg2pvpzbbf5ofkohntopt7cvfa
 ```
 
-Gateway preview:
-
-```text
-https://gateway.pinata.cloud/ipfs/bafkreifiifj4mafn5rtrdebj6lipc2ndlg2pvpzbbf5ofkohntopt7cvfa
-```
-
 ---
 
 ## Important Deployment Note
 
-The frontend currently contains a final-contract placeholder:
+The frontend contains a final-contract placeholder:
 
 ```js
 const WALLET_STATUS_BADGE_CONTRACT =
-  "0x10A061C78BF697543DA27Bb18B4a6b4BE8Ef7C78";
+  "0xC790a1f6b314267e88F6ef2FcB66537DD2C4e1a2";
 ```
 
-Final contract has been deployed and configured in `wallet-intelligence.js`:
+Final ERC-5192 SBT contract has been deployed and configured in `wallet-intelligence.js`:
 
 ```text
-0x10A061C78BF697543DA27Bb18B4a6b4BE8Ef7C78
+0xC790a1f6b314267e88F6ef2FcB66537DD2C4e1a2
 ```
 
-Do not mint through the old test contract if you want the finalized IPFS metadata.
+Do not mint through the previous non-ERC5192 test contract if you want the finalized SBT standard behavior.
 
 ---
 
@@ -142,12 +137,6 @@ Name format:
 Wallet Status - <full wallet address>
 ```
 
-Example:
-
-```text
-Wallet Status - 0x870ad63acc507cdfd878F170606d19ae78988AFE
-```
-
 Attributes:
 
 ```text
@@ -160,8 +149,26 @@ Rank Badge Count
 Native Balance Tier
 Wallet Address
 Version
+Token Type
+Transferability
 Verification Mode
 ```
+
+---
+
+## SBT / ERC-5192 Behavior
+
+The final contract is designed as a locked wallet badge:
+
+```text
+locked(tokenId) = true
+transferFrom() reverts
+safeTransferFrom() reverts
+approve() reverts
+setApprovalForAll() reverts
+```
+
+A wallet can mint only one badge. If the wallet profile changes, the same badge is updated through `updateBadge()`.
 
 ---
 
@@ -186,58 +193,11 @@ If badge exists and is current:
   Badge Up To Date
 ```
 
-The checker still does **not** require wallet connection for analysis.
-
-Wallet connection appears only when the user explicitly clicks **Mint Badge** or **Update Badge**.
-
----
-
-## On-chain Verification Model
-
-v2 uses an **on-chain verified core** model.
-
-The contract does not accept editable score payloads from the frontend for the core badge state. Instead, it recalculates the core badge profile from on-chain state available to the contract.
-
-Verified core inputs include:
-
-```text
-msg.sender wallet
-native DACC balance tier
-DAC Inception Rank badge balance
-one-wallet-one-badge ownership rule
-mint/update price rule
-```
-
-The broader browser-based Wallet Intelligence Layer still computes explorer-derived analytics such as:
-
-```text
-historical activity windowing
-Sybil heuristics
-activity archetype
-transaction spread
-contract interaction behavior
-counterparty pattern
-```
-
-Those explorer-indexed fields remain part of the web profile. The badge contract verifies the on-chain core profile.
-
 ---
 
 ## DAC Sender NFT Launchpad Relationship
 
 The Wallet Status badge is designed to coexist with the DAC Sender NFT Launchpad registry.
-
-The badge contract is separate from the generic DAC Sender NFT collection contract because dynamic badge logic requires:
-
-```text
-one wallet = one badge
-status update on same token
-mint/update price difference
-non-transferable behavior
-on-chain core profile recomputation
-```
-
-The DACNFTRegistry remains the collection discovery layer.
 
 Registry:
 
@@ -245,10 +205,10 @@ Registry:
 0x34CDf37FeEb81877acabAD601AAaA3AE5a5029Ae
 ```
 
-Register values after final contract deployment:
+Register values after final SBT contract deployment:
 
 ```text
-contractAddr : 0x10A061C78BF697543DA27Bb18B4a6b4BE8Ef7C78
+contractAddr : 0xC790a1f6b314267e88F6ef2FcB66537DD2C4e1a2
 name         : Wallet Status
 symbol       : Status
 maxSupply    : 999999999
@@ -261,14 +221,15 @@ metadataCID  : bafkreifiifj4mafn5rtrdebj6lipc2ndlg2pvpzbbf5ofkohntopt7cvfa
 
 ## Changelog
 
-### v2.0.2 — IPFS Final Badge Metadata
+### v2.0.2 — IPFS Final Badge Metadata + ERC-5192 SBT
 
 - Locked final NFT description.
 - Switched final image source to IPFS.
 - Added final collection metadata CID.
 - Finalized token metadata fields.
-- Moved the evolving-badge target note out of the NFT preview and into the UI control panel.
-- Kept the web repository minimal: `index.html`, `wallet-intelligence.css`, `wallet-intelligence.js`, and `README.md`.
+- Added ERC-5192 `locked(tokenId)` behavior.
+- Kept the web repository minimal.
+- Kept version label at `v2.0.2`.
 
 ### v2.0.1 — Direct Badge Mint
 
