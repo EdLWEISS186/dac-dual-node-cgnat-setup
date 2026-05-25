@@ -1,4 +1,4 @@
-a# DAC Wallet Intelligence Layer v2.0.2
+# DAC Wallet Intelligence Layer v2.0.2
 
 Client-side wallet intelligence interface and dynamic wallet-bound badge layer for the **DAC Quantum Chain Testnet**.
 
