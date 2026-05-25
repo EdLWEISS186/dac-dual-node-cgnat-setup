@@ -111,10 +111,14 @@ The frontend currently contains a final-contract placeholder:
 
 ```js
 const WALLET_STATUS_BADGE_CONTRACT =
-  "0x0000000000000000000000000000000000000000";
+  "0x10A061C78BF697543DA27Bb18B4a6b4BE8Ef7C78";
 ```
 
-Before testing mint, deploy the final contract source separately through Remix, then replace the placeholder with the deployed final contract address.
+Final contract has been deployed and configured in `wallet-intelligence.js`:
+
+```text
+0x10A061C78BF697543DA27Bb18B4a6b4BE8Ef7C78
+```
 
 Do not mint through the old test contract if you want the finalized IPFS metadata.
 
@@ -244,7 +248,7 @@ Registry:
 Register values after final contract deployment:
 
 ```text
-contractAddr : final Wallet Status contract
+contractAddr : 0x10A061C78BF697543DA27Bb18B4a6b4BE8Ef7C78
 name         : Wallet Status
 symbol       : Status
 maxSupply    : 999999999
