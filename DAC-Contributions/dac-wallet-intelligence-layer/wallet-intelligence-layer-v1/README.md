@@ -1,4 +1,4 @@
-# DAC Wallet Intelligence Layer v1.5.2
+# DAC Wallet Intelligence Layer v1.5.4
 
 Client-side wallet intelligence interface for the **DAC Quantum Chain Testnet**.
 
@@ -11,7 +11,7 @@ The checker reads public DAC testnet data from the explorer and RPC, then conver
 
 - [DAC Wallet Intelligence Layer](https://EdLWEISS186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1/)
 
-![Version](https://img.shields.io/badge/version-v1.5.2-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-v1.5.4-blue?style=flat-square)
 ![Network](https://img.shields.io/badge/network-DAC%20testnet-yellow?style=flat-square)
 ![Chain ID](https://img.shields.io/badge/chain%20ID-21894-blueviolet?style=flat-square)
 ![Mode](https://img.shields.io/badge/mode-read%20only-brightgreen?style=flat-square)
@@ -22,14 +22,16 @@ The checker reads public DAC testnet data from the explorer and RPC, then conver
 
 ## Latest Version
 
-### v1.5.2 — Wallet Quality Policy, Sybil Heuristics, and UI Consistency
+### v1.5.4 — GitHub Project Button
 
-Version `v1.5.2` is the current stable version of the Wallet Intelligence Layer.
+Version `v1.5.4` is the current UI version of the Wallet Intelligence Layer.
+
+This release adds a direct GitHub project button below the five pipeline cards in the initial hero interface. The button links users to the project folder so they can review the implementation, README, assets, and repository context.
 
 Current metadata:
 
 ```text
-App Version     : v1.5.2
+App Version     : v1.5.4
 Policy Version  : WIL-v1.5.2
 Policy ID       : WIL-2026-05-v1.5.2
 Policy Engine   : wallet-quality-scoring-v1.5.2
@@ -38,15 +40,16 @@ Sybil Mode      : EXPLORER_ONLY
 Registry Module : known-collection-registry-v1.3.3
 ```
 
-Key updates in v1.5.2:
+Key updates in v1.5.4:
 
-- The Sybil panel is titled **Sybil Heuristics**.
-- The mode label remains `EOH-v1.5.2 · EXPLORER_ONLY`.
-- Topbar branding follows the active product version: `Wallet Intelligence Layer v1.5.2`.
-- Topbar subtext remains `Wallet Checker`.
-- Wallet Age in the Sybil Heuristics metric row is normalized to match neighboring metric cards.
-- First Transaction keeps compact age formatting with visual separation between numeric values and time units.
-- The known collection registry remains `known-collection-registry-v1.3.3` because the registry detection logic has not changed since v1.3.3.
+- Added **Read Project Details** button below the hero pipeline cards.
+- Linked the button to the GitHub project folder.
+
+GitHub project folder:
+
+```text
+https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1
+```
 
 ---
 
@@ -65,6 +68,7 @@ Key updates in v1.5.2:
 - [Historical Activity Windowing](#historical-activity-windowing)
 - [DAC Inception Rank Signal](#dac-inception-rank-signal)
 - [DACC Stake Signal](#dacc-stake-signal)
+- [Project Repository Link](#project-repository-link)
 - [Stress Testing Links](#stress-testing-links)
 - [Failure Handling](#failure-handling)
 - [Security Model](#security-model)
@@ -95,6 +99,8 @@ DAC Wallet Intelligence Layer
 The interface is read-only. Users paste a wallet address and press `Check`. No wallet connection, signature, private key, backend account, or server-side database is required.
 
 The output is designed for infrastructure testing, testnet participation analysis, wallet behavior review, explorer-based reporting, public-data debugging, and community analytics.
+
+The initial interface also includes a direct GitHub project button so users can inspect the repository folder and read the implementation details.
 
 ---
 
@@ -132,7 +138,7 @@ Screenshots should be stored in the local `assets/` folder.
 
 ### Initial Interface
 
-Default interface state before a wallet check is executed.
+Default interface state before a wallet check is executed. This view includes the five pipeline cards and the GitHub project button.
 
 ![Initial Interface](assets/InitialInterface.png)
 
@@ -208,7 +214,7 @@ Conceptual module layout:
 
 ```text
 index.html
-└── UI shell, wallet input, result panels, stress-testing links
+└── UI shell, wallet input, result panels, project link, stress-testing links
 
 wallet-intelligence.js
 ├── explorer / RPC orchestration
@@ -558,6 +564,32 @@ Stake is not labeled as an official rank signal. It is displayed as a separate D
 
 ---
 
+
+## Project Repository Link
+
+Version `v1.5.4` adds a repository navigation button to the initial hero section.
+
+```text
+Read Project Details
+Open GitHub folder
+```
+
+The button points to:
+
+```text
+https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1
+```
+
+Purpose:
+
+- allow users to review the project folder
+- provide direct access to the README and static source files
+- make the community-built nature of the checker transparent
+- help reviewers trace the project context inside the wider DAC contribution repository
+
+
+---
+
 ## Stress Testing Links
 
 The interface includes a Stress Testing panel that links to related DAC testnet activity tools:
@@ -636,6 +668,7 @@ Example wallet:
 - Wallet Quality Policy is `WIL-v1.5.2`.
 - Policy engine is `wallet-quality-scoring-v1.5.2`.
 - Sybil engine is `EOH-v1.5.2`.
+- App UI version is `v1.5.4`.
 
 ---
 
@@ -654,16 +687,25 @@ Potential future directions:
 
 ## Changelog
 
+### v1.5.4 — GitHub Project Button
+
+- Added `Read Project Details` button below the initial hero pipeline cards.
+- Linked the button to the GitHub project folder.
+- Updated app UI version to `v1.5.4`.
+
+### v1.5.3 — Stress Testing Button Fix
+
+- Improved Stress Testing links so they visually read as action buttons rather than table-like rows.
+- Added button-like layout, hover behavior, directional arrow indicator, and clearer button hierarchy.
+- Updated app UI version to `v1.5.3`.
+
 ### v1.5.2 — Sybil Heuristics Naming & UI Consistency
 
 - Renamed panel heading from `Explorer-only Sybil Heuristics` to `Sybil Heuristics`.
-- Kept mode label as `EOH-v1.5.2 · EXPLORER_ONLY`.
 - Updated topbar branding to `Wallet Intelligence Layer v1.5.2`.
 - Restored topbar subtext to `Wallet Checker`.
 - Normalized Wallet Age display in the Sybil Heuristics metric row.
-- Kept First Transaction age formatting with separate number/unit colors.
 - Confirmed known collection registry logic is unchanged since v1.3.3.
-- Kept registry module version as `known-collection-registry-v1.3.3`.
 - Updated policy version to `WIL-v1.5.2`.
 - Updated policy engine to `wallet-quality-scoring-v1.5.2`.
 
@@ -691,7 +733,6 @@ Potential future directions:
 ### v1.4.2 — Net Staked Label Polish
 
 - Renamed `Net Stake Delta` to `Net Staked`.
-- Kept `Estimated Current Stake` unchanged for the All Time window.
 - Updated historical window wording.
 
 ### v1.4.1 — Historical Windowing Wording Polish
@@ -772,4 +813,9 @@ This project is part of the [`dac-dual-node-cgnat-setup`](https://github.com/EdL
 
 ---
 
-*Authored by **JERUZZALEM** — DAC Infra Tester*
+## Author
+
+**JERUZZALEM**  
+DAC Infra Tester
+
+Built by Communities for Communities.
