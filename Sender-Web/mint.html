@@ -339,6 +339,8 @@ const HIDDEN_COLLECTIONS=new Set([
 ]);
 function isHiddenCollection(addr){return HIDDEN_COLLECTIONS.has(String(addr||'').toLowerCase());}
 function isWalletStatusSbtV8(addr){return String(addr||'').toLowerCase()===WALLET_STATUS_SBT_V8;}
+function getReadProvider(){return provider || RPC;}
+function getWriteOrReadProvider(){return signer || provider || RPC;}
 const REGISTRY_ABI=['function getAll() view returns (tuple(address contractAddr,string name,string symbol,uint256 maxSupply,uint256 mintPrice,string imageCID,string metadataCID,address deployer,uint256 deployedAt)[])'];
 const NFT_ABI=['function name() view returns (string)','function symbol() view returns (string)','function totalSupply() view returns (uint256)','function maxSupply() view returns (uint256)','function maxMintPerWallet() view returns (uint256)','function mintPrice() view returns (uint256)','function mintedPerWallet(address) view returns (uint256)','function dynamicSvgOf(address) view returns (string)','function mint(uint256 quantity) payable'];
 const RPC=new ethers.JsonRpcProvider('https://rpctest.dachain.tech');
@@ -400,7 +402,7 @@ async function hydrateWalletStatusCollectionThumb(card, collection){
 
   try{
     const walletForPreview=connectedAddress || collection.deployer || '0x0000000000000000000000000000000000000000';
-    const c=new ethers.Contract(collection.contractAddr,['function dynamicSvgOf(address) view returns (string)'],RPC);
+    const c=new ethers.Contract(collection.contractAddr,['function dynamicSvgOf(address) view returns (string)'],getReadProvider());
     const svg=await c.dynamicSvgOf(walletForPreview);
     if(!svg||!String(svg).trim().startsWith('<svg'))throw new Error('Invalid dynamic SVG thumbnail');
     box.innerHTML=svg;
@@ -423,7 +425,7 @@ async function setWalletStatusDynamicArtwork(wallet){
 
   try{
     if(ph){ph.style.display='flex';ph.innerHTML='<div class="m-artwork-ph-icon">&#x2726;</div><div>Loading dynamic SBT...</div>';}
-    const c=new ethers.Contract(contractAddress,['function dynamicSvgOf(address) view returns (string)'],RPC);
+    const c=new ethers.Contract(contractAddress,['function dynamicSvgOf(address) view returns (string)'],getReadProvider());
     const svg=await c.dynamicSvgOf(wallet);
 
     if(!svg||!String(svg).trim().startsWith('<svg'))throw new Error('Invalid dynamic SVG');
@@ -456,7 +458,7 @@ async function ensureMintPriceLoaded(){
   if(mintPrice>0n)return;
 
   try{
-    const c=new ethers.Contract(contractAddress,['function mintPrice() view returns (uint256)'],signer||RPC);
+    const c=new ethers.Contract(contractAddress,['function mintPrice() view returns (uint256)'],getWriteOrReadProvider());
     const p=await c.mintPrice();
     if(p>0n){
       mintPrice=p;
@@ -466,7 +468,7 @@ async function ensureMintPriceLoaded(){
   }catch{}
 
   try{
-    const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,RPC);
+    const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,getReadProvider());
     const all=await reg.getAll();
     const found=all.find(c=>String(c.contractAddr).toLowerCase()===contractAddress.toLowerCase());
     if(found&&found.mintPrice!==undefined){
@@ -481,7 +483,7 @@ async function loadCollections(){
   const panel=document.getElementById('panel-collections');
   panel.innerHTML='<div class="loading-state"><div class="load-spin"></div>Loading from registry...</div>';
   try{
-    const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,RPC);
+    const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,getReadProvider());
     const allRaw=await reg.getAll();
     const all=allRaw.filter(c=>!isHiddenCollection(c.contractAddr));
     document.getElementById('count-badge').textContent=all.length;
@@ -526,7 +528,7 @@ async function loadCollections(){
 
 async function fetchSupply(addr,maxS){
   try{
-    const c=new ethers.Contract(addr,['function totalSupply() view returns (uint256)'],RPC);
+    const c=new ethers.Contract(addr,['function totalSupply() view returns (uint256)'],getReadProvider());
     const total=Number(await c.totalSupply());
     const el=document.getElementById('sup-'+addr);
     const bar=document.getElementById('bar-'+addr);
@@ -545,13 +547,13 @@ async function loadMyCollections(){
   list.style.display='flex';
   list.innerHTML='<div class="loading-state"><div class="load-spin"></div>Loading your NFTs...</div>';
   try{
-    const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,RPC);
+    const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,getReadProvider());
     const allRaw=await reg.getAll();
     const all=allRaw.filter(c=>!isHiddenCollection(c.contractAddr));
     const minABI=['function mintedPerWallet(address) view returns (uint256)','function totalSupply() view returns (uint256)'];
     const results=await Promise.all(all.map(async c=>{
       try{
-        const contract=new ethers.Contract(c.contractAddr,minABI,RPC);
+        const contract=new ethers.Contract(c.contractAddr,minABI,getReadProvider());
         const [minted,total]=await Promise.all([contract.mintedPerWallet(connectedAddress),contract.totalSupply()]);
         return{c,minted:Number(minted),total:Number(total)};
       }catch{return{c,minted:0,total:0};}
@@ -619,7 +621,7 @@ function applyCollectionData(data){
 async function loadRegistryData(){
   if(!contractAddress)return;
   try{
-    const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,RPC);
+    const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,getReadProvider());
     const all=await reg.getAll();
     const found=all.find(c=>String(c.contractAddr).toLowerCase()===contractAddress.toLowerCase());
     if(!found)return;
@@ -832,8 +834,12 @@ function onConnected(){
     if(isWalletStatusSbtV8(contractAddress))setWalletStatusDynamicArtwork(connectedAddress);
   } else {
     document.getElementById('mine-connect-box').style.display='none';
+    loadCollections();
+    const minePanel=document.getElementById('panel-mine');
+    if(minePanel && minePanel.style.display==='flex')loadMyCollections();
   }
-  window.ethereum.on('accountsChanged',a=>{if(!a.length)location.reload();else{connectedAddress=a[0];document.getElementById('wallet-addr').textContent=shortAddr(a[0]);document.getElementById('wd-full-addr').textContent=a[0];if(isMintPage){refreshMintData();if(isWalletStatusSbtV8(contractAddress))setWalletStatusDynamicArtwork(connectedAddress);}}});
+  window.ethereum.on('accountsChanged',a=>{if(!a.length)location.reload();else{connectedAddress=a[0];document.getElementById('wallet-addr').textContent=shortAddr(a[0]);document.getElementById('wd-full-addr').textContent=a[0];if(isMintPage){refreshMintData();if(isWalletStatusSbtV8(contractAddress))setWalletStatusDynamicArtwork(connectedAddress);}
+      else{loadCollections();const minePanel=document.getElementById('panel-mine');if(minePanel&&minePanel.style.display==='flex')loadMyCollections();}}});
   window.ethereum.on('chainChanged',()=>location.reload());
 }
 
