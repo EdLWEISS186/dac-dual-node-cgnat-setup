@@ -14,6 +14,7 @@ The following reports document technical findings from field testing conducted d
 | 4 | [Frontend–Blockchain State Desynchronization After Successful NFT Mint](./4.%20Frontend%E2%80%93Blockchain%20State%20Desynchronization%20After%20Successful%20NFT%20Mint.pdf) | May 10, 2026 |
 | 5 | [Official Enode Evolution Analysis — Infrastructure Rotation & Network Maturation](./5.%20Official%20Enode%20Evolution%20Analysis%20%E2%80%94%20Infrastructure%20Rotation%20%26%20Network%20Maturation.pdf) | May 11, 2026 |
 | 6 | [DAC SENDER — Testnet Transaction Interface](./6.%20DAC%20SENDER%20%E2%80%94%20Testnet%20Transaction%20Interface.pdf) | May 22, 2026 |
+| 7 | [Wallet Intelligence Layer — Wallet Intelligence, Dynamic Wallet Status SBT, and DAC Sender Launchpad Integration](./7.%20Wallet%20Intelligence%20Layer%20%E2%80%94%20Wallet%20Intelligence%2C%20Dynamic%20Wallet%20Status%20SBT%2C%20and%20DAC%20Sender%20Launchpad%20Integration.pdf) | May 28, 2026 |
 
 ---
 
@@ -36,6 +37,9 @@ The following reports document technical findings from field testing conducted d
 
 **6. DAC SENDER — Testnet Transaction Interface** — *May 22, 2026*
 > Application development report documenting the design, deployment, and operational validation of **DAC•SENDER v1.4.3**, a static no-build, no-backend client-side web interface built to support DAC Quantum Chain Testnet infrastructure testing. The tool generates diverse, measurable EVM activity across native transfers, proxy transfers, multi-send batch transfers, contract deployment, NFT deployment, registry registration, and NFT minting. The report also documents technical findings observed during development, including the 2,824 Gwei gas price anomaly, the DACSendProxy protocol fee cap bug and fix, EVM London compatibility constraints caused by the absence of the PUSH0 opcode, recurring public RPC 502/504 failures, and the implementation of an on-chain NFT registry architecture for the NFT Launchpad. This report marks a transition from pure infrastructure diagnostics into community-built on-chain tooling for reproducible testnet activity generation and application-layer validation.
+
+**7. Wallet Intelligence Layer — Wallet Intelligence, Dynamic Wallet Status SBT, and DAC Sender Launchpad Integration** — *May 28, 2026*
+> Application development report documenting the completion of DAC Wallet Intelligence Layer across two development tracks: v1 (up to v1.5.4) and v2 (up to v2.0.2). v1 provides a read-only, no-connect wallet checker that converts public DAC Testnet explorer and RPC data into a structured wallet profile — covering native funds, asset holdings, activity analytics, NFT portfolio, reputation scoring, Sybil heuristics, and DAC Inception Rank signals. v2 extends the foundation into a dynamic wallet-bound SBT system: each wallet can mint one evolving ERC-5192 locked badge reflecting its verified on-chain profile, dynamically rendered as an SVG tied to live contract reads. The Wallet Status SBT is integrated into the DAC Sender NFT Launchpad registry, making it discoverable and mintable through the existing community launchpad. Technical findings during v2 finalization include inline SVG rendering as the resolution for dynamic artwork compatibility and UI-layer filtering as the approach for managing deprecated development registry entries.
 
 ---
 
