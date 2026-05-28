@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Register Existing DAC Sender NFT</title>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+<style>
+:root{
+  --bg:#070707;--surface:#141414;--surface2:#1b1b1b;--border:#2a2a2a;
+  --text:#f1eee8;--muted:#88827a;--dim:#55504a;--accent:#e8631a;
+  --green:#2ecc71;--red:#e74c3c;--blue:#3b82f6;--yellow:#d9a928;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;background:
+  radial-gradient(circle at 20% 0%,rgba(232,99,26,.12),transparent 28%),
+  radial-gradient(circle at 100% 90%,rgba(59,130,246,.10),transparent 30%),
+  var(--bg);
+  color:var(--text);font-family:var(--sans);padding:32px;
+}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.header,.card{background:rgba(20,20,20,.86);border:1px solid var(--border);border-radius:14px}
+.header{padding:24px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+h1{font-family:var(--mono);font-size:28px;line-height:1.15;margin:0 0 10px}
+p{margin:0;color:var(--muted);line-height:1.7;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{padding:18px}
+.full{grid-column:1/-1}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+input,textarea{
+  width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);
+  background:#0d0d0d;color:var(--text);font-family:var(--mono);font-size:13px;
+}
+textarea{min-height:76px;resize:vertical}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+button{
+  border:1px solid var(--border);border-radius:8px;padding:12px 16px;
+  background:var(--surface2);color:var(--text);font-family:var(--mono);
+  font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+}
+button.primary{background:var(--accent);border-color:var(--accent);color:white}
+button:hover{opacity:.85}
+.status{
+  min-height:120px;white-space:pre-wrap;word-break:break-word;
+  border:1px solid var(--border);border-radius:10px;background:#0d0d0d;
+  padding:14px 16px;font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--muted)
+}
+.ok{color:var(--green)}.err{color:var(--red)}.info{color:var(--blue)}.warn{color:var(--yellow)}
+.note{font-size:12px;color:var(--muted);line-height:1.7}
+code{color:var(--text)}
+@media(max-width:760px){body{padding:18px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="header">
+    <div class="eyebrow">DAC•SENDER Registry Repair Helper</div>
+    <h1>Register Existing NFT Collection</h1>
+    <p>
+      Use this only when a DAC•SENDER NFT can be minted from a direct <code>mint.html?contract=...</code> link,
+      but does not appear in the Launchpad Collections / My Collections tabs.
+    </p>
+  </section>
+
+  <section class="grid">
+    <article class="card full">
+      <label>Direct mint link or contract address</label>
+      <textarea id="sourceInput" placeholder="Paste mint.html?contract=0x... link or contract address"></textarea>
+      <div class="note" style="margin-top:8px">
+        This helper will try to read collection data from the NFT contract and from localStorage cache:
+        <code>dac_nft_&lt;contract&gt;</code>.
+      </div>
+    </article>
+
+    <article class="card"><label>Contract address</label><input id="contractAddr" placeholder="0x..." /></article>
+    <article class="card"><label>Name</label><input id="name" placeholder="Collection name" /></article>
+    <article class="card"><label>Symbol</label><input id="symbol" placeholder="Symbol" /></article>
+    <article class="card"><label>Max supply</label><input id="maxSupply" placeholder="999" /></article>
+    <article class="card"><label>Mint price in DACC</label><input id="mintPrice" placeholder="0.001" /></article>
+    <article class="card"><label>Image CID</label><input id="imageCID" placeholder="bafy... or bafk..." /></article>
+    <article class="card full"><label>Metadata CID</label><input id="metadataCID" placeholder="bafy... or bafk..." /></article>
+
+    <article class="card full">
+      <div class="actions">
+        <button onclick="extractAddress()">Extract Address</button>
+        <button onclick="connectWallet()">Connect Wallet</button>
+        <button onclick="autoFill()">Auto Fill</button>
+        <button onclick="checkRegistry()">Check Registry</button>
+        <button class="primary" onclick="registerCollection()">Register Collection</button>
+      </div>
+    </article>
+
+    <article class="card full">
+      <label>Status</label>
+      <div class="status" id="statusBox">Ready. Paste the direct mint link or contract address first.</div>
+    </article>
+  </section>
+</div>
+
+<script>
+const DAC_CHAIN_ID_HEX = "0x5586";
+const RPC_URL = "https://rpctest.dachain.tech/";
+const REGISTRY_ADDRESS = "0x34CDf37FeEb81877acabAD601AAaA3AE5a5029Ae";
+
+const REGISTRY_ABI = [
+  "function getAll() view returns (tuple(address contractAddr,string name,string symbol,uint256 maxSupply,uint256 mintPrice,string imageCID,string metadataCID,address deployer,uint256 deployedAt)[])",
+  "function register(address contractAddr,string name,string symbol,uint256 maxSupply,uint256 mintPrice,string imageCID,string metadataCID)"
+];
+
+const NFT_ABI = [
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+  "function maxSupply() view returns (uint256)",
+  "function mintPrice() view returns (uint256)"
+];
+
+const rpc = new ethers.JsonRpcProvider(RPC_URL);
+let provider;
+let signer;
+
+function $(id){return document.getElementById(id);}
+function setStatus(msg,type=""){const b=$("statusBox");b.className="status "+type;b.textContent=msg;}
+function normCid(v){
+  if(!v)return "";
+  v=String(v).trim();
+  v=v.replace(/^ipfs:\/\//i,"");
+  v=v.replace(/^https?:\/\/[^/]+\/ipfs\//i,"");
+  return v.split(/[?#]/)[0].trim();
+}
+function setVal(id,v){if(v!==undefined&&v!==null&&String(v).trim()!=="")$(id).value=String(v).trim();}
+
+function extractAddress(){
+  const raw = ($("sourceInput").value || "").trim();
+  const match = raw.match(/0x[a-fA-F0-9]{40}/);
+  if(!match){
+    setStatus("No valid contract address found in input.", "err");
+    return null;
+  }
+  $("contractAddr").value = ethers.getAddress(match[0]);
+  setStatus("Contract extracted:\n"+$("contractAddr").value+"\n\nNow click Auto Fill.", "ok");
+  return $("contractAddr").value;
+}
+
+async function ensureDacChain(){
+  const chainId = await window.ethereum.request({method:"eth_chainId"});
+  if(String(chainId).toLowerCase() === DAC_CHAIN_ID_HEX.toLowerCase()) return;
+  await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:DAC_CHAIN_ID_HEX}]});
+}
+
+async function connectWallet(){
+  if(!window.ethereum){
+    setStatus("No browser wallet found. Open this page with Rabby, MetaMask, or OKX Wallet available.", "err");
+    return;
+  }
+  try{
+    await ensureDacChain();
+    provider = new ethers.BrowserProvider(window.ethereum);
+    signer = await provider.getSigner();
+    setStatus("Connected:\n"+await signer.getAddress(), "ok");
+  }catch(err){
+    setStatus(err?.message || "Wallet connection failed.", "err");
+  }
+}
+
+async function autoFill(){
+  let addr = $("contractAddr").value.trim();
+  if(!ethers.isAddress(addr)) addr = extractAddress();
+  if(!addr) return;
+  addr = ethers.getAddress(addr);
+  $("contractAddr").value = addr;
+
+  const lines = [`Auto-fill for ${addr}`];
+
+  try{
+    const c = new ethers.Contract(addr, NFT_ABI, rpc);
+    const [name, symbol, maxSupply, mintPrice] = await Promise.allSettled([
+      c.name(), c.symbol(), c.maxSupply(), c.mintPrice()
+    ]);
+
+    if(name.status==="fulfilled") setVal("name", name.value);
+    if(symbol.status==="fulfilled") setVal("symbol", symbol.value);
+    if(maxSupply.status==="fulfilled") setVal("maxSupply", maxSupply.value.toString());
+    if(mintPrice.status==="fulfilled") setVal("mintPrice", ethers.formatEther(mintPrice.value));
+
+    lines.push("Contract reads completed.");
+  }catch(err){
+    lines.push("Contract reads failed: "+(err?.message||err));
+  }
+
+  try{
+    const cachedRaw = localStorage.getItem("dac_nft_"+addr.toLowerCase());
+    if(cachedRaw){
+      const data = JSON.parse(cachedRaw);
+      setVal("name", data.name || data?.metadata?.name);
+      setVal("symbol", data.symbol || data?.metadata?.symbol);
+      setVal("maxSupply", data.maxSupply);
+      if(data.mintPrice !== undefined) setVal("mintPrice", data.mintPrice);
+
+      const image = data.imageCID || data.image || data.image_url || data?.metadata?.image || data?.metadata?.image_url;
+      const metadata = data.metadataCID || data.tokenURI || data.uri;
+      if(image) setVal("imageCID", normCid(image));
+      if(metadata) setVal("metadataCID", normCid(metadata));
+
+      lines.push("LocalStorage cache found and applied.");
+    }else{
+      lines.push("No localStorage cache found for this contract.");
+    }
+  }catch(err){
+    lines.push("LocalStorage parse failed: "+(err?.message||err));
+  }
+
+  setStatus(lines.join("\n"), "info");
+}
+
+async function checkRegistry(){
+  let addr = $("contractAddr").value.trim();
+  if(!ethers.isAddress(addr)) addr = extractAddress();
+  if(!addr) return false;
+  addr = ethers.getAddress(addr);
+  $("contractAddr").value = addr;
+
+  try{
+    const reg = new ethers.Contract(REGISTRY_ADDRESS, REGISTRY_ABI, rpc);
+    const all = await reg.getAll();
+    const found = all.find(c => String(c.contractAddr).toLowerCase() === addr.toLowerCase());
+    if(found){
+      setStatus(
+        "Already registered.\n\n"+
+        "Contract: "+found.contractAddr+"\n"+
+        "Name: "+found.name+"\n"+
+        "Symbol: "+found.symbol+"\n"+
+        "Max supply: "+found.maxSupply.toString()+"\n"+
+        "Mint price: "+ethers.formatEther(found.mintPrice)+" DACC\n"+
+        "Image CID: "+found.imageCID+"\n"+
+        "Metadata CID: "+found.metadataCID,
+        "ok"
+      );
+      return true;
+    }
+    setStatus("Not registered yet.\n\nThis explains why it does not appear in Collections / My Collections.", "warn");
+    return false;
+  }catch(err){
+    setStatus(err?.message || "Registry check failed.", "err");
+    return false;
+  }
+}
+
+async function registerCollection(){
+  let addr = $("contractAddr").value.trim();
+  if(!ethers.isAddress(addr)) addr = extractAddress();
+  if(!addr) return;
+  addr = ethers.getAddress(addr);
+  $("contractAddr").value = addr;
+
+  if(await checkRegistry()) return;
+
+  const name = $("name").value.trim();
+  const symbol = $("symbol").value.trim();
+  const maxSupplyRaw = $("maxSupply").value.trim();
+  const mintPriceRaw = $("mintPrice").value.trim();
+  const imageCID = normCid($("imageCID").value);
+  const metadataCID = normCid($("metadataCID").value);
+
+  if(!name || !symbol || !maxSupplyRaw || !mintPriceRaw || !imageCID || !metadataCID){
+    setStatus("Missing required fields.\n\nRequired: name, symbol, maxSupply, mintPrice, imageCID, metadataCID.", "err");
+    return;
+  }
+
+  try{
+    if(!signer) await connectWallet();
+    if(!signer) return;
+
+    const maxSupply = BigInt(maxSupplyRaw.replace(/,/g,""));
+    const mintPriceWei = ethers.parseEther(mintPriceRaw);
+
+    const reg = new ethers.Contract(REGISTRY_ADDRESS, REGISTRY_ABI, signer);
+
+    setStatus("Sending registry.register(...). Confirm in wallet.", "info");
+
+    const tx = await reg.register(addr, name, symbol, maxSupply, mintPriceWei, imageCID, metadataCID);
+    setStatus("Submitted:\n"+tx.hash+"\n\nWaiting for confirmation...", "info");
+
+    const receipt = await tx.wait();
+    setStatus(
+      "Registry repair complete.\n\n"+
+      "Tx: "+receipt.hash+"\n"+
+      "Block: "+receipt.blockNumber+"\n\n"+
+      "Now hard refresh mint.html with Ctrl + Shift + R.",
+      "ok"
+    );
+  }catch(err){
+    setStatus(err?.info?.error?.message || err?.message || "Registration failed.", "err");
+  }
+}
+</script>
+</body>
+</html>
