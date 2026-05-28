@@ -15,6 +15,7 @@ The following reports document technical findings from field testing conducted d
 | 5 | [Official Enode Evolution Analysis — Infrastructure Rotation & Network Maturation](./5.%20Official%20Enode%20Evolution%20Analysis%20%E2%80%94%20Infrastructure%20Rotation%20%26%20Network%20Maturation.pdf) | May 11, 2026 |
 | 6 | [DAC SENDER — Testnet Transaction Interface](./6.%20DAC%20SENDER%20%E2%80%94%20Testnet%20Transaction%20Interface.pdf) | May 22, 2026 |
 | 7 | [Wallet Intelligence Layer — Wallet Intelligence, Dynamic Wallet Status SBT, and DAC Sender Launchpad Integration](./7.%20Wallet%20Intelligence%20Layer%20%E2%80%94%20Wallet%20Intelligence%2C%20Dynamic%20Wallet%20Status%20SBT%2C%20and%20DAC%20Sender%20Launchpad%20Integration.pdf) | May 28, 2026 |
+| 8 | [DAC Wallet Intelligence Layer – Function Task Validation & Output Parity Testing](./8.%20DAC%20Wallet%20Intelligence%20Layer%20%E2%80%93%20Function%20Task%20Validation%20%26%20Output%20Parity%20Testing.pdf) | May 29, 2026 |
 
 ---
 
@@ -40,6 +41,9 @@ The following reports document technical findings from field testing conducted d
 
 **7. Wallet Intelligence Layer — Wallet Intelligence, Dynamic Wallet Status SBT, and DAC Sender Launchpad Integration** — *May 28, 2026*
 > Application development report documenting the completion of DAC Wallet Intelligence Layer across two development tracks: v1 (up to v1.5.4) and v2 (up to v2.0.2). v1 provides a read-only, no-connect wallet checker that converts public DAC Testnet explorer and RPC data into a structured wallet profile — covering native funds, asset holdings, activity analytics, NFT portfolio, reputation scoring, Sybil heuristics, and DAC Inception Rank signals. v2 extends the foundation into a dynamic wallet-bound SBT system: each wallet can mint one evolving ERC-5192 locked badge reflecting its verified on-chain profile, dynamically rendered as an SVG tied to live contract reads. The Wallet Status SBT is integrated into the DAC Sender NFT Launchpad registry, making it discoverable and mintable through the existing community launchpad. Technical findings during v2 finalization include inline SVG rendering as the resolution for dynamic artwork compatibility and UI-layer filtering as the approach for managing deprecated development registry entries.
+
+**8. DAC Wallet Intelligence Layer – Function Task Validation & Output Parity Testing** — *May 29, 2026*
+> Final / advanced phase validation report comparing the local browser output of **Wallet Intelligence Layer v2.0.2** with the `dac_wallet_intelligence` function-task execution from the DAC / Truebit Etherscan API task-library PR #2. The task was executed locally with Node.js using a prepared input derived from the WIL browser raw output. Results confirmed successful function-task execution, core metrics parity, and portfolio intelligence parity, while identifying scoring model drift in the reputation and Sybil-risk layers. The report concludes that the current function-task implementation is a valid simplified analytics execution baseline, while full WIL v2.0.2 parity remains a future enhancement requiring stake-flow, DAC Inception Rank, WIL scoring policy, historical activity, explorer-only Sybil heuristic, and dynamic badge-compatible output support.
 
 ---
 
