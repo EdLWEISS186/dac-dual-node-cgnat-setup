@@ -335,9 +335,18 @@ const REGISTRY_ADDRESS='0x34CDf37FeEb81877acabAD601AAaA3AE5a5029Ae';
 const WALLET_STATUS_SBT_V8='0xde02dfbf28563f80733423678477357df9040b14';
 const HIDDEN_COLLECTIONS=new Set([
   '0xc790a1f6b314267e88f6ef2fcb66537dd2c4e1a2',
-  '0x28aa8d67bb4becf5ad6fc5e28f5b971febb29cff'
+  '0x28aa8d67bb4becf5ad6fc5e28f5b971febb29cff',
+  '0x1c369b1a257c08d77368a6162be0b5ce480f80f5',
+  '0x165b72b2e5e547a9f0247b379a5db723f049d8e3',
+  '0xa3d5cc4418c10f6f9be8f128469217d320123f93'
 ]);
-function isHiddenCollection(addr){return HIDDEN_COLLECTIONS.has(String(addr||'').toLowerCase());}
+function isHiddenCollection(collectionOrAddr){
+  const addr = typeof collectionOrAddr === 'string'
+    ? collectionOrAddr
+    : collectionOrAddr?.contractAddr;
+
+  return HIDDEN_COLLECTIONS.has(String(addr || '').toLowerCase());
+}
 function isWalletStatusSbtV8(addr){return String(addr||'').toLowerCase()===WALLET_STATUS_SBT_V8;}
 function getReadProvider(){return provider || RPC;}
 function getWriteOrReadProvider(){return signer || provider || RPC;}
@@ -485,7 +494,7 @@ async function loadCollections(){
   try{
     const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,getReadProvider());
     const allRaw=await reg.getAll();
-    const all=allRaw.filter(c=>!isHiddenCollection(c.contractAddr));
+    const all=allRaw.filter(c=>!isHiddenCollection(c));
     document.getElementById('count-badge').textContent=all.length;
     if(!all.length){panel.innerHTML='<div class="empty-state"><div class="empty-icon">&#x25C8;</div><div class="empty-title">No collections yet</div><div class="empty-sub">Deploy an NFT via DAC&bull;Sender to list it here.</div></div>';return;}
     panel.innerHTML='';
@@ -549,7 +558,7 @@ async function loadMyCollections(){
   try{
     const reg=new ethers.Contract(REGISTRY_ADDRESS,REGISTRY_ABI,getReadProvider());
     const allRaw=await reg.getAll();
-    const all=allRaw.filter(c=>!isHiddenCollection(c.contractAddr));
+    const all=allRaw.filter(c=>!isHiddenCollection(c));
     const minABI=['function mintedPerWallet(address) view returns (uint256)','function totalSupply() view returns (uint256)'];
     const results=await Promise.all(all.map(async c=>{
       try{
