@@ -16,6 +16,7 @@ The following reports document technical findings from field testing conducted d
 | 6 | [DAC SENDER — Testnet Transaction Interface](./6.%20DAC%20SENDER%20%E2%80%94%20Testnet%20Transaction%20Interface.pdf) | May 22, 2026 |
 | 7 | [Wallet Intelligence Layer — Wallet Intelligence, Dynamic Wallet Status SBT, and DAC Sender Launchpad Integration](./7.%20Wallet%20Intelligence%20Layer%20%E2%80%94%20Wallet%20Intelligence%2C%20Dynamic%20Wallet%20Status%20SBT%2C%20and%20DAC%20Sender%20Launchpad%20Integration.pdf) | May 28, 2026 |
 | 8 | [DAC Wallet Intelligence Layer – Function Task Validation & Output Parity Testing](./8.%20DAC%20Wallet%20Intelligence%20Layer%20%E2%80%93%20Function%20Task%20Validation%20%26%20Output%20Parity%20Testing.pdf) | May 29, 2026 |
+| 9 | [DAC Testnet Inception Debugging Report — Frontend–Blockchain State Desynchronization, RPC Reliability, and Reward Accounting Validation](./9.%20DAC%20Testnet%20Inception%20Debugging%20Report.pdf) | May 30, 2026 |
 
 ---
 
@@ -44,6 +45,9 @@ The following reports document technical findings from field testing conducted d
 
 **8. DAC Wallet Intelligence Layer – Function Task Validation & Output Parity Testing** — *May 29, 2026*
 > Final / advanced phase validation report comparing the local browser output of **Wallet Intelligence Layer v2.0.2** with the `dac_wallet_intelligence` function-task execution from the DAC / Truebit Etherscan API task-library PR #2. The task was executed locally with Node.js using a prepared input derived from the WIL browser raw output. Results confirmed successful function-task execution, core metrics parity, and portfolio intelligence parity, while identifying scoring model drift in the reputation and Sybil-risk layers. The report concludes that the current function-task implementation is a valid simplified analytics execution baseline, while full WIL v2.0.2 parity remains a future enhancement requiring stake-flow, DAC Inception Rank, WIL scoring policy, historical activity, explorer-only Sybil heuristic, and dynamic badge-compatible output support.
+
+**9. DAC Testnet Inception Debugging Report — Frontend–Blockchain State Desynchronization, RPC Reliability, and Reward Accounting Validation** — *May 30, 2026*
+> Consolidated application-layer consistency and infrastructure debugging report covering DAC Inception Web checkpoints v0.1–v0.7. The investigation validates state boundaries between frontend UI, backend/indexer responses, public RPC, local RPC, explorer data, and confirmed on-chain execution. Key findings include recurring public RPC lag and instability, faucet pending/cooldown ambiguity, My Activity state-source inconsistency, leaderboard client-side scope limitations, social-binding transparency gaps, Quantum Crate UI/history refresh lag, QE Pool burn-to-QE accounting risk, and Rank NFT profile mapping desynchronization. The report concludes that several user actions succeeded on-chain, but confirmed state did not reliably propagate into profile, history, reward accounting, or UI rendering layers.
 
 ---
 
