@@ -153,7 +153,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .auto-key-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .auto-key-input{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:11px;color:var(--text);outline:none;transition:border-color 0.2s}
 .auto-key-input:focus{border-color:#e2b340}
-.auto-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+.auto-settings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:2px}
 .auto-setting-field{display:flex;flex-direction:column;gap:5px}
 .auto-setting-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#e2b340}
 .auto-setting-input{width:100%;padding:9px 12px;background:var(--bg);border:1px solid rgba(226,179,64,0.22);border-radius:5px;font-family:var(--mono);font-size:11px;color:var(--text);outline:none;transition:border-color 0.2s}
@@ -509,6 +509,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
             <label class="auto-setting-label" for="auto-count-input">Send Count</label>
             <input type="number" id="auto-count-input" class="auto-setting-input" value="100" min="1" max="500" step="1" inputmode="numeric" />
             <div class="auto-setting-hint">Stops after this many successful auto-send transactions.</div>
+          </div>
+          <div class="auto-setting-field">
+            <label class="auto-setting-label" for="auto-speed-input">Transaction Speed</label>
+            <select id="auto-speed-input" class="auto-setting-input">
+              <option value="slow">Slow</option>
+              <option value="normal" selected>Normal</option>
+              <option value="fast">Fast</option>
+            </select>
+            <div class="auto-setting-hint">Controls gas priority for each auto-send transaction.</div>
           </div>
         </div>
       </div>
@@ -10937,7 +10946,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
   const AUTO_PBKDF2_ITERATIONS = 250000;
   const AUTO_SEND_SESSION_CAP = 500;
   let autoRpcProvider=null, autoWallet=null, autoSendRunning=false, autoSendTimer=null;
-  let autoSendAmountStr=null, autoSendAmountWei=null, autoSendCounter=0, autoSendDelayMs=5000, autoSendTargetCount=100;
+  let autoSendAmountStr=null, autoSendAmountWei=null, autoSendCounter=0, autoSendDelayMs=5000, autoSendTargetCount=100, autoSendSpeed="normal";
   let autoUsedRecipients=new Set();
 
   // ── CONNECT ──────────────────────────────────────
@@ -11264,15 +11273,47 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
     autoUsedRecipients.add(picked.toLowerCase());
     return picked;
   }
+  function normalizeAutoSpeed(value){
+    const v=(value||'normal').toLowerCase();
+    return ['slow','normal','fast'].includes(v)?v:'normal';
+  }
+  function autoSpeedLabel(value){
+    const v=normalizeAutoSpeed(value);
+    return v.charAt(0).toUpperCase()+v.slice(1);
+  }
+  function scaleFeeValue(value,percent){
+    if(value==null)return undefined;
+    const scaled=(BigInt(value)*BigInt(percent))/100n;
+    return scaled>0n?scaled:1n;
+  }
+  async function buildAutoGasOverrides(provider,speed){
+    const s=normalizeAutoSpeed(speed);
+    if(s==='normal')return {};
+    const feeData=await provider.getFeeData();
+    const feePercent=s==='fast'?130:90;
+    const priorityPercent=s==='fast'?150:90;
+    if(feeData.maxFeePerGas&&feeData.maxPriorityFeePerGas){
+      return {
+        maxFeePerGas:scaleFeeValue(feeData.maxFeePerGas,feePercent),
+        maxPriorityFeePerGas:scaleFeeValue(feeData.maxPriorityFeePerGas,priorityPercent)
+      };
+    }
+    if(feeData.gasPrice){
+      return {gasPrice:scaleFeeValue(feeData.gasPrice,feePercent)};
+    }
+    return {};
+  }
+
   async function startAutoSend(){
     if(autoSendRunning)return;
     const amountStr=document.getElementById('amount-input').value.trim().replace(',','.');
     const delaySec=parseInt(document.getElementById('auto-delay-input')?.value||'5',10);
     const targetCount=parseInt(document.getElementById('auto-count-input')?.value||'100',10);
+    const speed=normalizeAutoSpeed(document.getElementById('auto-speed-input')?.value||'normal');
     if(!amountStr||isNaN(parseFloat(amountStr))||parseFloat(amountStr)<=0){showToastAuto('Set a valid amount once before starting auto-send.','error');return;}
     if(!Number.isFinite(delaySec)||delaySec<1||delaySec>3600){showToastAuto('Set delay between 1 and 3600 seconds.','error');return;}
-    if(!Number.isFinite(targetCount)||targetCount<1){showToastAuto('Set jumlah pengiriman at least 1.','error');return;}
-    if(targetCount>AUTO_SEND_SESSION_CAP){showToastAuto('Jumlah exceeds safety cap of '+AUTO_SEND_SESSION_CAP+' tx per browser session.','error');return;}
+    if(!Number.isFinite(targetCount)||targetCount<1){showToastAuto('Set send count at least 1.','error');return;}
+    if(targetCount>AUTO_SEND_SESSION_CAP){showToastAuto('Send count exceeds safety cap of '+AUTO_SEND_SESSION_CAP+' tx per browser session.','error');return;}
     const wallet=await getUnlockedAutoWallet();
     if(!wallet)return;
     try{
@@ -11282,11 +11323,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
       autoSendAmountWei=ethers.parseEther(amountStr);
       autoSendDelayMs=delaySec*1000;
       autoSendTargetCount=targetCount;
+      autoSendSpeed=speed;
       autoSendCounter=0;
       autoUsedRecipients.clear();
       autoSendRunning=true;
       setAutoButtons(true);
-      showToastAuto('AUTO-SEND started: '+targetCount+' tx · '+amountStr+' DACC each · '+delaySec+'s delay.','info');
+      showToastAuto('AUTO-SEND started: '+targetCount+' tx · '+amountStr+' DACC each · '+delaySec+'s delay · '+autoSpeedLabel(speed)+' speed.','info');
       runAutoSendCycle();
     }catch(err){
       autoSendRunning=false;
@@ -11322,10 +11364,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
     try{
       const bal=await wallet.provider.getBalance(wallet.address);
       if(bal<=autoSendAmountWei)throw new Error('Insufficient burner balance for next auto-send.');
-      const tx=await wallet.sendTransaction({to:toAddr,value:autoSendAmountWei});
+      const gasOverrides=await buildAutoGasOverrides(wallet.provider,autoSendSpeed);
+      const tx=await wallet.sendTransaction({to:toAddr,value:autoSendAmountWei,...gasOverrides});
       autoSendCounter++;
       updateTxCard(cardId,tx.hash,'pending');
-      showToastAuto('AUTO-SEND #'+autoSendCounter+'/'+autoSendTargetCount+' broadcast. Waiting confirmation...','info');
+      showToastAuto('AUTO-SEND #'+autoSendCounter+'/'+autoSendTargetCount+' broadcast · '+autoSpeedLabel(autoSendSpeed)+' speed. Waiting confirmation...','info');
       const receipt=await tx.wait();
       const st=receipt.status===1?'success':'failed';
       updateTxCard(cardId,tx.hash,st);
