@@ -339,7 +339,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 <div id="overlay">
   <div class="overlay-logo">DAC Quantum Chain</div>
   <div class="overlay-title">DAC<span style="color:var(--accent);">&bull;</span>SENDER</div>
-  <div style="font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--text-muted);margin-top:-10px;">v1.5.1</div>
+  <div style="font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--text-muted);margin-top:-10px;">DEV-ONLY[JERUZZALEM]</div>
   <div class="overlay-sub">Connect your EVM wallet to continue</div>
   <button id="btn-connect" onclick="connectWallet()">&#x2B21; &nbsp;Connect Wallet</button>
   <div id="overlay-status" style="font-size:11px;color:#7a7672;font-family:monospace;display:none;"></div>
@@ -351,7 +351,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div><div class="topbar-brand">DAC<span>&bull;</span>SENDER</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-muted);margin-top:2px;">v1.5.1</div></div>
+  <div><div class="topbar-brand">DAC<span>&bull;</span>SENDER</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-muted);margin-top:2px;">DEV-ONLY[JERUZZALEM]</div></div>
   <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
     <div class="topbar-center">Made by <strong>JERUZZALEM</strong> &mdash; DAC Infra Tester</div>
     <div style="font-family:var(--sans);font-size:10px;color:rgba(255,255,255,0.28);letter-spacing:1px;">Built by Communities for Communities</div>
@@ -11168,6 +11168,19 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
     if(delay)delay.disabled=running;
     if(count)count.disabled=running;
   }
+
+  function describeAutoRpcError(err){
+    const raw=(err?.shortMessage||err?.reason||err?.message||String(err)||'').replace(/\s+/g,' ').trim();
+    if(!raw)return 'Unknown RPC error.';
+    if(/failed to fetch|networkerror|cors|access-control|connection refused|could not coalesce|server response/i.test(raw)){
+      return 'Local RPC is not reachable from this browser. Check that your DAC node is running at '+LOCAL_RPC+' and that CORS/VHosts allow this page.';
+    }
+    if(/failed to detect network|network changed|timeout|ECONNREFUSED/i.test(raw)){
+      return 'Local RPC did not respond correctly at '+LOCAL_RPC+'. Check node status, port 8546, CORS, and chainId '+DAC_CHAIN_ID+'.';
+    }
+    return raw;
+  }
+
   async function saveAutoKey(){
     if(!window.crypto?.subtle){showToastAuto('Web Crypto is unavailable in this browser.','error');return;}
     const pk=normalizePrivateKey(document.getElementById('auto-pk-input')?.value);
@@ -11196,22 +11209,33 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
     const pass=document.getElementById('auto-pass-input')?.value||'';
     if(!payload){showToastAuto('No encrypted key saved yet.','error');return null;}
     if(!pass){showToastAuto('Enter your local passphrase to unlock.','error');return null;}
+
+    let pk;
     try{
       if(payload.chainId && Number(payload.chainId)!==DAC_CHAIN_ID)throw new Error('Saved key is not marked for DAC Testnet.');
-      const pk=await decryptAutoPrivateKey(payload,pass);
+      pk=await decryptAutoPrivateKey(payload,pass);
       autoWallet=new ethers.Wallet(pk,getAutoProvider());
-      const net=await autoWallet.provider.getNetwork();
-      if(Number(net.chainId)!==DAC_CHAIN_ID)throw new Error('RPC is not DAC Testnet.');
-      updateAutoKeyStatus('UNLOCKED · '+shortAddr(autoWallet.address),'ready');
-      document.getElementById('auto-pk-input').value='';
-      showToastAuto('Auto-send key unlocked for '+shortAddr(autoWallet.address)+'.','success');
-      return autoWallet;
     }catch(err){
       autoWallet=null;
       updateAutoKeyStatus('LOCKED','error');
-      showToastAuto('Unlock failed. Check passphrase or saved key.','error');
+      showToastAuto('Unlock failed: passphrase does not match the saved encrypted key. Use the exact same passphrase or click Forget Key and save again.','error');
       return null;
     }
+
+    // Important: unlocking the encrypted key is separate from checking the local RPC.
+    // The previous build checked RPC inside the same catch block, so a CORS/offline local node looked like a wrong passphrase.
+    try{
+      const net=await autoWallet.provider.getNetwork();
+      if(Number(net.chainId)!==DAC_CHAIN_ID)throw new Error('Local RPC is connected, but chainId is '+Number(net.chainId)+' instead of '+DAC_CHAIN_ID+'.');
+      updateAutoKeyStatus('UNLOCKED · '+shortAddr(autoWallet.address),'ready');
+      document.getElementById('auto-pk-input').value='';
+      showToastAuto('Auto-send key unlocked for '+shortAddr(autoWallet.address)+'. Local RPC ready.','success');
+    }catch(err){
+      updateAutoKeyStatus('UNLOCKED · RPC CHECK','ready');
+      document.getElementById('auto-pk-input').value='';
+      showToastAuto('Key unlocked for '+shortAddr(autoWallet.address)+', but RPC check failed: '+describeAutoRpcError(err),'info');
+    }
+    return autoWallet;
   }
   function forgetAutoKey(){
     stopAutoSend();
@@ -11267,7 +11291,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
     }catch(err){
       autoSendRunning=false;
       setAutoButtons(false);
-      showToastAuto(err?.message||'Unable to start auto-send.','error');
+      showToastAuto(describeAutoRpcError(err)||'Unable to start auto-send.','error');
     }
   }
   function stopAutoSend(showMessage=true){
