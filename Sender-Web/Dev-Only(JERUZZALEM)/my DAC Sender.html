@@ -153,6 +153,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .auto-key-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .auto-key-input{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:11px;color:var(--text);outline:none;transition:border-color 0.2s}
 .auto-key-input:focus{border-color:#e2b340}
+.auto-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+.auto-setting-field{display:flex;flex-direction:column;gap:5px}
+.auto-setting-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#e2b340}
+.auto-setting-input{width:100%;padding:9px 12px;background:var(--bg);border:1px solid rgba(226,179,64,0.22);border-radius:5px;font-family:var(--mono);font-size:11px;color:var(--text);outline:none;transition:border-color 0.2s}
+.auto-setting-input:focus{border-color:#e2b340}
+.auto-setting-hint{font-size:10px;color:var(--text-dim);line-height:1.45}
 .auto-key-actions{display:flex;gap:8px;flex-wrap:wrap}
 .auto-mini-btn{padding:8px 12px;background:var(--surface);border:1px solid rgba(226,179,64,0.35);border-radius:5px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#e2b340;cursor:pointer;transition:opacity 0.2s,transform 0.1s}
 .auto-mini-btn:hover{opacity:0.85;transform:translateY(-1px)}
@@ -167,7 +173,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 #toast-auto.info{background:rgba(59,158,255,0.1);border-color:rgba(59,158,255,0.3);color:var(--blue)}
 #toast-auto.success{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green)}
 #toast-auto.error{background:rgba(231,76,60,0.1);border-color:rgba(231,76,60,0.3);color:var(--red)}
-@media(max-width:768px){.auto-key-grid{grid-template-columns:1fr}.auto-send-row{flex-direction:column}}
+@media(max-width:768px){.auto-key-grid,.auto-settings-grid{grid-template-columns:1fr}.auto-send-row{flex-direction:column}}
 
 /* DEPLOY */
 .deploy-wrap{display:flex;flex-direction:column;gap:24px;padding-top:48px}
@@ -333,7 +339,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 <div id="overlay">
   <div class="overlay-logo">DAC Quantum Chain</div>
   <div class="overlay-title">DAC<span style="color:var(--accent);">&bull;</span>SENDER</div>
-  <div style="font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--text-muted);margin-top:-10px;">v1.4.3</div>
+  <div style="font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--text-muted);margin-top:-10px;">v1.5.1</div>
   <div class="overlay-sub">Connect your EVM wallet to continue</div>
   <button id="btn-connect" onclick="connectWallet()">&#x2B21; &nbsp;Connect Wallet</button>
   <div id="overlay-status" style="font-size:11px;color:#7a7672;font-family:monospace;display:none;"></div>
@@ -345,7 +351,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div><div class="topbar-brand">DAC<span>&bull;</span>SENDER</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-muted);margin-top:2px;">v1.4.3</div></div>
+  <div><div class="topbar-brand">DAC<span>&bull;</span>SENDER</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-muted);margin-top:2px;">v1.5.1</div></div>
   <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
     <div class="topbar-center">Made by <strong>JERUZZALEM</strong> &mdash; DAC Infra Tester</div>
     <div style="font-family:var(--sans);font-size:10px;color:rgba(255,255,255,0.28);letter-spacing:1px;">Built by Communities for Communities</div>
@@ -491,6 +497,19 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
           <button class="auto-mini-btn" onclick="saveAutoKey()">Save Encrypted Key</button>
           <button class="auto-mini-btn" onclick="unlockAutoKey()">Unlock</button>
           <button class="auto-mini-btn danger" onclick="forgetAutoKey()">Forget Key</button>
+        </div>
+
+        <div class="auto-settings-grid">
+          <div class="auto-setting-field">
+            <label class="auto-setting-label" for="auto-delay-input">Delay (seconds)</label>
+            <input type="number" id="auto-delay-input" class="auto-setting-input" value="5" min="1" max="3600" step="1" inputmode="numeric" />
+            <div class="auto-setting-hint">Pause after each confirmed send.</div>
+          </div>
+          <div class="auto-setting-field">
+            <label class="auto-setting-label" for="auto-count-input">Jumlah pengiriman</label>
+            <input type="number" id="auto-count-input" class="auto-setting-input" value="100" min="1" max="500" step="1" inputmode="numeric" />
+            <div class="auto-setting-hint">Stops after this many auto-send txs.</div>
+          </div>
         </div>
       </div>
 
@@ -786,7 +805,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 <div class="strip">
   <div class="strip-segment"><div class="strip-logo">D<b>A</b>C</div></div>
   <div class="strip-segment"><div class="strip-live"><div class="strip-live-badge"><div class="strip-live-dot"></div>TESTNET LIVE</div><div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px">DAC QUANTUM CHAIN</div></div></div>
-  <div class="strip-segment"><div class="strip-chain-info"><div class="strip-tag">Network</div><div class="strip-rpc">rpctest.dachain.tech</div><div class="strip-rpc">Chain ID &middot; 21894</div></div></div>
+  <div class="strip-segment"><div class="strip-chain-info"><div class="strip-tag">Network</div><div class="strip-rpc">127.0.0.1:8546</div><div class="strip-rpc">Chain ID &middot; 21894</div></div></div>
   <div class="strip-segment"><div class="strip-chain-info"><div class="strip-tag">Block Explorer</div><div class="strip-rpc" style="font-size:10px;">exptest.dachain.tech</div></div></div>
 </div>
 </div>
@@ -795,7 +814,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
   const DAC_CHAIN_ID = 21894;
   const DAC_CHAIN_HEX = '0x5586';
   const EXPLORER = 'https://exptest.dachain.tech';
-  const DAC_CHAIN_PARAMS = {chainId:DAC_CHAIN_HEX,chainName:'DAC Testnet',nativeCurrency:{name:'DACC',symbol:'DACC',decimals:18},rpcUrls:['https://rpctest.dachain.tech'],blockExplorerUrls:[EXPLORER]};
+  const LOCAL_RPC = 'http://127.0.0.1:8546';
+  const DAC_CHAIN_PARAMS = {chainId:DAC_CHAIN_HEX,chainName:'DAC Testnet',nativeCurrency:{name:'DACC',symbol:'DACC',decimals:18},rpcUrls:[LOCAL_RPC],blockExplorerUrls:[EXPLORER]};
   const RANDOM_ADDRESSES = [
     "0xFb93EED6c4BC0686513c2d585fD54d7e517Da32c",
     "0x10100e4f09066DbF80296e76a5749fae3BcB71EF",
@@ -10915,10 +10935,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
   // Raw private keys are never stored. The imported burner key is encrypted locally with Web Crypto.
   const AUTO_KEY_STORAGE = 'dac_sender_auto_key_encrypted_v1';
   const AUTO_PBKDF2_ITERATIONS = 250000;
-  const AUTO_SEND_DELAY_MS = 4500;
   const AUTO_SEND_SESSION_CAP = 500;
   let autoRpcProvider=null, autoWallet=null, autoSendRunning=false, autoSendTimer=null;
-  let autoSendAmountStr=null, autoSendAmountWei=null, autoSendCounter=0;
+  let autoSendAmountStr=null, autoSendAmountWei=null, autoSendCounter=0, autoSendDelayMs=5000, autoSendTargetCount=100;
+  let autoUsedRecipients=new Set();
 
   // ── CONNECT ──────────────────────────────────────
   async function connectWallet(){
@@ -11140,9 +11160,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
     const start=document.getElementById('btn-auto-send');
     const stop=document.getElementById('btn-stop-auto');
     const amount=document.getElementById('amount-input');
+    const delay=document.getElementById('auto-delay-input');
+    const count=document.getElementById('auto-count-input');
     if(start)start.disabled=running;
     if(stop)stop.disabled=!running;
     if(amount)amount.disabled=running;
+    if(delay)delay.disabled=running;
+    if(count)count.disabled=running;
   }
   async function saveAutoKey(){
     if(!window.crypto?.subtle){showToastAuto('Web Crypto is unavailable in this browser.','error');return;}
@@ -11206,23 +11230,39 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
     if(!RANDOM_ADDRESSES.length)return null;
     const pool=RANDOM_ADDRESSES.filter(a=>ethers.isAddress(a)&&(!senderAddr||a.toLowerCase()!==senderAddr.toLowerCase()));
     if(!pool.length)return null;
-    return pool[Math.floor(Math.random()*pool.length)];
+    let available=pool.filter(a=>!autoUsedRecipients.has(a.toLowerCase()));
+    if(!available.length){
+      // If the requested amount is larger than the pool, allow reuse after one full pass.
+      autoUsedRecipients.clear();
+      available=pool;
+    }
+    const picked=available[Math.floor(Math.random()*available.length)];
+    autoUsedRecipients.add(picked.toLowerCase());
+    return picked;
   }
   async function startAutoSend(){
     if(autoSendRunning)return;
     const amountStr=document.getElementById('amount-input').value.trim().replace(',','.');
+    const delaySec=parseInt(document.getElementById('auto-delay-input')?.value||'5',10);
+    const targetCount=parseInt(document.getElementById('auto-count-input')?.value||'100',10);
     if(!amountStr||isNaN(parseFloat(amountStr))||parseFloat(amountStr)<=0){showToastAuto('Set a valid amount once before starting auto-send.','error');return;}
+    if(!Number.isFinite(delaySec)||delaySec<1||delaySec>3600){showToastAuto('Set delay between 1 and 3600 seconds.','error');return;}
+    if(!Number.isFinite(targetCount)||targetCount<1){showToastAuto('Set jumlah pengiriman at least 1.','error');return;}
+    if(targetCount>AUTO_SEND_SESSION_CAP){showToastAuto('Jumlah exceeds safety cap of '+AUTO_SEND_SESSION_CAP+' tx per browser session.','error');return;}
     const wallet=await getUnlockedAutoWallet();
     if(!wallet)return;
     try{
       const net=await wallet.provider.getNetwork();
-      if(Number(net.chainId)!==DAC_CHAIN_ID)throw new Error('Wrong chain.');
+      if(Number(net.chainId)!==DAC_CHAIN_ID)throw new Error('Wrong chain. Local RPC must be DAC Testnet chain '+DAC_CHAIN_ID+'.');
       autoSendAmountStr=amountStr;
       autoSendAmountWei=ethers.parseEther(amountStr);
+      autoSendDelayMs=delaySec*1000;
+      autoSendTargetCount=targetCount;
       autoSendCounter=0;
+      autoUsedRecipients.clear();
       autoSendRunning=true;
       setAutoButtons(true);
-      showToastAuto('AUTO-SEND started. Amount locked at '+amountStr+' DACC per transaction.','info');
+      showToastAuto('AUTO-SEND started: '+targetCount+' tx · '+amountStr+' DACC each · '+delaySec+'s delay.','info');
       runAutoSendCycle();
     }catch(err){
       autoSendRunning=false;
@@ -11230,23 +11270,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
       showToastAuto(err?.message||'Unable to start auto-send.','error');
     }
   }
-  function stopAutoSend(){
+  function stopAutoSend(showMessage=true){
     autoSendRunning=false;
     if(autoSendTimer){clearTimeout(autoSendTimer);autoSendTimer=null;}
     setAutoButtons(false);
-    if(document.getElementById('toast-auto'))showToastAuto('AUTO-SEND stopped.','info');
+    if(showMessage&&document.getElementById('toast-auto'))showToastAuto('AUTO-SEND stopped.','info');
   }
   async function runAutoSendCycle(){
     if(!autoSendRunning)return;
+    if(autoSendCounter>=autoSendTargetCount){
+      stopAutoSend(false);
+      showToastAuto('AUTO-SEND completed: '+autoSendCounter+'/'+autoSendTargetCount+' transactions sent.','success');
+      return;
+    }
     if(autoSendCounter>=AUTO_SEND_SESSION_CAP){
-      stopAutoSend();
+      stopAutoSend(false);
       showToastAuto('Safety cap reached for this browser session. Start again manually if needed.','info');
       return;
     }
     const wallet=await getUnlockedAutoWallet();
-    if(!wallet){stopAutoSend();return;}
+    if(!wallet){stopAutoSend(false);return;}
     const toAddr=pickAutoRecipient(wallet.address);
-    if(!toAddr){stopAutoSend();showToastAuto('No valid recipient address available.','error');return;}
+    if(!toAddr){stopAutoSend(false);showToastAuto('No valid recipient address available.','error');return;}
     document.getElementById('recipient-input').value=toAddr;
     const cardId='tx-'+(++txCount);
     addTxCard(cardId,autoSendAmountStr,toAddr,null,'pending');
@@ -11256,22 +11301,29 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
       const tx=await wallet.sendTransaction({to:toAddr,value:autoSendAmountWei});
       autoSendCounter++;
       updateTxCard(cardId,tx.hash,'pending');
-      showToastAuto('AUTO-SEND #'+autoSendCounter+' broadcast. Waiting confirmation...','info');
+      showToastAuto('AUTO-SEND #'+autoSendCounter+'/'+autoSendTargetCount+' broadcast. Waiting confirmation...','info');
       const receipt=await tx.wait();
       const st=receipt.status===1?'success':'failed';
       updateTxCard(cardId,tx.hash,st);
       txMetrics.push({type:'auto-send',hash:tx.hash,recipient:toAddr,amount:autoSendAmountStr,total:autoSendAmountStr,status:st,timestamp:new Date().toISOString(),gasUsed:receipt.gasUsed?.toString()||'—'});
       enableExport();
       refreshBalance();
+      if(st!=='success')throw new Error('Auto-send transaction reverted or failed on-chain.');
       if(autoSendRunning){
-        autoSendTimer=setTimeout(runAutoSendCycle,AUTO_SEND_DELAY_MS);
+        if(autoSendCounter>=autoSendTargetCount){
+          stopAutoSend(false);
+          showToastAuto('AUTO-SEND completed: '+autoSendCounter+'/'+autoSendTargetCount+' transactions sent.','success');
+        }else{
+          showToastAuto('AUTO-SEND #'+autoSendCounter+'/'+autoSendTargetCount+' confirmed. Next send in '+Math.round(autoSendDelayMs/1000)+'s.','success');
+          autoSendTimer=setTimeout(runAutoSendCycle,autoSendDelayMs);
+        }
       }
     }catch(err){
       updateTxCard(cardId,null,'failed');
       const msg=err?.info?.error?.message||err?.message||'Auto-send transaction failed.';
       showToastAuto(msg,'error');
       // Keep the wallet safe: stop on tx errors instead of looping through failures.
-      stopAutoSend();
+      stopAutoSend(false);
     }
   }
   function showToastAuto(msg,type){
@@ -11599,7 +11651,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 
 
   // ── STATS BAR ────────────────────────────────────
-  const READ_RPC = 'https://rpctest.dachain.tech';
+  const READ_RPC = LOCAL_RPC;
   let readProvider = null;
   let statsInterval = null;
   let blockHistory = [];
