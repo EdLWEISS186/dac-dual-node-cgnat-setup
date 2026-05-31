@@ -11289,15 +11289,33 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
   async function buildAutoGasOverrides(provider,speed){
     const s=normalizeAutoSpeed(speed);
     if(s==='normal')return {};
+
     const feeData=await provider.getFeeData();
     const feePercent=s==='fast'?130:90;
     const priorityPercent=s==='fast'?150:90;
-    if(feeData.maxFeePerGas&&feeData.maxPriorityFeePerGas){
-      return {
-        maxFeePerGas:scaleFeeValue(feeData.maxFeePerGas,feePercent),
-        maxPriorityFeePerGas:scaleFeeValue(feeData.maxPriorityFeePerGas,priorityPercent)
-      };
+
+    if(feeData.maxFeePerGas!=null&&feeData.maxPriorityFeePerGas!=null){
+      let maxFeePerGas=scaleFeeValue(feeData.maxFeePerGas,feePercent);
+      let maxPriorityFeePerGas=scaleFeeValue(feeData.maxPriorityFeePerGas,priorityPercent);
+
+      // EIP-1559 safety guard:
+      // maxFeePerGas must never be lower than maxPriorityFeePerGas.
+      // When possible, also keep enough fee cap above the current base fee.
+      const latestBlock=await provider.getBlock('latest').catch(()=>null);
+      const baseFeePerGas=latestBlock?.baseFeePerGas;
+
+      if(baseFeePerGas!=null){
+        const minRequiredMaxFee=BigInt(baseFeePerGas)+BigInt(maxPriorityFeePerGas);
+        if(BigInt(maxFeePerGas)<minRequiredMaxFee){
+          maxFeePerGas=minRequiredMaxFee;
+        }
+      }else if(BigInt(maxFeePerGas)<BigInt(maxPriorityFeePerGas)){
+        maxFeePerGas=maxPriorityFeePerGas;
+      }
+
+      return {maxFeePerGas,maxPriorityFeePerGas};
     }
+
     if(feeData.gasPrice){
       return {gasPrice:scaleFeeValue(feeData.gasPrice,feePercent)};
     }
