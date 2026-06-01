@@ -1,0 +1,53 @@
+name: DAC Enode Intelligence Watcher
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  watch-dac-enodes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        working-directory: Observation-for-Technical-Report/dac-enode-intelligence-watcher
+        run: pip install -r requirements.txt
+
+      - name: Run DAC Enode Watcher
+        working-directory: Observation-for-Technical-Report/dac-enode-intelligence-watcher
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: python watcher.py
+
+      - name: Commit JSON snapshot if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add Observation-for-Technical-Report/dac-enode-intelligence-watcher/data/
+
+          if git diff --cached --quiet; then
+            echo "No JSON changes to commit."
+          else
+            git commit -m "chore: update DAC enode watcher snapshot"
+            git push
+          fi
