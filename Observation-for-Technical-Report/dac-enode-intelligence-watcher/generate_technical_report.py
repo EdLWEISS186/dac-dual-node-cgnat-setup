@@ -64,7 +64,13 @@ def build_report() -> str:
     rotation = load_json(ROTATION_SUMMARY_FILE)
     anomaly = load_json(ANOMALY_SUMMARY_FILE)
 
-    generated_at = datetime.now(timezone.utc).isoformat()
+    # Use watcher data timestamp instead of runtime timestamp.
+    # This keeps the generated report deterministic when no watcher data changes.
+    generated_at = (
+        load_json(LATEST_FILE).get("checked_at_utc")
+        or load_json(LATEST_FILE).get("generated_at_source")
+        or datetime.now(timezone.utc).isoformat()
+    )
 
     observation_scope = rotation.get("observation_scope", {})
     enode_stats = rotation.get("enode_count_statistics", {})

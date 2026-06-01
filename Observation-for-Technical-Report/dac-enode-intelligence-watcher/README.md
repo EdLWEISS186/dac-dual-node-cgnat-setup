@@ -658,6 +658,28 @@ The watcher is executed by GitHub Actions every 3 hours:
 
 It can also be triggered manually from the GitHub Actions tab.
 
+The workflow now runs the full watcher intelligence pipeline:
+
+    watcher.py
+        ↓
+    build_rotation_intelligence.py
+        ↓
+    build_anomaly_detection.py
+        ↓
+    generate_technical_report.py
+
+This means that when the official enode data changes, the workflow can automatically update:
+
+- `data/latest.json`
+- `data/snapshots/`
+- `data/rotation-intelligence-summary.json`
+- `data/anomaly-detection-summary.json`
+- `reports/generated/dac-enode-intelligence-report.md`
+
+The generated technical report uses the latest watcher timestamp instead of the workflow runtime timestamp.
+
+This keeps the report output deterministic when the watcher data does not change and prevents unnecessary scheduled commits.
+
 ---
 
 ## Email Notification
@@ -763,6 +785,9 @@ The current version already supports:
 - provider confidence labeling
 - provider / ASN dashboard visualization
 - provider / ASN report section generation
+- automated GitHub Actions intelligence pipeline rebuild
+- deterministic generated report timestamp
+- scheduled output commit only when generated files change
 
 ---
 
@@ -974,6 +999,28 @@ Initial generated result:
 - `Unknown`: 22 unique IPs
 
 This layer improves infrastructure readability while keeping the result honest by labeling unmatched IPs as `Unknown`.
+
+---
+
+### Production Automation Polish
+
+Improved GitHub Actions automation so scheduled watcher runs now rebuild the full intelligence pipeline automatically.
+
+Updated workflow:
+
+- runs `watcher.py`
+- rebuilds rotation intelligence
+- rebuilds anomaly detection summary
+- regenerates the Markdown technical report
+- commits generated outputs only when they change
+
+Updated report generator behavior:
+
+- `generate_technical_report.py` now uses the latest watcher timestamp
+- runtime timestamp is no longer used when watcher data exists
+- this prevents unnecessary report changes when no enode data changes
+
+This completes the production automation layer for the current watcher pipeline.
 
 ---
 
