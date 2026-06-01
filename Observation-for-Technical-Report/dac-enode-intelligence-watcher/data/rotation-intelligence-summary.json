@@ -4,8 +4,8 @@
   "description": "Aggregated rotation intelligence derived from manual backfill and automated watcher snapshots.",
   "observation_scope": {
     "manual_backfill_snapshots": 14,
-    "automated_watcher_snapshots": 2,
-    "total_snapshots": 16,
+    "automated_watcher_snapshots": 3,
+    "total_snapshots": 17,
     "first_observation": {
       "observation_index": 1,
       "phase": "manual_backfill",
@@ -23,20 +23,20 @@
       "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
     },
     "latest_observation": {
-      "observation_index": 16,
+      "observation_index": 17,
       "phase": "automated_watcher",
       "status": "changed",
-      "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-      "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
+      "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+      "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
       "target_port": 28657,
-      "current_total": 13,
-      "previous_total": 12,
-      "added_count": 1,
-      "removed_count": 0,
-      "unchanged_count": 12,
-      "change_severity": "LOW",
-      "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
-      "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+      "current_total": 9,
+      "previous_total": 13,
+      "added_count": 0,
+      "removed_count": 4,
+      "unchanged_count": 9,
+      "change_severity": "MEDIUM",
+      "severity_reason": "Moderate enode rotation detected: 0 added and 4 removed.",
+      "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
     }
   },
   "coverage_note": "Manual backfill is a partial archive. Missing dates represent missed observation windows, not confirmed absence of changes.",
@@ -46,12 +46,13 @@
   "enode_count_statistics": {
     "minimum": 7,
     "maximum": 15,
-    "average": 12.31
+    "average": 12.12
   },
   "unique_enode_count": 28,
   "unique_ip_count": 28,
   "severity_counts": {
-    "LOW": 1
+    "LOW": 1,
+    "MEDIUM": 1
   },
   "provider_detection": {
     "method": "static_prefix_heuristic",
@@ -61,15 +62,15 @@
   },
   "provider_counts": {
     "Contabo": 3,
-    "Unknown": 22,
     "DigitalOcean": 1,
+    "Unknown": 22,
     "Hetzner": 1,
     "OVHcloud": 1
   },
   "asn_counts": {
     "AS51167": 3,
-    "Unknown": 22,
     "AS14061": 1,
+    "Unknown": 22,
     "AS24940": 1,
     "AS16276": 1
   },
@@ -288,7 +289,7 @@
       "node_id": "637ec7dff7ce720bda6484d10103ce249787b3b98a226eb348b15f605ed9f17fbb24fc3c330cc182f1f92aeb0be3fce49f83f2aaa174a2691be170655df179f9",
       "ip": "213.136.82.243",
       "port": 28657,
-      "appearance_count": 16,
+      "appearance_count": 17,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -297,11 +298,11 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 16,
+        "observation_index": 17,
         "phase": "automated_watcher",
-        "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-        "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
@@ -420,6 +421,153 @@
           "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
           "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
           "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+        }
+      ]
+    },
+    {
+      "enode": "enode://09b8b08d7154745cc501d03eb562a35b1bd08509d992c25266e80c558eb97c53a90df0069e637463ed85b4df072e76f0d516bb4cc16d21269570b0370a6a5c4c@206.189.127.204:28657",
+      "node_id": "09b8b08d7154745cc501d03eb562a35b1bd08509d992c25266e80c558eb97c53a90df0069e637463ed85b4df072e76f0d516bb4cc16d21269570b0370a6a5c4c",
+      "ip": "206.189.127.204",
+      "port": 28657,
+      "appearance_count": 16,
+      "first_seen": {
+        "observation_index": 1,
+        "phase": "manual_backfill",
+        "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
+        "checked_at_utc": null,
+        "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
+      },
+      "last_seen": {
+        "observation_index": 17,
+        "phase": "automated_watcher",
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+      },
+      "phases_seen": [
+        "automated_watcher",
+        "manual_backfill"
+      ],
+      "appearance_ratio": 0.9412,
+      "appearances": [
+        {
+          "observation_index": 1,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 2,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 3,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 4,
+          "phase": "manual_backfill",
+          "generated_at_source": "Mon May 18 08:00:02 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-18T08-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 6,
+          "phase": "manual_backfill",
+          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 7,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 8,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 9,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 10,
+          "phase": "manual_backfill",
+          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 11,
+          "phase": "manual_backfill",
+          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 12,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 13,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 14,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 31 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-31T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 15,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 04:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T02:07:09.594281+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
+        },
+        {
+          "observation_index": 16,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
         }
       ]
     },
@@ -447,7 +595,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 1.0,
+      "appearance_ratio": 0.9412,
       "appearances": [
         {
           "observation_index": 1,
@@ -587,7 +735,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 1.0,
+      "appearance_ratio": 0.9412,
       "appearances": [
         {
           "observation_index": 1,
@@ -704,139 +852,6 @@
       ]
     },
     {
-      "enode": "enode://09b8b08d7154745cc501d03eb562a35b1bd08509d992c25266e80c558eb97c53a90df0069e637463ed85b4df072e76f0d516bb4cc16d21269570b0370a6a5c4c@206.189.127.204:28657",
-      "node_id": "09b8b08d7154745cc501d03eb562a35b1bd08509d992c25266e80c558eb97c53a90df0069e637463ed85b4df072e76f0d516bb4cc16d21269570b0370a6a5c4c",
-      "ip": "206.189.127.204",
-      "port": 28657,
-      "appearance_count": 15,
-      "first_seen": {
-        "observation_index": 1,
-        "phase": "manual_backfill",
-        "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
-        "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
-      },
-      "last_seen": {
-        "observation_index": 16,
-        "phase": "automated_watcher",
-        "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-        "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
-      },
-      "phases_seen": [
-        "automated_watcher",
-        "manual_backfill"
-      ],
-      "appearance_ratio": 0.9375,
-      "appearances": [
-        {
-          "observation_index": 1,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 2,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 3,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 4,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 18 08:00:02 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-18T08-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 6,
-          "phase": "manual_backfill",
-          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 7,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 8,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 9,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 10,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 11,
-          "phase": "manual_backfill",
-          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 12,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 13,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 14,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 31 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-31T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 15,
-          "phase": "automated_watcher",
-          "generated_at_source": "Mon Jun  1 04:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-01T02:07:09.594281+00:00",
-          "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
-        },
-        {
-          "observation_index": 16,
-          "phase": "automated_watcher",
-          "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-          "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
-        }
-      ]
-    },
-    {
       "enode": "enode://98910c2d5647bde2628982cb70480f445ccc7ad61c3aabdfe65893c186bd7bc5723806259b4631df4c53c43fbb45d499b6a73a6c267f1f343b697f5a88bcbd3c@161.97.89.27:28657",
       "node_id": "98910c2d5647bde2628982cb70480f445ccc7ad61c3aabdfe65893c186bd7bc5723806259b4631df4c53c43fbb45d499b6a73a6c267f1f343b697f5a88bcbd3c",
       "ip": "161.97.89.27",
@@ -860,7 +875,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9375,
+      "appearance_ratio": 0.8824,
       "appearances": [
         {
           "observation_index": 2,
@@ -974,7 +989,7 @@
       "node_id": "27386ed9cc211266c676c2b9098d98f42e5381041f59cc7f93bba654afcbfaf385bed32070317f4403d477b66ce2f6df76424064b72dbcdfae8eac05b02c098d",
       "ip": "157.173.127.21",
       "port": 28657,
-      "appearance_count": 13,
+      "appearance_count": 14,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -983,17 +998,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 16,
+        "observation_index": 17,
         "phase": "automated_watcher",
-        "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-        "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.8125,
+      "appearance_ratio": 0.8235,
       "appearances": [
         {
           "observation_index": 1,
@@ -1085,6 +1100,125 @@
           "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
           "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
           "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+        }
+      ]
+    },
+    {
+      "enode": "enode://21159ac6120e7ff4dbba6c468563a8b604f68831d0582259495ae5271421f18dbe97cc8bcc43162a74b4463af42926f8a573927cf990c076e213a5fe36e01b05@173.212.217.213:28657",
+      "node_id": "21159ac6120e7ff4dbba6c468563a8b604f68831d0582259495ae5271421f18dbe97cc8bcc43162a74b4463af42926f8a573927cf990c076e213a5fe36e01b05",
+      "ip": "173.212.217.213",
+      "port": 28657,
+      "appearance_count": 12,
+      "first_seen": {
+        "observation_index": 6,
+        "phase": "manual_backfill",
+        "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+        "checked_at_utc": null,
+        "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+      },
+      "last_seen": {
+        "observation_index": 17,
+        "phase": "automated_watcher",
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+      },
+      "phases_seen": [
+        "automated_watcher",
+        "manual_backfill"
+      ],
+      "appearance_ratio": 0.7059,
+      "appearances": [
+        {
+          "observation_index": 6,
+          "phase": "manual_backfill",
+          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 7,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 8,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 9,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 10,
+          "phase": "manual_backfill",
+          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 11,
+          "phase": "manual_backfill",
+          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 12,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 13,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 14,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 31 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-31T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 15,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 04:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T02:07:09.594281+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
+        },
+        {
+          "observation_index": 16,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
         }
       ]
     },
@@ -1111,7 +1245,7 @@
       "phases_seen": [
         "manual_backfill"
       ],
-      "appearance_ratio": 0.75,
+      "appearance_ratio": 0.7059,
       "appearances": [
         {
           "observation_index": 1,
@@ -1223,7 +1357,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6875,
+      "appearance_ratio": 0.6471,
       "appearances": [
         {
           "observation_index": 1,
@@ -1305,86 +1439,51 @@
       ]
     },
     {
-      "enode": "enode://21159ac6120e7ff4dbba6c468563a8b604f68831d0582259495ae5271421f18dbe97cc8bcc43162a74b4463af42926f8a573927cf990c076e213a5fe36e01b05@173.212.217.213:28657",
-      "node_id": "21159ac6120e7ff4dbba6c468563a8b604f68831d0582259495ae5271421f18dbe97cc8bcc43162a74b4463af42926f8a573927cf990c076e213a5fe36e01b05",
-      "ip": "173.212.217.213",
+      "enode": "enode://b3158fbb361298135c2e03d2ea9a1b10362a12c0d84ccbed92fb60af721b5a73bdaa66f82916012cdb187aea9ea4185bae8dd443ede10e26bb41811bdd8060c5@95.216.70.180:28657",
+      "node_id": "b3158fbb361298135c2e03d2ea9a1b10362a12c0d84ccbed92fb60af721b5a73bdaa66f82916012cdb187aea9ea4185bae8dd443ede10e26bb41811bdd8060c5",
+      "ip": "95.216.70.180",
       "port": 28657,
-      "appearance_count": 11,
+      "appearance_count": 7,
       "first_seen": {
-        "observation_index": 6,
+        "observation_index": 2,
         "phase": "manual_backfill",
-        "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+        "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
         "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+        "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 16,
+        "observation_index": 17,
         "phase": "automated_watcher",
-        "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-        "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6875,
+      "appearance_ratio": 0.4118,
       "appearances": [
         {
-          "observation_index": 6,
+          "observation_index": 2,
           "phase": "manual_backfill",
-          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+          "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 7,
+          "observation_index": 3,
           "phase": "manual_backfill",
-          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
+          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 8,
+          "observation_index": 4,
           "phase": "manual_backfill",
-          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
+          "generated_at_source": "Mon May 18 08:00:02 AM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 9,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 10,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 11,
-          "phase": "manual_backfill",
-          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 12,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 13,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-18T08-00-02-CEST-manual.json"
         },
         {
           "observation_index": 14,
@@ -1406,82 +1505,13 @@
           "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
           "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
           "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
-        }
-      ]
-    },
-    {
-      "enode": "enode://737b86812193747fc7967d1420749026bbc1f590772d6c66228bae7248880b487860f4f2f3f2c3b6dc25429f0b0cac5cc126c611dd3a388b53071abc05634401@168.144.140.128:28657",
-      "node_id": "737b86812193747fc7967d1420749026bbc1f590772d6c66228bae7248880b487860f4f2f3f2c3b6dc25429f0b0cac5cc126c611dd3a388b53071abc05634401",
-      "ip": "168.144.140.128",
-      "port": 28657,
-      "appearance_count": 7,
-      "first_seen": {
-        "observation_index": 2,
-        "phase": "manual_backfill",
-        "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
-        "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
-      },
-      "last_seen": {
-        "observation_index": 12,
-        "phase": "manual_backfill",
-        "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-        "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
-      },
-      "phases_seen": [
-        "manual_backfill"
-      ],
-      "appearance_ratio": 0.4375,
-      "appearances": [
-        {
-          "observation_index": 2,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 3,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 6,
-          "phase": "manual_backfill",
-          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 7,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 10,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 11,
-          "phase": "manual_backfill",
-          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 12,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
         }
       ]
     }
@@ -1508,7 +1538,7 @@
       "provider_detection_method": "static_prefix_heuristic",
       "matched_prefix": "213.136.82.0/23",
       "provider_notes": "Static prefix heuristic based on common Contabo ranges.",
-      "appearance_count": 16,
+      "appearance_count": 17,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -1517,11 +1547,11 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 16,
+        "observation_index": 17,
         "phase": "automated_watcher",
-        "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-        "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
@@ -1640,6 +1670,169 @@
           "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
           "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
           "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+        }
+      ]
+    },
+    {
+      "ip": "206.189.127.204",
+      "provider_hint": {
+        "ip": "206.189.127.204",
+        "provider_guess": "DigitalOcean",
+        "asn_hint": "AS14061",
+        "provider_type": "VPS",
+        "country_hint": "Global",
+        "confidence": "HIGH",
+        "detection_method": "static_prefix_heuristic",
+        "matched_prefix": "206.189.0.0/16",
+        "notes": "Static prefix heuristic based on common DigitalOcean ranges."
+      },
+      "provider_guess": "DigitalOcean",
+      "asn_hint": "AS14061",
+      "provider_type": "VPS",
+      "country_hint": "Global",
+      "provider_confidence": "HIGH",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": "206.189.0.0/16",
+      "provider_notes": "Static prefix heuristic based on common DigitalOcean ranges.",
+      "appearance_count": 16,
+      "first_seen": {
+        "observation_index": 1,
+        "phase": "manual_backfill",
+        "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
+        "checked_at_utc": null,
+        "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
+      },
+      "last_seen": {
+        "observation_index": 17,
+        "phase": "automated_watcher",
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+      },
+      "phases_seen": [
+        "automated_watcher",
+        "manual_backfill"
+      ],
+      "appearance_ratio": 0.9412,
+      "appearances": [
+        {
+          "observation_index": 1,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 2,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 3,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 4,
+          "phase": "manual_backfill",
+          "generated_at_source": "Mon May 18 08:00:02 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-18T08-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 6,
+          "phase": "manual_backfill",
+          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 7,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 8,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 9,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 10,
+          "phase": "manual_backfill",
+          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 11,
+          "phase": "manual_backfill",
+          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 12,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 13,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 14,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 31 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-31T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 15,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 04:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T02:07:09.594281+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
+        },
+        {
+          "observation_index": 16,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
         }
       ]
     },
@@ -1682,7 +1875,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 1.0,
+      "appearance_ratio": 0.9412,
       "appearances": [
         {
           "observation_index": 1,
@@ -1837,7 +2030,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 1.0,
+      "appearance_ratio": 0.9412,
       "appearances": [
         {
           "observation_index": 1,
@@ -1873,155 +2066,6 @@
           "generated_at_source": "Tue May 19 04:00:01 PM CEST 2026",
           "checked_at_utc": null,
           "snapshot_file": "data/manual-backfill/2026-05-19T16-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 6,
-          "phase": "manual_backfill",
-          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 7,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 8,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 9,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 10,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 11,
-          "phase": "manual_backfill",
-          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 12,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 13,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 14,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 31 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-31T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 15,
-          "phase": "automated_watcher",
-          "generated_at_source": "Mon Jun  1 04:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-01T02:07:09.594281+00:00",
-          "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
-        },
-        {
-          "observation_index": 16,
-          "phase": "automated_watcher",
-          "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-          "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
-        }
-      ]
-    },
-    {
-      "ip": "206.189.127.204",
-      "provider_hint": {
-        "ip": "206.189.127.204",
-        "provider_guess": "DigitalOcean",
-        "asn_hint": "AS14061",
-        "provider_type": "VPS",
-        "country_hint": "Global",
-        "confidence": "HIGH",
-        "detection_method": "static_prefix_heuristic",
-        "matched_prefix": "206.189.0.0/16",
-        "notes": "Static prefix heuristic based on common DigitalOcean ranges."
-      },
-      "provider_guess": "DigitalOcean",
-      "asn_hint": "AS14061",
-      "provider_type": "VPS",
-      "country_hint": "Global",
-      "provider_confidence": "HIGH",
-      "provider_detection_method": "static_prefix_heuristic",
-      "matched_prefix": "206.189.0.0/16",
-      "provider_notes": "Static prefix heuristic based on common DigitalOcean ranges.",
-      "appearance_count": 15,
-      "first_seen": {
-        "observation_index": 1,
-        "phase": "manual_backfill",
-        "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
-        "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
-      },
-      "last_seen": {
-        "observation_index": 16,
-        "phase": "automated_watcher",
-        "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-        "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
-      },
-      "phases_seen": [
-        "automated_watcher",
-        "manual_backfill"
-      ],
-      "appearance_ratio": 0.9375,
-      "appearances": [
-        {
-          "observation_index": 1,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 2,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 3,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 4,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 18 08:00:02 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-18T08-00-02-CEST-manual.json"
         },
         {
           "observation_index": 6,
@@ -2142,7 +2186,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9375,
+      "appearance_ratio": 0.8824,
       "appearances": [
         {
           "observation_index": 2,
@@ -2271,7 +2315,7 @@
       "provider_detection_method": "static_prefix_heuristic",
       "matched_prefix": null,
       "provider_notes": "No static provider hint matched. Use live ASN lookup for verification.",
-      "appearance_count": 13,
+      "appearance_count": 14,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -2280,17 +2324,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 16,
+        "observation_index": 17,
         "phase": "automated_watcher",
-        "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-        "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.8125,
+      "appearance_ratio": 0.8235,
       "appearances": [
         {
           "observation_index": 1,
@@ -2382,6 +2426,141 @@
           "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
           "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
           "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+        }
+      ]
+    },
+    {
+      "ip": "173.212.217.213",
+      "provider_hint": {
+        "ip": "173.212.217.213",
+        "provider_guess": "Contabo",
+        "asn_hint": "AS51167",
+        "provider_type": "VPS",
+        "country_hint": "Germany / Global",
+        "confidence": "HIGH",
+        "detection_method": "static_prefix_heuristic",
+        "matched_prefix": "173.212.192.0/18",
+        "notes": "Static prefix heuristic based on common Contabo ranges."
+      },
+      "provider_guess": "Contabo",
+      "asn_hint": "AS51167",
+      "provider_type": "VPS",
+      "country_hint": "Germany / Global",
+      "provider_confidence": "HIGH",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": "173.212.192.0/18",
+      "provider_notes": "Static prefix heuristic based on common Contabo ranges.",
+      "appearance_count": 12,
+      "first_seen": {
+        "observation_index": 6,
+        "phase": "manual_backfill",
+        "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+        "checked_at_utc": null,
+        "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+      },
+      "last_seen": {
+        "observation_index": 17,
+        "phase": "automated_watcher",
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+      },
+      "phases_seen": [
+        "automated_watcher",
+        "manual_backfill"
+      ],
+      "appearance_ratio": 0.7059,
+      "appearances": [
+        {
+          "observation_index": 6,
+          "phase": "manual_backfill",
+          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 7,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 8,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 9,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 10,
+          "phase": "manual_backfill",
+          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 11,
+          "phase": "manual_backfill",
+          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 12,
+          "phase": "manual_backfill",
+          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
+        },
+        {
+          "observation_index": 13,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 14,
+          "phase": "manual_backfill",
+          "generated_at_source": "Sun May 31 12:00:02 PM CEST 2026",
+          "checked_at_utc": null,
+          "snapshot_file": "data/manual-backfill/2026-05-31T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 15,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 04:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T02:07:09.594281+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
+        },
+        {
+          "observation_index": 16,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
         }
       ]
     },
@@ -2423,7 +2602,7 @@
       "phases_seen": [
         "manual_backfill"
       ],
-      "appearance_ratio": 0.75,
+      "appearance_ratio": 0.7059,
       "appearances": [
         {
           "observation_index": 1,
@@ -2550,7 +2729,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6875,
+      "appearance_ratio": 0.6471,
       "appearances": [
         {
           "observation_index": 1,
@@ -2632,102 +2811,67 @@
       ]
     },
     {
-      "ip": "173.212.217.213",
+      "ip": "95.216.70.180",
       "provider_hint": {
-        "ip": "173.212.217.213",
-        "provider_guess": "Contabo",
-        "asn_hint": "AS51167",
-        "provider_type": "VPS",
-        "country_hint": "Germany / Global",
+        "ip": "95.216.70.180",
+        "provider_guess": "Hetzner",
+        "asn_hint": "AS24940",
+        "provider_type": "VPS / Dedicated",
+        "country_hint": "Germany / Finland",
         "confidence": "HIGH",
         "detection_method": "static_prefix_heuristic",
-        "matched_prefix": "173.212.192.0/18",
-        "notes": "Static prefix heuristic based on common Contabo ranges."
+        "matched_prefix": "95.216.0.0/16",
+        "notes": "Static prefix heuristic based on commonly observed Hetzner ranges."
       },
-      "provider_guess": "Contabo",
-      "asn_hint": "AS51167",
-      "provider_type": "VPS",
-      "country_hint": "Germany / Global",
+      "provider_guess": "Hetzner",
+      "asn_hint": "AS24940",
+      "provider_type": "VPS / Dedicated",
+      "country_hint": "Germany / Finland",
       "provider_confidence": "HIGH",
       "provider_detection_method": "static_prefix_heuristic",
-      "matched_prefix": "173.212.192.0/18",
-      "provider_notes": "Static prefix heuristic based on common Contabo ranges.",
-      "appearance_count": 11,
+      "matched_prefix": "95.216.0.0/16",
+      "provider_notes": "Static prefix heuristic based on commonly observed Hetzner ranges.",
+      "appearance_count": 7,
       "first_seen": {
-        "observation_index": 6,
+        "observation_index": 2,
         "phase": "manual_backfill",
-        "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+        "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
         "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+        "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 16,
+        "observation_index": 17,
         "phase": "automated_watcher",
-        "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
-        "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+        "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6875,
+      "appearance_ratio": 0.4118,
       "appearances": [
         {
-          "observation_index": 6,
+          "observation_index": 2,
           "phase": "manual_backfill",
-          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+          "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 7,
+          "observation_index": 3,
           "phase": "manual_backfill",
-          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
+          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 8,
+          "observation_index": 4,
           "phase": "manual_backfill",
-          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
+          "generated_at_source": "Mon May 18 08:00:02 AM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 9,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 10,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 11,
-          "phase": "manual_backfill",
-          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 12,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 13,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-18T08-00-02-CEST-manual.json"
         },
         {
           "observation_index": 14,
@@ -2749,97 +2893,13 @@
           "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
           "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
           "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
-        }
-      ]
-    },
-    {
-      "ip": "168.144.140.128",
-      "provider_hint": {
-        "ip": "168.144.140.128",
-        "provider_guess": "Unknown",
-        "asn_hint": null,
-        "provider_type": "Unknown",
-        "country_hint": "Unknown",
-        "confidence": "LOW",
-        "detection_method": "static_prefix_heuristic",
-        "notes": "No static provider hint matched. Use live ASN lookup for verification."
-      },
-      "provider_guess": "Unknown",
-      "asn_hint": null,
-      "provider_type": "Unknown",
-      "country_hint": "Unknown",
-      "provider_confidence": "LOW",
-      "provider_detection_method": "static_prefix_heuristic",
-      "matched_prefix": null,
-      "provider_notes": "No static provider hint matched. Use live ASN lookup for verification.",
-      "appearance_count": 7,
-      "first_seen": {
-        "observation_index": 2,
-        "phase": "manual_backfill",
-        "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
-        "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
-      },
-      "last_seen": {
-        "observation_index": 12,
-        "phase": "manual_backfill",
-        "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-        "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
-      },
-      "phases_seen": [
-        "manual_backfill"
-      ],
-      "appearance_ratio": 0.4375,
-      "appearances": [
-        {
-          "observation_index": 2,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 3,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 6,
-          "phase": "manual_backfill",
-          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 7,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 10,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 11,
-          "phase": "manual_backfill",
-          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 12,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
         }
       ]
     }
@@ -3207,10 +3267,26 @@
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
       "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+    },
+    {
+      "observation_index": 17,
+      "phase": "automated_watcher",
+      "status": "changed",
+      "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+      "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+      "target_port": 28657,
+      "current_total": 9,
+      "previous_total": 13,
+      "added_count": 0,
+      "removed_count": 4,
+      "unchanged_count": 9,
+      "change_severity": "MEDIUM",
+      "severity_reason": "Moderate enode rotation detected: 0 added and 4 removed.",
+      "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
     }
   ],
   "report_ready_summary": {
-    "short_summary": "Across 16 total observations, the DAC official enode list showed 28 unique enodes and 28 unique IPs. The observed target port remained within [28657]. Enode count ranged from 7 to 15, with an average of 12.31.",
+    "short_summary": "Across 17 total observations, the DAC official enode list showed 28 unique enodes and 28 unique IPs. The observed target port remained within [28657]. Enode count ranged from 7 to 15, with an average of 12.12.",
     "manual_to_automated_context": "The dataset combines partial manual observations from the pre-watcher period with automated GitHub Actions snapshots after the watcher was deployed.",
     "technical_value": "This summary provides a structured basis for analyzing bootstrap peer rotation, persistent official enodes, IP recurrence, provider hints, ASN hints, and possible infrastructure maturation patterns."
   }
