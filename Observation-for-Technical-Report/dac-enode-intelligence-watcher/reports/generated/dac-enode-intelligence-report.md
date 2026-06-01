@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Technical Observation Report
 
-Generated at UTC: `2026-06-01T08:20:59.628796+00:00`
+Generated at UTC: `2026-06-01T09:48:59.503819+00:00`
 
 Project: **DAC Enode Intelligence Watcher**
 
@@ -18,7 +18,7 @@ Across 16 total observations, the DAC official enode list showed 28 unique enode
 
 The dataset combines partial manual observations from the pre-watcher period with automated GitHub Actions snapshots after the watcher was deployed.
 
-This summary provides a structured basis for analyzing bootstrap peer rotation, persistent official enodes, IP recurrence, and possible infrastructure maturation patterns.
+This summary provides a structured basis for analyzing bootstrap peer rotation, persistent official enodes, IP recurrence, provider hints, ASN hints, and possible infrastructure maturation patterns.
 
 ## 2. Observation Scope
 
@@ -102,20 +102,41 @@ Recommended action: No urgent action is required, but the snapshot is preserved 
 
 ## 7. Most Persistent IPs
 
-| IP | Appearances | Ratio | Phases Seen | First Seen | Last Seen |
-| --- | --- | --- | --- | --- | --- |
-| 213.136.82.243 | 16 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 157.173.127.30 | 16 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 157.173.127.31 | 16 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 206.189.127.204 | 15 | 0.9375 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 161.97.89.27 | 15 | 0.9375 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 157.173.127.21 | 13 | 0.8125 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 217.76.53.98 | 12 | 0.75 | manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Sun May 31 12:00:02 PM CEST 2026 |
-| 207.154.217.91 | 11 | 0.6875 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 173.212.217.213 | 11 | 0.6875 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 168.144.140.128 | 7 | 0.4375 | manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Fri May 29 04:00:01 AM CEST 2026 |
+| IP | Provider | ASN | Confidence | Appearances | Ratio | Phases Seen | First Seen | Last Seen |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 213.136.82.243 | Contabo | AS51167 | HIGH | 16 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 157.173.127.30 | Unknown | None | LOW | 16 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 157.173.127.31 | Unknown | None | LOW | 16 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 206.189.127.204 | DigitalOcean | AS14061 | HIGH | 15 | 0.9375 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 161.97.89.27 | Contabo | AS51167 | HIGH | 15 | 0.9375 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 157.173.127.21 | Unknown | None | LOW | 13 | 0.8125 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 217.76.53.98 | Unknown | None | LOW | 12 | 0.75 | manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Sun May 31 12:00:02 PM CEST 2026 |
+| 207.154.217.91 | Unknown | None | LOW | 11 | 0.6875 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 173.212.217.213 | Contabo | AS51167 | HIGH | 11 | 0.6875 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 168.144.140.128 | Unknown | None | LOW | 7 | 0.4375 | manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Fri May 29 04:00:01 AM CEST 2026 |
 
-## 8. Anomaly Detection Summary
+## 8. Provider / ASN Hint Summary
+
+Provider and ASN values in this section are heuristic hints based on static IP prefix matching.
+
+They should be treated as enrichment for infrastructure analysis, not final verified ASN truth.
+
+| Detection Field | Value |
+| --- | --- |
+| Method | static_prefix_heuristic |
+| Machine learning used | False |
+| Live ASN lookup used | False |
+| Confidence note | Provider and ASN values are heuristic hints based on static IP prefix matching. Treat as enrichment, not final verified ASN truth. |
+
+| Provider | ASN | Type | Country Hint | Confidence | Unique IPs | IPs |
+| --- | --- | --- | --- | --- | --- | --- |
+| Contabo | AS51167 | VPS | Germany / Global | HIGH | 3 | 161.97.89.27, 173.212.217.213, 213.136.82.243 |
+| DigitalOcean | AS14061 | VPS | Global | HIGH | 1 | 206.189.127.204 |
+| Hetzner | AS24940 | VPS / Dedicated | Germany / Finland | HIGH | 1 | 95.216.70.180 |
+| OVHcloud | AS16276 | VPS / Dedicated | France / Europe | HIGH | 1 | 152.228.141.231 |
+| Unknown | Unknown | Unknown | Unknown | LOW | 22 | 1.54.141.106, 113.173.209.213, 118.71.126.107, 145.223.99.167, 156.67.104.212, 157.173.127.18, 157.173.127.21, 157.173.127.22, 157.173.127.30, 157.173.127.31, 168.144.140.128, 173.249.42.5, 185.190.143.54, 194.163.186.161, 194.60.201.112, 207.154.217.91, 217.76.53.98, 38.49.213.251, 5.104.86.129, 5.9.116.21, 84.46.253.182, 95.111.227.13 |
+
+## 9. Anomaly Detection Summary
 
 | Anomaly Metric | Value |
 | --- | --- |
@@ -128,7 +149,7 @@ The anomaly layer highlights observations that may indicate unusually large peer
 
 Recommended action: Use these anomaly events as candidates for deeper manual review and future technical reporting.
 
-## 9. Detected Anomaly Events
+## 10. Detected Anomaly Events
 
 | Type | Severity | Index | Phase | Generated At | Previous | Current | Reason |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -138,7 +159,7 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | AGGRESSIVE_ROTATION | HIGH | 8 | manual_backfill | Sat May 23 12:00:02 PM CEST 2026 | 12 | 12 | Large rotation intensity detected: 4 added and 4 removed. |
 | AGGRESSIVE_ROTATION | HIGH | 11 | manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | 12 | 14 | Large rotation intensity detected: 5 added and 3 removed. |
 
-## 10. Observation Timeline
+## 11. Observation Timeline
 
 | Index | Phase | Generated At | Port | Total | Added | Removed | Severity |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -159,17 +180,19 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | 15 | automated_watcher | Mon Jun  1 04:00:01 AM CEST 2026 | 28657 | 12 | 12 | 0 | None |
 | 16 | automated_watcher | Mon Jun  1 08:00:02 AM CEST 2026 | 28657 | 13 | 1 | 0 | LOW |
 
-## 11. Technical Interpretation
+## 12. Technical Interpretation
 
 The current dataset shows a transition from manual observation into automated infrastructure monitoring.
 
 The official enode list shows visible peer rotation across the observation period, while the target port remains consistent at `28657`.
 
+Provider and ASN hints add an additional infrastructure-enrichment layer by grouping observed IPs into likely hosting providers or ASN categories where static prefix matching is available.
+
 The anomaly layer detected selected high-impact rotation events, but these should be interpreted as review signals rather than direct evidence of network failure.
 
 In a testnet environment, enode rotation may reflect infrastructure maintenance, bootstrap peer refreshes, scaling experiments, or network maturation.
 
-## 12. Conclusion
+## 13. Conclusion
 
 DAC Enode Intelligence Watcher now provides a structured evidence pipeline for official enode observation.
 
@@ -183,6 +206,7 @@ The project currently supports:
 - rotation intelligence aggregation
 - anomaly detection
 - report-ready Markdown generation
+- heuristic provider / ASN hint enrichment
 
 This report can be used as a draft foundation for future DAC Testnet infrastructure technical reports.
 

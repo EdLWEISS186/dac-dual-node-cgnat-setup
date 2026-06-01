@@ -263,6 +263,12 @@
       color: #c7d7ea;
     }
 
+    .ip-list {
+      white-space: normal;
+      line-height: 1.65;
+      word-break: break-word;
+    }
+
     .footer {
       margin-top: 28px;
       color: var(--muted);
@@ -358,6 +364,11 @@
       </div>
 
       <div class="card section">
+        <h2>Provider / ASN Hint Summary</h2>
+        <div id="providerSummary"></div>
+      </div>
+
+      <div class="card section">
         <h2>Most Persistent Enodes</h2>
         <div class="table-wrap">
           <table id="persistentEnodes"></table>
@@ -441,6 +452,8 @@
         ["Target Port", safe(latest.target_port), "Latest observed P2P port"],
         ["Unique Enodes", safe(rotation.unique_enode_count), "Across full dataset"],
         ["Unique IPs", safe(rotation.unique_ip_count), "Across full dataset"],
+        ["Known Providers", Object.keys(rotation.provider_counts || {}).filter(key => key !== "Unknown").length, "Heuristic provider matches"],
+        ["Unknown IPs", safe((rotation.provider_counts || {}).Unknown, 0), "No static provider hint matched"],
         ["Enode Avg", safe(stats.average), `Min ${safe(stats.minimum)} / Max ${safe(stats.maximum)}`],
         ["Anomaly Signals", safe(anomalyReport.anomaly_count), `Highest: ${safe(anomalyReport.highest_severity)}`]
       ];
@@ -513,6 +526,32 @@
       $(id).innerHTML = head + body;
     }
 
+    function renderProviderSummary(rotation) {
+      const detection = rotation.provider_detection || {};
+      const sourceRows = rotation.provider_asn_summary || [];
+
+      const rows = sourceRows.map(item => [
+        safe(item.provider_guess),
+        safe(item.asn_hint),
+        safe(item.provider_type),
+        safe(item.country_hint),
+        safe(item.confidence),
+        safe(item.unique_ip_count),
+        `<span class="mono ip-list">${(item.ips || []).join(", ")}</span>`
+      ]);
+
+      const note = `
+        <div class="summary-box" style="margin-bottom: 12px;">
+          <p><strong>Method:</strong> ${safe(detection.method)}</p>
+          <p><strong>Live ASN lookup used:</strong> ${safe(detection.live_asn_lookup_used)}</p>
+          <p class="muted">${safe(detection.confidence_note)}</p>
+        </div>
+      `;
+
+      $("providerSummary").innerHTML = note + `<div class="table-wrap"><table id="providerSummaryTable"></table></div>`;
+      renderTable("providerSummaryTable", ["Provider", "ASN", "Type", "Country Hint", "Confidence", "Unique IPs", "IPs"], rows);
+    }
+
     function renderPersistentEnodes(rotation) {
       const rows = (rotation.most_persistent_enodes || []).slice(0, 10).map(item => [
         `<span class="mono">${shortText(item.enode, 22, 12)}</span>`,
@@ -529,6 +568,9 @@
     function renderPersistentIps(rotation) {
       const rows = (rotation.most_persistent_ips || []).slice(0, 10).map(item => [
         safe(item.ip),
+        safe(item.provider_guess),
+        safe(item.asn_hint),
+        safe(item.provider_confidence),
         safe(item.appearance_count),
         safe(item.appearance_ratio),
         safe((item.phases_seen || []).join(", ")),
@@ -536,7 +578,7 @@
         safe(item.last_seen && item.last_seen.generated_at_source)
       ]);
 
-      renderTable("persistentIps", ["IP", "Appearances", "Ratio", "Phases", "First Seen", "Last Seen"], rows);
+      renderTable("persistentIps", ["IP", "Provider", "ASN", "Confidence", "Appearances", "Ratio", "Phases", "First Seen", "Last Seen"], rows);
     }
 
     function renderAnomalyEvents(anomaly) {
@@ -585,6 +627,7 @@
         renderAiSummary(latest);
         renderAnomalySummary(anomaly);
         renderReportSummary(rotation);
+        renderProviderSummary(rotation);
         renderPersistentEnodes(rotation);
         renderPersistentIps(rotation);
         renderAnomalyEvents(anomaly);

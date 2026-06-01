@@ -2,6 +2,8 @@ import json
 from collections import Counter, defaultdict
 from pathlib import Path
 
+from provider_hints import detect_provider_hint
+
 
 PROJECT_NAME = "DAC Enode Intelligence Watcher"
 BASE_DIR = Path(__file__).resolve().parent
@@ -22,19 +24,40 @@ def parse_enode_details(enode: str) -> dict:
         without_prefix = enode.replace("enode://", "")
         node_id, endpoint = without_prefix.split("@", 1)
         ip, port = endpoint.rsplit(":", 1)
+        provider_hint = detect_provider_hint(ip)
 
         return {
             "enode": enode,
             "node_id": node_id,
             "ip": ip,
-            "port": int(port)
+            "port": int(port),
+            "provider_hint": provider_hint,
+            "provider_guess": provider_hint.get("provider_guess"),
+            "asn_hint": provider_hint.get("asn_hint"),
+            "provider_type": provider_hint.get("provider_type"),
+            "country_hint": provider_hint.get("country_hint"),
+            "provider_confidence": provider_hint.get("confidence"),
+            "provider_detection_method": provider_hint.get("detection_method"),
+            "matched_prefix": provider_hint.get("matched_prefix"),
+            "provider_notes": provider_hint.get("notes")
         }
     except Exception:
+        provider_hint = detect_provider_hint(None)
+
         return {
             "enode": enode,
             "node_id": None,
             "ip": None,
-            "port": None
+            "port": None,
+            "provider_hint": provider_hint,
+            "provider_guess": provider_hint.get("provider_guess"),
+            "asn_hint": provider_hint.get("asn_hint"),
+            "provider_type": provider_hint.get("provider_type"),
+            "country_hint": provider_hint.get("country_hint"),
+            "provider_confidence": provider_hint.get("confidence"),
+            "provider_detection_method": provider_hint.get("detection_method"),
+            "matched_prefix": provider_hint.get("matched_prefix"),
+            "provider_notes": provider_hint.get("notes")
         }
 
 
@@ -138,8 +161,19 @@ def build_ip_table(snapshots: list[dict]) -> list[dict]:
     table = []
 
     for ip, appearances in ip_presence.items():
+        provider_hint = detect_provider_hint(ip)
+
         table.append({
             "ip": ip,
+            "provider_hint": provider_hint,
+            "provider_guess": provider_hint.get("provider_guess"),
+            "asn_hint": provider_hint.get("asn_hint"),
+            "provider_type": provider_hint.get("provider_type"),
+            "country_hint": provider_hint.get("country_hint"),
+            "provider_confidence": provider_hint.get("confidence"),
+            "provider_detection_method": provider_hint.get("detection_method"),
+            "matched_prefix": provider_hint.get("matched_prefix"),
+            "provider_notes": provider_hint.get("notes"),
             "appearance_count": len(appearances),
             "first_seen": appearances[0],
             "last_seen": appearances[-1],
@@ -263,6 +297,87 @@ def main() -> None:
         if item.get("change_severity")
     )
 
+    provider_counts = Counter(
+        item.get("provider_guess") or "Unknown"
+        for item in ip_table
+    )
+
+    asn_counts = Counter(
+        item.get("asn_hint") or "Unknown"
+        for item in ip_table
+    )
+
+    provider_type_counts = Counter(
+        item.get("provider_type") or "Unknown"
+        for item in ip_table
+    )
+
+    provider_confidence_counts = Counter(
+        item.get("provider_confidence") or "LOW"
+        for item in ip_table
+    )
+
+    provider_summary = [
+        {
+            "provider_guess": provider,
+            "unique_ip_count": count,
+            "ips": sorted([
+                item["ip"]
+                for item in ip_table
+                if (item.get("provider_guess") or "Unknown") == provider
+            ])
+        }
+        for provider, count in provider_counts.most_common()
+    ]
+
+    asn_summary = [
+        {
+            "asn_hint": asn,
+            "unique_ip_count": count,
+            "ips": sorted([
+                item["ip"]
+                for item in ip_table
+                if (item.get("asn_hint") or "Unknown") == asn
+            ])
+        }
+        for asn, count in asn_counts.most_common()
+    ]
+
+    provider_asn_groups = {}
+
+    for item in ip_table:
+        key = (
+            item.get("provider_guess") or "Unknown",
+            item.get("asn_hint") or "Unknown",
+            item.get("provider_type") or "Unknown",
+            item.get("country_hint") or "Unknown",
+            item.get("provider_confidence") or "LOW"
+        )
+
+        provider_asn_groups.setdefault(key, []).append(item["ip"])
+
+    provider_asn_summary = [
+        {
+            "provider_guess": provider,
+            "asn_hint": asn,
+            "provider_type": provider_type,
+            "country_hint": country,
+            "confidence": confidence,
+            "unique_ip_count": len(ips),
+            "ips": sorted(ips)
+        }
+        for (provider, asn, provider_type, country, confidence), ips in provider_asn_groups.items()
+    ]
+
+    provider_asn_summary.sort(
+        key=lambda item: (
+            item["provider_guess"] == "Unknown",
+            -item["unique_ip_count"],
+            item["provider_guess"],
+            item["asn_hint"]
+        )
+    )
+
     most_persistent_enodes = enode_table[:10]
     most_persistent_ips = ip_table[:10]
 
@@ -287,6 +402,19 @@ def main() -> None:
         "unique_enode_count": len(enode_table),
         "unique_ip_count": len(ip_table),
         "severity_counts": dict(severity_counts),
+        "provider_detection": {
+            "method": "static_prefix_heuristic",
+            "machine_learning_used": False,
+            "live_asn_lookup_used": False,
+            "confidence_note": "Provider and ASN values are heuristic hints based on static IP prefix matching. Treat as enrichment, not final verified ASN truth."
+        },
+        "provider_counts": dict(provider_counts),
+        "asn_counts": dict(asn_counts),
+        "provider_type_counts": dict(provider_type_counts),
+        "provider_confidence_counts": dict(provider_confidence_counts),
+        "provider_summary": provider_summary,
+        "asn_summary": asn_summary,
+        "provider_asn_summary": provider_asn_summary,
         "most_persistent_enodes": most_persistent_enodes,
         "most_persistent_ips": most_persistent_ips,
         "transition_summary": build_transition_summary(timeline),
@@ -305,7 +433,7 @@ def main() -> None:
             ),
             "technical_value": (
                 "This summary provides a structured basis for analyzing bootstrap peer rotation, "
-                "persistent official enodes, IP recurrence, and possible infrastructure maturation patterns."
+                "persistent official enodes, IP recurrence, provider hints, ASN hints, and possible infrastructure maturation patterns."
             )
         }
     }
@@ -321,6 +449,9 @@ def main() -> None:
     print(f"[OK] Automated watcher snapshots: {phases.get('automated_watcher', 0)}")
     print(f"[OK] Unique enodes: {len(enode_table)}")
     print(f"[OK] Unique IPs: {len(ip_table)}")
+    print(f"[OK] Provider hints: {dict(provider_counts)}")
+    print(f"[OK] ASN hints: {dict(asn_counts)}")
+    print(f"[OK] Provider / ASN groups: {len(provider_asn_summary)}")
     print(f"[OK] Target ports observed: {target_ports}")
     print(f"[OK] Enode count min/max/avg: {min(enode_counts)} / {max(enode_counts)} / {round(sum(enode_counts) / len(enode_counts), 2)}")
 

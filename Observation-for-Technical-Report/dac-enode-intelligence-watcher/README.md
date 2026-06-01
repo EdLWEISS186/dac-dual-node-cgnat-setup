@@ -552,6 +552,55 @@ This turns the watcher from a monitoring and analysis tool into a report prepara
 
 ---
 
+## Provider / ASN Hint Layer
+
+The project now includes a heuristic Provider / ASN Hint Layer.
+
+This layer enriches observed enode IPs with static provider and ASN hints.
+
+Helper file:
+
+    provider_hints.py
+
+The provider hint layer is used by:
+
+- `build_rotation_intelligence.py`
+- `data/rotation-intelligence-summary.json`
+- `dashboard/index.html`
+- `generate_technical_report.py`
+- `reports/generated/dac-enode-intelligence-report.md`
+
+Generated provider fields include:
+
+- `provider_guess`
+- `asn_hint`
+- `provider_type`
+- `country_hint`
+- `provider_confidence`
+- `provider_detection_method`
+- `matched_prefix`
+- `provider_notes`
+
+The current implementation uses static IP prefix heuristics.
+
+It does not perform live ASN lookup.
+
+Current generated provider summary includes:
+
+- `Contabo / AS51167`
+- `DigitalOcean / AS14061`
+- `Hetzner / AS24940`
+- `OVHcloud / AS16276`
+- `Unknown`
+
+Important note:
+
+Provider and ASN values are enrichment hints, not final verified ASN truth.
+
+Unknown values are intentionally preserved when no static prefix matches. This prevents the system from guessing provider identity without enough evidence.
+
+---
+
 ## Dashboard Layer
 
 The project now includes a static HTML dashboard for visual inspection.
@@ -708,6 +757,12 @@ The current version already supports:
 - dashboard-based latest watcher inspection
 - dashboard-based anomaly summary inspection
 - dashboard-based persistent enode/IP inspection
+- heuristic provider / ASN hint enrichment
+- provider summary generation
+- ASN summary generation
+- provider confidence labeling
+- provider / ASN dashboard visualization
+- provider / ASN report section generation
 
 ---
 
@@ -872,6 +927,53 @@ The dashboard also uses:
 - `assets/DAC-CARD.png`
 
 This image represents the independent DAC Infra Tester contributor identity and avoids using official DAC branding.
+
+### v1.6.1 — Provider / ASN Hint Layer
+
+Added heuristic provider and ASN enrichment for observed enode IPs.
+
+New file:
+
+- `provider_hints.py`
+
+Updated files:
+
+- `build_rotation_intelligence.py`
+- `generate_technical_report.py`
+- `dashboard/index.html`
+- `data/rotation-intelligence-summary.json`
+- `reports/generated/dac-enode-intelligence-report.md`
+
+New output fields:
+
+- `provider_guess`
+- `asn_hint`
+- `provider_type`
+- `country_hint`
+- `provider_confidence`
+- `provider_detection_method`
+- `matched_prefix`
+- `provider_notes`
+
+New summary output:
+
+- `provider_counts`
+- `asn_counts`
+- `provider_type_counts`
+- `provider_confidence_counts`
+- `provider_summary`
+- `asn_summary`
+- `provider_asn_summary`
+
+Initial generated result:
+
+- `Contabo / AS51167`: 3 unique IPs
+- `DigitalOcean / AS14061`: 1 unique IP
+- `Hetzner / AS24940`: 1 unique IP
+- `OVHcloud / AS16276`: 1 unique IP
+- `Unknown`: 22 unique IPs
+
+This layer improves infrastructure readability while keeping the result honest by labeling unmatched IPs as `Unknown`.
 
 ---
 

@@ -53,6 +53,235 @@
   "severity_counts": {
     "LOW": 1
   },
+  "provider_detection": {
+    "method": "static_prefix_heuristic",
+    "machine_learning_used": false,
+    "live_asn_lookup_used": false,
+    "confidence_note": "Provider and ASN values are heuristic hints based on static IP prefix matching. Treat as enrichment, not final verified ASN truth."
+  },
+  "provider_counts": {
+    "Contabo": 3,
+    "Unknown": 22,
+    "DigitalOcean": 1,
+    "Hetzner": 1,
+    "OVHcloud": 1
+  },
+  "asn_counts": {
+    "AS51167": 3,
+    "Unknown": 22,
+    "AS14061": 1,
+    "AS24940": 1,
+    "AS16276": 1
+  },
+  "provider_type_counts": {
+    "VPS": 4,
+    "Unknown": 22,
+    "VPS / Dedicated": 2
+  },
+  "provider_confidence_counts": {
+    "HIGH": 6,
+    "LOW": 22
+  },
+  "provider_summary": [
+    {
+      "provider_guess": "Unknown",
+      "unique_ip_count": 22,
+      "ips": [
+        "1.54.141.106",
+        "113.173.209.213",
+        "118.71.126.107",
+        "145.223.99.167",
+        "156.67.104.212",
+        "157.173.127.18",
+        "157.173.127.21",
+        "157.173.127.22",
+        "157.173.127.30",
+        "157.173.127.31",
+        "168.144.140.128",
+        "173.249.42.5",
+        "185.190.143.54",
+        "194.163.186.161",
+        "194.60.201.112",
+        "207.154.217.91",
+        "217.76.53.98",
+        "38.49.213.251",
+        "5.104.86.129",
+        "5.9.116.21",
+        "84.46.253.182",
+        "95.111.227.13"
+      ]
+    },
+    {
+      "provider_guess": "Contabo",
+      "unique_ip_count": 3,
+      "ips": [
+        "161.97.89.27",
+        "173.212.217.213",
+        "213.136.82.243"
+      ]
+    },
+    {
+      "provider_guess": "DigitalOcean",
+      "unique_ip_count": 1,
+      "ips": [
+        "206.189.127.204"
+      ]
+    },
+    {
+      "provider_guess": "Hetzner",
+      "unique_ip_count": 1,
+      "ips": [
+        "95.216.70.180"
+      ]
+    },
+    {
+      "provider_guess": "OVHcloud",
+      "unique_ip_count": 1,
+      "ips": [
+        "152.228.141.231"
+      ]
+    }
+  ],
+  "asn_summary": [
+    {
+      "asn_hint": "Unknown",
+      "unique_ip_count": 22,
+      "ips": [
+        "1.54.141.106",
+        "113.173.209.213",
+        "118.71.126.107",
+        "145.223.99.167",
+        "156.67.104.212",
+        "157.173.127.18",
+        "157.173.127.21",
+        "157.173.127.22",
+        "157.173.127.30",
+        "157.173.127.31",
+        "168.144.140.128",
+        "173.249.42.5",
+        "185.190.143.54",
+        "194.163.186.161",
+        "194.60.201.112",
+        "207.154.217.91",
+        "217.76.53.98",
+        "38.49.213.251",
+        "5.104.86.129",
+        "5.9.116.21",
+        "84.46.253.182",
+        "95.111.227.13"
+      ]
+    },
+    {
+      "asn_hint": "AS51167",
+      "unique_ip_count": 3,
+      "ips": [
+        "161.97.89.27",
+        "173.212.217.213",
+        "213.136.82.243"
+      ]
+    },
+    {
+      "asn_hint": "AS14061",
+      "unique_ip_count": 1,
+      "ips": [
+        "206.189.127.204"
+      ]
+    },
+    {
+      "asn_hint": "AS24940",
+      "unique_ip_count": 1,
+      "ips": [
+        "95.216.70.180"
+      ]
+    },
+    {
+      "asn_hint": "AS16276",
+      "unique_ip_count": 1,
+      "ips": [
+        "152.228.141.231"
+      ]
+    }
+  ],
+  "provider_asn_summary": [
+    {
+      "provider_guess": "Contabo",
+      "asn_hint": "AS51167",
+      "provider_type": "VPS",
+      "country_hint": "Germany / Global",
+      "confidence": "HIGH",
+      "unique_ip_count": 3,
+      "ips": [
+        "161.97.89.27",
+        "173.212.217.213",
+        "213.136.82.243"
+      ]
+    },
+    {
+      "provider_guess": "DigitalOcean",
+      "asn_hint": "AS14061",
+      "provider_type": "VPS",
+      "country_hint": "Global",
+      "confidence": "HIGH",
+      "unique_ip_count": 1,
+      "ips": [
+        "206.189.127.204"
+      ]
+    },
+    {
+      "provider_guess": "Hetzner",
+      "asn_hint": "AS24940",
+      "provider_type": "VPS / Dedicated",
+      "country_hint": "Germany / Finland",
+      "confidence": "HIGH",
+      "unique_ip_count": 1,
+      "ips": [
+        "95.216.70.180"
+      ]
+    },
+    {
+      "provider_guess": "OVHcloud",
+      "asn_hint": "AS16276",
+      "provider_type": "VPS / Dedicated",
+      "country_hint": "France / Europe",
+      "confidence": "HIGH",
+      "unique_ip_count": 1,
+      "ips": [
+        "152.228.141.231"
+      ]
+    },
+    {
+      "provider_guess": "Unknown",
+      "asn_hint": "Unknown",
+      "provider_type": "Unknown",
+      "country_hint": "Unknown",
+      "confidence": "LOW",
+      "unique_ip_count": 22,
+      "ips": [
+        "1.54.141.106",
+        "113.173.209.213",
+        "118.71.126.107",
+        "145.223.99.167",
+        "156.67.104.212",
+        "157.173.127.18",
+        "157.173.127.21",
+        "157.173.127.22",
+        "157.173.127.30",
+        "157.173.127.31",
+        "168.144.140.128",
+        "173.249.42.5",
+        "185.190.143.54",
+        "194.163.186.161",
+        "194.60.201.112",
+        "207.154.217.91",
+        "217.76.53.98",
+        "38.49.213.251",
+        "5.104.86.129",
+        "5.9.116.21",
+        "84.46.253.182",
+        "95.111.227.13"
+      ]
+    }
+  ],
   "most_persistent_enodes": [
     {
       "enode": "enode://637ec7dff7ce720bda6484d10103ce249787b3b98a226eb348b15f605ed9f17fbb24fc3c330cc182f1f92aeb0be3fce49f83f2aaa174a2691be170655df179f9@213.136.82.243:28657",
@@ -1260,6 +1489,25 @@
   "most_persistent_ips": [
     {
       "ip": "213.136.82.243",
+      "provider_hint": {
+        "ip": "213.136.82.243",
+        "provider_guess": "Contabo",
+        "asn_hint": "AS51167",
+        "provider_type": "VPS",
+        "country_hint": "Germany / Global",
+        "confidence": "HIGH",
+        "detection_method": "static_prefix_heuristic",
+        "matched_prefix": "213.136.82.0/23",
+        "notes": "Static prefix heuristic based on common Contabo ranges."
+      },
+      "provider_guess": "Contabo",
+      "asn_hint": "AS51167",
+      "provider_type": "VPS",
+      "country_hint": "Germany / Global",
+      "provider_confidence": "HIGH",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": "213.136.82.0/23",
+      "provider_notes": "Static prefix heuristic based on common Contabo ranges.",
       "appearance_count": 16,
       "first_seen": {
         "observation_index": 1,
@@ -1397,6 +1645,24 @@
     },
     {
       "ip": "157.173.127.30",
+      "provider_hint": {
+        "ip": "157.173.127.30",
+        "provider_guess": "Unknown",
+        "asn_hint": null,
+        "provider_type": "Unknown",
+        "country_hint": "Unknown",
+        "confidence": "LOW",
+        "detection_method": "static_prefix_heuristic",
+        "notes": "No static provider hint matched. Use live ASN lookup for verification."
+      },
+      "provider_guess": "Unknown",
+      "asn_hint": null,
+      "provider_type": "Unknown",
+      "country_hint": "Unknown",
+      "provider_confidence": "LOW",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": null,
+      "provider_notes": "No static provider hint matched. Use live ASN lookup for verification.",
       "appearance_count": 16,
       "first_seen": {
         "observation_index": 1,
@@ -1534,6 +1800,24 @@
     },
     {
       "ip": "157.173.127.31",
+      "provider_hint": {
+        "ip": "157.173.127.31",
+        "provider_guess": "Unknown",
+        "asn_hint": null,
+        "provider_type": "Unknown",
+        "country_hint": "Unknown",
+        "confidence": "LOW",
+        "detection_method": "static_prefix_heuristic",
+        "notes": "No static provider hint matched. Use live ASN lookup for verification."
+      },
+      "provider_guess": "Unknown",
+      "asn_hint": null,
+      "provider_type": "Unknown",
+      "country_hint": "Unknown",
+      "provider_confidence": "LOW",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": null,
+      "provider_notes": "No static provider hint matched. Use live ASN lookup for verification.",
       "appearance_count": 16,
       "first_seen": {
         "observation_index": 1,
@@ -1671,6 +1955,25 @@
     },
     {
       "ip": "206.189.127.204",
+      "provider_hint": {
+        "ip": "206.189.127.204",
+        "provider_guess": "DigitalOcean",
+        "asn_hint": "AS14061",
+        "provider_type": "VPS",
+        "country_hint": "Global",
+        "confidence": "HIGH",
+        "detection_method": "static_prefix_heuristic",
+        "matched_prefix": "206.189.0.0/16",
+        "notes": "Static prefix heuristic based on common DigitalOcean ranges."
+      },
+      "provider_guess": "DigitalOcean",
+      "asn_hint": "AS14061",
+      "provider_type": "VPS",
+      "country_hint": "Global",
+      "provider_confidence": "HIGH",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": "206.189.0.0/16",
+      "provider_notes": "Static prefix heuristic based on common DigitalOcean ranges.",
       "appearance_count": 15,
       "first_seen": {
         "observation_index": 1,
@@ -1801,6 +2104,25 @@
     },
     {
       "ip": "161.97.89.27",
+      "provider_hint": {
+        "ip": "161.97.89.27",
+        "provider_guess": "Contabo",
+        "asn_hint": "AS51167",
+        "provider_type": "VPS",
+        "country_hint": "Germany / Global",
+        "confidence": "HIGH",
+        "detection_method": "static_prefix_heuristic",
+        "matched_prefix": "161.97.0.0/16",
+        "notes": "Static prefix heuristic based on common Contabo ranges."
+      },
+      "provider_guess": "Contabo",
+      "asn_hint": "AS51167",
+      "provider_type": "VPS",
+      "country_hint": "Germany / Global",
+      "provider_confidence": "HIGH",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": "161.97.0.0/16",
+      "provider_notes": "Static prefix heuristic based on common Contabo ranges.",
       "appearance_count": 15,
       "first_seen": {
         "observation_index": 2,
@@ -1931,6 +2253,24 @@
     },
     {
       "ip": "157.173.127.21",
+      "provider_hint": {
+        "ip": "157.173.127.21",
+        "provider_guess": "Unknown",
+        "asn_hint": null,
+        "provider_type": "Unknown",
+        "country_hint": "Unknown",
+        "confidence": "LOW",
+        "detection_method": "static_prefix_heuristic",
+        "notes": "No static provider hint matched. Use live ASN lookup for verification."
+      },
+      "provider_guess": "Unknown",
+      "asn_hint": null,
+      "provider_type": "Unknown",
+      "country_hint": "Unknown",
+      "provider_confidence": "LOW",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": null,
+      "provider_notes": "No static provider hint matched. Use live ASN lookup for verification.",
       "appearance_count": 13,
       "first_seen": {
         "observation_index": 1,
@@ -2047,6 +2387,24 @@
     },
     {
       "ip": "217.76.53.98",
+      "provider_hint": {
+        "ip": "217.76.53.98",
+        "provider_guess": "Unknown",
+        "asn_hint": null,
+        "provider_type": "Unknown",
+        "country_hint": "Unknown",
+        "confidence": "LOW",
+        "detection_method": "static_prefix_heuristic",
+        "notes": "No static provider hint matched. Use live ASN lookup for verification."
+      },
+      "provider_guess": "Unknown",
+      "asn_hint": null,
+      "provider_type": "Unknown",
+      "country_hint": "Unknown",
+      "provider_confidence": "LOW",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": null,
+      "provider_notes": "No static provider hint matched. Use live ASN lookup for verification.",
       "appearance_count": 12,
       "first_seen": {
         "observation_index": 1,
@@ -2155,6 +2513,24 @@
     },
     {
       "ip": "207.154.217.91",
+      "provider_hint": {
+        "ip": "207.154.217.91",
+        "provider_guess": "Unknown",
+        "asn_hint": null,
+        "provider_type": "Unknown",
+        "country_hint": "Unknown",
+        "confidence": "LOW",
+        "detection_method": "static_prefix_heuristic",
+        "notes": "No static provider hint matched. Use live ASN lookup for verification."
+      },
+      "provider_guess": "Unknown",
+      "asn_hint": null,
+      "provider_type": "Unknown",
+      "country_hint": "Unknown",
+      "provider_confidence": "LOW",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": null,
+      "provider_notes": "No static provider hint matched. Use live ASN lookup for verification.",
       "appearance_count": 11,
       "first_seen": {
         "observation_index": 1,
@@ -2257,6 +2633,25 @@
     },
     {
       "ip": "173.212.217.213",
+      "provider_hint": {
+        "ip": "173.212.217.213",
+        "provider_guess": "Contabo",
+        "asn_hint": "AS51167",
+        "provider_type": "VPS",
+        "country_hint": "Germany / Global",
+        "confidence": "HIGH",
+        "detection_method": "static_prefix_heuristic",
+        "matched_prefix": "173.212.192.0/18",
+        "notes": "Static prefix heuristic based on common Contabo ranges."
+      },
+      "provider_guess": "Contabo",
+      "asn_hint": "AS51167",
+      "provider_type": "VPS",
+      "country_hint": "Germany / Global",
+      "provider_confidence": "HIGH",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": "173.212.192.0/18",
+      "provider_notes": "Static prefix heuristic based on common Contabo ranges.",
       "appearance_count": 11,
       "first_seen": {
         "observation_index": 6,
@@ -2359,6 +2754,24 @@
     },
     {
       "ip": "168.144.140.128",
+      "provider_hint": {
+        "ip": "168.144.140.128",
+        "provider_guess": "Unknown",
+        "asn_hint": null,
+        "provider_type": "Unknown",
+        "country_hint": "Unknown",
+        "confidence": "LOW",
+        "detection_method": "static_prefix_heuristic",
+        "notes": "No static provider hint matched. Use live ASN lookup for verification."
+      },
+      "provider_guess": "Unknown",
+      "asn_hint": null,
+      "provider_type": "Unknown",
+      "country_hint": "Unknown",
+      "provider_confidence": "LOW",
+      "provider_detection_method": "static_prefix_heuristic",
+      "matched_prefix": null,
+      "provider_notes": "No static provider hint matched. Use live ASN lookup for verification.",
       "appearance_count": 7,
       "first_seen": {
         "observation_index": 2,
@@ -2799,6 +3212,6 @@
   "report_ready_summary": {
     "short_summary": "Across 16 total observations, the DAC official enode list showed 28 unique enodes and 28 unique IPs. The observed target port remained within [28657]. Enode count ranged from 7 to 15, with an average of 12.31.",
     "manual_to_automated_context": "The dataset combines partial manual observations from the pre-watcher period with automated GitHub Actions snapshots after the watcher was deployed.",
-    "technical_value": "This summary provides a structured basis for analyzing bootstrap peer rotation, persistent official enodes, IP recurrence, and possible infrastructure maturation patterns."
+    "technical_value": "This summary provides a structured basis for analyzing bootstrap peer rotation, persistent official enodes, IP recurrence, provider hints, ASN hints, and possible infrastructure maturation patterns."
   }
 }
