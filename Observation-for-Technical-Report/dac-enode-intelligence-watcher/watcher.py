@@ -96,6 +96,171 @@ def admin_addpeer_line(enode: str) -> str:
     return f'admin.addPeer("{enode}");'
 
 
+def classify_change(
+    added: list[str],
+    removed: list[str],
+    unchanged: list[str],
+    previous_enodes: list[str],
+    current_enodes: list[str],
+    previous_target_port: int | None,
+    current_target_port: int | None,
+    target_port_changed: bool,
+    is_initial: bool
+) -> tuple[str, str]:
+    added_count = len(added)
+    removed_count = len(removed)
+    changed_count = added_count + removed_count
+    previous_total = len(previous_enodes)
+    current_total = len(current_enodes)
+
+    if is_initial:
+        return (
+            "INFO",
+            "Initial baseline snapshot captured because no previous watcher state existed."
+        )
+
+    if current_total == 0:
+        return (
+            "CRITICAL",
+            "No enodes were detected from the official source."
+        )
+
+    if target_port_changed:
+        return (
+            "HIGH",
+            f"Target port changed from {previous_target_port} to {current_target_port}."
+        )
+
+    if previous_total > 0 and current_total <= max(2, int(previous_total * 0.3)):
+        return (
+            "CRITICAL",
+            f"Official enode count dropped sharply from {previous_total} to {current_total}."
+        )
+
+    if previous_total > 0 and removed_count >= max(5, int(previous_total * 0.5)):
+        return (
+            "HIGH",
+            f"{removed_count} enodes were removed from a previous total of {previous_total}."
+        )
+
+    if changed_count == 0:
+        return (
+            "NONE",
+            "No enode or target-port change detected."
+        )
+
+    if changed_count <= 2:
+        return (
+            "LOW",
+            f"Small enode rotation detected: {added_count} added and {removed_count} removed."
+        )
+
+    if changed_count <= 6:
+        return (
+            "MEDIUM",
+            f"Moderate enode rotation detected: {added_count} added and {removed_count} removed."
+        )
+
+    return (
+        "HIGH",
+        f"Large enode rotation detected: {added_count} added and {removed_count} removed."
+    )
+
+
+def build_ai_style_summary(
+    added: list[str],
+    removed: list[str],
+    unchanged: list[str],
+    previous_enodes: list[str],
+    current_enodes: list[str],
+    previous_target_port: int | None,
+    current_target_port: int | None,
+    target_port_changed: bool,
+    change_severity: str,
+    is_initial: bool
+) -> dict:
+    added_count = len(added)
+    removed_count = len(removed)
+    unchanged_count = len(unchanged)
+    previous_total = len(previous_enodes)
+    current_total = len(current_enodes)
+
+    if is_initial:
+        summary = (
+            f"Initial DAC official enode baseline captured with {current_total} enodes. "
+            f"The observed target port is {current_target_port}."
+        )
+        technical_impact = (
+            "This snapshot becomes the first automated comparison baseline for future enode observations."
+        )
+        recommended_action = (
+            "Keep this baseline as the starting point for automated watcher history."
+        )
+        rotation_interpretation = "Initial baseline capture; no previous automated snapshot exists for comparison."
+
+    elif target_port_changed:
+        summary = (
+            f"DAC official enode target port changed from {previous_target_port} to {current_target_port}. "
+            f"The current list contains {current_total} enodes."
+        )
+        technical_impact = (
+            "A target port change may affect node runners who manually rely on the official enode page for peer configuration."
+        )
+        recommended_action = (
+            "Review the updated official enode list before refreshing local peer commands."
+        )
+        rotation_interpretation = "Target port migration or configuration update detected."
+
+    elif added_count or removed_count:
+        summary = (
+            f"DAC official enode list changed: {added_count} enodes added, "
+            f"{removed_count} removed, and {unchanged_count} remained unchanged. "
+            f"Current total: {current_total} enodes."
+        )
+
+        if change_severity == "LOW":
+            rotation_interpretation = "Small bootstrap peer rotation detected."
+            technical_impact = "This appears to be a minor peer-list refresh."
+            recommended_action = "No urgent action is required, but the snapshot is preserved for history."
+
+        elif change_severity == "MEDIUM":
+            rotation_interpretation = "Moderate bootstrap peer rotation detected."
+            technical_impact = "Node runners may review the updated list if they manually refresh official peers."
+            recommended_action = "Compare added and removed enodes before updating manual peer records."
+
+        elif change_severity == "HIGH":
+            rotation_interpretation = "Large bootstrap peer rotation detected."
+            technical_impact = "This may indicate infrastructure rotation, maintenance, scaling, or peer replacement."
+            recommended_action = "Review the full snapshot and preserve it for technical reporting."
+
+        else:
+            rotation_interpretation = "Enode list changed."
+            technical_impact = "The official peer list changed and should be tracked as infrastructure evidence."
+            recommended_action = "Review the generated JSON snapshot."
+
+    else:
+        summary = (
+            f"No meaningful DAC official enode change detected. "
+            f"The current list remains at {current_total} enodes with target port {current_target_port}."
+        )
+        technical_impact = "No new technical action is required."
+        recommended_action = "Continue scheduled monitoring."
+        rotation_interpretation = "Stable peer-list state."
+
+    return {
+        "summary": summary,
+        "rotation_interpretation": rotation_interpretation,
+        "technical_impact": technical_impact,
+        "recommended_action": recommended_action,
+        "previous_total": previous_total,
+        "current_total": current_total,
+        "added_count": added_count,
+        "removed_count": removed_count,
+        "unchanged_count": unchanged_count,
+        "target_port_changed": target_port_changed
+    }
+
+
 def load_latest() -> dict | None:
     if not LATEST_FILE.exists():
         return None
@@ -156,6 +321,24 @@ Previous target port:
 
 Current target port:
 {snapshot["current_target_port"]}
+
+Change severity:
+{snapshot["change_severity"]}
+
+Severity reason:
+{snapshot["severity_reason"]}
+
+AI-style summary:
+{snapshot["ai_style_summary"]["summary"]}
+
+Rotation interpretation:
+{snapshot["ai_style_summary"]["rotation_interpretation"]}
+
+Technical impact:
+{snapshot["technical_impact"]}
+
+Recommended action:
+{snapshot["recommended_action"]}
 
 Previous total:
 {snapshot["previous_total"]}
@@ -261,10 +444,36 @@ Warning snapshot:
     is_initial = previous_snapshot is None
     has_changed = bool(added or removed or target_port_changed)
 
+    change_severity, severity_reason = classify_change(
+        added=added,
+        removed=removed,
+        unchanged=unchanged,
+        previous_enodes=previous_enodes,
+        current_enodes=current_enodes,
+        previous_target_port=previous_target_port,
+        current_target_port=current_target_port,
+        target_port_changed=target_port_changed,
+        is_initial=is_initial
+    )
+
+    ai_style_summary = build_ai_style_summary(
+        added=added,
+        removed=removed,
+        unchanged=unchanged,
+        previous_enodes=previous_enodes,
+        current_enodes=current_enodes,
+        previous_target_port=previous_target_port,
+        current_target_port=current_target_port,
+        target_port_changed=target_port_changed,
+        change_severity=change_severity,
+        is_initial=is_initial
+    )
+
     print(f"[INFO] Current enodes: {len(current_enodes)}")
     print(f"[INFO] Previous enodes: {len(previous_enodes)}")
     print(f"[INFO] Added: {len(added)} | Removed: {len(removed)} | Unchanged: {len(unchanged)}")
     print(f"[INFO] Target port: {previous_target_port} -> {current_target_port} | Changed: {target_port_changed}")
+    print(f"[INFO] Change severity: {change_severity} | Reason: {severity_reason}")
 
     if not is_initial and not has_changed:
         print("[OK] No enode changes detected. No snapshot created.")
@@ -284,6 +493,12 @@ Warning snapshot:
         "previous_target_port": previous_target_port,
         "current_target_port": current_target_port,
         "target_port_changed": target_port_changed,
+
+        "change_severity": change_severity,
+        "severity_reason": severity_reason,
+        "ai_style_summary": ai_style_summary,
+        "technical_impact": ai_style_summary["technical_impact"],
+        "recommended_action": ai_style_summary["recommended_action"],
 
         "previous_total": len(previous_enodes),
         "current_total": len(current_enodes),
@@ -317,9 +532,9 @@ Warning snapshot:
         subject = f"[DAC Enode Watcher] Initial snapshot captured | {len(current_enodes)} enodes"
     else:
         if target_port_changed:
-            subject = f"[DAC Enode Watcher] Change detected | port {previous_target_port} -> {current_target_port} | +{len(added)} / -{len(removed)}"
+            subject = f"[DAC Enode Watcher] {change_severity} | port {previous_target_port} -> {current_target_port} | +{len(added)} / -{len(removed)}"
         else:
-            subject = f"[DAC Enode Watcher] Change detected | +{len(added)} / -{len(removed)}"
+            subject = f"[DAC Enode Watcher] {change_severity} change | +{len(added)} / -{len(removed)}"
 
     email_body = build_email_body(snapshot)
     send_email(subject, email_body)
