@@ -552,6 +552,55 @@ This turns the watcher from a monitoring and analysis tool into a report prepara
 
 ---
 
+## Dashboard Layer
+
+The project now includes a static HTML dashboard for visual inspection.
+
+Dashboard file:
+
+    dashboard/index.html
+
+The dashboard reads local JSON outputs from:
+
+- `data/latest.json`
+- `data/manual-backfill/manual-backfill-summary.json`
+- `data/rotation-intelligence-summary.json`
+- `data/anomaly-detection-summary.json`
+
+It displays:
+
+- latest watcher state
+- AI-style summary
+- manual vs automated observation scope
+- total observations
+- unique enodes
+- unique IPs
+- target port
+- anomaly summary
+- report-ready summary
+- most persistent enodes
+- most persistent IPs
+- detected anomaly events
+- observation timeline
+
+The dashboard also includes the independent DAC Infra Tester identity card from:
+
+    assets/DAC-CARD.png
+
+This image is used as a community contributor identity element and does not represent official DAC branding.
+
+To preview locally, run:
+
+    python3 -m http.server 8090
+
+Then open:
+
+    http://localhost:8090/dashboard/
+
+The dashboard should be opened through a local HTTP server or GitHub Pages, not directly through `file://`, because it loads JSON data using `fetch()`.
+
+---
+
 ## GitHub Actions Schedule
 
 The watcher is executed by GitHub Actions every 3 hours:
@@ -655,6 +704,10 @@ The current version already supports:
 - report-ready observation scope generation
 - report-ready timeline generation
 - report-ready technical interpretation generation
+- static HTML dashboard generation
+- dashboard-based latest watcher inspection
+- dashboard-based anomaly summary inspection
+- dashboard-based persistent enode/IP inspection
 
 ---
 
@@ -785,6 +838,40 @@ New report output:
 - conclusion
 
 This turns the project into a report preparation pipeline for future DAC Testnet infrastructure reports.
+
+---
+
+### v1.6 — Dashboard Layer
+
+Added a static HTML dashboard for visual inspection of watcher outputs.
+
+New files:
+
+- `dashboard/index.html`
+
+Dashboard data sources:
+
+- `data/latest.json`
+- `data/manual-backfill/manual-backfill-summary.json`
+- `data/rotation-intelligence-summary.json`
+- `data/anomaly-detection-summary.json`
+
+Dashboard output includes:
+
+- latest watcher state
+- AI-style summary
+- anomaly summary
+- report-ready summary
+- most persistent enodes
+- most persistent IPs
+- detected anomaly events
+- observation timeline
+
+The dashboard also uses:
+
+- `assets/DAC-CARD.png`
+
+This image represents the independent DAC Infra Tester contributor identity and avoids using official DAC branding.
 
 ---
 

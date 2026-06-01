@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAC Enode Intelligence Watcher Dashboard</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0d1b2f;
+      --panel-soft: #12243b;
+      --border: #243956;
+      --text: #e6edf7;
+      --muted: #9fb0c6;
+      --accent: #58a6ff;
+      --good: #37d67a;
+      --warn: #f5c542;
+      --danger: #ff6b6b;
+      --info: #7cc7ff;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(88, 166, 255, 0.14), transparent 34rem),
+        radial-gradient(circle at top right, rgba(55, 214, 122, 0.08), transparent 32rem),
+        var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .hero {
+      padding: 28px;
+      background: linear-gradient(135deg, rgba(13, 27, 47, 0.95), rgba(18, 36, 59, 0.9));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .hero-art {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .hero-art img {
+      width: 190px;
+      max-width: 100%;
+      border-radius: 20px;
+      border: 1px solid rgba(88, 166, 255, 0.45);
+      box-shadow:
+        0 0 36px rgba(88, 166, 255, 0.24),
+        0 18px 36px rgba(0, 0, 0, 0.34);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin-top: 14px;
+      max-width: 880px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill strong {
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.cards {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      background: rgba(13, 27, 47, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+      overflow: hidden;
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .metric {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 6px 0;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .section {
+      margin-top: 18px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+    }
+
+    .status.low,
+    .status.info,
+    .status.none {
+      color: var(--good);
+      background: rgba(55, 214, 122, 0.1);
+      border-color: rgba(55, 214, 122, 0.35);
+    }
+
+    .status.medium {
+      color: var(--warn);
+      background: rgba(245, 197, 66, 0.1);
+      border-color: rgba(245, 197, 66, 0.35);
+    }
+
+    .status.high,
+    .status.critical {
+      color: var(--danger);
+      background: rgba(255, 107, 107, 0.1);
+      border-color: rgba(255, 107, 107, 0.35);
+    }
+
+    .summary-box {
+      color: var(--text);
+      line-height: 1.65;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid rgba(36, 57, 86, 0.75);
+      text-align: left;
+      font-size: 13px;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: #c7d7ea;
+    }
+
+    .footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .error {
+      border-color: rgba(255, 107, 107, 0.45);
+      background: rgba(255, 107, 107, 0.08);
+      color: #ffdada;
+    }
+
+    @media (max-width: 980px) {
+      .grid.cards,
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grid.cards,
+      .grid.two {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 22px;
+        grid-template-columns: 1fr;
+      }
+
+      .hero-art {
+        justify-content: flex-start;
+      }
+
+      .hero-art img {
+        width: 160px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">DAC Enode Intelligence Watcher</div>
+        <h1>Infrastructure Observation Dashboard</h1>
+        <p class="subtitle">
+          A visual inspection layer for DAC official enode monitoring, manual backfill history,
+          rotation intelligence, anomaly detection, and latest watcher state.
+        </p>
+        <div class="meta-row">
+          <span class="pill">Maintainer: <strong>JERUZZALEM — DAC Infra Tester</strong></span>
+          <span class="pill">Source: <strong>DAC official enode page</strong></span>
+          <span class="pill">Mode: <strong>Static JSON Dashboard</strong></span>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-label="DAC Infra Tester identity card">
+        <img src="../assets/DAC-CARD.png" alt="JERUZZALEM DAC Infra Tester card" />
+      </div>
+    </section>
+
+    <section id="loadState" class="card section">
+      Loading dashboard data...
+    </section>
+
+    <section id="dashboard" style="display:none;">
+      <div class="grid cards section" id="metricCards"></div>
+
+      <div class="grid two section">
+        <div class="card">
+          <h2>Latest Watcher State</h2>
+          <div id="latestState"></div>
+        </div>
+
+        <div class="card">
+          <h2>AI-Style Summary</h2>
+          <div id="aiSummary"></div>
+        </div>
+      </div>
+
+      <div class="grid two section">
+        <div class="card">
+          <h2>Anomaly Summary</h2>
+          <div id="anomalySummary"></div>
+        </div>
+
+        <div class="card">
+          <h2>Report-Ready Summary</h2>
+          <div id="reportSummary"></div>
+        </div>
+      </div>
+
+      <div class="card section">
+        <h2>Most Persistent Enodes</h2>
+        <div class="table-wrap">
+          <table id="persistentEnodes"></table>
+        </div>
+      </div>
+
+      <div class="card section">
+        <h2>Most Persistent IPs</h2>
+        <div class="table-wrap">
+          <table id="persistentIps"></table>
+        </div>
+      </div>
+
+      <div class="card section">
+        <h2>Detected Anomaly Events</h2>
+        <div class="table-wrap">
+          <table id="anomalyEvents"></table>
+        </div>
+      </div>
+
+      <div class="card section">
+        <h2>Observation Timeline</h2>
+        <div class="table-wrap">
+          <table id="timeline"></table>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Dashboard reads local JSON outputs generated by DAC Enode Intelligence Watcher.
+    </div>
+  </main>
+
+  <script>
+    const files = {
+      latest: "../data/latest.json",
+      manual: "../data/manual-backfill/manual-backfill-summary.json",
+      rotation: "../data/rotation-intelligence-summary.json",
+      anomaly: "../data/anomaly-detection-summary.json"
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function safe(value, fallback = "N/A") {
+      if (value === null || value === undefined || value === "") return fallback;
+      return value;
+    }
+
+    function shortText(value, start = 18, end = 10) {
+      if (!value) return "N/A";
+      if (value.length <= start + end + 3) return value;
+      return `${value.slice(0, start)}...${value.slice(-end)}`;
+    }
+
+    function statusClass(value) {
+      return String(value || "none").toLowerCase();
+    }
+
+    function statusBadge(value) {
+      const label = safe(value, "NONE");
+      return `<span class="status ${statusClass(label)}">${label}</span>`;
+    }
+
+    async function fetchJSON(path) {
+      const response = await fetch(path, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`Failed to load ${path}: ${response.status}`);
+      }
+      return response.json();
+    }
+
+    function renderCards({ latest, manual, rotation, anomaly }) {
+      const scope = rotation.observation_scope || {};
+      const stats = rotation.enode_count_statistics || {};
+      const anomalyReport = anomaly.report_summary || {};
+
+      const cards = [
+        ["Total Observations", safe(scope.total_snapshots), "Manual + automated snapshots"],
+        ["Manual Backfill", safe(scope.manual_backfill_snapshots, manual.total_manual_snapshots), "Pre-watcher archive"],
+        ["Automated Snapshots", safe(scope.automated_watcher_snapshots), "GitHub Actions watcher"],
+        ["Target Port", safe(latest.target_port), "Latest observed P2P port"],
+        ["Unique Enodes", safe(rotation.unique_enode_count), "Across full dataset"],
+        ["Unique IPs", safe(rotation.unique_ip_count), "Across full dataset"],
+        ["Enode Avg", safe(stats.average), `Min ${safe(stats.minimum)} / Max ${safe(stats.maximum)}`],
+        ["Anomaly Signals", safe(anomalyReport.anomaly_count), `Highest: ${safe(anomalyReport.highest_severity)}`]
+      ];
+
+      $("metricCards").innerHTML = cards.map(([value, metric, label]) => `
+        <div class="card">
+          <h3>${value}</h3>
+          <div class="metric">${metric}</div>
+          <div class="label">${label}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderLatest(latest) {
+      $("latestState").innerHTML = `
+        <div class="summary-box">
+          <p><strong>Generated at source:</strong><br><span class="muted">${safe(latest.generated_at_source)}</span></p>
+          <p><strong>Checked at UTC:</strong><br><span class="muted">${safe(latest.checked_at_utc)}</span></p>
+          <p><strong>Current total:</strong> ${safe(latest.current_total)} enodes</p>
+          <p><strong>Previous total:</strong> ${safe(latest.previous_total)} enodes</p>
+          <p><strong>Added / Removed / Unchanged:</strong> ${safe(latest.added_count)} / ${safe(latest.removed_count)} / ${safe(latest.unchanged_count)}</p>
+          <p><strong>Severity:</strong> ${statusBadge(latest.change_severity)}</p>
+          <p><strong>Reason:</strong><br><span class="muted">${safe(latest.severity_reason)}</span></p>
+        </div>
+      `;
+    }
+
+    function renderAiSummary(latest) {
+      const ai = latest.ai_style_summary || {};
+
+      $("aiSummary").innerHTML = `
+        <div class="summary-box">
+          <p>${safe(ai.summary, "No AI-style summary available.")}</p>
+          <p><strong>Rotation interpretation:</strong><br><span class="muted">${safe(ai.rotation_interpretation)}</span></p>
+          <p><strong>Technical impact:</strong><br><span class="muted">${safe(latest.technical_impact)}</span></p>
+          <p><strong>Recommended action:</strong><br><span class="muted">${safe(latest.recommended_action)}</span></p>
+        </div>
+      `;
+    }
+
+    function renderAnomalySummary(anomaly) {
+      const report = anomaly.report_summary || {};
+
+      $("anomalySummary").innerHTML = `
+        <div class="summary-box">
+          <p>${safe(report.short_summary, "No anomaly summary available.")}</p>
+          <p><strong>Highest severity:</strong> ${statusBadge(report.highest_severity)}</p>
+          <p><strong>Severity counts:</strong><br><span class="mono">${JSON.stringify(report.severity_counts || {})}</span></p>
+          <p><strong>Anomaly types:</strong><br><span class="mono">${JSON.stringify(report.anomaly_type_counts || {})}</span></p>
+          <p><strong>Recommended action:</strong><br><span class="muted">${safe(report.recommended_action)}</span></p>
+        </div>
+      `;
+    }
+
+    function renderReportSummary(rotation) {
+      const report = rotation.report_ready_summary || {};
+
+      $("reportSummary").innerHTML = `
+        <div class="summary-box">
+          <p>${safe(report.short_summary)}</p>
+          <p>${safe(report.manual_to_automated_context)}</p>
+          <p>${safe(report.technical_value)}</p>
+        </div>
+      `;
+    }
+
+    function renderTable(id, headers, rows) {
+      const head = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>`;
+      const body = `<tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody>`;
+      $(id).innerHTML = head + body;
+    }
+
+    function renderPersistentEnodes(rotation) {
+      const rows = (rotation.most_persistent_enodes || []).slice(0, 10).map(item => [
+        `<span class="mono">${shortText(item.enode, 22, 12)}</span>`,
+        safe(item.ip),
+        safe(item.port),
+        safe(item.appearance_count),
+        safe(item.appearance_ratio),
+        safe((item.phases_seen || []).join(", "))
+      ]);
+
+      renderTable("persistentEnodes", ["Enode", "IP", "Port", "Appearances", "Ratio", "Phases"], rows);
+    }
+
+    function renderPersistentIps(rotation) {
+      const rows = (rotation.most_persistent_ips || []).slice(0, 10).map(item => [
+        safe(item.ip),
+        safe(item.appearance_count),
+        safe(item.appearance_ratio),
+        safe((item.phases_seen || []).join(", ")),
+        safe(item.first_seen && item.first_seen.generated_at_source),
+        safe(item.last_seen && item.last_seen.generated_at_source)
+      ]);
+
+      renderTable("persistentIps", ["IP", "Appearances", "Ratio", "Phases", "First Seen", "Last Seen"], rows);
+    }
+
+    function renderAnomalyEvents(anomaly) {
+      const rows = (anomaly.anomalies || []).map(item => {
+        const obs = item.observation || {};
+        return [
+          safe(item.anomaly_type),
+          statusBadge(item.severity),
+          safe(obs.observation_index),
+          safe(obs.phase),
+          safe(obs.generated_at_source),
+          `${safe(obs.previous_total)} → ${safe(obs.current_total)}`,
+          safe(item.reason)
+        ];
+      });
+
+      renderTable("anomalyEvents", ["Type", "Severity", "Index", "Phase", "Generated At", "Count", "Reason"], rows);
+    }
+
+    function renderTimeline(rotation) {
+      const rows = (rotation.observation_timeline || []).map(item => [
+        safe(item.observation_index),
+        safe(item.phase),
+        safe(item.generated_at_source),
+        safe(item.target_port),
+        safe(item.current_total),
+        safe(item.added_count),
+        safe(item.removed_count),
+        item.change_severity ? statusBadge(item.change_severity) : `<span class="muted">N/A</span>`
+      ]);
+
+      renderTable("timeline", ["Index", "Phase", "Generated At", "Port", "Total", "Added", "Removed", "Severity"], rows);
+    }
+
+    async function init() {
+      try {
+        const [latest, manual, rotation, anomaly] = await Promise.all([
+          fetchJSON(files.latest),
+          fetchJSON(files.manual),
+          fetchJSON(files.rotation),
+          fetchJSON(files.anomaly)
+        ]);
+
+        renderCards({ latest, manual, rotation, anomaly });
+        renderLatest(latest);
+        renderAiSummary(latest);
+        renderAnomalySummary(anomaly);
+        renderReportSummary(rotation);
+        renderPersistentEnodes(rotation);
+        renderPersistentIps(rotation);
+        renderAnomalyEvents(anomaly);
+        renderTimeline(rotation);
+
+        $("loadState").style.display = "none";
+        $("dashboard").style.display = "block";
+      } catch (error) {
+        $("loadState").className = "card section error";
+        $("loadState").innerHTML = `
+          <strong>Dashboard failed to load JSON data.</strong>
+          <p>${error.message}</p>
+          <p class="muted">Open this dashboard through GitHub Pages or a local HTTP server, not directly through file://.</p>
+        `;
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
