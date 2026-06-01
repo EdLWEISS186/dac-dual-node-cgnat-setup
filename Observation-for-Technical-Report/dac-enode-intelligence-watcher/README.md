@@ -26,6 +26,38 @@ Instead of manually checking the official enode page and risking missed updates,
 
 ---
 
+## Manual Observation Challenge
+
+Before this watcher was created, the official DAC enode list was observed manually by saving screenshots and text files from the public enode page.
+
+This method worked for point-in-time documentation, but it was difficult to follow up consistently because the official enode page can update over time and previous states are no longer visible once the page changes.
+
+As shown below, some observations were successfully captured, while some days could be missed due to manual workload, timing, or limited availability.
+
+![Manual DAC enode observation was difficult to follow up consistently](assets/HardToFollowUp.png)
+
+This is the main reason why **DAC Enode Intelligence Watcher** was created.
+
+The watcher turns manual observation into an automated process by continuously checking the official source, extracting structured enode data, comparing it with the previous snapshot, and preserving meaningful changes as JSON evidence.
+
+Instead of relying only on screenshots and manual text files, the project now creates a repeatable observation pipeline:
+
+```text
+Manual observation
+        ↓
+Risk of missed updates
+        ↓
+Automated watcher
+        ↓
+Structured JSON snapshots
+        ↓
+Email result and technical evidence
+```
+
+This allows future enode evolution analysis to be based on more consistent historical data.
+
+---
+
 ## Purpose
 
 The purpose of this project is not only to send notifications.
@@ -203,6 +235,22 @@ The watcher performs structured infrastructure observation by:
 * generating structured output for reporting
 
 This makes the system suitable for technical monitoring and evidence preservation.
+
+---
+
+## Current Status
+
+The current version already supports:
+
+* official DAC enode page monitoring
+* scheduled GitHub Actions execution every 3 hours
+* manual workflow execution
+* email notification
+* JSON snapshot generation
+* latest state tracking
+* historical snapshot preservation
+* added, removed, and unchanged enode classification
+* target port change detection
 
 ---
 
