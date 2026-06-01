@@ -2,3 +2,9 @@ venv/
 __pycache__/
 *.pyc
 .env
+
+# Allow watcher JSON outputs to be tracked
+!data/
+!data/latest.json
+!data/snapshots/
+!data/snapshots/*.json
