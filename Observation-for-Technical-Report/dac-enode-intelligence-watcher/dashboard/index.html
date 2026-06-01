@@ -369,6 +369,11 @@
       </div>
 
       <div class="card section">
+        <h2>DAC Infrastructure Signal Summary</h2>
+        <div id="dacSignalSummary"></div>
+      </div>
+
+      <div class="card section">
         <h2>Most Persistent Enodes</h2>
         <div class="table-wrap">
           <table id="persistentEnodes"></table>
@@ -526,6 +531,28 @@
       $(id).innerHTML = head + body;
     }
 
+    function renderDacSignalSummary(rotation) {
+      const signalMeta = rotation.dac_infrastructure_signal || {};
+      const rows = (rotation.dac_infrastructure_signal_summary || []).map(item => [
+        safe(item.dac_infrastructure_signal),
+        safe(item.unique_ip_count),
+        safe((item.confidence_levels || []).join(", ")),
+        safe((item.peer_identity_hints || []).join(", ")),
+        `<span class="mono ip-list">${(item.ips || []).join(", ")}</span>`
+      ]);
+
+      const note = `
+        <div class="summary-box" style="margin-bottom: 12px;">
+          <p><strong>Method:</strong> ${safe(signalMeta.method)}</p>
+          <p><strong>Official ownership claim:</strong> ${safe(signalMeta.official_ownership_claim)}</p>
+          <p class="muted">${safe(signalMeta.disclaimer)}</p>
+        </div>
+      `;
+
+      $("dacSignalSummary").innerHTML = note + `<div class="table-wrap"><table id="dacSignalSummaryTable"></table></div>`;
+      renderTable("dacSignalSummaryTable", ["Signal", "Unique IPs", "Confidence", "Peer Identity Hints", "IPs"], rows);
+    }
+
     function renderProviderSummary(rotation) {
       const detection = rotation.provider_detection || {};
       const sourceRows = rotation.provider_asn_summary || [];
@@ -568,6 +595,9 @@
     function renderPersistentIps(rotation) {
       const rows = (rotation.most_persistent_ips || []).slice(0, 10).map(item => [
         safe(item.ip),
+        safe(item.dac_infrastructure_signal),
+        safe(item.signal_confidence),
+        safe(item.peer_identity_hint),
         safe(item.provider_guess),
         safe(item.asn_hint),
         safe(item.provider_confidence),
@@ -578,7 +608,7 @@
         safe(item.last_seen && item.last_seen.generated_at_source)
       ]);
 
-      renderTable("persistentIps", ["IP", "Provider", "ASN", "Confidence", "Appearances", "Ratio", "Phases", "First Seen", "Last Seen"], rows);
+      renderTable("persistentIps", ["IP", "DAC Signal", "Signal Confidence", "Peer Identity", "Provider", "ASN", "Provider Confidence", "Appearances", "Ratio", "Phases", "First Seen", "Last Seen"], rows);
     }
 
     function renderAnomalyEvents(anomaly) {
@@ -628,6 +658,7 @@
         renderAnomalySummary(anomaly);
         renderReportSummary(rotation);
         renderProviderSummary(rotation);
+        renderDacSignalSummary(rotation);
         renderPersistentEnodes(rotation);
         renderPersistentIps(rotation);
         renderAnomalyEvents(anomaly);

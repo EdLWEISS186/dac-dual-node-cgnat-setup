@@ -26,6 +26,111 @@ Instead of manually checking the official enode page and risking missed updates,
 
 ---
 
+## Project Architecture / Data Flow Topology
+
+DAC Enode Intelligence Watcher has evolved from a simple watcher into a full observation, intelligence, reporting, and dashboard pipeline.
+
+The current topology is:
+
+    Official DAC Enode Source
+    https://enodes.dachain.tech/testnet/
+            │
+            ▼
+    watcher.py
+    - fetch official enode page
+    - parse current enode list
+    - detect added / removed / unchanged enodes
+    - detect target port changes
+    - classify change severity
+    - generate AI-style summary
+    - send email notification
+    - update latest.json
+    - create snapshot when meaningful change is detected
+            │
+            ▼
+    data/latest.json
+    data/snapshots/*.json
+            │
+            ▼
+    build_rotation_intelligence.py
+    - combine manual backfill snapshots
+    - combine automated watcher snapshots
+    - calculate observation scope
+    - calculate enode count statistics
+    - detect persistent enodes
+    - detect persistent IPs
+    - enrich IPs with provider / ASN hints
+    - enrich IPs with DAC Infrastructure Signal
+            │
+            ├── provider_hints.py
+            │   - static provider prefix heuristic
+            │   - provider_guess
+            │   - asn_hint
+            │   - provider_type
+            │   - country_hint
+            │   - confidence
+            │
+            ├── dac_signal_hints.py
+            │   - DAC Infrastructure Signal heuristic
+            │   - registry history signal
+            │   - peer identity signal
+            │   - persistence signal
+            │   - subnet pattern signal
+            │   - community inference disclaimer
+            │
+            ▼
+    data/rotation-intelligence-summary.json
+            │
+            ▼
+    build_anomaly_detection.py
+    - scan observation timeline
+    - detect large count drops
+    - detect high removal events
+    - detect aggressive rotation
+    - detect unexpected target port
+    - generate anomaly summary
+            │
+            ▼
+    data/anomaly-detection-summary.json
+            │
+            ├───────────────────────────────┐
+            ▼                               ▼
+    generate_technical_report.py        dashboard/index.html
+    - executive summary                 - visual latest watcher state
+    - observation scope                  - provider / ASN summary
+    - persistent enodes/IPs              - DAC Infrastructure Signal summary
+    - provider / ASN summary             - anomaly summary
+    - DAC Infrastructure Signal summary  - persistent IP/enode tables
+    - anomaly summary                    - observation timeline
+    - technical interpretation
+            │
+            ▼
+    reports/generated/dac-enode-intelligence-report.md
+
+GitHub Actions automation:
+
+    .github/workflows/dac-enode-watcher.yml
+            │
+            ▼
+    Scheduled every 3 hours + manual run
+            │
+            ▼
+    watcher.py
+    build_rotation_intelligence.py
+    build_anomaly_detection.py
+    generate_technical_report.py
+            │
+            ▼
+    Commit generated outputs only when files change
+
+This topology allows the project to preserve raw observation evidence, enrich it with heuristic interpretation layers, detect anomaly candidates, generate report-ready output, and visualize the latest state through a dashboard.
+
+Important interpretation note:
+
+DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.
+
+---
+
 ## Manual Observation Challenge
 
 Before this watcher was created, the official DAC enode list was observed manually by saving screenshots and text files from the public enode page.
@@ -552,6 +657,57 @@ This turns the watcher from a monitoring and analysis tool into a report prepara
 
 ---
 
+## DAC Infrastructure Signal Layer
+
+The project now includes a DAC Infrastructure Signal Layer.
+
+This layer enriches observed enode IPs with community inference labels derived from:
+
+- observed registry history
+- peer identity strings from prior `admin.peers` evidence
+- persistence / survivorship across observations
+- recurring subnet patterns
+- provider hints
+- manual technical report evidence
+
+Helper file:
+
+    dac_signal_hints.py
+
+Generated signal fields include:
+
+- `dac_infrastructure_signal`
+- `signal_category`
+- `signal_confidence`
+- `peer_identity_hint`
+- `historical_registry_status`
+- `signal_basis`
+- `official_ownership_claim`
+- `signal_detection_method`
+- `signal_source_reference`
+- `signal_disclaimer`
+
+Important note:
+
+DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.
+
+Current generated DAC Infrastructure Signal examples include:
+
+- `Authority-like Core Signal`
+- `Relay-like DAC Node Signal`
+- `Internal RPC-like Signal`
+- `Community VPS-like Signal`
+- `Community Node Signal`
+- `Legacy Relay-like Signal`
+- `Unlisted Active Peer Signal`
+- `Retained Infrastructure Signal`
+- `Core Subnet Historical Signal`
+- `Unknown / No Signal`
+
+The layer is designed to improve infrastructure readability without claiming official node ownership.
+
+---
+
 ## Provider / ASN Hint Layer
 
 The project now includes a heuristic Provider / ASN Hint Layer.
@@ -788,6 +944,11 @@ The current version already supports:
 - automated GitHub Actions intelligence pipeline rebuild
 - deterministic generated report timestamp
 - scheduled output commit only when generated files change
+- DAC Infrastructure Signal enrichment
+- DAC signal summary generation
+- DAC signal dashboard visualization
+- DAC signal technical report section generation
+- community inference disclaimer for non-official role signals
 
 ---
 
@@ -999,6 +1160,58 @@ Initial generated result:
 - `Unknown`: 22 unique IPs
 
 This layer improves infrastructure readability while keeping the result honest by labeling unmatched IPs as `Unknown`.
+
+### v1.6.2 — DAC Infrastructure Signal Layer
+
+Added community inference labels for observed enode IPs.
+
+New file:
+
+- `dac_signal_hints.py`
+
+Updated files:
+
+- `build_rotation_intelligence.py`
+- `generate_technical_report.py`
+- `dashboard/index.html`
+- `data/rotation-intelligence-summary.json`
+- `reports/generated/dac-enode-intelligence-report.md`
+- `README.md`
+
+New output fields:
+
+- `dac_infrastructure_signal`
+- `signal_category`
+- `signal_confidence`
+- `peer_identity_hint`
+- `historical_registry_status`
+- `signal_basis`
+- `official_ownership_claim`
+- `signal_detection_method`
+- `signal_source_reference`
+- `signal_disclaimer`
+
+New summary output:
+
+- `dac_infrastructure_signal_counts`
+- `signal_category_counts`
+- `signal_confidence_counts`
+- `dac_infrastructure_signal_summary`
+
+Initial generated result includes:
+
+- `Authority-like Core Signal`: 3 unique IPs
+- `Community VPS-like Signal`: 4 unique IPs
+- `Relay-like DAC Node Signal`: 1 unique IP
+- `Internal RPC-like Signal`: 1 unique IP
+- `Unlisted Active Peer Signal`: 1 unique IP
+- `Unknown / No Signal`: 12 unique IPs
+
+Important interpretation:
+
+DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.
+
+This layer improves node-role readability without claiming official ownership.
 
 ---
 

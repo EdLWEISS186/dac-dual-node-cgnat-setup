@@ -84,6 +84,8 @@ def build_report() -> str:
     persistent_ips = rotation.get("most_persistent_ips", [])[:10]
     provider_asn_summary = rotation.get("provider_asn_summary", [])
     provider_detection = rotation.get("provider_detection", {})
+    dac_signal_meta = rotation.get("dac_infrastructure_signal", {})
+    dac_signal_summary = rotation.get("dac_infrastructure_signal_summary", [])
     timeline = rotation.get("observation_timeline", [])
     anomalies = anomaly.get("anomalies", [])
 
@@ -225,9 +227,12 @@ def build_report() -> str:
     for item in persistent_ips:
         persistent_ip_rows.append([
             item.get("ip", "N/A"),
-            item.get("provider_guess", "N/A"),
-            item.get("asn_hint", "N/A"),
-            item.get("provider_confidence", "N/A"),
+            safe(item.get("dac_infrastructure_signal")),
+            safe(item.get("signal_confidence")),
+            safe(item.get("peer_identity_hint")),
+            safe(item.get("provider_guess")),
+            safe(item.get("asn_hint")),
+            safe(item.get("provider_confidence")),
             item.get("appearance_count", "N/A"),
             item.get("appearance_ratio", "N/A"),
             ", ".join(item.get("phases_seen", [])),
@@ -236,11 +241,43 @@ def build_report() -> str:
         ])
 
     lines.append(table(
-        ["IP", "Provider", "ASN", "Confidence", "Appearances", "Ratio", "Phases Seen", "First Seen", "Last Seen"],
-        persistent_ip_rows or [["N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]]
+        ["IP", "DAC Signal", "Signal Confidence", "Peer Identity", "Provider", "ASN", "Provider Confidence", "Appearances", "Ratio", "Phases Seen", "First Seen", "Last Seen"],
+        persistent_ip_rows or [["N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]]
     ))
 
-    lines.append(section("8. Provider / ASN Hint Summary"))
+    lines.append(section("8. DAC Infrastructure Signal Summary"))
+    lines.append("DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints.")
+    lines.append("")
+    lines.append("It is not an official DAC classification and should not be treated as confirmed node ownership.")
+    lines.append("")
+    lines.append(table(
+        ["Detection Field", "Value"],
+        [
+            ["Method", dac_signal_meta.get("method", "N/A")],
+            ["Official ownership claim", dac_signal_meta.get("official_ownership_claim", "N/A")],
+            ["Source reference", dac_signal_meta.get("source_reference", "N/A")],
+            ["Disclaimer", dac_signal_meta.get("disclaimer", "N/A")],
+        ]
+    ))
+    lines.append("")
+
+    dac_signal_rows = []
+
+    for item in dac_signal_summary:
+        dac_signal_rows.append([
+            safe(item.get("dac_infrastructure_signal")),
+            item.get("unique_ip_count", "N/A"),
+            ", ".join(item.get("confidence_levels", [])),
+            ", ".join(item.get("peer_identity_hints", [])),
+            ", ".join(item.get("ips", [])),
+        ])
+
+    lines.append(table(
+        ["DAC Infrastructure Signal", "Unique IPs", "Confidence", "Peer Identity Hints", "IPs"],
+        dac_signal_rows or [["N/A", "N/A", "N/A", "N/A", "N/A"]]
+    ))
+
+    lines.append(section("9. Provider / ASN Hint Summary"))
     lines.append("Provider and ASN values in this section are heuristic hints based on static IP prefix matching.")
     lines.append("")
     lines.append("They should be treated as enrichment for infrastructure analysis, not final verified ASN truth.")
@@ -260,8 +297,8 @@ def build_report() -> str:
 
     for item in provider_asn_summary:
         provider_rows.append([
-            item.get("provider_guess", "N/A"),
-            item.get("asn_hint", "N/A"),
+            safe(item.get("provider_guess")),
+            safe(item.get("asn_hint")),
             item.get("provider_type", "N/A"),
             item.get("country_hint", "N/A"),
             item.get("confidence", "N/A"),
@@ -274,7 +311,7 @@ def build_report() -> str:
         provider_rows or [["N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]]
     ))
 
-    lines.append(section("9. Anomaly Detection Summary"))
+    lines.append(section("10. Anomaly Detection Summary"))
     lines.append(table(
         ["Anomaly Metric", "Value"],
         [
@@ -289,7 +326,7 @@ def build_report() -> str:
     lines.append("")
     lines.append(f"Recommended action: {anomaly_report.get('recommended_action', 'N/A')}")
 
-    lines.append(section("10. Detected Anomaly Events"))
+    lines.append(section("11. Detected Anomaly Events"))
     anomaly_rows = []
 
     for item in anomalies:
@@ -310,7 +347,7 @@ def build_report() -> str:
         anomaly_rows or [["None", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "No anomaly events detected."]]
     ))
 
-    lines.append(section("11. Observation Timeline"))
+    lines.append(section("12. Observation Timeline"))
     timeline_rows = []
 
     for item in timeline:
@@ -330,18 +367,20 @@ def build_report() -> str:
         timeline_rows
     ))
 
-    lines.append(section("12. Technical Interpretation"))
+    lines.append(section("13. Technical Interpretation"))
     lines.append("The current dataset shows a transition from manual observation into automated infrastructure monitoring.")
     lines.append("")
     lines.append("The official enode list shows visible peer rotation across the observation period, while the target port remains consistent at `28657`.")
     lines.append("")
     lines.append("Provider and ASN hints add an additional infrastructure-enrichment layer by grouping observed IPs into likely hosting providers or ASN categories where static prefix matching is available.")
     lines.append("")
+    lines.append("DAC Infrastructure Signal adds a separate community inference layer for interpreting observed node roles without claiming official ownership.")
+    lines.append("")
     lines.append("The anomaly layer detected selected high-impact rotation events, but these should be interpreted as review signals rather than direct evidence of network failure.")
     lines.append("")
     lines.append("In a testnet environment, enode rotation may reflect infrastructure maintenance, bootstrap peer refreshes, scaling experiments, or network maturation.")
 
-    lines.append(section("13. Conclusion"))
+    lines.append(section("14. Conclusion"))
     lines.append("DAC Enode Intelligence Watcher now provides a structured evidence pipeline for official enode observation.")
     lines.append("")
     lines.append("The project currently supports:")
@@ -355,6 +394,7 @@ def build_report() -> str:
     lines.append("- anomaly detection")
     lines.append("- report-ready Markdown generation")
     lines.append("- heuristic provider / ASN hint enrichment")
+    lines.append("- DAC Infrastructure Signal enrichment")
     lines.append("")
     lines.append("This report can be used as a draft foundation for future DAC Testnet infrastructure technical reports.")
 

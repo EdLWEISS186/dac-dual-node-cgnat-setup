@@ -18,7 +18,7 @@ Across 17 total observations, the DAC official enode list showed 28 unique enode
 
 The dataset combines partial manual observations from the pre-watcher period with automated GitHub Actions snapshots after the watcher was deployed.
 
-This summary provides a structured basis for analyzing bootstrap peer rotation, persistent official enodes, IP recurrence, provider hints, ASN hints, and possible infrastructure maturation patterns.
+This summary provides a structured basis for analyzing bootstrap peer rotation, persistent observed enodes, IP recurrence, provider hints, ASN hints, DAC Infrastructure Signals, and possible infrastructure maturation patterns.
 
 ## 2. Observation Scope
 
@@ -102,20 +102,46 @@ Recommended action: Compare added and removed enodes before updating manual peer
 
 ## 7. Most Persistent IPs
 
-| IP | Provider | ASN | Confidence | Appearances | Ratio | Phases Seen | First Seen | Last Seen |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 213.136.82.243 | Contabo | AS51167 | HIGH | 17 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
-| 206.189.127.204 | DigitalOcean | AS14061 | HIGH | 16 | 0.9412 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
-| 157.173.127.30 | Unknown | None | LOW | 16 | 0.9412 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 157.173.127.31 | Unknown | None | LOW | 16 | 0.9412 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 161.97.89.27 | Contabo | AS51167 | HIGH | 15 | 0.8824 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 157.173.127.21 | Unknown | None | LOW | 14 | 0.8235 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
-| 173.212.217.213 | Contabo | AS51167 | HIGH | 12 | 0.7059 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
-| 217.76.53.98 | Unknown | None | LOW | 12 | 0.7059 | manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Sun May 31 12:00:02 PM CEST 2026 |
-| 207.154.217.91 | Unknown | None | LOW | 11 | 0.6471 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 95.216.70.180 | Hetzner | AS24940 | HIGH | 7 | 0.4118 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
+| IP | DAC Signal | Signal Confidence | Peer Identity | Provider | ASN | Provider Confidence | Appearances | Ratio | Phases Seen | First Seen | Last Seen |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 213.136.82.243 | Unlisted Active Peer Signal | MEDIUM | SAPInode | Contabo | AS51167 | HIGH | 17 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
+| 206.189.127.204 | Relay-like DAC Node Signal | HIGH | DAC-Node 05 | DigitalOcean | AS14061 | HIGH | 16 | 0.9412 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
+| 157.173.127.30 | Authority-like Core Signal | HIGH | DAC Testnet Authority 2 | Unknown | N/A | LOW | 16 | 0.9412 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 157.173.127.31 | Authority-like Core Signal | HIGH | DAC Testnet Authority 1 | Unknown | N/A | LOW | 16 | 0.9412 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 161.97.89.27 | Community VPS-like Signal | MEDIUM | whale-vps3 | Contabo | AS51167 | HIGH | 15 | 0.8824 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 157.173.127.21 | Authority-like Core Signal | HIGH | DAC Testnet Authority 3 | Unknown | N/A | LOW | 14 | 0.8235 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
+| 173.212.217.213 | Retained Infrastructure Signal | MEDIUM | N/A | Contabo | AS51167 | HIGH | 12 | 0.7059 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
+| 217.76.53.98 | Community VPS-like Signal | MEDIUM | whale-vps1 | Unknown | N/A | LOW | 12 | 0.7059 | manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Sun May 31 12:00:02 PM CEST 2026 |
+| 207.154.217.91 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | 11 | 0.6471 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 95.216.70.180 | Community VPS-like Signal | MEDIUM | Fertal | Hetzner | AS24940 | HIGH | 7 | 0.4118 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun  1 12:00:02 PM CEST 2026 |
 
-## 8. Provider / ASN Hint Summary
+## 8. DAC Infrastructure Signal Summary
+
+DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints.
+
+It is not an official DAC classification and should not be treated as confirmed node ownership.
+
+| Detection Field | Value |
+| --- | --- |
+| Method | static_report_evidence_and_observation_heuristic |
+| Official ownership claim | False |
+| Source reference | Derived from community observation evidence in Report 5: Official Enode Evolution Analysis — Infrastructure Rotation & Network Maturation, plus watcher observation history. |
+| Disclaimer | DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership. |
+
+| DAC Infrastructure Signal | Unique IPs | Confidence | Peer Identity Hints | IPs |
+| --- | --- | --- | --- | --- |
+| Unknown / No Signal | 12 | LOW |  | 1.54.141.106, 113.173.209.213, 118.71.126.107, 145.223.99.167, 168.144.140.128, 173.249.42.5, 185.190.143.54, 194.163.186.161, 194.60.201.112, 38.49.213.251, 5.9.116.21, 95.111.227.13 |
+| Community VPS-like Signal | 4 | MEDIUM | Fertal, whale-vps1, whale-vps2, whale-vps3 | 156.67.104.212, 161.97.89.27, 217.76.53.98, 95.216.70.180 |
+| Authority-like Core Signal | 3 | HIGH | DAC Testnet Authority 1, DAC Testnet Authority 2, DAC Testnet Authority 3 | 157.173.127.21, 157.173.127.30, 157.173.127.31 |
+| Core Subnet Historical Signal | 2 | MEDIUM |  | 157.173.127.18, 157.173.127.22 |
+| Retained Infrastructure Signal | 2 | MEDIUM |  | 173.212.217.213, 207.154.217.91 |
+| Community Node Signal | 1 | MEDIUM | x0rabbit | 5.104.86.129 |
+| Internal RPC-like Signal | 1 | HIGH | DAC Testnet RPC 03 | 84.46.253.182 |
+| Legacy Relay-like Signal | 1 | MEDIUM | gdacnode legacy build | 152.228.141.231 |
+| Relay-like DAC Node Signal | 1 | HIGH | DAC-Node 05 | 206.189.127.204 |
+| Unlisted Active Peer Signal | 1 | MEDIUM | SAPInode | 213.136.82.243 |
+
+## 9. Provider / ASN Hint Summary
 
 Provider and ASN values in this section are heuristic hints based on static IP prefix matching.
 
@@ -136,7 +162,7 @@ They should be treated as enrichment for infrastructure analysis, not final veri
 | OVHcloud | AS16276 | VPS / Dedicated | France / Europe | HIGH | 1 | 152.228.141.231 |
 | Unknown | Unknown | Unknown | Unknown | LOW | 22 | 1.54.141.106, 113.173.209.213, 118.71.126.107, 145.223.99.167, 156.67.104.212, 157.173.127.18, 157.173.127.21, 157.173.127.22, 157.173.127.30, 157.173.127.31, 168.144.140.128, 173.249.42.5, 185.190.143.54, 194.163.186.161, 194.60.201.112, 207.154.217.91, 217.76.53.98, 38.49.213.251, 5.104.86.129, 5.9.116.21, 84.46.253.182, 95.111.227.13 |
 
-## 9. Anomaly Detection Summary
+## 10. Anomaly Detection Summary
 
 | Anomaly Metric | Value |
 | --- | --- |
@@ -149,7 +175,7 @@ The anomaly layer highlights observations that may indicate unusually large peer
 
 Recommended action: Use these anomaly events as candidates for deeper manual review and future technical reporting.
 
-## 10. Detected Anomaly Events
+## 11. Detected Anomaly Events
 
 | Type | Severity | Index | Phase | Generated At | Previous | Current | Reason |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -159,7 +185,7 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | AGGRESSIVE_ROTATION | HIGH | 8 | manual_backfill | Sat May 23 12:00:02 PM CEST 2026 | 12 | 12 | Large rotation intensity detected: 4 added and 4 removed. |
 | AGGRESSIVE_ROTATION | HIGH | 11 | manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | 12 | 14 | Large rotation intensity detected: 5 added and 3 removed. |
 
-## 11. Observation Timeline
+## 12. Observation Timeline
 
 | Index | Phase | Generated At | Port | Total | Added | Removed | Severity |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -181,7 +207,7 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | 16 | automated_watcher | Mon Jun  1 08:00:02 AM CEST 2026 | 28657 | 13 | 1 | 0 | LOW |
 | 17 | automated_watcher | Mon Jun  1 12:00:02 PM CEST 2026 | 28657 | 9 | 0 | 4 | MEDIUM |
 
-## 12. Technical Interpretation
+## 13. Technical Interpretation
 
 The current dataset shows a transition from manual observation into automated infrastructure monitoring.
 
@@ -189,11 +215,13 @@ The official enode list shows visible peer rotation across the observation perio
 
 Provider and ASN hints add an additional infrastructure-enrichment layer by grouping observed IPs into likely hosting providers or ASN categories where static prefix matching is available.
 
+DAC Infrastructure Signal adds a separate community inference layer for interpreting observed node roles without claiming official ownership.
+
 The anomaly layer detected selected high-impact rotation events, but these should be interpreted as review signals rather than direct evidence of network failure.
 
 In a testnet environment, enode rotation may reflect infrastructure maintenance, bootstrap peer refreshes, scaling experiments, or network maturation.
 
-## 13. Conclusion
+## 14. Conclusion
 
 DAC Enode Intelligence Watcher now provides a structured evidence pipeline for official enode observation.
 
@@ -208,6 +236,7 @@ The project currently supports:
 - anomaly detection
 - report-ready Markdown generation
 - heuristic provider / ASN hint enrichment
+- DAC Infrastructure Signal enrichment
 
 This report can be used as a draft foundation for future DAC Testnet infrastructure technical reports.
 

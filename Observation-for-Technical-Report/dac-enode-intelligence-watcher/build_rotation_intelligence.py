@@ -3,6 +3,12 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from provider_hints import detect_provider_hint
+from dac_signal_hints import (
+    DISCLAIMER as DAC_SIGNAL_DISCLAIMER,
+    SIGNAL_SOURCE_REFERENCE,
+    detect_dac_infrastructure_signal,
+    summarize_signal_counts,
+)
 
 
 PROJECT_NAME = "DAC Enode Intelligence Watcher"
@@ -25,6 +31,10 @@ def parse_enode_details(enode: str) -> dict:
         node_id, endpoint = without_prefix.split("@", 1)
         ip, port = endpoint.rsplit(":", 1)
         provider_hint = detect_provider_hint(ip)
+        dac_signal = detect_dac_infrastructure_signal(
+            ip=ip,
+            provider_hint=provider_hint
+        )
 
         return {
             "enode": enode,
@@ -39,10 +49,25 @@ def parse_enode_details(enode: str) -> dict:
             "provider_confidence": provider_hint.get("confidence"),
             "provider_detection_method": provider_hint.get("detection_method"),
             "matched_prefix": provider_hint.get("matched_prefix"),
-            "provider_notes": provider_hint.get("notes")
+            "provider_notes": provider_hint.get("notes"),
+            "dac_signal": dac_signal,
+            "dac_infrastructure_signal": dac_signal.get("dac_infrastructure_signal"),
+            "signal_category": dac_signal.get("signal_category"),
+            "signal_confidence": dac_signal.get("signal_confidence"),
+            "peer_identity_hint": dac_signal.get("peer_identity_hint"),
+            "historical_registry_status": dac_signal.get("historical_registry_status"),
+            "signal_basis": dac_signal.get("signal_basis"),
+            "official_ownership_claim": dac_signal.get("official_ownership_claim"),
+            "signal_detection_method": dac_signal.get("detection_method"),
+            "signal_source_reference": dac_signal.get("source_reference"),
+            "signal_disclaimer": dac_signal.get("disclaimer")
         }
     except Exception:
         provider_hint = detect_provider_hint(None)
+        dac_signal = detect_dac_infrastructure_signal(
+            ip=None,
+            provider_hint=provider_hint
+        )
 
         return {
             "enode": enode,
@@ -57,7 +82,18 @@ def parse_enode_details(enode: str) -> dict:
             "provider_confidence": provider_hint.get("confidence"),
             "provider_detection_method": provider_hint.get("detection_method"),
             "matched_prefix": provider_hint.get("matched_prefix"),
-            "provider_notes": provider_hint.get("notes")
+            "provider_notes": provider_hint.get("notes"),
+            "dac_signal": dac_signal,
+            "dac_infrastructure_signal": dac_signal.get("dac_infrastructure_signal"),
+            "signal_category": dac_signal.get("signal_category"),
+            "signal_confidence": dac_signal.get("signal_confidence"),
+            "peer_identity_hint": dac_signal.get("peer_identity_hint"),
+            "historical_registry_status": dac_signal.get("historical_registry_status"),
+            "signal_basis": dac_signal.get("signal_basis"),
+            "official_ownership_claim": dac_signal.get("official_ownership_claim"),
+            "signal_detection_method": dac_signal.get("detection_method"),
+            "signal_source_reference": dac_signal.get("source_reference"),
+            "signal_disclaimer": dac_signal.get("disclaimer")
         }
 
 
@@ -162,6 +198,17 @@ def build_ip_table(snapshots: list[dict]) -> list[dict]:
 
     for ip, appearances in ip_presence.items():
         provider_hint = detect_provider_hint(ip)
+        appearance_count = len(appearances)
+        appearance_ratio = round(appearance_count / len(snapshots), 4) if snapshots else 0
+        phases_seen = sorted({item["phase"] for item in appearances})
+
+        dac_signal = detect_dac_infrastructure_signal(
+            ip=ip,
+            provider_hint=provider_hint,
+            appearance_count=appearance_count,
+            appearance_ratio=appearance_ratio,
+            phases_seen=phases_seen
+        )
 
         table.append({
             "ip": ip,
@@ -174,11 +221,22 @@ def build_ip_table(snapshots: list[dict]) -> list[dict]:
             "provider_detection_method": provider_hint.get("detection_method"),
             "matched_prefix": provider_hint.get("matched_prefix"),
             "provider_notes": provider_hint.get("notes"),
-            "appearance_count": len(appearances),
+            "dac_signal": dac_signal,
+            "dac_infrastructure_signal": dac_signal.get("dac_infrastructure_signal"),
+            "signal_category": dac_signal.get("signal_category"),
+            "signal_confidence": dac_signal.get("signal_confidence"),
+            "peer_identity_hint": dac_signal.get("peer_identity_hint"),
+            "historical_registry_status": dac_signal.get("historical_registry_status"),
+            "signal_basis": dac_signal.get("signal_basis"),
+            "official_ownership_claim": dac_signal.get("official_ownership_claim"),
+            "signal_detection_method": dac_signal.get("detection_method"),
+            "signal_source_reference": dac_signal.get("source_reference"),
+            "signal_disclaimer": dac_signal.get("disclaimer"),
+            "appearance_count": appearance_count,
             "first_seen": appearances[0],
             "last_seen": appearances[-1],
-            "phases_seen": sorted({item["phase"] for item in appearances}),
-            "appearance_ratio": round(len(appearances) / len(snapshots), 4) if snapshots else 0,
+            "phases_seen": phases_seen,
+            "appearance_ratio": appearance_ratio,
             "appearances": appearances
         })
 
@@ -317,6 +375,42 @@ def main() -> None:
         for item in ip_table
     )
 
+    dac_signal_counts = summarize_signal_counts(ip_table)
+
+    signal_category_counts = Counter(
+        item.get("signal_category") or "unknown"
+        for item in ip_table
+    )
+
+    signal_confidence_counts = Counter(
+        item.get("signal_confidence") or "LOW"
+        for item in ip_table
+    )
+
+    dac_infrastructure_signal_summary = [
+        {
+            "dac_infrastructure_signal": signal,
+            "unique_ip_count": count,
+            "ips": sorted([
+                item["ip"]
+                for item in ip_table
+                if (item.get("dac_infrastructure_signal") or "Unknown / No Signal") == signal
+            ]),
+            "peer_identity_hints": sorted({
+                item.get("peer_identity_hint")
+                for item in ip_table
+                if (item.get("dac_infrastructure_signal") or "Unknown / No Signal") == signal
+                and item.get("peer_identity_hint")
+            }),
+            "confidence_levels": sorted({
+                item.get("signal_confidence") or "LOW"
+                for item in ip_table
+                if (item.get("dac_infrastructure_signal") or "Unknown / No Signal") == signal
+            })
+        }
+        for signal, count in dac_signal_counts.items()
+    ]
+
     provider_summary = [
         {
             "provider_guess": provider,
@@ -415,6 +509,16 @@ def main() -> None:
         "provider_summary": provider_summary,
         "asn_summary": asn_summary,
         "provider_asn_summary": provider_asn_summary,
+        "dac_infrastructure_signal": {
+            "method": "static_report_evidence_and_observation_heuristic",
+            "official_ownership_claim": False,
+            "source_reference": SIGNAL_SOURCE_REFERENCE,
+            "disclaimer": DAC_SIGNAL_DISCLAIMER
+        },
+        "dac_infrastructure_signal_counts": dac_signal_counts,
+        "signal_category_counts": dict(signal_category_counts),
+        "signal_confidence_counts": dict(signal_confidence_counts),
+        "dac_infrastructure_signal_summary": dac_infrastructure_signal_summary,
         "most_persistent_enodes": most_persistent_enodes,
         "most_persistent_ips": most_persistent_ips,
         "transition_summary": build_transition_summary(timeline),
@@ -433,7 +537,8 @@ def main() -> None:
             ),
             "technical_value": (
                 "This summary provides a structured basis for analyzing bootstrap peer rotation, "
-                "persistent official enodes, IP recurrence, provider hints, ASN hints, and possible infrastructure maturation patterns."
+                "persistent observed enodes, IP recurrence, provider hints, ASN hints, DAC Infrastructure Signals, "
+                "and possible infrastructure maturation patterns."
             )
         }
     }
@@ -452,6 +557,7 @@ def main() -> None:
     print(f"[OK] Provider hints: {dict(provider_counts)}")
     print(f"[OK] ASN hints: {dict(asn_counts)}")
     print(f"[OK] Provider / ASN groups: {len(provider_asn_summary)}")
+    print(f"[OK] DAC Infrastructure Signals: {dac_signal_counts}")
     print(f"[OK] Target ports observed: {target_ports}")
     print(f"[OK] Enode count min/max/avg: {min(enode_counts)} / {max(enode_counts)} / {round(sum(enode_counts) / len(enode_counts), 2)}")
 
