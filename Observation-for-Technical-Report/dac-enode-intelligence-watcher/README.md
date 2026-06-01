@@ -110,6 +110,29 @@ By storing historical snapshots, this project makes it possible to review how th
 
 ---
 
+## Observation Phases
+
+This project now contains two observation phases.
+
+```text
+Phase 1 — Manual Observation / Pre-Watcher Backfill
+May 15–31, 2026
+data/manual-backfill/
+
+Phase 2 — Automated Watcher Observation
+June 1, 2026 onward
+data/latest.json
+data/snapshots/
+```
+
+The manual phase preserves historical data collected before the watcher existed.
+
+The automated phase continues the observation process using GitHub Actions, structured JSON snapshots, and email notifications.
+
+This separation makes the dataset clearer and prevents old manual data from interfering with the active watcher state.
+
+---
+
 ## Monitoring Target
 
 Target page:
@@ -130,29 +153,128 @@ admin.addPeer("enode://...@IP:28657");
 
 ## Output Files
 
-The watcher stores data in:
+The watcher stores active automated observation data in:
 
 ```text
 data/latest.json
 data/snapshots/
 ```
 
-### `latest.json`
+Additional historical/manual data is stored in:
 
-Contains the latest observed state.
+```text
+manual-archive/
+data/manual-backfill/
+```
 
-This file acts as the comparison baseline for the next scheduled check.
+### `data/latest.json`
+
+Contains the latest observed state from the automated watcher.
+
+This file acts as the comparison baseline for the next scheduled automated check.
+
+The manual backfill data does not replace or modify `latest.json`.
 
 ### `data/snapshots/*.json`
 
-Contains historical snapshots created when:
+Contains automated watcher snapshots created when:
 
 * the watcher runs for the first time
 * new enodes are added
 * existing enodes are removed
 * the target port changes
 
-These snapshots provide a historical record for future infrastructure analysis.
+### `manual-archive/`
+
+Contains the original raw manual observation file:
+
+```text
+manual-archive/Old Data Before Intelligence Watcher Created.txt
+```
+
+This file preserves the original pre-watcher data exactly as collected manually.
+
+### `data/manual-backfill/`
+
+Contains structured JSON snapshots generated from the manual archive.
+
+These files are historical backfill data and are intentionally separated from automated watcher snapshots.
+
+### `data/manual-backfill/manual-backfill-summary.json`
+
+Contains a summary of the manual observation period, including:
+
+* total manual snapshots
+* first and last manual observation timestamp
+* observed target ports
+* unique enode count
+* minimum and maximum enode count
+* list of manual snapshot files
+
+---
+
+## Manual Backfill Dataset
+
+Before the automated watcher was created, several official DAC enode snapshots had already been collected manually.
+
+Instead of discarding that historical data, the manual observations were preserved and converted into structured JSON backfill data.
+
+This backfill dataset represents the **pre-watcher manual observation period**.
+
+```text
+Manual observation period:
+May 15–31, 2026
+```
+
+The current manual backfill contains:
+
+* 14 manually captured snapshots
+* 28 unique enodes observed
+* target port observed: `28657`
+* first manual snapshot: `Fri May 15 12:00:01 AM CEST 2026`
+* last manual snapshot: `Sun May 31 12:00:02 PM CEST 2026`
+
+This dataset is intentionally labeled as a **partial manual archive**.
+
+Missing dates represent missed observation windows, not confirmed absence of infrastructure changes.
+
+---
+
+## Manual Backfill Parser
+
+The parser used to convert the raw manual archive into structured JSON is stored in:
+
+```text
+parse_manual_backfill.py
+```
+
+The parser reads the raw manual archive, extracts each `Generated:` block, parses enode entries, compares each manual snapshot against the previous manual snapshot, and generates structured JSON files.
+
+It tracks:
+
+* manual snapshot index
+* source type
+* source file
+* observation completeness
+* data gap note
+* generated timestamp from source
+* generated date
+* generated time
+* generated timezone
+* target port
+* previous target port
+* current target port
+* target port change status
+* previous enode total
+* current enode total
+* added enodes
+* removed enodes
+* unchanged enodes
+* parsed enode details
+* `admin.addPeer(...)` lines
+* snapshot file path
+
+This keeps the old manual data compatible with the newer watcher snapshot format while clearly separating manual historical backfill from automated watcher output.
 
 ---
 
@@ -171,7 +293,7 @@ previous_target_port
 current_target_port
 ```
 
-If no enode or target-port change is detected, no new snapshot is created.
+If no enode or target-port change is detected, no new automated snapshot is created.
 
 This prevents unnecessary noise while preserving meaningful infrastructure changes.
 
@@ -248,9 +370,12 @@ The current version already supports:
 * email notification
 * JSON snapshot generation
 * latest state tracking
-* historical snapshot preservation
+* historical automated snapshot preservation
+* manual pre-watcher backfill preservation
 * added, removed, and unchanged enode classification
 * target port change detection
+* raw manual archive preservation
+* manual archive parsing into structured JSON
 
 ---
 
@@ -287,6 +412,8 @@ __pycache__/
 ```
 
 Watcher-generated JSON files under `data/` are intentionally tracked for technical observation history.
+
+Manual backfill JSON files under `data/manual-backfill/` are also intentionally tracked because they preserve historical pre-watcher observations.
 
 ---
 
