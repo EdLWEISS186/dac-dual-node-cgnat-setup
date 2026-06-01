@@ -6,25 +6,75 @@ This project monitors the official DAC Testnet public enode page:
 
 https://enodes.dachain.tech/testnet/
 
-It automatically checks the official enode list, detects infrastructure-level changes, sends email notifications, and stores historical JSON snapshots inside this repository.
+It automatically observes the official enode list, captures structured data, analyzes changes, sends email notifications, and stores historical JSON snapshots inside this repository.
+
+---
+
+## Background
+
+This project was created as a continuation of the previous technical report:
+
+[5. Official Enode Evolution Analysis — Infrastructure Rotation & Network Maturation](../../Testnet_%28Inception%29_Technical_Reports/5.%20Official%20Enode%20Evolution%20Analysis%20%E2%80%94%20Infrastructure%20Rotation%20%26%20Network%20Maturation.pdf)
+
+That report analyzed the evolution of DAC official enodes as an infrastructure signal, focusing on peer rotation, network maturation, and bootstrap-node behavior over time.
+
+The original report was based on manual observation and point-in-time analysis.
+
+**DAC Enode Intelligence Watcher** extends that work into a continuous observation system.
+
+Instead of manually checking the official enode page and risking missed updates, this watcher automatically captures each meaningful change and preserves it as structured historical data.
 
 ---
 
 ## Purpose
 
-The DAC official public enode list may change over time. Because the page can update periodically, manual observation can miss previous states.
+The purpose of this project is not only to send notifications.
 
-This watcher helps preserve historical evidence by recording:
+The main purpose is to support a technical observation workflow:
 
-- current official enode list
-- newly added enodes
-- removed enodes
-- unchanged enodes
-- target P2P port
-- source generated timestamp
-- watcher check timestamp
+```text
+Observe official source
+        ↓
+Collect structured enode data
+        ↓
+Analyze infrastructure-level changes
+        ↓
+Generate result
+        ↓
+Store evidence and notify the observer
+```
 
-This is intended for technical observation and future reporting, not for modifying the DAC network.
+The watcher helps preserve historical evidence by recording:
+
+* current official enode list
+* newly added enodes
+* removed enodes
+* unchanged enodes
+* target P2P port
+* target port changes
+* source generated timestamp
+* watcher check timestamp
+* structured JSON snapshots for later review
+
+This makes the observation process more consistent, repeatable, and useful for future technical reports.
+
+---
+
+## Why This Matters
+
+Official enode changes can reflect infrastructure-level activity such as:
+
+* bootstrap peer rotation
+* network maintenance
+* public peer refresh
+* node replacement
+* infrastructure scaling
+* testnet maturation
+* target port consistency or migration
+
+A single manual observation may miss these changes.
+
+By storing historical snapshots, this project makes it possible to review how the official enode list evolves over time.
 
 ---
 
@@ -32,13 +82,17 @@ This is intended for technical observation and future reporting, not for modifyi
 
 Target page:
 
-    https://enodes.dachain.tech/testnet/
+```text
+https://enodes.dachain.tech/testnet/
+```
 
 Observed source format:
 
-    Generated: Mon Jun 1 12:00:01 AM CEST 2026 | Target Port: 28657
+```text
+Generated: Mon Jun 1 12:00:01 AM CEST 2026 | Target Port: 28657
 
-    admin.addPeer("enode://...@IP:28657");
+admin.addPeer("enode://...@IP:28657");
+```
 
 ---
 
@@ -46,21 +100,27 @@ Observed source format:
 
 The watcher stores data in:
 
-    data/latest.json
-    data/snapshots/
+```text
+data/latest.json
+data/snapshots/
+```
 
-### latest.json
+### `latest.json`
 
 Contains the latest observed state.
 
-### data/snapshots/*.json
+This file acts as the comparison baseline for the next scheduled check.
+
+### `data/snapshots/*.json`
 
 Contains historical snapshots created when:
 
-- the watcher runs for the first time
-- new enodes are added
-- existing enodes are removed
-- the target port changes
+* the watcher runs for the first time
+* new enodes are added
+* existing enodes are removed
+* the target port changes
+
+These snapshots provide a historical record for future infrastructure analysis.
 
 ---
 
@@ -70,14 +130,18 @@ The watcher compares the current official enode list against the previous `lates
 
 It tracks:
 
-- added
-- removed
-- unchanged
-- target_port_changed
-- previous_target_port
-- current_target_port
+```text
+added
+removed
+unchanged
+target_port_changed
+previous_target_port
+current_target_port
+```
 
 If no enode or target-port change is detected, no new snapshot is created.
+
+This prevents unnecessary noise while preserving meaningful infrastructure changes.
 
 ---
 
@@ -85,7 +149,9 @@ If no enode or target-port change is detected, no new snapshot is created.
 
 The watcher is executed by GitHub Actions every 3 hours:
 
-    cron: "0 */3 * * *"
+```yaml
+cron: "0 */3 * * *"
+```
 
 It can also be triggered manually from the GitHub Actions tab.
 
@@ -93,29 +159,69 @@ It can also be triggered manually from the GitHub Actions tab.
 
 ## Email Notification
 
-When a change is detected, the watcher sends an email notification containing:
+When a meaningful change is detected, the watcher sends an email notification containing:
 
-- source URL
-- generated time from source page
-- checked timestamp in UTC
-- previous total enode count
-- current total enode count
-- added enodes
-- removed enodes
-- unchanged enodes
-- target port status
-- snapshot file path
+* source URL
+* generated time from the official source page
+* checked timestamp in UTC
+* previous total enode count
+* current total enode count
+* added enodes
+* removed enodes
+* unchanged enodes
+* target port status
+* snapshot file path
 
 Email credentials are stored securely using GitHub Actions repository secrets.
 
 Required secrets:
 
-- SMTP_HOST
-- SMTP_PORT
-- SMTP_USER
-- SMTP_PASS
-- EMAIL_FROM
-- EMAIL_TO
+```text
+SMTP_HOST
+SMTP_PORT
+SMTP_USER
+SMTP_PASS
+EMAIL_FROM
+EMAIL_TO
+```
+
+---
+
+## Current Intelligence Layer
+
+In the current version, the intelligence layer is deterministic and rule-based.
+
+It does not rely on a machine learning model.
+
+The watcher performs structured infrastructure observation by:
+
+* extracting official enode data
+* parsing node ID, IP, and port
+* comparing the current state with the previous snapshot
+* classifying enodes as added, removed, or unchanged
+* detecting target port changes
+* generating structured output for reporting
+
+This makes the system suitable for technical monitoring and evidence preservation.
+
+---
+
+## Future Upgrade Direction
+
+Future versions may extend this watcher into a broader infrastructure intelligence system.
+
+Possible upgrades include:
+
+* change severity classification
+* AI-assisted summary generation
+* anomaly detection
+* enode rotation pattern analysis
+* public RPC health monitoring
+* explorer availability monitoring
+* infrastructure status dashboard
+* automated technical report draft generation
+
+These upgrades are optional and will depend on future observation needs.
 
 ---
 
@@ -125,10 +231,12 @@ Do not commit email passwords, SMTP credentials, `.env` files, or tokens.
 
 The project `.gitignore` excludes:
 
-- venv/
-- __pycache__/
-- *.pyc
-- .env
+```text
+venv/
+__pycache__/
+*.pyc
+.env
+```
 
 Watcher-generated JSON files under `data/` are intentionally tracked for technical observation history.
 
@@ -138,7 +246,9 @@ Watcher-generated JSON files under `data/` are intentionally tracked for technic
 
 This is an independent community-built observation tool.
 
-It is not an official DAC Labs tool and does not represent official DAC infrastructure policy. The watcher only observes publicly available enode data and stores snapshots for technical reporting purposes.
+It is not an official DAC Labs tool and does not represent official DAC infrastructure policy.
+
+The watcher only observes publicly available enode data and stores snapshots for technical reporting purposes.
 
 ---
 
