@@ -1,0 +1,314 @@
+{
+  "generated_at_utc": "2026-06-03T06:22:38.373518+00:00",
+  "source_file": "data/rotation-intelligence-summary.json",
+  "method": "heuristic_concentration_assessment",
+  "official_classification": false,
+  "disclaimer": "Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement.",
+  "total_unique_ips": 29,
+  "overall_concentration_label": "ELEVATED",
+  "overall_reasons": [
+    "Top live ASN controls at least 50% of observed unique IPs.",
+    "Observed IPs show notable concentration in one live ASN country code."
+  ],
+  "thresholds": {
+    "LOW": "top concentration below 35%",
+    "MODERATE": "top concentration at least 35%",
+    "ELEVATED": "top concentration at least 50%",
+    "HIGH": "top concentration at least 70%",
+    "INCONCLUSIVE": "unknown coverage at least 50%"
+  },
+  "live_asn_concentration": {
+    "dimension": "live_asn",
+    "total_unique_ips": 29,
+    "top_name": "AS51167",
+    "top_count": 15,
+    "top_percentage": 51.72,
+    "unknown_count": 0,
+    "unknown_percentage": 0.0,
+    "concentration_label": "ELEVATED",
+    "distribution": [
+      {
+        "name": "AS51167",
+        "unique_ip_count": 15,
+        "percentage": 51.72
+      },
+      {
+        "name": "AS14061",
+        "unique_ip_count": 4,
+        "percentage": 13.79
+      },
+      {
+        "name": "AS141995",
+        "unique_ip_count": 2,
+        "percentage": 6.9
+      },
+      {
+        "name": "AS18403",
+        "unique_ip_count": 2,
+        "percentage": 6.9
+      },
+      {
+        "name": "AS24940",
+        "unique_ip_count": 2,
+        "percentage": 6.9
+      },
+      {
+        "name": "AS16276",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "AS26832",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "AS45899",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "AS47583",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      }
+    ]
+  },
+  "live_asn_name_concentration": {
+    "dimension": "live_asn_name",
+    "total_unique_ips": 29,
+    "top_name": "CONTABO - Contabo GmbH, DE",
+    "top_count": 15,
+    "top_percentage": 51.72,
+    "unknown_count": 0,
+    "unknown_percentage": 0.0,
+    "concentration_label": "ELEVATED",
+    "distribution": [
+      {
+        "name": "CONTABO - Contabo GmbH, DE",
+        "unique_ip_count": 15,
+        "percentage": 51.72
+      },
+      {
+        "name": "DIGITALOCEAN-ASN - DigitalOcean, LLC, US",
+        "unique_ip_count": 4,
+        "percentage": 13.79
+      },
+      {
+        "name": "CAPL-AS-AP - Contabo Asia Private Limited, SG",
+        "unique_ip_count": 2,
+        "percentage": 6.9
+      },
+      {
+        "name": "FPT-VN - FPT Telecom Company, VN",
+        "unique_ip_count": 2,
+        "percentage": 6.9
+      },
+      {
+        "name": "HETZNER-AS - Hetzner Online GmbH, DE",
+        "unique_ip_count": 2,
+        "percentage": 6.9
+      },
+      {
+        "name": "AS-HOSTINGER - Hostinger International Limited, CY",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "OVH - OVH SAS, FR",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "RICAWEBSERVICES - Rica Web Services, CA",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "VNPT-AS-VN - VNPT Corp, VN",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      }
+    ]
+  },
+  "live_country_concentration": {
+    "dimension": "live_country_code",
+    "total_unique_ips": 29,
+    "top_name": "DE",
+    "top_count": 18,
+    "top_percentage": 62.07,
+    "unknown_count": 0,
+    "unknown_percentage": 0.0,
+    "concentration_label": "ELEVATED",
+    "distribution": [
+      {
+        "name": "DE",
+        "unique_ip_count": 18,
+        "percentage": 62.07
+      },
+      {
+        "name": "US",
+        "unique_ip_count": 6,
+        "percentage": 20.69
+      },
+      {
+        "name": "VN",
+        "unique_ip_count": 3,
+        "percentage": 10.34
+      },
+      {
+        "name": "FR",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "LT",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      }
+    ]
+  },
+  "static_provider_concentration": {
+    "dimension": "static_provider_hint",
+    "total_unique_ips": 29,
+    "top_name": "Unknown",
+    "top_count": 23,
+    "top_percentage": 79.31,
+    "unknown_count": 23,
+    "unknown_percentage": 79.31,
+    "concentration_label": "INCONCLUSIVE",
+    "distribution": [
+      {
+        "name": "Unknown",
+        "unique_ip_count": 23,
+        "percentage": 79.31
+      },
+      {
+        "name": "Contabo",
+        "unique_ip_count": 3,
+        "percentage": 10.34
+      },
+      {
+        "name": "DigitalOcean",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "Hetzner",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "OVHcloud",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      }
+    ]
+  },
+  "static_asn_concentration": {
+    "dimension": "static_asn_hint",
+    "total_unique_ips": 29,
+    "top_name": "Unknown",
+    "top_count": 23,
+    "top_percentage": 79.31,
+    "unknown_count": 23,
+    "unknown_percentage": 79.31,
+    "concentration_label": "INCONCLUSIVE",
+    "distribution": [
+      {
+        "name": "Unknown",
+        "unique_ip_count": 23,
+        "percentage": 79.31
+      },
+      {
+        "name": "AS51167",
+        "unique_ip_count": 3,
+        "percentage": 10.34
+      },
+      {
+        "name": "AS14061",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "AS16276",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "AS24940",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      }
+    ]
+  },
+  "dac_signal_concentration": {
+    "dimension": "dac_infrastructure_signal",
+    "total_unique_ips": 29,
+    "top_name": "Unknown / No Signal",
+    "top_count": 10,
+    "top_percentage": 34.48,
+    "unknown_count": 10,
+    "unknown_percentage": 34.48,
+    "concentration_label": "LOW",
+    "distribution": [
+      {
+        "name": "Unknown / No Signal",
+        "unique_ip_count": 10,
+        "percentage": 34.48
+      },
+      {
+        "name": "Retained Infrastructure Signal",
+        "unique_ip_count": 5,
+        "percentage": 17.24
+      },
+      {
+        "name": "Community VPS-like Signal",
+        "unique_ip_count": 4,
+        "percentage": 13.79
+      },
+      {
+        "name": "Authority-like Core Signal",
+        "unique_ip_count": 3,
+        "percentage": 10.34
+      },
+      {
+        "name": "Core Subnet Historical Signal",
+        "unique_ip_count": 2,
+        "percentage": 6.9
+      },
+      {
+        "name": "Community Node Signal",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "Internal RPC-like Signal",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "Legacy Relay-like Signal",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "Relay-like DAC Node Signal",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      },
+      {
+        "name": "Unlisted Active Peer Signal",
+        "unique_ip_count": 1,
+        "percentage": 3.45
+      }
+    ]
+  },
+  "report_ready_summary": {
+    "headline": "Observed infrastructure shows elevated concentration under the current heuristic model.",
+    "key_observation": "Top live ASN is AS51167 with 15 unique IPs (51.72%).",
+    "country_observation": "Top live ASN country code is DE with 18 unique IPs (62.07%).",
+    "interpretation": "Top live ASN controls at least 50% of observed unique IPs. Observed IPs show notable concentration in one live ASN country code.",
+    "recommended_action": "Use this as an observation aid only. Compare it with registry history, DAC Infrastructure Signal, manual peer identity evidence, live ASN lookup updates, and future watcher snapshots before drawing conclusions."
+  }
+}

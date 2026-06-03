@@ -43,6 +43,7 @@ jobs:
         run: |
           python build_rotation_intelligence.py
           python build_anomaly_detection.py
+          python build_concentration_risk.py
           python generate_technical_report.py
 
       - name: Commit generated watcher outputs if changed

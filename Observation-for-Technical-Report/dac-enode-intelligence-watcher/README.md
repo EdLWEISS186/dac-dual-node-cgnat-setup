@@ -93,6 +93,18 @@ The current topology is:
             ▼
     data/anomaly-detection-summary.json
             │
+            ▼
+    build_concentration_risk.py
+    - read rotation intelligence summary
+    - read live ASN concentration
+    - read static provider / ASN hints
+    - read DAC Infrastructure Signal distribution
+    - calculate concentration label
+    - generate report-ready risk summary
+            │
+            ▼
+    data/concentration-risk-summary.json
+            │
             ├───────────────────────────────┐
             ▼                               ▼
     generate_technical_report.py        dashboard/index.html
@@ -118,12 +130,13 @@ GitHub Actions automation:
     watcher.py
     build_rotation_intelligence.py
     build_anomaly_detection.py
+    build_concentration_risk.py
     generate_technical_report.py
             │
             ▼
     Commit generated outputs only when files change
 
-This topology allows the project to preserve raw observation evidence, enrich it with heuristic interpretation layers, detect anomaly candidates, generate report-ready output, and visualize the latest state through a dashboard.
+This topology allows the project to preserve raw observation evidence, enrich it with heuristic interpretation layers, detect anomaly candidates, assess provider / ASN concentration risk, generate report-ready output, and visualize the latest state through a dashboard.
 
 Important interpretation note:
 
@@ -657,6 +670,61 @@ This turns the watcher from a monitoring and analysis tool into a report prepara
 
 ---
 
+## Provider Concentration / Decentralization Risk Summary
+
+The project now includes a Provider Concentration / Decentralization Risk Summary layer.
+
+This layer provides an observation-based heuristic for checking whether observed enode IPs appear concentrated across a small number of ASNs, provider hints, country codes, or DAC Infrastructure Signal categories.
+
+Helper file:
+
+    build_concentration_risk.py
+
+Generated output:
+
+    data/concentration-risk-summary.json
+
+The current model uses:
+
+- Live ASN concentration
+- Live ASN name concentration
+- Live country concentration
+- Static provider hint concentration
+- Static ASN hint concentration
+- DAC Infrastructure Signal concentration
+
+Risk labels:
+
+- `LOW`
+- `MODERATE`
+- `ELEVATED`
+- `HIGH`
+- `INCONCLUSIVE`
+
+Current generated assessment:
+
+- Overall label: `ELEVATED`
+- Top live ASN: `AS51167`
+- Top live ASN share: `15 / 29 unique IPs` or `51.72%`
+- Top live ASN country: `DE`
+- Top country share: `18 / 29 unique IPs` or `62.07%`
+- Static provider hint remains limited because `Unknown` still dominates static hints.
+
+Dashboard note:
+
+The Observation Timeline now adds a 24-hour hint beside the original source timestamp, for example:
+
+    Tue Jun 2 12:00:01 PM CEST (12:00 CEST)
+    Tue Jun 2 10:00:02 PM CEST (22:00 CEST)
+
+This avoids confusion between 12-hour AM/PM formatting and technical observation order.
+
+Important note:
+
+Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement.
+
+---
+
 ## Live ASN Lookup Layer
 
 The project now includes an optional Live ASN Lookup Layer.
@@ -1013,6 +1081,11 @@ The current version already supports:
 - ASN cache generation
 - Live ASN dashboard visualization
 - Live ASN report section generation
+- provider concentration risk generation
+- concentration-risk-summary.json generation
+- concentration summary dashboard visualization
+- concentration section in generated technical report
+- 24-hour timestamp hint for dashboard timeline readability
 
 ---
 
@@ -1346,6 +1419,52 @@ It should be read together with:
 - DAC Infrastructure Signal Layer
 - registry observation history
 - manual technical report evidence
+
+### v1.7 — Provider Concentration / Decentralization Risk Summary
+
+Added an observation-based concentration summary layer.
+
+New file:
+
+- `build_concentration_risk.py`
+
+New generated output:
+
+- `data/concentration-risk-summary.json`
+
+Updated files:
+
+- `.github/workflows/dac-enode-watcher.yml`
+- `generate_technical_report.py`
+- `dashboard/index.html`
+- `reports/generated/dac-enode-intelligence-report.md`
+- `README.md`
+
+New report section:
+
+- `Provider Concentration / Decentralization Risk Summary`
+
+New dashboard section:
+
+- `Provider Concentration / Decentralization Risk Summary`
+
+Dashboard readability improvement:
+
+- Observation Timeline now shows a 24-hour hint after original source timestamps.
+- Example: `Tue Jun 2 10:00:02 PM CEST (22:00 CEST)`
+
+Initial generated result:
+
+- Overall concentration label: `ELEVATED`
+- Top live ASN: `AS51167`
+- Top live ASN share: `15 / 29 unique IPs` or `51.72%`
+- Top live country: `DE`
+- Top live country share: `18 / 29 unique IPs` or `62.07%`
+- Static provider hint top value: `Unknown`, showing why live ASN enrichment is useful.
+
+Important interpretation:
+
+This layer does not make a final decentralization claim. It provides a cautious observation-based heuristic for report preparation.
 
 ---
 

@@ -142,7 +142,30 @@ ASN and provider names are based on external routing data and should be treated 
 | AS47583 | 1 | AS-HOSTINGER - Hostinger International Limited, CY | US | 145.223.99.167 |
 | AS26832 | 1 | RICAWEBSERVICES - Rica Web Services, CA | US | 38.49.213.251 |
 
-## 9. DAC Infrastructure Signal Summary
+## 9. Provider Concentration / Decentralization Risk Summary
+
+This section is an observation-based heuristic. It is not an official DAC classification and should not be treated as a definitive decentralization measurement.
+
+| Field | Value |
+| --- | --- |
+| Overall label | ELEVATED |
+| Total unique IPs | 29 |
+| Headline | Observed infrastructure shows elevated concentration under the current heuristic model. |
+| Key observation | Top live ASN is AS51167 with 15 unique IPs (51.72%). |
+| Country observation | Top live ASN country code is DE with 18 unique IPs (62.07%). |
+| Interpretation | Top live ASN controls at least 50% of observed unique IPs. Observed IPs show notable concentration in one live ASN country code. |
+| Recommended action | Use this as an observation aid only. Compare it with registry history, DAC Infrastructure Signal, manual peer identity evidence, live ASN lookup updates, and future watcher snapshots before drawing conclusions. |
+| Disclaimer | Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement. |
+
+| Dimension | Top Name | Top Count | Top % | Unknown % | Label |
+| --- | --- | --- | --- | --- | --- |
+| Live ASN | AS51167 | 15 | 51.72 | 0.0 | ELEVATED |
+| Live Country | DE | 18 | 62.07 | 0.0 | ELEVATED |
+| Static Provider Hint | Unknown | 23 | 79.31 | 79.31 | INCONCLUSIVE |
+| DAC Infrastructure Signal | Unknown / No Signal | 10 | 34.48 | 34.48 | LOW |
+
+
+## 10. DAC Infrastructure Signal Summary
 
 DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints.
 
@@ -168,7 +191,7 @@ It is not an official DAC classification and should not be treated as confirmed 
 | Relay-like DAC Node Signal | 1 | HIGH | DAC-Node 05 | 206.189.127.204 |
 | Unlisted Active Peer Signal | 1 | MEDIUM | SAPInode | 213.136.82.243 |
 
-## 10. Provider / ASN Hint Summary
+## 11. Provider / ASN Hint Summary
 
 Provider and ASN values in this section are heuristic hints based on static IP prefix matching.
 
@@ -189,7 +212,7 @@ They should be treated as enrichment for infrastructure analysis, not final veri
 | OVHcloud | AS16276 | VPS / Dedicated | France / Europe | HIGH | 1 | 152.228.141.231 |
 | Unknown | Unknown | Unknown | Unknown | LOW | 23 | 1.54.141.106, 113.173.209.213, 118.71.126.107, 145.223.99.167, 156.67.104.212, 157.173.127.18, 157.173.127.21, 157.173.127.22, 157.173.127.30, 157.173.127.31, 168.144.140.128, 173.249.42.5, 185.190.143.54, 192.241.148.112, 194.163.186.161, 194.60.201.112, 207.154.217.91, 217.76.53.98, 38.49.213.251, 5.104.86.129, 5.9.116.21, 84.46.253.182, 95.111.227.13 |
 
-## 11. Anomaly Detection Summary
+## 12. Anomaly Detection Summary
 
 | Anomaly Metric | Value |
 | --- | --- |
@@ -202,7 +225,7 @@ The anomaly layer highlights observations that may indicate unusually large peer
 
 Recommended action: Use these anomaly events as candidates for deeper manual review and future technical reporting.
 
-## 12. Detected Anomaly Events
+## 13. Detected Anomaly Events
 
 | Type | Severity | Index | Phase | Generated At | Previous | Current | Reason |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -212,7 +235,7 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | AGGRESSIVE_ROTATION | HIGH | 8 | manual_backfill | Sat May 23 12:00:02 PM CEST 2026 | 12 | 12 | Large rotation intensity detected: 4 added and 4 removed. |
 | AGGRESSIVE_ROTATION | HIGH | 11 | manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | 12 | 14 | Large rotation intensity detected: 5 added and 3 removed. |
 
-## 13. Observation Timeline
+## 14. Observation Timeline
 
 | Index | Phase | Generated At | Port | Total | Added | Removed | Severity |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -238,7 +261,7 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | 20 | automated_watcher | Tue Jun  2 12:00:01 PM CEST 2026 | 28657 | 12 | 1 | 1 | LOW |
 | 21 | automated_watcher | Tue Jun  2 10:00:02 PM CEST 2026 | 28657 | 14 | 2 | 0 | LOW |
 
-## 14. Technical Interpretation
+## 15. Technical Interpretation
 
 The current dataset shows a transition from manual observation into automated infrastructure monitoring.
 
@@ -248,13 +271,15 @@ Provider and ASN hints add an additional infrastructure-enrichment layer by grou
 
 Live ASN lookup adds a routing-data enrichment layer that can reduce Unknown provider/ASN coverage while remaining separate from official ownership claims.
 
+Provider concentration summary adds a cautious heuristic for identifying whether observed IPs appear concentrated across a small number of ASNs, countries, provider hints, or DAC Infrastructure Signal categories.
+
 DAC Infrastructure Signal adds a separate community inference layer for interpreting observed node roles without claiming official ownership.
 
 The anomaly layer detected selected high-impact rotation events, but these should be interpreted as review signals rather than direct evidence of network failure.
 
 In a testnet environment, enode rotation may reflect infrastructure maintenance, bootstrap peer refreshes, scaling experiments, or network maturation.
 
-## 15. Conclusion
+## 16. Conclusion
 
 DAC Enode Intelligence Watcher now provides a structured evidence pipeline for official enode observation.
 
@@ -271,6 +296,7 @@ The project currently supports:
 - heuristic provider / ASN hint enrichment
 - DAC Infrastructure Signal enrichment
 - optional live ASN lookup enrichment
+- provider concentration / decentralization risk heuristic
 
 This report can be used as a draft foundation for future DAC Testnet infrastructure technical reports.
 

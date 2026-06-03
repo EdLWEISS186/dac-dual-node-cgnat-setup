@@ -88,6 +88,13 @@ def build_report() -> str:
     dac_signal_summary = rotation.get("dac_infrastructure_signal_summary", [])
     live_asn_meta = rotation.get("live_asn_lookup", {})
     live_asn_summary = rotation.get("live_asn_summary", [])
+    concentration_file = DATA_DIR / "concentration-risk-summary.json"
+    concentration = load_json(concentration_file) if concentration_file.exists() else {}
+    concentration_report = concentration.get("report_ready_summary", {})
+    live_asn_concentration = concentration.get("live_asn_concentration", {})
+    live_country_concentration = concentration.get("live_country_concentration", {})
+    static_provider_concentration = concentration.get("static_provider_concentration", {})
+    dac_signal_concentration = concentration.get("dac_signal_concentration", {})
     timeline = rotation.get("observation_timeline", [])
     anomalies = anomaly.get("anomalies", [])
 
@@ -284,7 +291,63 @@ def build_report() -> str:
         live_asn_rows or [["N/A", "N/A", "N/A", "N/A", "N/A"]]
     ))
 
-    lines.append(section("9. DAC Infrastructure Signal Summary"))
+    lines.append(section("9. Provider Concentration / Decentralization Risk Summary"))
+    lines.append("This section is an observation-based heuristic. It is not an official DAC classification and should not be treated as a definitive decentralization measurement.")
+    lines.append("")
+    lines.append(table(
+        ["Field", "Value"],
+        [
+            ["Overall label", concentration.get("overall_concentration_label", "N/A")],
+            ["Total unique IPs", concentration.get("total_unique_ips", "N/A")],
+            ["Headline", concentration_report.get("headline", "N/A")],
+            ["Key observation", concentration_report.get("key_observation", "N/A")],
+            ["Country observation", concentration_report.get("country_observation", "N/A")],
+            ["Interpretation", concentration_report.get("interpretation", "N/A")],
+            ["Recommended action", concentration_report.get("recommended_action", "N/A")],
+            ["Disclaimer", concentration.get("disclaimer", "N/A")],
+        ]
+    ))
+    lines.append("")
+    lines.append(table(
+        ["Dimension", "Top Name", "Top Count", "Top %", "Unknown %", "Label"],
+        [
+            [
+                "Live ASN",
+                live_asn_concentration.get("top_name", "N/A"),
+                live_asn_concentration.get("top_count", "N/A"),
+                live_asn_concentration.get("top_percentage", "N/A"),
+                live_asn_concentration.get("unknown_percentage", "N/A"),
+                live_asn_concentration.get("concentration_label", "N/A"),
+            ],
+            [
+                "Live Country",
+                live_country_concentration.get("top_name", "N/A"),
+                live_country_concentration.get("top_count", "N/A"),
+                live_country_concentration.get("top_percentage", "N/A"),
+                live_country_concentration.get("unknown_percentage", "N/A"),
+                live_country_concentration.get("concentration_label", "N/A"),
+            ],
+            [
+                "Static Provider Hint",
+                static_provider_concentration.get("top_name", "N/A"),
+                static_provider_concentration.get("top_count", "N/A"),
+                static_provider_concentration.get("top_percentage", "N/A"),
+                static_provider_concentration.get("unknown_percentage", "N/A"),
+                static_provider_concentration.get("concentration_label", "N/A"),
+            ],
+            [
+                "DAC Infrastructure Signal",
+                dac_signal_concentration.get("top_name", "N/A"),
+                dac_signal_concentration.get("top_count", "N/A"),
+                dac_signal_concentration.get("top_percentage", "N/A"),
+                dac_signal_concentration.get("unknown_percentage", "N/A"),
+                dac_signal_concentration.get("concentration_label", "N/A"),
+            ],
+        ]
+    ))
+    lines.append("")
+
+    lines.append(section("10. DAC Infrastructure Signal Summary"))
     lines.append("DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints.")
     lines.append("")
     lines.append("It is not an official DAC classification and should not be treated as confirmed node ownership.")
@@ -316,7 +379,7 @@ def build_report() -> str:
         dac_signal_rows or [["N/A", "N/A", "N/A", "N/A", "N/A"]]
     ))
 
-    lines.append(section("10. Provider / ASN Hint Summary"))
+    lines.append(section("11. Provider / ASN Hint Summary"))
     lines.append("Provider and ASN values in this section are heuristic hints based on static IP prefix matching.")
     lines.append("")
     lines.append("They should be treated as enrichment for infrastructure analysis, not final verified ASN truth.")
@@ -350,7 +413,7 @@ def build_report() -> str:
         provider_rows or [["N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]]
     ))
 
-    lines.append(section("11. Anomaly Detection Summary"))
+    lines.append(section("12. Anomaly Detection Summary"))
     lines.append(table(
         ["Anomaly Metric", "Value"],
         [
@@ -365,7 +428,7 @@ def build_report() -> str:
     lines.append("")
     lines.append(f"Recommended action: {anomaly_report.get('recommended_action', 'N/A')}")
 
-    lines.append(section("12. Detected Anomaly Events"))
+    lines.append(section("13. Detected Anomaly Events"))
     anomaly_rows = []
 
     for item in anomalies:
@@ -386,7 +449,7 @@ def build_report() -> str:
         anomaly_rows or [["None", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "No anomaly events detected."]]
     ))
 
-    lines.append(section("13. Observation Timeline"))
+    lines.append(section("14. Observation Timeline"))
     timeline_rows = []
 
     for item in timeline:
@@ -406,7 +469,7 @@ def build_report() -> str:
         timeline_rows
     ))
 
-    lines.append(section("14. Technical Interpretation"))
+    lines.append(section("15. Technical Interpretation"))
     lines.append("The current dataset shows a transition from manual observation into automated infrastructure monitoring.")
     lines.append("")
     lines.append("The official enode list shows visible peer rotation across the observation period, while the target port remains consistent at `28657`.")
@@ -415,13 +478,15 @@ def build_report() -> str:
     lines.append("")
     lines.append("Live ASN lookup adds a routing-data enrichment layer that can reduce Unknown provider/ASN coverage while remaining separate from official ownership claims.")
     lines.append("")
+    lines.append("Provider concentration summary adds a cautious heuristic for identifying whether observed IPs appear concentrated across a small number of ASNs, countries, provider hints, or DAC Infrastructure Signal categories.")
+    lines.append("")
     lines.append("DAC Infrastructure Signal adds a separate community inference layer for interpreting observed node roles without claiming official ownership.")
     lines.append("")
     lines.append("The anomaly layer detected selected high-impact rotation events, but these should be interpreted as review signals rather than direct evidence of network failure.")
     lines.append("")
     lines.append("In a testnet environment, enode rotation may reflect infrastructure maintenance, bootstrap peer refreshes, scaling experiments, or network maturation.")
 
-    lines.append(section("15. Conclusion"))
+    lines.append(section("16. Conclusion"))
     lines.append("DAC Enode Intelligence Watcher now provides a structured evidence pipeline for official enode observation.")
     lines.append("")
     lines.append("The project currently supports:")
@@ -437,6 +502,7 @@ def build_report() -> str:
     lines.append("- heuristic provider / ASN hint enrichment")
     lines.append("- DAC Infrastructure Signal enrichment")
     lines.append("- optional live ASN lookup enrichment")
+    lines.append("- provider concentration / decentralization risk heuristic")
     lines.append("")
     lines.append("This report can be used as a draft foundation for future DAC Testnet infrastructure technical reports.")
 

@@ -374,6 +374,11 @@
       </div>
 
       <div class="card section">
+        <h2>Provider Concentration / Decentralization Risk Summary</h2>
+        <div id="concentrationSummary"></div>
+      </div>
+
+      <div class="card section">
         <h2>DAC Infrastructure Signal Summary</h2>
         <div id="dacSignalSummary"></div>
       </div>
@@ -417,7 +422,8 @@
       latest: "../data/latest.json",
       manual: "../data/manual-backfill/manual-backfill-summary.json",
       rotation: "../data/rotation-intelligence-summary.json",
-      anomaly: "../data/anomaly-detection-summary.json"
+      anomaly: "../data/anomaly-detection-summary.json",
+      concentration: "../data/concentration-risk-summary.json"
     };
 
     const $ = (id) => document.getElementById(id);
@@ -431,6 +437,25 @@
       if (!value) return "N/A";
       if (value.length <= start + end + 3) return value;
       return `${value.slice(0, start)}...${value.slice(-end)}`;
+    }
+
+    function withTwentyFourHourHint(value) {
+      if (!value || typeof value !== "string") return safe(value);
+
+      const match = value.match(/(\d{1,2}):(\d{2}):(\d{2})\s+(AM|PM)\s+([A-Z]{2,5})/);
+      if (!match) return value;
+
+      let hour = Number(match[1]);
+      const minute = match[2];
+      const meridiem = match[4];
+      const timezone = match[5];
+
+      if (meridiem === "AM" && hour === 12) hour = 0;
+      if (meridiem === "PM" && hour !== 12) hour += 12;
+
+      const hour24 = String(hour).padStart(2, "0");
+
+      return `${value} (${hour24}:${minute} ${timezone})`;
     }
 
     function statusClass(value) {
@@ -448,6 +473,17 @@
         throw new Error(`Failed to load ${path}: ${response.status}`);
       }
       return response.json();
+    }
+
+    function concentrationMetric(label, summary) {
+      return [
+        safe(label),
+        safe(summary && summary.top_name),
+        safe(summary && summary.top_count),
+        safe(summary && summary.top_percentage),
+        safe(summary && summary.unknown_percentage),
+        safe(summary && summary.concentration_label)
+      ];
     }
 
     function renderCards({ latest, manual, rotation, anomaly }) {
@@ -480,7 +516,7 @@
     function renderLatest(latest) {
       $("latestState").innerHTML = `
         <div class="summary-box">
-          <p><strong>Generated at source:</strong><br><span class="muted">${safe(latest.generated_at_source)}</span></p>
+          <p><strong>Generated at source:</strong><br><span class="muted">${withTwentyFourHourHint(latest.generated_at_source)}</span></p>
           <p><strong>Checked at UTC:</strong><br><span class="muted">${safe(latest.checked_at_utc)}</span></p>
           <p><strong>Current total:</strong> ${safe(latest.current_total)} enodes</p>
           <p><strong>Previous total:</strong> ${safe(latest.previous_total)} enodes</p>
@@ -534,6 +570,32 @@
       const head = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>`;
       const body = `<tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody>`;
       $(id).innerHTML = head + body;
+    }
+
+    function renderConcentrationSummary(concentration) {
+      const report = concentration.report_ready_summary || {};
+
+      const note = `
+        <div class="summary-box" style="margin-bottom: 12px;">
+          <p><strong>Overall label:</strong> ${safe(concentration.overall_concentration_label)}</p>
+          <p><strong>Total unique IPs:</strong> ${safe(concentration.total_unique_ips)}</p>
+          <p><strong>Headline:</strong> ${safe(report.headline)}</p>
+          <p><strong>Key observation:</strong> ${safe(report.key_observation)}</p>
+          <p><strong>Interpretation:</strong> ${safe(report.interpretation)}</p>
+          <p class="muted">${safe(concentration.disclaimer)}</p>
+        </div>
+      `;
+
+      const rows = [
+        concentrationMetric("Live ASN", concentration.live_asn_concentration),
+        concentrationMetric("Live Country", concentration.live_country_concentration),
+        concentrationMetric("Static Provider Hint", concentration.static_provider_concentration),
+        concentrationMetric("Static ASN Hint", concentration.static_asn_concentration),
+        concentrationMetric("DAC Infrastructure Signal", concentration.dac_signal_concentration)
+      ];
+
+      $("concentrationSummary").innerHTML = note + `<div class="table-wrap"><table id="concentrationSummaryTable"></table></div>`;
+      renderTable("concentrationSummaryTable", ["Dimension", "Top Name", "Top Count", "Top %", "Unknown %", "Label"], rows);
     }
 
     function renderLiveAsnSummary(rotation) {
@@ -636,8 +698,8 @@
         safe(item.appearance_count),
         safe(item.appearance_ratio),
         safe((item.phases_seen || []).join(", ")),
-        safe(item.first_seen && item.first_seen.generated_at_source),
-        safe(item.last_seen && item.last_seen.generated_at_source)
+        withTwentyFourHourHint(item.first_seen && item.first_seen.generated_at_source),
+        withTwentyFourHourHint(item.last_seen && item.last_seen.generated_at_source)
       ]);
 
       renderTable("persistentIps", ["IP", "DAC Signal", "Signal Confidence", "Peer Identity", "Static Provider", "Static ASN", "Provider Confidence", "Live ASN", "Live ASN Name", "Country", "Appearances", "Ratio", "Phases", "First Seen", "Last Seen"], rows);
@@ -651,7 +713,7 @@
           statusBadge(item.severity),
           safe(obs.observation_index),
           safe(obs.phase),
-          safe(obs.generated_at_source),
+          withTwentyFourHourHint(obs.generated_at_source),
           `${safe(obs.previous_total)} → ${safe(obs.current_total)}`,
           safe(item.reason)
         ];
@@ -664,7 +726,7 @@
       const rows = (rotation.observation_timeline || []).map(item => [
         safe(item.observation_index),
         safe(item.phase),
-        safe(item.generated_at_source),
+        withTwentyFourHourHint(item.generated_at_source),
         safe(item.target_port),
         safe(item.current_total),
         safe(item.added_count),
@@ -691,6 +753,8 @@
         renderReportSummary(rotation);
         renderProviderSummary(rotation);
         renderLiveAsnSummary(rotation);
+        const concentration = await fetchJSON(files.concentration);
+        renderConcentrationSummary(concentration);
         renderDacSignalSummary(rotation);
         renderPersistentEnodes(rotation);
         renderPersistentIps(rotation);
