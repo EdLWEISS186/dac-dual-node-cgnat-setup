@@ -308,6 +308,101 @@
         width: 160px;
       }
     }
+  
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-panel {
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(15, 23, 42, 0.42);
+      border-radius: 18px;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .chart-panel h3 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+    }
+
+    .chart-panel p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .chart-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .chart-axis,
+    .chart-grid-line {
+      stroke: rgba(148, 163, 184, 0.24);
+      stroke-width: 1;
+    }
+
+    .chart-label {
+      fill: var(--muted);
+      font-size: 10px;
+    }
+
+    .chart-line {
+      fill: none;
+      stroke: rgba(56, 189, 248, 0.95);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .chart-point {
+      fill: rgba(56, 189, 248, 0.95);
+      stroke: rgba(15, 23, 42, 0.9);
+      stroke-width: 2;
+    }
+
+    .chart-bar-added {
+      fill: rgba(34, 197, 94, 0.78);
+    }
+
+    .chart-bar-removed {
+      fill: rgba(248, 113, 113, 0.78);
+    }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
   </style>
 </head>
 <body>
@@ -360,6 +455,22 @@
         <div class="card">
           <h2>Report-Ready Summary</h2>
           <div id="reportSummary"></div>
+        </div>
+      </div>
+
+      <div class="card section">
+        <h2>Core Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-panel">
+            <h3>Enode Count Over Time</h3>
+            <p>Tracks observed current enode total across manual backfill and automated watcher snapshots.</p>
+            <div id="enodeCountChart"></div>
+          </div>
+          <div class="chart-panel">
+            <h3>Added vs Removed Per Observation</h3>
+            <p>Shows rotation activity per observation, separate from total enode count.</p>
+            <div id="rotationActivityChart"></div>
+          </div>
         </div>
       </div>
 
@@ -566,6 +677,159 @@
       `;
     }
 
+    function chartTimeline(rotation) {
+      return (rotation.observation_timeline || [])
+        .filter(item => item && item.current_total !== null && item.current_total !== undefined)
+        .map(item => ({
+          ...item,
+          label: `#${item.observation_index}`,
+          sourceTime: withTwentyFourHourHint(item.generated_at_source)
+        }));
+    }
+
+    function scaleValue(value, minValue, maxValue, minPixel, maxPixel) {
+      if (maxValue === minValue) return (minPixel + maxPixel) / 2;
+      return maxPixel - ((value - minValue) / (maxValue - minValue)) * (maxPixel - minPixel);
+    }
+
+    function renderEnodeCountChart(rotation) {
+      const data = chartTimeline(rotation);
+      const target = $("enodeCountChart");
+
+      if (!target || !data.length) return;
+
+      const width = 920;
+      const height = 280;
+      const margin = { top: 24, right: 28, bottom: 42, left: 48 };
+      const plotW = width - margin.left - margin.right;
+      const plotH = height - margin.top - margin.bottom;
+
+      const values = data.map(item => Number(item.current_total || 0));
+      const minValue = Math.max(0, Math.min(...values) - 1);
+      const maxValue = Math.max(...values) + 1;
+
+      const points = data.map((item, index) => {
+        const x = margin.left + (data.length === 1 ? plotW / 2 : (index / (data.length - 1)) * plotW);
+        const y = scaleValue(Number(item.current_total || 0), minValue, maxValue, margin.top, margin.top + plotH);
+        return { x, y, item };
+      });
+
+      const polyline = points.map(point => `${point.x},${point.y}`).join(" ");
+
+      const gridLines = [0, 0.25, 0.5, 0.75, 1].map(step => {
+        const y = margin.top + plotH * step;
+        const value = Math.round(maxValue - (maxValue - minValue) * step);
+        return `
+          <line class="chart-grid-line" x1="${margin.left}" y1="${y}" x2="${margin.left + plotW}" y2="${y}"></line>
+          <text class="chart-label" x="${margin.left - 10}" y="${y + 4}" text-anchor="end">${value}</text>
+        `;
+      }).join("");
+
+      const xLabels = points
+        .filter((_, index) => index === 0 || index === points.length - 1 || index % Math.ceil(points.length / 5) === 0)
+        .map(point => `
+          <text class="chart-label" x="${point.x}" y="${height - 14}" text-anchor="middle">${point.item.label}</text>
+        `)
+        .join("");
+
+      const circles = points.map(point => `
+        <circle class="chart-point" cx="${point.x}" cy="${point.y}" r="4">
+          <title>${point.item.label} | ${point.item.current_total} enodes | ${point.item.sourceTime}</title>
+        </circle>
+      `).join("");
+
+      target.innerHTML = `
+        <svg class="chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Enode count over time">
+          ${gridLines}
+          <line class="chart-axis" x1="${margin.left}" y1="${margin.top + plotH}" x2="${margin.left + plotW}" y2="${margin.top + plotH}"></line>
+          <line class="chart-axis" x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotH}"></line>
+          <polyline class="chart-line" points="${polyline}"></polyline>
+          ${circles}
+          ${xLabels}
+          <text class="chart-label" x="${width / 2}" y="${height - 2}" text-anchor="middle">Observation index</text>
+        </svg>
+      `;
+    }
+
+    function renderRotationActivityChart(rotation) {
+      const data = chartTimeline(rotation);
+      const target = $("rotationActivityChart");
+
+      if (!target || !data.length) return;
+
+      const width = 920;
+      const height = 280;
+      const margin = { top: 24, right: 28, bottom: 42, left: 48 };
+      const plotW = width - margin.left - margin.right;
+      const plotH = height - margin.top - margin.bottom;
+
+      const maxValue = Math.max(
+        1,
+        ...data.map(item => Number(item.added_count || 0)),
+        ...data.map(item => Number(item.removed_count || 0))
+      );
+
+      const groupW = plotW / data.length;
+      const barW = Math.max(4, Math.min(14, groupW * 0.32));
+
+      const gridLines = [0, 0.25, 0.5, 0.75, 1].map(step => {
+        const y = margin.top + plotH * step;
+        const value = Math.round(maxValue - maxValue * step);
+        return `
+          <line class="chart-grid-line" x1="${margin.left}" y1="${y}" x2="${margin.left + plotW}" y2="${y}"></line>
+          <text class="chart-label" x="${margin.left - 10}" y="${y + 4}" text-anchor="end">${value}</text>
+        `;
+      }).join("");
+
+      const bars = data.map((item, index) => {
+        const centerX = margin.left + groupW * index + groupW / 2;
+        const added = Number(item.added_count || 0);
+        const removed = Number(item.removed_count || 0);
+
+        const addedH = (added / maxValue) * plotH;
+        const removedH = (removed / maxValue) * plotH;
+
+        const baseY = margin.top + plotH;
+
+        return `
+          <rect class="chart-bar-added" x="${centerX - barW - 1}" y="${baseY - addedH}" width="${barW}" height="${addedH}" rx="2">
+            <title>${item.label} | added ${added} | ${item.sourceTime}</title>
+          </rect>
+          <rect class="chart-bar-removed" x="${centerX + 1}" y="${baseY - removedH}" width="${barW}" height="${removedH}" rx="2">
+            <title>${item.label} | removed ${removed} | ${item.sourceTime}</title>
+          </rect>
+        `;
+      }).join("");
+
+      const xLabels = data
+        .map((item, index) => ({ item, index, x: margin.left + groupW * index + groupW / 2 }))
+        .filter(point => point.index === 0 || point.index === data.length - 1 || point.index % Math.ceil(data.length / 5) === 0)
+        .map(point => `
+          <text class="chart-label" x="${point.x}" y="${height - 14}" text-anchor="middle">${point.item.label}</text>
+        `)
+        .join("");
+
+      target.innerHTML = `
+        <svg class="chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Added versus removed per observation">
+          ${gridLines}
+          <line class="chart-axis" x1="${margin.left}" y1="${margin.top + plotH}" x2="${margin.left + plotW}" y2="${margin.top + plotH}"></line>
+          <line class="chart-axis" x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotH}"></line>
+          ${bars}
+          ${xLabels}
+          <text class="chart-label" x="${width / 2}" y="${height - 2}" text-anchor="middle">Observation index</text>
+        </svg>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-swatch chart-bar-added"></span>Added</span>
+          <span class="legend-item"><span class="legend-swatch chart-bar-removed"></span>Removed</span>
+        </div>
+      `;
+    }
+
+    function renderCoreCharts(rotation) {
+      renderEnodeCountChart(rotation);
+      renderRotationActivityChart(rotation);
+    }
+
     function renderTable(id, headers, rows) {
       const head = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>`;
       const body = `<tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody>`;
@@ -751,6 +1015,7 @@
         renderAiSummary(latest);
         renderAnomalySummary(anomaly);
         renderReportSummary(rotation);
+        renderCoreCharts(rotation);
         renderProviderSummary(rotation);
         renderLiveAsnSummary(rotation);
         const concentration = await fetchJSON(files.concentration);

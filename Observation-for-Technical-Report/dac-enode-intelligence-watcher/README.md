@@ -677,6 +677,53 @@ This turns the watcher from a monitoring and analysis tool into a report prepara
 
 ---
 
+## Dashboard Chart Layer
+
+The dashboard now includes a lightweight chart layer.
+
+The initial v1.8.0 implementation uses native HTML, CSS, JavaScript, and inline SVG.
+
+No external chart dependency is required.
+
+Current charts:
+
+- Enode Count Over Time
+- Added vs Removed Per Observation
+
+Data source:
+
+    data/rotation-intelligence-summary.json
+
+Chart input:
+
+    observation_timeline
+
+Fields used:
+
+- `observation_index`
+- `generated_at_source`
+- `current_total`
+- `added_count`
+- `removed_count`
+- `phase`
+- `status`
+
+Chart purpose:
+
+- show enode count movement over time
+- show rotation intensity per observation
+- separate total enode count from added / removed activity
+- improve visual inspection before deeper technical reporting
+
+Future chart layers:
+
+- Live ASN Distribution
+- DAC Infrastructure Signal Distribution
+- Anomaly Severity Count
+- Manual vs Automated Observation Count
+
+---
+
 ## Provider Concentration / Decentralization Risk Summary
 
 The project now includes a Provider Concentration / Decentralization Risk Summary layer.
@@ -1092,6 +1139,9 @@ The current version already supports:
 - concentration-risk-summary.json generation
 - concentration summary dashboard visualization
 - concentration section in generated technical report
+- dashboard core chart layer
+- Enode Count Over Time chart
+- Added vs Removed Per Observation chart
 - 24-hour timestamp hint for dashboard timeline readability
 
 ---
@@ -1426,6 +1476,43 @@ It should be read together with:
 - DAC Infrastructure Signal Layer
 - registry observation history
 - manual technical report evidence
+
+### v1.8.0 — Core Dashboard Chart Layer
+
+Added the first dashboard chart layer.
+
+Updated file:
+
+- `dashboard/index.html`
+
+New dashboard section:
+
+- `Core Charts`
+
+New charts:
+
+- `Enode Count Over Time`
+- `Added vs Removed Per Observation`
+
+Implementation details:
+
+- native SVG chart rendering
+- no external chart dependency
+- charts read from `rotation.observation_timeline`
+- tooltips use original source timestamp with 24-hour hint where available
+
+Why this matters:
+
+The dashboard can now visually show both total enode count movement and per-observation rotation intensity.
+
+This makes the watcher more useful for quick infrastructure observation before preparing deeper technical reports.
+
+Future chart work:
+
+- v1.8.1 — Live ASN and DAC Infrastructure Signal distribution charts
+- v1.8.2 — Anomaly severity and manual-vs-automated observation charts
+
+---
 
 ### v1.7 — Provider Concentration / Decentralization Risk Summary
 
