@@ -677,6 +677,55 @@ This turns the watcher from a monitoring and analysis tool into a report prepara
 
 ---
 
+## Custom Markdown Report Export Layer
+
+The project now includes a custom Markdown report export layer.
+
+This layer generates range-specific Markdown reports that can be reused for technical writing, AI-assisted analysis, archive notes, or future PDF packaging.
+
+Helper file:
+
+    generate_custom_report.py
+
+Supported ranges:
+
+- `7d`
+- `30d`
+- `all`
+
+Manual commands:
+
+    python generate_custom_report.py --range 7d
+    python generate_custom_report.py --range 30d
+    python generate_custom_report.py --range all
+
+Generated outputs:
+
+    reports/generated/custom/dac-enode-report-7d.md
+    reports/generated/custom/dac-enode-report-30d.md
+    reports/generated/custom/dac-enode-report-all.md
+
+Data sources:
+
+- `data/latest.json`
+- `data/rotation-intelligence-summary.json`
+- `data/anomaly-detection-summary.json`
+- `data/concentration-risk-summary.json`
+
+Current generated result:
+
+- `7D`: `11 observations`, `1 selected anomaly signal`
+- `30D`: `21 observations`, `5 selected anomaly signals`
+- `ALL TIME`: `21 observations`, `5 selected anomaly signals`
+
+Important note:
+
+The custom Markdown report is designed as a reusable report-preparation layer first.
+
+PDF generation is intentionally treated as optional packaging for a later release.
+
+---
+
 ## Dashboard Chart Layer
 
 The dashboard now includes a lightweight chart layer.
@@ -1169,6 +1218,11 @@ The current version already supports:
 - Anomaly Severity Count chart
 - Manual vs Automated Observations chart
 - summary chart units for signals and observations
+- custom Markdown report exporter
+- 7D custom Markdown report
+- 30D custom Markdown report
+- ALL TIME custom Markdown report
+- scheduled workflow generation for custom Markdown reports
 - 7D / 30D / ALL TIME chart range controls
 - readable observation-time x-axis labels
 - clarified Added enodes / Removed enodes legend
@@ -1506,6 +1560,67 @@ It should be read together with:
 - DAC Infrastructure Signal Layer
 - registry observation history
 - manual technical report evidence
+
+### v1.9.0 — Custom Markdown Report Export Layer
+
+Added a range-aware custom Markdown report exporter.
+
+New file:
+
+- `generate_custom_report.py`
+
+New generated outputs:
+
+- `reports/generated/custom/dac-enode-report-7d.md`
+- `reports/generated/custom/dac-enode-report-30d.md`
+- `reports/generated/custom/dac-enode-report-all.md`
+
+Updated files:
+
+- `.github/workflows/dac-enode-watcher.yml`
+- `README.md`
+
+Supported ranges:
+
+- `7d`
+- `30d`
+- `all`
+
+Manual commands:
+
+- `python generate_custom_report.py --range 7d`
+- `python generate_custom_report.py --range 30d`
+- `python generate_custom_report.py --range all`
+
+Workflow automation:
+
+The scheduled watcher workflow now rebuilds all custom Markdown reports after the main technical report generation step.
+
+Current generated result:
+
+- `7D`: `11 observations`, `1 selected anomaly signal`
+- `30D`: `21 observations`, `5 selected anomaly signals`
+- `ALL TIME`: `21 observations`, `5 selected anomaly signals`
+
+Why this matters:
+
+v1.9.0 adds a reusable report-preparation layer.
+
+The generated Markdown files can be used directly for technical reports, archive notes, AI-assisted analysis, or later PDF packaging.
+
+Design decision:
+
+Markdown export is implemented before PDF generation because Markdown is easier to inspect, edit, reuse, and process with AI tools.
+
+PDF generation remains optional for a later release.
+
+Next planned upgrade:
+
+- v1.9.1 — Custom JSON report summary export
+- v1.9.2 — Dashboard export links
+- v1.9.3 — Optional PDF export
+
+---
 
 ### v1.8.2 — Summary Dashboard Chart Layer
 
