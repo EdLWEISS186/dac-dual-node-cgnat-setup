@@ -804,7 +804,7 @@ Manual backfill data under `data/manual-backfill/` is also intentionally tracked
 
 This is an independent community-built observation tool.
 
-It is not an official DAC Labs tool and does not represent official DAC infrastructure policy.
+It is not an official DAC tool and does not represent official DAC infrastructure policy.
 
 The watcher observes publicly available enode data and stores snapshots for technical reporting purposes.
 
