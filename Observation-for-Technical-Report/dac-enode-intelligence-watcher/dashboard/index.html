@@ -515,7 +515,7 @@
   
     .export-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
     }
 
@@ -737,6 +737,15 @@
               <a class="export-link" href="../reports/generated/custom/dac-enode-report-all.json" target="_blank" rel="noopener">All Time <span>JSON</span></a>
             </div>
           </div>
+          <div class="export-panel">
+            <h3>PDF Reports</h3>
+            <p>Optional PDF packaging generated from the Markdown reports for sharing and presentation.</p>
+            <div class="export-link-list">
+              <a class="export-link" href="../reports/generated/custom/dac-enode-report-7d.pdf" target="_blank" rel="noopener">Last 7 Days <span>PDF</span></a>
+              <a class="export-link" href="../reports/generated/custom/dac-enode-report-30d.pdf" target="_blank" rel="noopener">Last 30 Days <span>PDF</span></a>
+              <a class="export-link" href="../reports/generated/custom/dac-enode-report-all.pdf" target="_blank" rel="noopener">All Time <span>PDF</span></a>
+            </div>
+          </div>
         </div>
 
         <div class="custom-export-panel">
@@ -755,6 +764,7 @@
           <div class="custom-export-actions">
             <button class="custom-export-button" type="button" id="downloadCustomMarkdown">Download Custom Markdown</button>
             <button class="custom-export-button" type="button" id="downloadCustomJson">Download Custom JSON</button>
+            <button class="custom-export-button" type="button" id="printCustomPdf">Print / Save Custom PDF</button>
           </div>
           <div id="customExportStatus" class="custom-export-status"></div>
         </div>
@@ -1848,6 +1858,185 @@
       }
     }
 
+    function buildCustomPdfHtmlExport() {
+      const data = buildCustomJsonExport();
+      const timeline = data.timeline || [];
+      const anomalies = data.anomalies || [];
+
+      const style = `
+        <style>
+          body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0f172a;
+            margin: 24px;
+            line-height: 1.4;
+          }
+          h1 {
+            font-size: 22px;
+            margin-bottom: 8px;
+          }
+          h2 {
+            font-size: 16px;
+            margin-top: 24px;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 6px;
+          }
+          p {
+            font-size: 12px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0 18px;
+            font-size: 8px;
+            table-layout: fixed;
+            word-break: break-word;
+          }
+          th, td {
+            border: 1px solid #cbd5e1;
+            padding: 4px;
+            vertical-align: top;
+            text-align: left;
+          }
+          th {
+            background: #e8eef8;
+          }
+          .note {
+            color: #475569;
+            font-size: 11px;
+          }
+          @page {
+            size: A4 portrait;
+            margin: 10mm;
+          }
+        </style>
+      `;
+
+      const escapeHtml = (value) => String(safe(value))
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+      const tableHtml = (headers, rows) => `
+        <table>
+          <thead>
+            <tr>${headers.map(header => `<th>${escapeHtml(header)}</th>`).join("")}</tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => `<tr>${row.map(cell => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}
+          </tbody>
+        </table>
+      `;
+
+      const anomalyRows = anomalies.map(item => [
+        item.anomaly_type,
+        item.severity,
+        item.observation && item.observation.observation_index,
+        item.reason
+      ]);
+
+      return `<!doctype html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <title>DAC Enode Custom PDF Export</title>
+            ${style}
+          </head>
+          <body>
+            <h1>DAC Enode Intelligence Watcher - Custom Browser PDF Export</h1>
+            <p><strong>Generated at browser UTC:</strong> ${escapeHtml(data.generated_at_browser_utc)}</p>
+            <p><strong>Range:</strong> ${escapeHtml(data.range.from_source_time_readable)} -> ${escapeHtml(data.range.to_source_time_readable)}</p>
+            <p class="note">This browser-generated PDF export is observation-based. It does not make official DAC ownership claims and is not automatically committed to the repository.</p>
+
+            <h2>1. Observation Scope</h2>
+            ${tableHtml(
+              ["Field", "Value"],
+              [
+                ["Observation count", data.observation_scope.observation_count],
+                ["From observation", data.range.from_observation_index],
+                ["To observation", data.range.to_observation_index],
+                ["Minimum enode count", data.observation_scope.min_enode_count],
+                ["Maximum enode count", data.observation_scope.max_enode_count],
+                ["Average enode count", data.observation_scope.avg_enode_count],
+                ["Total added events", data.observation_scope.total_added_events],
+                ["Total removed events", data.observation_scope.total_removed_events]
+              ]
+            )}
+
+            <h2>2. Anomaly Summary</h2>
+            ${tableHtml(
+              ["Field", "Value"],
+              [
+                ["Selected anomaly signals", data.anomaly_summary.selected_anomaly_signal_count],
+                ["Selected severity counts", JSON.stringify(data.anomaly_summary.selected_severity_counts)],
+                ["Selected anomaly type counts", JSON.stringify(data.anomaly_summary.selected_anomaly_type_counts)]
+              ]
+            )}
+
+            <h2>3. Concentration Context</h2>
+            ${tableHtml(
+              ["Field", "Value"],
+              [
+                ["Overall concentration label", data.concentration_summary.overall_concentration_label],
+                ["Headline", data.concentration_summary.headline],
+                ["Key observation", data.concentration_summary.key_observation],
+                ["Interpretation", data.concentration_summary.interpretation]
+              ]
+            )}
+
+            <h2>4. Observation Timeline</h2>
+            ${tableHtml(
+              ["#", "Phase", "Status", "Source Time", "Current", "Added", "Removed", "Port"],
+              timeline.map(item => [
+                item.observation_index,
+                item.phase,
+                item.status,
+                formatChartDateLabel(item.generated_at_source),
+                item.current_total,
+                item.added_count,
+                item.removed_count,
+                item.target_port
+              ])
+            )}
+
+            ${anomalies.length ? `
+              <h2>5. Selected Anomalies</h2>
+              ${tableHtml(["Type", "Severity", "Observation", "Reason"], anomalyRows)}
+            ` : ""}
+          </body>
+        </html>`;
+    }
+
+    function printCustomPdfExport() {
+      try {
+        const html = buildCustomPdfHtmlExport();
+        const printWindow = window.open("", "_blank");
+
+        if (!printWindow) {
+          setCustomExportStatus("Popup blocked. Please allow popups to print or save custom PDF.");
+          return;
+        }
+
+        printWindow.document.open();
+        printWindow.document.write(html);
+        printWindow.document.close();
+
+        setTimeout(() => {
+          try {
+            printWindow.focus();
+            printWindow.print();
+          } catch (_error) {
+            setCustomExportStatus("Custom PDF print view opened. Use browser print manually if the dialog does not appear.");
+          }
+        }, 500);
+
+        setCustomExportStatus("Custom PDF print view opened. Use Save as PDF in the browser print dialog.");
+      } catch (error) {
+        setCustomExportStatus(error.message);
+      }
+    }
+
     function initCustomExport(latest, rotation, anomaly, concentration) {
       const timeline = rotation.observation_timeline || [];
       const startEl = $("customExportStart");
@@ -1868,9 +2057,11 @@
 
       const markdownButton = $("downloadCustomMarkdown");
       const jsonButton = $("downloadCustomJson");
+      const pdfButton = $("printCustomPdf");
 
       if (markdownButton) markdownButton.addEventListener("click", () => downloadCustomExport("markdown"));
       if (jsonButton) jsonButton.addEventListener("click", () => downloadCustomExport("json"));
+      if (pdfButton) pdfButton.addEventListener("click", () => printCustomPdfExport());
 
       setCustomExportStatus(`Ready. ${timeline.length} observations available for custom export.`);
     }
