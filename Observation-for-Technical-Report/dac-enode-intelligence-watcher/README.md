@@ -677,9 +677,9 @@ This turns the watcher from a monitoring and analysis tool into a report prepara
 
 ---
 
-## Custom Markdown Report Export Layer
+## Custom Report Export Layer
 
-The project now includes a custom Markdown report export layer.
+The project now includes a custom report export layer that can generate Markdown reports and structured JSON summaries.
 
 This layer generates range-specific Markdown reports that can be reused for technical writing, AI-assisted analysis, archive notes, or future PDF packaging.
 
@@ -693,17 +693,41 @@ Supported ranges:
 - `30d`
 - `all`
 
-Manual commands:
+Supported formats:
+
+- `markdown`
+- `json`
+- `both`
+
+Manual Markdown commands:
 
     python generate_custom_report.py --range 7d
     python generate_custom_report.py --range 30d
     python generate_custom_report.py --range all
 
-Generated outputs:
+Manual JSON commands:
+
+    python generate_custom_report.py --range 7d --format json
+    python generate_custom_report.py --range 30d --format json
+    python generate_custom_report.py --range all --format json
+
+Manual Markdown + JSON commands:
+
+    python generate_custom_report.py --range 7d --format both
+    python generate_custom_report.py --range 30d --format both
+    python generate_custom_report.py --range all --format both
+
+Generated Markdown outputs:
 
     reports/generated/custom/dac-enode-report-7d.md
     reports/generated/custom/dac-enode-report-30d.md
     reports/generated/custom/dac-enode-report-all.md
+
+Generated JSON outputs:
+
+    reports/generated/custom/dac-enode-report-7d.json
+    reports/generated/custom/dac-enode-report-30d.json
+    reports/generated/custom/dac-enode-report-all.json
 
 Data sources:
 
@@ -720,7 +744,7 @@ Current generated result:
 
 Important note:
 
-The custom Markdown report is designed as a reusable report-preparation layer first.
+The custom Markdown report is designed as a reusable report-preparation layer, while the JSON summary is designed for structured AI-assisted analysis, dashboards, and future export layers.
 
 PDF generation is intentionally treated as optional packaging for a later release.
 
@@ -1223,6 +1247,11 @@ The current version already supports:
 - 30D custom Markdown report
 - ALL TIME custom Markdown report
 - scheduled workflow generation for custom Markdown reports
+- custom JSON summary exporter
+- 7D custom JSON summary
+- 30D custom JSON summary
+- ALL TIME custom JSON summary
+- scheduled workflow generation for Markdown + JSON custom reports
 - 7D / 30D / ALL TIME chart range controls
 - readable observation-time x-axis labels
 - clarified Added enodes / Removed enodes legend
@@ -1561,6 +1590,76 @@ It should be read together with:
 - registry observation history
 - manual technical report evidence
 
+### v1.9.1 — Custom JSON Report Summary Export
+
+Added structured JSON summary export to the existing custom report generator.
+
+Updated file:
+
+- `generate_custom_report.py`
+
+Updated workflow:
+
+- `.github/workflows/dac-enode-watcher.yml`
+
+Updated documentation:
+
+- `README.md`
+
+New generated outputs:
+
+- `reports/generated/custom/dac-enode-report-7d.json`
+- `reports/generated/custom/dac-enode-report-30d.json`
+- `reports/generated/custom/dac-enode-report-all.json`
+
+New CLI option:
+
+- `--format markdown`
+- `--format json`
+- `--format both`
+
+Default behavior:
+
+- `--format markdown`
+
+Workflow behavior:
+
+The scheduled watcher workflow now runs custom report generation with `--format both`, producing Markdown and JSON outputs for:
+
+- `7d`
+- `30d`
+- `all`
+
+Current generated JSON result:
+
+- `7D`: `11 observations`, `1 selected anomaly signal`, `HIGH = 1`
+- `30D`: `21 observations`, `5 selected anomaly signals`, `HIGH = 5`
+- `ALL TIME`: `21 observations`, `5 selected anomaly signals`, `HIGH = 5`
+
+JSON summary includes:
+
+- latest observation summary
+- selected observation scope
+- enode movement summary
+- selected anomaly summary
+- provider / ASN concentration summary
+- selected timeline rows
+- selected anomaly rows
+- report-use notes
+
+Why this matters:
+
+v1.9.1 makes the custom report layer useful not only for human-readable reports, but also for structured AI-assisted analysis.
+
+The JSON summaries are easier to reuse in dashboards, scripts, data pipelines, and future export layers.
+
+Next planned upgrade:
+
+- v1.9.2 — Dashboard export links
+- v1.9.3 — Optional PDF export
+
+---
+
 ### v1.9.0 — Custom Markdown Report Export Layer
 
 Added a range-aware custom Markdown report exporter.
@@ -1616,7 +1715,6 @@ PDF generation remains optional for a later release.
 
 Next planned upgrade:
 
-- v1.9.1 — Custom JSON report summary export
 - v1.9.2 — Dashboard export links
 - v1.9.3 — Optional PDF export
 

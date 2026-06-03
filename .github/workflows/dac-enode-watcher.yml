@@ -45,9 +45,9 @@ jobs:
           python build_anomaly_detection.py
           python build_concentration_risk.py
           python generate_technical_report.py
-          python generate_custom_report.py --range 7d
-          python generate_custom_report.py --range 30d
-          python generate_custom_report.py --range all
+          python generate_custom_report.py --range 7d --format both
+          python generate_custom_report.py --range 30d --format both
+          python generate_custom_report.py --range all --format both
 
       - name: Commit generated watcher outputs if changed
         run: |

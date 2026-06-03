@@ -16,6 +16,7 @@ ANOMALY_FILE = DATA_DIR / "anomaly-detection-summary.json"
 CONCENTRATION_FILE = DATA_DIR / "concentration-risk-summary.json"
 
 RANGE_OPTIONS = {"7d", "30d", "all"}
+FORMAT_OPTIONS = {"markdown", "json", "both"}
 
 MONTH_INDEX = {
     "Jan": 1,
@@ -194,6 +195,160 @@ def filter_anomalies_by_timeline(anomalies: list[dict], timeline: list[dict]) ->
     ]
 
 
+
+def build_custom_summary_data(selected_range: str) -> dict:
+    latest = load_json(LATEST_FILE)
+    rotation = load_json(ROTATION_FILE)
+    anomaly = load_json(ANOMALY_FILE)
+    concentration = load_json(CONCENTRATION_FILE)
+
+    timeline = rotation.get("observation_timeline", [])
+    selected_timeline = filter_timeline_by_range(timeline, selected_range)
+
+    timeline_summary = summarize_timeline(selected_timeline)
+    selected_anomalies = filter_anomalies_by_timeline(anomaly.get("anomalies", []), selected_timeline)
+
+    selected_severity_counts = Counter(item.get("severity") or "Unknown" for item in selected_anomalies)
+    selected_anomaly_type_counts = Counter(item.get("anomaly_type") or "Unknown" for item in selected_anomalies)
+
+    concentration_report = concentration.get("report_ready_summary", {})
+
+    timeline_rows = []
+    for item in selected_timeline:
+        timeline_rows.append({
+            "observation_index": item.get("observation_index"),
+            "phase": item.get("phase"),
+            "status": item.get("status"),
+            "source_time_raw": item.get("generated_at_source"),
+            "source_time_readable": format_source_time(item.get("generated_at_source")),
+            "checked_at_utc": item.get("checked_at_utc"),
+            "current_total": item.get("current_total"),
+            "previous_total": item.get("previous_total"),
+            "added_count": item.get("added_count"),
+            "removed_count": item.get("removed_count"),
+            "unchanged_count": item.get("unchanged_count"),
+            "target_port": item.get("target_port"),
+            "change_severity": item.get("change_severity"),
+            "severity_reason": item.get("severity_reason"),
+            "snapshot_file": item.get("snapshot_file"),
+        })
+
+    anomaly_rows = []
+    for item in selected_anomalies:
+        observation = item.get("observation", {})
+        anomaly_rows.append({
+            "anomaly_type": item.get("anomaly_type"),
+            "severity": item.get("severity"),
+            "reason": item.get("reason"),
+            "technical_impact": item.get("technical_impact"),
+            "recommended_action": item.get("recommended_action"),
+            "observation_index": observation.get("observation_index"),
+            "phase": observation.get("phase"),
+            "source_time_raw": observation.get("generated_at_source"),
+            "source_time_readable": format_source_time(observation.get("generated_at_source")),
+            "current_total": observation.get("current_total"),
+            "previous_total": observation.get("previous_total"),
+            "added_count": observation.get("added_count"),
+            "removed_count": observation.get("removed_count"),
+            "unchanged_count": observation.get("unchanged_count"),
+            "target_port": observation.get("target_port"),
+            "snapshot_file": observation.get("snapshot_file"),
+        })
+
+    live_asn = concentration.get("live_asn_concentration", {})
+    live_country = concentration.get("live_country_concentration", {})
+    dac_signal = concentration.get("dac_signal_concentration", {})
+
+    return {
+        "project": "DAC Enode Intelligence Watcher",
+        "summary_type": "custom_json_report_summary",
+        "generated_at_utc": utc_now(),
+        "range": selected_range,
+        "range_label": range_title(selected_range),
+        "source_files": {
+            "latest": str(LATEST_FILE.relative_to(BASE_DIR)),
+            "rotation": str(ROTATION_FILE.relative_to(BASE_DIR)),
+            "anomaly": str(ANOMALY_FILE.relative_to(BASE_DIR)),
+            "concentration": str(CONCENTRATION_FILE.relative_to(BASE_DIR)),
+        },
+        "important_note": (
+            "This custom JSON summary is observation-based. It does not make official DAC ownership claims "
+            "and should not be treated as a definitive decentralization measurement."
+        ),
+        "latest_observation": {
+            "checked_at_utc": latest.get("checked_at_utc"),
+            "generated_at_source": latest.get("generated_at_source"),
+            "target_port": latest.get("target_port"),
+            "current_total": latest.get("current_total"),
+            "previous_total": latest.get("previous_total"),
+            "added_count": latest.get("added_count"),
+            "removed_count": latest.get("removed_count"),
+            "unchanged_count": latest.get("unchanged_count"),
+            "change_severity": latest.get("change_severity"),
+            "severity_reason": latest.get("severity_reason"),
+        },
+        "observation_scope": {
+            "selected_observation_count": timeline_summary["observations"],
+            "first_observed_source_time": timeline_summary["first_source_time"],
+            "last_observed_source_time": timeline_summary["last_source_time"],
+            "phase_counts": timeline_summary["phase_counts"],
+            "status_counts": timeline_summary["status_counts"],
+            "target_ports_observed": timeline_summary["target_ports"],
+        },
+        "enode_movement_summary": {
+            "min_enode_count": timeline_summary["min_enodes"],
+            "max_enode_count": timeline_summary["max_enodes"],
+            "avg_enode_count": timeline_summary["avg_enodes"],
+            "total_added_events": timeline_summary["total_added"],
+            "total_removed_events": timeline_summary["total_removed"],
+        },
+        "anomaly_summary": {
+            "selected_anomaly_signal_count": len(selected_anomalies),
+            "selected_severity_counts": dict(selected_severity_counts),
+            "selected_anomaly_type_counts": dict(selected_anomaly_type_counts),
+            "global_short_summary": anomaly.get("report_summary", {}).get("short_summary"),
+            "global_highest_severity": anomaly.get("report_summary", {}).get("highest_severity"),
+            "global_recommended_action": anomaly.get("report_summary", {}).get("recommended_action"),
+        },
+        "concentration_summary": {
+            "overall_concentration_label": concentration.get("overall_concentration_label"),
+            "headline": concentration_report.get("headline"),
+            "key_observation": concentration_report.get("key_observation"),
+            "country_observation": concentration_report.get("country_observation"),
+            "interpretation": concentration_report.get("interpretation"),
+            "recommended_action": concentration_report.get("recommended_action"),
+            "disclaimer": concentration.get("disclaimer"),
+            "top_dimensions": {
+                "live_asn": {
+                    "top_name": live_asn.get("top_name"),
+                    "top_count": live_asn.get("top_count"),
+                    "top_percentage": live_asn.get("top_percentage"),
+                    "label": live_asn.get("concentration_label"),
+                },
+                "live_country": {
+                    "top_name": live_country.get("top_name"),
+                    "top_count": live_country.get("top_count"),
+                    "top_percentage": live_country.get("top_percentage"),
+                    "label": live_country.get("concentration_label"),
+                },
+                "dac_infrastructure_signal": {
+                    "top_name": dac_signal.get("top_name"),
+                    "top_count": dac_signal.get("top_count"),
+                    "top_percentage": dac_signal.get("top_percentage"),
+                    "label": dac_signal.get("concentration_label"),
+                },
+            },
+        },
+        "timeline": timeline_rows,
+        "anomalies": anomaly_rows,
+        "report_use_notes": [
+            "Use the 7D report for short-range rotation and recent watcher movement.",
+            "Use the 30D report for broader trend context once the 15-minute watcher has accumulated enough observations.",
+            "Use the All Time report for full testnet observation history preserved by this watcher.",
+            "Use JSON summaries for structured AI-assisted analysis, dashboards, and future export layers.",
+        ],
+    }
+
 def build_custom_report(selected_range: str) -> str:
     latest = load_json(LATEST_FILE)
     rotation = load_json(ROTATION_FILE)
@@ -358,6 +513,19 @@ def output_file_for_range(selected_range: str) -> Path:
     return REPORT_DIR / f"dac-enode-report-{selected_range}.md"
 
 
+def json_output_file_for_range(selected_range: str) -> Path:
+    return REPORT_DIR / f"dac-enode-report-{selected_range}.json"
+
+
+def write_custom_json_summary(selected_range: str) -> Path:
+    output_file = json_output_file_for_range(selected_range)
+    output_file.write_text(
+        json.dumps(build_custom_summary_data(selected_range), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    return output_file
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate custom DAC enode Markdown reports.")
     parser.add_argument(
@@ -366,18 +534,31 @@ def main() -> None:
         default="all",
         help="Report range: 7d, 30d, or all.",
     )
+    parser.add_argument(
+        "--format",
+        choices=sorted(FORMAT_OPTIONS),
+        default="markdown",
+        help="Output format: markdown, json, or both.",
+    )
 
     args = parser.parse_args()
     selected_range = args.range
+    selected_format = args.format
 
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
-    report = build_custom_report(selected_range)
-    output_file = output_file_for_range(selected_range)
-    output_file.write_text(report, encoding="utf-8")
+    if selected_format in {"markdown", "both"}:
+        report = build_custom_report(selected_range)
+        output_file = output_file_for_range(selected_range)
+        output_file.write_text(report, encoding="utf-8")
+        print(f"[OK] Custom Markdown report generated: {output_file}")
 
-    print(f"[OK] Custom Markdown report generated: {output_file}")
+    if selected_format in {"json", "both"}:
+        json_output_file = write_custom_json_summary(selected_range)
+        print(f"[OK] Custom JSON summary generated: {json_output_file}")
+
     print(f"[OK] Range: {selected_range}")
+    print(f"[OK] Format: {selected_format}")
 
 
 if __name__ == "__main__":
