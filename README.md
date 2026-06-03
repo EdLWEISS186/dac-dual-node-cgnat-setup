@@ -9,24 +9,27 @@
 
 Dual node setup (Windows + WSL) for DAC testnet — operating under CGNAT with static peering, internal LAN routing, and verified stability.
 
+> **Repository note:** While the core of this repository documents the dual-node CGNAT setup, the repo has expanded into a broader DAC Testnet contribution archive containing monitoring assets, node dashboard tooling, sender tools, contribution progress, technical reports, and observation utilities built to support infrastructure testing and reporting.
+
 ---
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [What This Repo Demonstrates](#what-this-repo-demonstrates)
-- [Reproducibility](#reproducibility)
-- [Key Insights](#key-insights)
-- [Limitations](#limitations)
-- [Documentation](#documentation)
-- [Network Topology](#network-topology)
-- [Node Configuration](#node-configuration)
-- [Startup Commands](#startup-commands)
-- [Scripts](#scripts)
-- [CGNAT Constraints](#cgnat-constraints)
-- [Why This Setup Matters](#why-this-setup-matters)
-- [Observations](#observations)
-- [Dashboard App](#dashboard-app)
+* [Overview](#overview)
+* [What This Repo Demonstrates](#what-this-repo-demonstrates)
+* [Reproducibility](#reproducibility)
+* [Key Insights](#key-insights)
+* [Limitations](#limitations)
+* [Documentation](#documentation)
+* [Network Topology](#network-topology)
+* [Node Configuration](#node-configuration)
+* [Startup Commands](#startup-commands)
+* [Scripts](#scripts)
+* [CGNAT Constraints](#cgnat-constraints)
+* [Why This Setup Matters](#why-this-setup-matters)
+* [Observations](#observations)
+* [Dashboard App](#dashboard-app)
+* [Additional Repository Areas](#additional-repository-areas)
 
 ---
 
@@ -40,10 +43,10 @@ The architecture is designed around a fundamental constraint: the ISP operates C
 
 **This setup is not built despite CGNAT — it is built because of it.**
 
-| Node         | Platform     | Role          | Port             | Address             |
-|--------------|--------------|---------------|------------------|---------------------|
-| Windows Node | Windows Host | Hub / Anchor  | e.g. `28657`     | Your LAN IP         |
-| WSL Node     | WSL (Linux)  | Support Node  | e.g. `30304`     | via Windows host    |
+| Node         | Platform     | Role         | Port         | Address          |
+| ------------ | ------------ | ------------ | ------------ | ---------------- |
+| Windows Node | Windows Host | Hub / Anchor | e.g. `28657` | Your LAN IP      |
+| WSL Node     | WSL (Linux)  | Support Node | e.g. `30304` | via Windows host |
 
 ---
 
@@ -67,10 +70,10 @@ Community validation is encouraged to further assess reproducibility across diff
 
 ## Key Insights
 
-- Under CGNAT, **peer quality > peer quantity** — 2 stable static peers outperform 10 unstable discovered peers
-- **Static peers significantly improve stability** over relying on dynamic peer discovery
-- **Internal node peering** between Windows and WSL improves block propagation consistency
-- Port forwarding at the router level is **insufficient** when CGNAT is active at the ISP level
+* Under CGNAT, **peer quality > peer quantity** — 2 stable static peers outperform 10 unstable discovered peers
+* **Static peers significantly improve stability** over relying on dynamic peer discovery
+* **Internal node peering** between Windows and WSL improves block propagation consistency
+* Port forwarding at the router level is **insufficient** when CGNAT is active at the ISP level
 
 ---
 
@@ -78,11 +81,11 @@ Community validation is encouraged to further assess reproducibility across diff
 
 This setup and its observations are subject to the following scope boundaries:
 
-- **Single-machine environment** — both nodes run on the same physical host (Windows + WSL); not validated on multi-host or distributed systems
-- **CGNAT-specific conditions** — behavior is observed exclusively under CGNAT; results may differ under public IP or full inbound connectivity
-- **Limited static peer set** — results are based on a small number of static peers; behavior may vary with different peer configurations or network conditions
-- **Testnet only** — observations are based on DAC testnet; not validated on mainnet environments
-- **Observation window** — monitoring duration (~2.5 hours) captures steady-state behavior, but does not represent long-term stability such as multi-day uptime
+* **Single-machine environment** — both nodes run on the same physical host (Windows + WSL); not validated on multi-host or distributed systems
+* **CGNAT-specific conditions** — behavior is observed exclusively under CGNAT; results may differ under public IP or full inbound connectivity
+* **Limited static peer set** — results are based on a small number of static peers; behavior may vary with different peer configurations or network conditions
+* **Testnet only** — observations are based on DAC testnet; not validated on mainnet environments
+* **Observation window** — monitoring duration (~2.5 hours) captures steady-state behavior, but does not represent long-term stability such as multi-day uptime
 
 ---
 
@@ -90,9 +93,9 @@ This setup and its observations are subject to the following scope boundaries:
 
 Full setup details and deep-dive explanations are available in the Wiki:
 
-- [Home](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki)
-- [Network Topology](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Network-Topology)
-- [Static Peer Configuration](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Static-Peer-Configuration)
+* [Home](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki)
+* [Network Topology](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Network-Topology)
+* [Static Peer Configuration](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/wiki/Static-Peer-Configuration)
 
 ---
 
@@ -127,11 +130,11 @@ Full setup details and deep-dive explanations are available in the Wiki:
 
 ## Node Configuration
 
-| Component      | Address                        | Identity                | Role                          |
-|----------------|--------------------------------|-------------------------|-------------------------------|
-| Windows Node   | `YOUR_LAN_IP:28657`            | `YOUR_WIN_IDENTITY`     | Primary anchor, hub node      |
-| WSL Node       | `YOUR_LAN_IP:30304`            | `YOUR_WSL_IDENTITY`     | Secondary, routed via host    |
-| Official Nodes | Public enodes                  | DAC Testnet Authorities | Static peers (authority)      |
+| Component      | Address             | Identity                | Role                       |
+| -------------- | ------------------- | ----------------------- | -------------------------- |
+| Windows Node   | `YOUR_LAN_IP:28657` | `YOUR_WIN_IDENTITY`     | Primary anchor, hub node   |
+| WSL Node       | `YOUR_LAN_IP:30304` | `YOUR_WSL_IDENTITY`     | Secondary, routed via host |
+| Official Nodes | Public enodes       | DAC Testnet Authorities | Static peers (authority)   |
 
 > Static peers are configured via `config.toml` placed in `--datadir/gdacnode/config.toml`. This replaces the deprecated `static-nodes.json` format.
 
@@ -143,11 +146,11 @@ Full setup details and deep-dive explanations are available in the Wiki:
 
 This setup uses `fast` sync mode — a deliberate choice based on the network constraints of this environment.
 
-| Mode | Behavior | Suitability |
-|------|----------|-------------|
-| `snap` | Faster but depends heavily on peers that support snap protocol | ❌ Unreliable under limited peers |
-| `fast` | Downloads block headers + state, less peer-dependent | ✅ Stable under CGNAT + static peers |
-| `full` | Full block verification from genesis | ❌ Too heavy for this setup |
+| Mode   | Behavior                                                       | Suitability                         |
+| ------ | -------------------------------------------------------------- | ----------------------------------- |
+| `snap` | Faster but depends heavily on peers that support snap protocol | ❌ Unreliable under limited peers    |
+| `fast` | Downloads block headers + state, less peer-dependent           | ✅ Stable under CGNAT + static peers |
+| `full` | Full block verification from genesis                           | ❌ Too heavy for this setup          |
 
 > Stability improved after switching from `snap` to `fast` — under CGNAT with limited static peers, `fast` is the practical sweet spot.
 
@@ -186,15 +189,15 @@ cd "/mnt/d/DAC/Linux" && \
 
 ### Parameter Reference
 
-| Parameter | Description | How to Obtain |
-|-----------|-------------|---------------|
-| `--identity` | Node display name visible in peer list | Any unique name e.g. `MY-WIN-NODE` |
-| `--config` | Path to TOML config file containing static peers | Place `config.toml` in `--datadir/gdacnode/` |
-| `--miner.etherbase` | Your wallet address | From your DAC wallet |
-| `--datadir` | Path where chain data is stored | Choose any local directory |
-| `--port` | P2P port for this node | Any available port — must be unique per node |
-| `--maxpeers` | Maximum number of peer connections | Recommended: `12` |
-| `--nat extip` | IP advertised to peers | Run `ipconfig` (Windows) → use your LAN IPv4 Address |
+| Parameter           | Description                                      | How to Obtain                                        |
+| ------------------- | ------------------------------------------------ | ---------------------------------------------------- |
+| `--identity`        | Node display name visible in peer list           | Any unique name e.g. `MY-WIN-NODE`                   |
+| `--config`          | Path to TOML config file containing static peers | Place `config.toml` in `--datadir/gdacnode/`         |
+| `--miner.etherbase` | Your wallet address                              | From your DAC wallet                                 |
+| `--datadir`         | Path where chain data is stored                  | Choose any local directory                           |
+| `--port`            | P2P port for this node                           | Any available port — must be unique per node         |
+| `--maxpeers`        | Maximum number of peer connections               | Recommended: `12`                                    |
+| `--nat extip`       | IP advertised to peers                           | Run `ipconfig` (Windows) → use your LAN IPv4 Address |
 
 > `--nat extip` must be updated every time you switch networks.
 
@@ -220,12 +223,12 @@ scripts/
 
 Scripts are parameterized using placeholder values and must be adjusted to match the local environment before execution. The following placeholders are used across all scripts:
 
-| Placeholder | Description | How to Obtain |
-|-------------|-------------|---------------|
-| `YOUR_WINDOWS_NODE_PATH` | Full path to your Windows node folder | e.g. `D:\DAC\Windows` |
-| `YOUR_WSL_NODE_PATH` | Full path to your WSL node folder | e.g. `/mnt/d/DAC/Linux` |
-| `YOUR_WALLET_ADDRESS` | Your DAC wallet address | From your DAC wallet |
-| `YOUR_NODE_IDENTITY` | Label shown in peer list | Any name e.g. `MY-WSL-NODE` |
+| Placeholder              | Description                           | How to Obtain               |
+| ------------------------ | ------------------------------------- | --------------------------- |
+| `YOUR_WINDOWS_NODE_PATH` | Full path to your Windows node folder | e.g. `D:\DAC\Windows`       |
+| `YOUR_WSL_NODE_PATH`     | Full path to your WSL node folder     | e.g. `/mnt/d/DAC/Linux`     |
+| `YOUR_WALLET_ADDRESS`    | Your DAC wallet address               | From your DAC wallet        |
+| `YOUR_NODE_IDENTITY`     | Label shown in peer list              | Any name e.g. `MY-WSL-NODE` |
 
 ---
 
@@ -241,18 +244,18 @@ Port forwarding was configured on the router (Huawei HG8145V5) — mapping exter
 
 ### Implications
 
-| Constraint | Impact | Workaround Applied |
-|------------|--------|--------------------|
-| No inbound connections | Peer discovery fails | Static peers only |
-| Shared public IP | Port forwarding ineffective | Internal LAN routing |
-| Dynamic peer reliance | Unstable connections | `--nat extip` + static nodes |
+| Constraint             | Impact                      | Workaround Applied           |
+| ---------------------- | --------------------------- | ---------------------------- |
+| No inbound connections | Peer discovery fails        | Static peers only            |
+| Shared public IP       | Port forwarding ineffective | Internal LAN routing         |
+| Dynamic peer reliance  | Unstable connections        | `--nat extip` + static nodes |
 
 ### Key Rules
 
-- Do **not** use `localhost` or loopback address for inter-node peering — WSL and Windows are on different network interfaces
-- Both nodes must advertise the same LAN IP using `--nat extip:YOUR_LOCAL_IP`
-- WSL routes all external traffic through the Windows host — use the Windows host LAN IP for both nodes
-- To find your LAN IP: run `ipconfig` on Windows and look for **IPv4 Address** under your active network adapter
+* Do **not** use `localhost` or loopback address for inter-node peering — WSL and Windows are on different network interfaces
+* Both nodes must advertise the same LAN IP using `--nat extip:YOUR_LOCAL_IP`
+* WSL routes all external traffic through the Windows host — use the Windows host LAN IP for both nodes
+* To find your LAN IP: run `ipconfig` on Windows and look for **IPv4 Address** under your active network adapter
 
 ---
 
@@ -262,9 +265,9 @@ The constraints illustrated in the topology above are not theoretical — they a
 
 The dual-node architecture also goes beyond basic participation. By running two nodes on the same machine — one as anchor, one as support — this setup creates a **minimal P2P cluster** that demonstrates:
 
-- Redundant sync paths under constrained conditions
-- Persistent internal peering without relying on discovery
-- Stable block propagation with quality-over-quantity peer selection
+* Redundant sync paths under constrained conditions
+* Persistent internal peering without relying on discovery
+* Stable block propagation with quality-over-quantity peer selection
 
 This is directly applicable to anyone running nodes on residential ISPs, mobile broadband, or shared infrastructure where CGNAT is common.
 
@@ -308,13 +311,14 @@ Windows node fully synced with **4 active peers** — 3 official DAC authority n
 Full peer data — [admin_peers_windows_2026-05-06.json](assets/admin_peers_windows_2026-05-06.json)
 
 Confirmed connections as of 2026-05-06 (7 peers):
-- `157.173.127.30:28657` — DAC Testnet Authority 2
-- `157.173.127.21:28657` — DAC Testnet Authority 3
-- `157.173.127.31:28657` — DAC Testnet Authority 1
-- `156.67.104.212:28657` — whale-vps2
-- `152.228.141.231:28657` — DAC Testnet node
-- `5.104.86.129:28657`   — x0rabbit
-- `192.168.100.7`        — WSL Node (internal, inbound)
+
+* `157.173.127.30:28657` — DAC Testnet Authority 2
+* `157.173.127.21:28657` — DAC Testnet Authority 3
+* `157.173.127.31:28657` — DAC Testnet Authority 1
+* `156.67.104.212:28657` — whale-vps2
+* `152.228.141.231:28657` — DAC Testnet node
+* `5.104.86.129:28657`   — x0rabbit
+* `192.168.100.7`        — WSL Node (internal, inbound)
 
 > Peer count has grown as more official nodes joined the testnet network since initial setup.
 
@@ -340,12 +344,13 @@ WSL node fully synced with **6 active peers** — the Windows host node and 5 of
 Full peer data — [admin_peers_wsl_2026-05-06.json](assets/admin_peers_wsl_2026-05-06.json)
 
 Confirmed connections as of 2026-05-06 (6 peers):
-- `192.168.100.7:28657`    — Windows Node (internal, static)
-- `157.173.127.30:28657`   — DAC Testnet Authority 2
-- `157.173.127.31:28657`   — DAC Testnet Authority 1
-- `156.67.104.212:28657`   — whale-vps2
-- `206.189.127.204:28657`  — DAC-Node 05
-- `161.97.89.27:28657`     — whale-vps3
+
+* `192.168.100.7:28657`    — Windows Node (internal, static)
+* `157.173.127.30:28657`   — DAC Testnet Authority 2
+* `157.173.127.31:28657`   — DAC Testnet Authority 1
+* `156.67.104.212:28657`   — whale-vps2
+* `206.189.127.204:28657`  — DAC-Node 05
+* `161.97.89.27:28657`     — whale-vps3
 
 ---
 
@@ -373,15 +378,15 @@ WSL node mirrors Windows block progression within seconds — confirming that in
 
 ### Summary
 
-| Metric              | Windows Node | WSL Node    |
-|---------------------|-------------|-------------|
-| `eth.syncing`       | `false`     | `false`     |
-| `net.peerCount`     | 4           | 2–3         |
-| Official peers      | 3           | 1–2         |
-| Internal peers      | 1 (WSL)     | 1 (Win)     |
-| Internal peer type  | —           | `static`    |
-| Sync status         | Complete    | Complete    |
-| Uptime (2h 26m)     | 100%        | 100%        |
+| Metric             | Windows Node | WSL Node |
+| ------------------ | ------------ | -------- |
+| `eth.syncing`      | `false`      | `false`  |
+| `net.peerCount`    | 4            | 2–3      |
+| Official peers     | 3            | 1–2      |
+| Internal peers     | 1 (WSL)      | 1 (Win)  |
+| Internal peer type | —            | `static` |
+| Sync status        | Complete     | Complete |
+| Uptime (2h 26m)    | 100%         | 100%     |
 
 ---
 
@@ -397,20 +402,21 @@ Nodes were allowed a 1-hour warm-up period prior to data collection to ensure pe
 
 #### Data Summary
 
-| Metric | Windows Node | WSL Node |
-|--------|-------------|----------|
-| Duration | 2h 26m | 2h 26m |
-| Blocks imported | 585 | 585 |
-| Block start → end | 14,722,271 → 14,722,856 | 14,722,272 → 14,722,856 |
-| Avg block time | ~15 seconds | ~15 seconds |
-| Peer count (stable) | 4 (≈99.9%) | 2 (≈97%) |
-| Peer count (transient) | 5 — 2 brief spikes | 3 — initial ~4 minutes only |
-| Sync interruptions | 0 | 0 |
-| Uptime | 100% | 100% |
+| Metric                 | Windows Node            | WSL Node                    |
+| ---------------------- | ----------------------- | --------------------------- |
+| Duration               | 2h 26m                  | 2h 26m                      |
+| Blocks imported        | 585                     | 585                         |
+| Block start → end      | 14,722,271 → 14,722,856 | 14,722,272 → 14,722,856     |
+| Avg block time         | ~15 seconds             | ~15 seconds                 |
+| Peer count (stable)    | 4 (≈99.9%)              | 2 (≈97%)                    |
+| Peer count (transient) | 5 — 2 brief spikes      | 3 — initial ~4 minutes only |
+| Sync interruptions     | 0                       | 0                           |
+| Uptime                 | 100%                    | 100%                        |
 
 > Raw log data is available for verification:
-> - [monitor.log](logs/monitor.log) — Windows Node
-> - [monitor_wsl.log](logs/monitor_wsl.log) — WSL Node
+>
+> * [monitor.log](logs/monitor.log) — Windows Node
+> * [monitor_wsl.log](logs/monitor_wsl.log) — WSL Node
 
 ---
 
@@ -436,11 +442,11 @@ This demonstrates that synchronization quality is not directly dependent on peer
 
 #### Key Observations
 
-- **Steady-state behavior achieved after warm-up** — Peer counts stabilized into consistent ranges, confirming that measurements taken immediately after startup would not have been representative.
-- **Peer quality outweighs peer quantity** — Despite maintaining fewer peers, the WSL node remained fully synchronized and operational throughout the observation period.
-- **Internal peering acts as a stabilizing bridge** — The persistent connection between Windows and WSL ensures reliable block propagation, even when external peer availability is limited.
-- **Asymmetric topology by design** — The Windows node functions as the network anchor with higher peer count, while the WSL node operates as a support node with hybrid connectivity (internal + external peers).
-- **Peer fluctuation does not impact synchronization** — Minor variations in peer count did not affect block consistency or sync performance.
+* **Steady-state behavior achieved after warm-up** — Peer counts stabilized into consistent ranges, confirming that measurements taken immediately after startup would not have been representative.
+* **Peer quality outweighs peer quantity** — Despite maintaining fewer peers, the WSL node remained fully synchronized and operational throughout the observation period.
+* **Internal peering acts as a stabilizing bridge** — The persistent connection between Windows and WSL ensures reliable block propagation, even when external peer availability is limited.
+* **Asymmetric topology by design** — The Windows node functions as the network anchor with higher peer count, while the WSL node operates as a support node with hybrid connectivity (internal + external peers).
+* **Peer fluctuation does not impact synchronization** — Minor variations in peer count did not affect block consistency or sync performance.
 
 ---
 
@@ -458,10 +464,10 @@ Additionally, behavior under conditions such as complete loss of external peers,
 
 Under CGNAT conditions:
 
-- Stable operation emerges from peer quality and persistence, not peer quantity
-- Static peer configuration provides a reliable baseline for connectivity
-- Internal peering contributes to consistency across nodes
-- Nodes can reach a natural equilibrium state without inbound connectivity
+* Stable operation emerges from peer quality and persistence, not peer quantity
+* Static peer configuration provides a reliable baseline for connectivity
+* Internal peering contributes to consistency across nodes
+* Nodes can reach a natural equilibrium state without inbound connectivity
 
 ---
 
@@ -470,6 +476,23 @@ Under CGNAT conditions:
 Based on this dual-node setup, a companion desktop application was built to run both nodes — Windows and WSL — along with monitoring and logging, all from a single interface. No more managing multiple terminal windows separately.
 
 → [DAC Node Dashboard](DAC-Node-Dashboard/)
+
+---
+
+## Additional Repository Areas
+
+Although this repository started as a dual-node CGNAT setup, it now also includes several supporting areas related to DAC Testnet infrastructure testing, tooling, observation, and reporting.
+
+| Folder                                                                                 | Purpose                                                                                                                                                                                                 |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`monitoring/`](monitoring/)                                                           | Grafana, Prometheus, and related monitoring assets used to observe DAC node behavior, uptime, peers, sync status, RPC behavior, and infrastructure stability.                                           |
+| [`DAC-Node-Dashboard/`](DAC-Node-Dashboard/)                                           | A node dashboard application for monitoring and logging DAC nodes from a single interface, reducing the need to manage multiple terminal windows manually.                                              |
+| [`DAC-Contributions/`](DAC-Contributions/)                                             | Archive and ongoing progress related to DAC ecosystem contributions, including PR-related work and extended contribution tooling.                                                                       |
+| [`Sender-Web/`](Sender-Web/)                                                           | Web-based DAC testnet tools used for sender utilities, transaction testing, NFT-related tools, launchpad experiments, and other testnet interactions.                                                   |
+| [`Testnet_(Inception)_Technical_Reports/`](Testnet_%28Inception%29_Technical_Reports/) | Archive of technical reports created during DAC Testnet Inception, covering infrastructure observations, tooling validation, bugs, RPC behavior, transaction behavior, NFT testing, and field findings. |
+| [`Observation-for-Technical-Report/`](Observation-for-Technical-Report/)               | Tools built specifically to support technical reporting through structured observation, including infrastructure watchers, enode monitoring, snapshots, automation, and report-generation helpers.      |
+
+These additions do not replace the original dual-node setup focus. Instead, they extend the repository into a practical record of DAC Testnet participation from the perspective of infrastructure operation, tooling, observation, and technical reporting.
 
 ---
 
