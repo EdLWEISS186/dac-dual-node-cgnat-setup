@@ -512,6 +512,155 @@
       background: rgba(248, 113, 113, 0.78);
     }
 
+  
+    .export-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .export-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .export-panel {
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(15, 23, 42, 0.42);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .export-panel h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+    }
+
+    .export-panel p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .export-link-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .export-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      background: rgba(15, 23, 42, 0.36);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .export-link:hover {
+      border-color: rgba(88, 166, 255, 0.46);
+      background: rgba(88, 166, 255, 0.12);
+    }
+
+    .export-link span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+  
+    .custom-export-panel {
+      margin-top: 16px;
+      border: 1px solid rgba(88, 166, 255, 0.22);
+      background: rgba(88, 166, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .custom-export-panel h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+    }
+
+    .custom-export-panel p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .custom-export-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .custom-export-controls {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .custom-export-field label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .custom-export-field select {
+      width: 100%;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.72);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .custom-export-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .custom-export-button {
+      border: 1px solid rgba(88, 166, 255, 0.34);
+      border-radius: 999px;
+      background: rgba(88, 166, 255, 0.16);
+      color: var(--text);
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .custom-export-button:hover {
+      background: rgba(88, 166, 255, 0.28);
+    }
+
+    .custom-export-status {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
   </style>
 </head>
 <body>
@@ -565,6 +714,52 @@
           <h2>Report-Ready Summary</h2>
           <div id="reportSummary"></div>
         </div>
+      </div>
+
+      <div class="card section">
+        <h2>Export Links</h2>
+        <div class="export-grid">
+          <div class="export-panel">
+            <h3>Markdown Reports</h3>
+            <p>Range-specific Markdown reports for writing, archive notes, and AI-assisted analysis.</p>
+            <div class="export-link-list">
+              <a class="export-link" href="../reports/generated/custom/dac-enode-report-7d.md" target="_blank" rel="noopener">Last 7 Days <span>MD</span></a>
+              <a class="export-link" href="../reports/generated/custom/dac-enode-report-30d.md" target="_blank" rel="noopener">Last 30 Days <span>MD</span></a>
+              <a class="export-link" href="../reports/generated/custom/dac-enode-report-all.md" target="_blank" rel="noopener">All Time <span>MD</span></a>
+            </div>
+          </div>
+          <div class="export-panel">
+            <h3>JSON Summaries</h3>
+            <p>Structured JSON summaries for scripts, dashboards, and AI-assisted data review.</p>
+            <div class="export-link-list">
+              <a class="export-link" href="../reports/generated/custom/dac-enode-report-7d.json" target="_blank" rel="noopener">Last 7 Days <span>JSON</span></a>
+              <a class="export-link" href="../reports/generated/custom/dac-enode-report-30d.json" target="_blank" rel="noopener">Last 30 Days <span>JSON</span></a>
+              <a class="export-link" href="../reports/generated/custom/dac-enode-report-all.json" target="_blank" rel="noopener">All Time <span>JSON</span></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="custom-export-panel">
+          <h3>Custom Range Export</h3>
+          <p>Select an observation window and download a browser-generated Markdown or JSON export. This does not write files back to the repository.</p>
+          <div class="custom-export-controls">
+            <div class="custom-export-field">
+              <label for="customExportStart">From observation</label>
+              <select id="customExportStart"></select>
+            </div>
+            <div class="custom-export-field">
+              <label for="customExportEnd">To observation</label>
+              <select id="customExportEnd"></select>
+            </div>
+          </div>
+          <div class="custom-export-actions">
+            <button class="custom-export-button" type="button" id="downloadCustomMarkdown">Download Custom Markdown</button>
+            <button class="custom-export-button" type="button" id="downloadCustomJson">Download Custom JSON</button>
+          </div>
+          <div id="customExportStatus" class="custom-export-status"></div>
+        </div>
+
+        <p class="muted">Static report files are generated by the scheduled watcher workflow. Custom range exports are generated locally in the browser for download only.</p>
       </div>
 
       <div class="card section">
@@ -1404,6 +1599,282 @@
       renderTable("timeline", ["Index", "Phase", "Generated At", "Port", "Total", "Added", "Removed", "Severity"], rows);
     }
 
+    let customExportState = null;
+
+    function customExportLabel(item) {
+      const index = item.observation_index || "N/A";
+      const time = formatChartDateLabel(item.generated_at_source || "");
+      return `#${index} · ${time}`;
+    }
+
+    function setCustomExportStatus(message) {
+      const target = $("customExportStatus");
+      if (target) target.textContent = message;
+    }
+
+    function markdownEscape(value) {
+      return safe(value).replace(/\|/g, "\\|");
+    }
+
+    function markdownTable(headers, rows) {
+      const head = `| ${headers.join(" | ")} |`;
+      const sep = `| ${headers.map(() => "---").join(" | ")} |`;
+      const body = rows.map(row => `| ${row.map(markdownEscape).join(" | ")} |`);
+      return [head, sep, ...body].join("\n");
+    }
+
+    function countByKey(items, key) {
+      return items.reduce((acc, item) => {
+        const name = item[key] || "Unknown";
+        acc[name] = (acc[name] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function selectedCustomTimeline() {
+      if (!customExportState) return [];
+
+      const startEl = $("customExportStart");
+      const endEl = $("customExportEnd");
+      if (!startEl || !endEl) return [];
+
+      const startIndex = Number(startEl.value);
+      const endIndex = Number(endEl.value);
+
+      if (Number.isNaN(startIndex) || Number.isNaN(endIndex) || startIndex > endIndex) {
+        return [];
+      }
+
+      return customExportState.timeline.slice(startIndex, endIndex + 1);
+    }
+
+    function selectedCustomAnomalies(timeline) {
+      if (!customExportState) return [];
+
+      const indexes = new Set(timeline.map(item => item.observation_index));
+      return (customExportState.anomaly.anomalies || []).filter(item =>
+        indexes.has(item.observation && item.observation.observation_index)
+      );
+    }
+
+    function summarizeCustomTimeline(timeline) {
+      const totals = timeline.map(item => Number(item.current_total || 0));
+      const totalAdded = timeline.reduce((sum, item) => sum + Number(item.added_count || 0), 0);
+      const totalRemoved = timeline.reduce((sum, item) => sum + Number(item.removed_count || 0), 0);
+
+      return {
+        observation_count: timeline.length,
+        first_observation: timeline[0] || null,
+        last_observation: timeline[timeline.length - 1] || null,
+        min_enode_count: totals.length ? Math.min(...totals) : null,
+        max_enode_count: totals.length ? Math.max(...totals) : null,
+        avg_enode_count: totals.length ? Number((totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(2)) : null,
+        total_added_events: totalAdded,
+        total_removed_events: totalRemoved,
+        phase_counts: countByKey(timeline, "phase"),
+        status_counts: countByKey(timeline, "status")
+      };
+    }
+
+    function buildCustomJsonExport() {
+      const timeline = selectedCustomTimeline();
+
+      if (!timeline.length) {
+        throw new Error("Invalid custom range. Make sure From observation is earlier than or equal to To observation.");
+      }
+
+      const anomalies = selectedCustomAnomalies(timeline);
+      const summary = summarizeCustomTimeline(timeline);
+      const concentration = customExportState.concentration || {};
+      const concentrationReport = concentration.report_ready_summary || {};
+
+      return {
+        project: "DAC Enode Intelligence Watcher",
+        summary_type: "dashboard_custom_range_export",
+        generated_at_browser_utc: new Date().toISOString(),
+        export_source: "dashboard_browser",
+        important_note: "This browser-generated custom export is observation-based. It does not make official DAC ownership claims and is not automatically committed to the repository.",
+        range: {
+          from_observation_index: summary.first_observation && summary.first_observation.observation_index,
+          to_observation_index: summary.last_observation && summary.last_observation.observation_index,
+          from_source_time: summary.first_observation && summary.first_observation.generated_at_source,
+          to_source_time: summary.last_observation && summary.last_observation.generated_at_source,
+          from_source_time_readable: summary.first_observation && formatChartDateLabel(summary.first_observation.generated_at_source),
+          to_source_time_readable: summary.last_observation && formatChartDateLabel(summary.last_observation.generated_at_source)
+        },
+        observation_scope: summary,
+        anomaly_summary: {
+          selected_anomaly_signal_count: anomalies.length,
+          selected_severity_counts: countByKey(anomalies, "severity"),
+          selected_anomaly_type_counts: countByKey(anomalies, "anomaly_type"),
+          global_summary: customExportState.anomaly.report_summary || {}
+        },
+        concentration_summary: {
+          overall_concentration_label: concentration.overall_concentration_label,
+          headline: concentrationReport.headline,
+          key_observation: concentrationReport.key_observation,
+          interpretation: concentrationReport.interpretation,
+          disclaimer: concentration.disclaimer
+        },
+        timeline,
+        anomalies
+      };
+    }
+
+    function buildCustomMarkdownExport() {
+      const data = buildCustomJsonExport();
+      const timeline = data.timeline || [];
+      const anomalies = data.anomalies || [];
+
+      const lines = [
+        "# DAC Enode Intelligence Watcher — Custom Browser Export",
+        "",
+        `Generated at browser UTC: \`${data.generated_at_browser_utc}\``,
+        "",
+        `Range: **${safe(data.range.from_source_time_readable)} → ${safe(data.range.to_source_time_readable)}**`,
+        "",
+        "Important note: this browser-generated custom export is observation-based. It does not make official DAC ownership claims and is not automatically committed to the repository.",
+        "",
+        "## 1. Observation Scope",
+        "",
+        markdownTable(
+          ["Field", "Value"],
+          [
+            ["Observation count", data.observation_scope.observation_count],
+            ["From observation", data.range.from_observation_index],
+            ["To observation", data.range.to_observation_index],
+            ["Minimum enode count", data.observation_scope.min_enode_count],
+            ["Maximum enode count", data.observation_scope.max_enode_count],
+            ["Average enode count", data.observation_scope.avg_enode_count],
+            ["Total added events", data.observation_scope.total_added_events],
+            ["Total removed events", data.observation_scope.total_removed_events]
+          ]
+        ),
+        "",
+        "## 2. Anomaly Summary",
+        "",
+        markdownTable(
+          ["Field", "Value"],
+          [
+            ["Selected anomaly signals", data.anomaly_summary.selected_anomaly_signal_count],
+            ["Selected severity counts", JSON.stringify(data.anomaly_summary.selected_severity_counts)],
+            ["Selected anomaly type counts", JSON.stringify(data.anomaly_summary.selected_anomaly_type_counts)]
+          ]
+        ),
+        "",
+        "## 3. Concentration Context",
+        "",
+        markdownTable(
+          ["Field", "Value"],
+          [
+            ["Overall concentration label", data.concentration_summary.overall_concentration_label],
+            ["Headline", data.concentration_summary.headline],
+            ["Key observation", data.concentration_summary.key_observation],
+            ["Interpretation", data.concentration_summary.interpretation]
+          ]
+        ),
+        "",
+        "## 4. Observation Timeline",
+        "",
+        markdownTable(
+          ["#", "Phase", "Status", "Source Time", "Current", "Added", "Removed", "Port"],
+          timeline.map(item => [
+            item.observation_index,
+            item.phase,
+            item.status,
+            formatChartDateLabel(item.generated_at_source),
+            item.current_total,
+            item.added_count,
+            item.removed_count,
+            item.target_port
+          ])
+        )
+      ];
+
+      if (anomalies.length) {
+        lines.push(
+          "",
+          "## 5. Selected Anomalies",
+          "",
+          markdownTable(
+            ["Type", "Severity", "Observation", "Reason"],
+            anomalies.map(item => [
+              item.anomaly_type,
+              item.severity,
+              item.observation && item.observation.observation_index,
+              item.reason
+            ])
+          )
+        );
+      }
+
+      return lines.join("\n") + "\n";
+    }
+
+    function downloadTextFile(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function customExportFilename(extension) {
+      const timeline = selectedCustomTimeline();
+      const first = timeline[0] && timeline[0].observation_index;
+      const last = timeline[timeline.length - 1] && timeline[timeline.length - 1].observation_index;
+      return `dac-enode-report-custom-obs-${first}-to-${last}.${extension}`;
+    }
+
+    function downloadCustomExport(format) {
+      try {
+        if (format === "markdown") {
+          downloadTextFile(customExportFilename("md"), buildCustomMarkdownExport(), "text/markdown;charset=utf-8");
+          setCustomExportStatus("Custom Markdown export generated in browser.");
+          return;
+        }
+
+        const json = JSON.stringify(buildCustomJsonExport(), null, 2) + "\n";
+        downloadTextFile(customExportFilename("json"), json, "application/json;charset=utf-8");
+        setCustomExportStatus("Custom JSON export generated in browser.");
+      } catch (error) {
+        setCustomExportStatus(error.message);
+      }
+    }
+
+    function initCustomExport(latest, rotation, anomaly, concentration) {
+      const timeline = rotation.observation_timeline || [];
+      const startEl = $("customExportStart");
+      const endEl = $("customExportEnd");
+
+      if (!startEl || !endEl || !timeline.length) return;
+
+      customExportState = { latest, rotation, anomaly, concentration, timeline };
+
+      const options = timeline.map((item, index) => {
+        return `<option value="${index}">${customExportLabel(item)}</option>`;
+      }).join("");
+
+      startEl.innerHTML = options;
+      endEl.innerHTML = options;
+      startEl.value = "0";
+      endEl.value = String(timeline.length - 1);
+
+      const markdownButton = $("downloadCustomMarkdown");
+      const jsonButton = $("downloadCustomJson");
+
+      if (markdownButton) markdownButton.addEventListener("click", () => downloadCustomExport("markdown"));
+      if (jsonButton) jsonButton.addEventListener("click", () => downloadCustomExport("json"));
+
+      setCustomExportStatus(`Ready. ${timeline.length} observations available for custom export.`);
+    }
+
     async function init() {
       try {
         const [latest, manual, rotation, anomaly] = await Promise.all([
@@ -1431,6 +1902,7 @@
         renderPersistentIps(rotation);
         renderAnomalyEvents(anomaly);
         renderTimeline(rotation);
+        initCustomExport(latest, rotation, anomaly, concentration);
 
         $("loadState").style.display = "none";
         $("dashboard").style.display = "block";
