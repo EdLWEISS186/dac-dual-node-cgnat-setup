@@ -1,43 +1,162 @@
 # DAC Enode Intelligence Watcher
 
-Community-built observation tool by **JERUZZALEM — DAC Infra Tester**.
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+![Watcher](https://img.shields.io/badge/watcher-every%2015%20minutes-blue)
+![Reports](https://img.shields.io/badge/reports-Markdown%20%7C%20JSON%20%7C%20PDF-purple)
+![Dashboard](https://img.shields.io/badge/dashboard-GitHub%20Pages%20ready-0ea5e9)
+![Maintainer](https://img.shields.io/badge/maintainer-JERUZZALEM-orange)
 
-This project monitors the official DAC Testnet public enode page:
+Community-built DAC Testnet enode observation, intelligence, dashboard, and report export pipeline by **JERUZZALEM — DAC Infra Tester**.
 
-https://enodes.dachain.tech/testnet/
+This project monitors the public DAC Testnet enode source, preserves historical snapshots, enriches observed infrastructure data, detects rotation and anomaly signals, builds dashboards, and generates reusable Markdown, JSON, and PDF reports.
 
-It automatically observes the official enode list, captures structured data, analyzes changes, sends email notifications, and stores historical JSON snapshots inside this repository.
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Background](#background)
+- [Why This Matters](#why-this-matters)
+- [Monitoring Target](#monitoring-target)
+- [Current Capabilities](#current-capabilities)
+- [Architecture / Data Flow Topology](#architecture--data-flow-topology)
+- [Observation Phases](#observation-phases)
+- [Generated Outputs](#generated-outputs)
+- [Intelligence Layers](#intelligence-layers)
+- [Dashboard](#dashboard)
+- [Report Export Stack](#report-export-stack)
+- [GitHub Actions Automation](#github-actions-automation)
+- [Local Usage](#local-usage)
+- [Current Generated State](#current-generated-state)
+- [Version History](#version-history)
+- [Future Upgrade Direction](#future-upgrade-direction)
+- [Security Notes](#security-notes)
+- [Disclaimer](#disclaimer)
+- [Maintainer](#maintainer)
+
+---
+
+## Overview
+
+**DAC Enode Intelligence Watcher** is an independent observation tool for the DAC Testnet public enode page.
+
+It started as a simple automated watcher and evolved into a full observation pipeline:
+
+- official enode monitoring
+- JSON snapshot preservation
+- manual backfill support
+- rotation intelligence
+- anomaly detection
+- provider / ASN enrichment
+- live ASN lookup
+- DAC Infrastructure Signal inference
+- provider concentration risk summary
+- static dashboard visualization
+- fixed-range and custom-range report exports
+- Markdown, JSON, and optional PDF output
+
+The project is designed for infrastructure observation and technical reporting.
+
+It does not make official DAC ownership claims or definitive decentralization claims.
 
 ---
 
 ## Background
 
-This project was created as a continuation of the previous technical report:
+This project continues earlier manual technical observation work around DAC official enode evolution.
 
-[5. Official Enode Evolution Analysis — Infrastructure Rotation & Network Maturation](../../Testnet_%28Inception%29_Technical_Reports/5.%20Official%20Enode%20Evolution%20Analysis%20%E2%80%94%20Infrastructure%20Rotation%20%26%20Network%20Maturation.pdf)
+The original manual process depended on screenshots and text captures from the public enode page. That approach was useful for point-in-time evidence, but difficult to follow consistently because the source page can update and previous states are no longer visible.
 
-That report analyzed the evolution of DAC official enodes as an infrastructure signal, focusing on peer rotation, network maturation, and bootstrap-node behavior over time.
+This watcher turns that manual process into a repeatable automated workflow:
 
-The original report was based on manual observation and point-in-time analysis.
-
-**DAC Enode Intelligence Watcher** extends that work into a continuous observation system.
-
-Instead of manually checking the official enode page and risking missed updates, this watcher automatically captures each meaningful change and preserves it as structured historical data.
+    Manual observation
+            ↓
+    Risk of missed updates
+            ↓
+    Automated watcher
+            ↓
+    Structured JSON snapshots
+            ↓
+    Intelligence summaries
+            ↓
+    Dashboard + technical reports
 
 ---
 
-Schedule note:
+## Why This Matters
 
-The watcher now runs every 15 minutes to capture shorter enode-list rotation windows more accurately.
+Official enode changes may reflect infrastructure-level activity such as:
 
-GitHub Actions scheduled runs may still experience slight delays depending on platform load, so the project relies on `checked_at_utc`, source generated time, and snapshot timestamps for precise observation ordering.
+- bootstrap peer rotation
+- public peer refresh
+- node replacement
+- infrastructure scaling
+- network maintenance
+- testnet maturation
+- target port consistency or migration
+- unusually large peer-list reduction
+- abnormal rotation candidates for review
 
+A single manual observation can miss these changes.
 
-## Project Architecture / Data Flow Topology
+By preserving structured snapshots and derived summaries, this project makes it easier to review how the official enode list evolves over time.
 
-DAC Enode Intelligence Watcher has evolved from a simple watcher into a full observation, intelligence, reporting, and dashboard pipeline.
+---
 
-The current topology is:
+## Monitoring Target
+
+Target page:
+
+    https://enodes.dachain.tech/testnet/
+
+Observed source format:
+
+    Generated: Wed Jun 3 12:00:02 PM CEST 2026 | Target Port: 28657
+
+    admin.addPeer("enode://...@IP:28657");
+
+Current watcher schedule:
+
+    */15 * * * *
+
+The watcher runs every 15 minutes through GitHub Actions, with optional manual workflow execution.
+
+GitHub Actions scheduled runs may still experience slight delays depending on platform load, so the project uses source generated time, `checked_at_utc`, and snapshot timestamps for observation ordering.
+
+---
+
+## Current Capabilities
+
+The project currently supports:
+
+- scheduled DAC Testnet enode monitoring
+- manual GitHub Actions workflow execution
+- email notifications for meaningful changes
+- structured latest-state tracking
+- automated JSON snapshot preservation
+- manual pre-watcher backfill preservation
+- added / removed / unchanged enode detection
+- target port monitoring
+- deterministic change severity classification
+- deterministic AI-style summary output
+- rotation intelligence across manual and automated observations
+- anomaly signal detection
+- provider / ASN hint enrichment
+- live ASN lookup with cache fallback
+- DAC Infrastructure Signal inference
+- provider concentration risk summary
+- automated Markdown technical report generation
+- static dashboard visualization
+- dashboard charts
+- dashboard export links
+- browser-generated custom range exports
+- fixed Markdown, JSON, and optional PDF report generation
+
+---
+
+## Architecture / Data Flow Topology
+
+Current v1.9.3 topology:
 
     Official DAC Enode Source
     https://enodes.dachain.tech/testnet/
@@ -49,7 +168,7 @@ The current topology is:
     - detect added / removed / unchanged enodes
     - detect target port changes
     - classify change severity
-    - generate AI-style summary
+    - generate deterministic summary
     - send email notification
     - update latest.json
     - create snapshot when meaningful change is detected
@@ -62,69 +181,56 @@ The current topology is:
     build_rotation_intelligence.py
     - combine manual backfill snapshots
     - combine automated watcher snapshots
-    - calculate observation scope
-    - calculate enode count statistics
-    - detect persistent enodes
-    - detect persistent IPs
-    - enrich IPs with provider / ASN hints
-    - enrich IPs with DAC Infrastructure Signal
+    - calculate observation timeline
+    - detect persistent enodes and IPs
+    - enrich with provider hints
+    - enrich with live ASN lookup
+    - enrich with DAC Infrastructure Signal
             │
             ├── provider_hints.py
-            │   - static provider prefix heuristic
-            │   - provider_guess
-            │   - asn_hint
-            │   - provider_type
-            │   - country_hint
-            │   - confidence
-            │
-            ├── dac_signal_hints.py
-            │   - DAC Infrastructure Signal heuristic
-            │   - registry history signal
-            │   - peer identity signal
-            │   - persistence signal
-            │   - subnet pattern signal
-            │   - community inference disclaimer
+            ├── asn_lookup.py
+            └── dac_signal_hints.py
             │
             ▼
     data/rotation-intelligence-summary.json
             │
-            ▼
-    build_anomaly_detection.py
-    - scan observation timeline
-    - detect large count drops
-    - detect high removal events
-    - detect aggressive rotation
-    - detect unexpected target port
-    - generate anomaly summary
-            │
-            ▼
-    data/anomaly-detection-summary.json
-            │
-            ▼
-    build_concentration_risk.py
-    - read rotation intelligence summary
-    - read live ASN concentration
-    - read static provider / ASN hints
-    - read DAC Infrastructure Signal distribution
-    - calculate concentration label
-    - generate report-ready risk summary
-            │
-            ▼
-    data/concentration-risk-summary.json
-            │
-            ├───────────────────────────────┐
-            ▼                               ▼
-    generate_technical_report.py        dashboard/index.html
-    - executive summary                 - visual latest watcher state
-    - observation scope                  - provider / ASN summary
-    - persistent enodes/IPs              - DAC Infrastructure Signal summary
-    - provider / ASN summary             - anomaly summary
-    - DAC Infrastructure Signal summary  - persistent IP/enode tables
-    - anomaly summary                    - observation timeline
-    - technical interpretation
-            │
-            ▼
+            ├──────────────────────────────┐
+            ▼                              ▼
+    build_anomaly_detection.py       build_concentration_risk.py
+    - scan observation timeline      - read provider / ASN signals
+    - detect large count drops       - read live ASN concentration
+    - detect high removal events     - read DAC signal distribution
+    - detect aggressive rotation     - calculate concentration label
+    - detect target port anomalies   - generate report-ready summary
+            │                              │
+            ▼                              ▼
+    data/anomaly-detection-summary.json    data/concentration-risk-summary.json
+            │                              │
+            └──────────────┬───────────────┘
+                           ▼
+    generate_technical_report.py
+    - generate full Markdown technical report
+                           │
+                           ▼
     reports/generated/dac-enode-intelligence-report.md
+                           │
+                           ├────────────────────────────────────────────┐
+                           ▼                                            ▼
+    generate_custom_report.py                              dashboard/index.html
+    - generate 7D Markdown + JSON                           - latest state
+    - generate 30D Markdown + JSON                          - charts
+    - generate ALL TIME Markdown + JSON                     - tables
+                           │                                - export links
+                           ▼                                - custom browser export
+    reports/generated/custom/*.md
+    reports/generated/custom/*.json
+                           │
+                           ▼
+    generate_pdf_report.py
+    - generate optional fixed PDF reports from Markdown
+                           │
+                           ▼
+    reports/generated/custom/*.pdf
 
 GitHub Actions automation:
 
@@ -139,108 +245,21 @@ GitHub Actions automation:
     build_anomaly_detection.py
     build_concentration_risk.py
     generate_technical_report.py
+    generate_custom_report.py --range 7d --format both
+    generate_custom_report.py --range 30d --format both
+    generate_custom_report.py --range all --format both
+    generate_pdf_report.py --range 7d
+    generate_pdf_report.py --range 30d
+    generate_pdf_report.py --range all
             │
             ▼
     Commit generated outputs only when files change
-
-This topology allows the project to preserve raw observation evidence, enrich it with heuristic interpretation layers, detect anomaly candidates, assess provider / ASN concentration risk, generate report-ready output, and visualize the latest state through a dashboard.
-
-Important interpretation note:
-
-DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.
-
----
-
-## Manual Observation Challenge
-
-Before this watcher was created, the official DAC enode list was observed manually by saving screenshots and text files from the public enode page.
-
-This method worked for point-in-time documentation, but it was difficult to follow up consistently because the official enode page can update over time and previous states are no longer visible once the page changes.
-
-As shown below, some observations were successfully captured, while some days could be missed due to manual workload, timing, or limited availability.
-
-![Manual DAC enode observation was difficult to follow up consistently](assets/HardToFollowUp.png)
-
-This is the main reason why **DAC Enode Intelligence Watcher** was created.
-
-The watcher turns manual observation into an automated process by continuously checking the official source, extracting structured enode data, comparing it with the previous snapshot, and preserving meaningful changes as JSON evidence.
-
-Instead of relying only on screenshots and manual text files, the project now creates a repeatable observation pipeline:
-
-    Manual observation
-            ↓
-    Risk of missed updates
-            ↓
-    Automated watcher
-            ↓
-    Structured JSON snapshots
-            ↓
-    Email result and technical evidence
-
-This allows future enode evolution analysis to be based on more consistent historical data.
-
----
-
-## Purpose
-
-The purpose of this project is not only to send notifications.
-
-The main purpose is to support a technical observation workflow:
-
-    Observe official source
-            ↓
-    Collect structured enode data
-            ↓
-    Analyze infrastructure-level changes
-            ↓
-    Generate result
-            ↓
-    Store evidence and notify the observer
-
-The watcher helps preserve historical evidence by recording:
-
-- current official enode list
-- newly added enodes
-- removed enodes
-- unchanged enodes
-- target P2P port
-- target port changes
-- change severity
-- severity reason
-- AI-style summary
-- technical impact
-- recommended action
-- source generated timestamp
-- watcher check timestamp
-- structured JSON snapshots for later review
-
-This makes the observation process more consistent, repeatable, and useful for future technical reports.
-
----
-
-## Why This Matters
-
-Official enode changes can reflect infrastructure-level activity such as:
-
-- bootstrap peer rotation
-- network maintenance
-- public peer refresh
-- node replacement
-- infrastructure scaling
-- testnet maturation
-- target port consistency or migration
-- abnormal peer-list reduction
-- large infrastructure rotation events
-
-A single manual observation may miss these changes.
-
-By storing historical snapshots, this project makes it possible to review how the official enode list evolves over time.
 
 ---
 
 ## Observation Phases
 
-This project now contains two observation phases.
+This project separates historical and automated observations into two phases.
 
     Phase 1 — Manual Observation / Pre-Watcher Backfill
     May 15–31, 2026
@@ -251,362 +270,119 @@ This project now contains two observation phases.
     data/latest.json
     data/snapshots/
 
-The manual phase preserves historical data collected before the watcher existed.
-
-The automated phase continues the observation process using GitHub Actions, structured JSON snapshots, change classification, AI-style summaries, and email notifications.
-
-This separation makes the dataset clearer and prevents old manual data from interfering with the active watcher state.
+This separation keeps the dataset clear and prevents historical manual data from overwriting active watcher state.
 
 ---
 
-## Monitoring Target
+## Generated Outputs
 
-Target page:
-
-    https://enodes.dachain.tech/testnet/
-
-Observed source format:
-
-    Generated: Mon Jun 1 12:00:01 AM CEST 2026 | Target Port: 28657
-
-    admin.addPeer("enode://...@IP:28657");
-
----
-
-## Output Files
-
-The watcher stores active automated observation data in:
+Active watcher output:
 
     data/latest.json
-    data/snapshots/
+    data/snapshots/*.json
 
-Additional historical/manual data is stored in:
+Manual backfill output:
 
     manual-archive/
     data/manual-backfill/
+    data/manual-backfill/manual-backfill-summary.json
 
-### `data/latest.json`
+Intelligence summaries:
 
-Contains the latest observed state from the automated watcher.
+    data/rotation-intelligence-summary.json
+    data/anomaly-detection-summary.json
+    data/concentration-risk-summary.json
+    data/asn-cache.json
 
-This file acts as the comparison baseline for the next scheduled automated check.
+Generated technical report:
 
-The manual backfill data does not replace or modify `latest.json`.
+    reports/generated/dac-enode-intelligence-report.md
 
-### `data/snapshots/*.json`
+Custom report exports:
 
-Contains automated watcher snapshots created when:
+    reports/generated/custom/dac-enode-report-7d.md
+    reports/generated/custom/dac-enode-report-30d.md
+    reports/generated/custom/dac-enode-report-all.md
 
-- the watcher runs for the first time
-- new enodes are added
-- existing enodes are removed
-- the target port changes
+    reports/generated/custom/dac-enode-report-7d.json
+    reports/generated/custom/dac-enode-report-30d.json
+    reports/generated/custom/dac-enode-report-all.json
 
-Automated snapshots also include the current intelligence fields:
-
-- `change_severity`
-- `severity_reason`
-- `ai_style_summary`
-- `technical_impact`
-- `recommended_action`
-
-### `manual-archive/`
-
-Contains the original raw manual observation file:
-
-    manual-archive/Old Data Before Intelligence Watcher Created.txt
-
-This file preserves the original pre-watcher data exactly as collected manually.
-
-### `data/manual-backfill/`
-
-Contains structured JSON snapshots generated from the manual archive.
-
-These files are historical backfill data and are intentionally separated from automated watcher snapshots.
-
-### `data/manual-backfill/manual-backfill-summary.json`
-
-Contains a summary of the manual observation period, including:
-
-- total manual snapshots
-- first and last manual observation timestamp
-- observed target ports
-- unique enode count
-- minimum and maximum enode count
-- list of manual snapshot files
-
-### `data/rotation-intelligence-summary.json`
-
-Contains aggregated enode rotation intelligence generated from both manual backfill snapshots and automated watcher snapshots.
-
-This file provides:
-
-- total observation count
-- manual backfill snapshot count
-- automated watcher snapshot count
-- observed target ports
-- enode count minimum, maximum, and average
-- unique enode count
-- unique IP count
-- most persistent enodes
-- most persistent IPs
-- transition summary
-- observation timeline
-- report-ready summary
-
-This file is designed as a higher-level analysis layer for future technical reports.
-
-### `data/anomaly-detection-summary.json`
-
-Contains rule-based anomaly detection results generated from the rotation intelligence summary.
-
-This file provides:
-
-- total observations scanned
-- anomaly signal count
-- highest anomaly severity
-- anomaly severity counts
-- anomaly type counts
-- anomaly rules used
-- anomaly event details
-- report-ready anomaly summary
-- technical interpretation
-- recommended action
-
-This file is designed to highlight observations that may require deeper manual review.
-
-### `reports/generated/dac-enode-intelligence-report.md`
-
-Contains an automatically generated Markdown technical observation report.
-
-This report is generated from:
-
-- `data/latest.json`
-- `data/manual-backfill/manual-backfill-summary.json`
-- `data/rotation-intelligence-summary.json`
-- `data/anomaly-detection-summary.json`
-
-The generated report includes:
-
-- executive summary
-- observation scope
-- manual backfill context
-- latest automated watcher state
-- enode count statistics
-- most persistent enodes
-- most persistent IPs
-- anomaly detection summary
-- detected anomaly events
-- observation timeline
-- technical interpretation
-- conclusion
-
-This file is intended as a report-ready draft that can later be refined into a formal PDF technical report.
+    reports/generated/custom/dac-enode-report-7d.pdf
+    reports/generated/custom/dac-enode-report-30d.pdf
+    reports/generated/custom/dac-enode-report-all.pdf
 
 ---
 
-## Manual Backfill Dataset
+## Intelligence Layers
 
-Before the automated watcher was created, several official DAC enode snapshots had already been collected manually.
+### Change Detection
 
-Instead of discarding that historical data, the manual observations were preserved and converted into structured JSON backfill data.
-
-This backfill dataset represents the **pre-watcher manual observation period**.
-
-    Manual observation period:
-    May 15–31, 2026
-
-The current manual backfill contains:
-
-- 14 manually captured snapshots
-- 28 unique enodes observed
-- target port observed: `28657`
-- first manual snapshot: `Fri May 15 12:00:01 AM CEST 2026`
-- last manual snapshot: `Sun May 31 12:00:02 PM CEST 2026`
-
-This dataset is intentionally labeled as a **partial manual archive**.
-
-Missing dates represent missed observation windows, not confirmed absence of infrastructure changes.
-
----
-
-## Manual Backfill Parser
-
-The parser used to convert the raw manual archive into structured JSON is stored in:
-
-    parse_manual_backfill.py
-
-The parser reads the raw manual archive, extracts each `Generated:` block, parses enode entries, compares each manual snapshot against the previous manual snapshot, and generates structured JSON files.
+The watcher compares the current official enode list against `data/latest.json`.
 
 It tracks:
 
-- manual snapshot index
-- source type
-- source file
-- observation completeness
-- data gap note
-- generated timestamp from source
-- generated date
-- generated time
-- generated timezone
-- target port
-- previous target port
-- current target port
-- target port change status
-- previous enode total
-- current enode total
 - added enodes
 - removed enodes
 - unchanged enodes
-- parsed enode details
-- `admin.addPeer(...)` lines
-- snapshot file path
+- target port changes
+- previous and current totals
+- source generated timestamp
+- watcher check timestamp
 
-This keeps the old manual data compatible with the newer watcher snapshot format while clearly separating manual historical backfill from automated watcher output.
+A new automated snapshot is created only when meaningful change is detected.
 
----
+### Change Severity Classification
 
-## Change Detection Logic
+Each meaningful change is classified deterministically:
 
-The watcher compares the current official enode list against the previous `latest.json`.
+- `INFO`
+- `NONE`
+- `LOW`
+- `MEDIUM`
+- `HIGH`
+- `CRITICAL`
 
-It tracks:
+This helps separate minor peer refreshes from major rotation or abnormal conditions.
 
-- `added`
-- `removed`
-- `unchanged`
-- `target_port_changed`
-- `previous_target_port`
-- `current_target_port`
+### AI-Style Summary Layer
 
-If no enode or target-port change is detected, no new automated snapshot is created.
+The project includes a deterministic summary layer.
 
-This prevents unnecessary noise while preserving meaningful infrastructure changes.
+It is not a machine learning model.
 
----
+It turns raw change data into human-readable summaries, technical impact notes, and recommended actions.
 
-## Change Severity Classification
+### Rotation Intelligence
 
-The watcher now includes a deterministic severity classification layer.
-
-Each meaningful change is classified into one of the following categories:
-
-- `INFO` — initial baseline snapshot
-- `NONE` — no enode or target-port change detected
-- `LOW` — small enode rotation
-- `MEDIUM` — moderate enode rotation
-- `HIGH` — large enode rotation or target port change
-- `CRITICAL` — no enodes detected or sharp enode count drop
-
-The generated snapshot includes:
-
-- `change_severity`
-- `severity_reason`
-
-Example:
-
-    {
-      "change_severity": "LOW",
-      "severity_reason": "Small enode rotation detected: 1 added and 0 removed."
-    }
-
-This helps future technical reports distinguish between minor peer refreshes, major bootstrap rotation, target-port changes, and possible abnormal states.
-
----
-
-## AI-Style Summary Layer
-
-The watcher also generates an AI-style interpretation layer.
-
-This is not a machine learning model.
-
-It is a deterministic summary system that converts raw technical changes into human-readable observation output.
-
-Each changed snapshot includes:
-
-- `ai_style_summary`
-- `technical_impact`
-- `recommended_action`
-
-The AI-style summary may explain:
-
-- whether the change looks like a small peer refresh
-- whether the update may indicate infrastructure rotation
-- whether the target port changed
-- what the possible technical impact is
-- what action a node runner or observer may take
-
-Example output:
-
-    DAC official enode list changed: 1 enodes added, 0 removed, and 12 remained unchanged.
-    Current total: 13 enodes.
-
-    Rotation interpretation:
-    Small bootstrap peer rotation detected.
-
-    Technical impact:
-    This appears to be a minor peer-list refresh.
-
-    Recommended action:
-    No urgent action is required, but the snapshot is preserved for history.
-
-This makes the watcher more useful for technical observation because the output is not only raw data, but also structured interpretation.
-
----
-
-## Enode Rotation Intelligence
-
-The project now includes an aggregated rotation intelligence layer.
-
-This layer is generated by:
+Generated by:
 
     build_rotation_intelligence.py
 
-The script reads:
-
-- `data/manual-backfill/*.json`
-- `data/snapshots/*.json`
-- `data/latest.json`
-
-It then generates:
+Output:
 
     data/rotation-intelligence-summary.json
 
-The rotation intelligence summary combines manual and automated observation periods into one structured analysis file.
+This layer combines manual backfill and automated watcher snapshots into a single observation timeline.
 
-Current generated summary includes:
+It supports:
 
-- total observations: 16
-- manual backfill snapshots: 14
-- automated watcher snapshots: 2
-- unique enodes observed: 28
-- unique IPs observed: 28
-- target ports observed: `28657`
-- enode count minimum: 7
-- enode count maximum: 15
-- enode count average: 12.31
+- observation timeline analysis
+- persistent enode detection
+- persistent IP detection
+- provider / ASN enrichment
+- DAC Infrastructure Signal enrichment
+- report-ready summaries
 
-This makes it possible to identify persistent official enodes, recurring IPs, enode count patterns, and infrastructure rotation signals across the full observation dataset.
+### Anomaly Detection
 
----
-
-## Anomaly Detection Layer
-
-The project now includes a deterministic anomaly detection layer.
-
-This layer is generated by:
+Generated by:
 
     build_anomaly_detection.py
 
-The script reads:
-
-- `data/rotation-intelligence-summary.json`
-
-It then generates:
+Output:
 
     data/anomaly-detection-summary.json
-
-The anomaly detection layer scans the full observation timeline and highlights events that may indicate abnormal or high-impact infrastructure behavior.
 
 Current anomaly rules include:
 
@@ -620,349 +396,30 @@ Current anomaly rules include:
 - `LOW_CONTINUITY_RATIO`
 - `WATCHER_HIGH_SEVERITY_SIGNAL`
 
-Current generated summary includes:
+This layer marks observations as review candidates. It does not automatically conclude that the network is unhealthy.
 
-- total observations scanned: 16
-- anomaly signals detected: 5
-- highest severity: `HIGH`
-- high severity signals: 5
-- detected anomaly types:
-  - `LARGE_ENODE_COUNT_DROP`
-  - `HIGH_REMOVAL_EVENT`
-  - `AGGRESSIVE_ROTATION`
+### Provider / ASN Hint Layer
 
-This layer does not automatically conclude that the network is unhealthy.
+Generated by:
 
-Instead, it marks selected observations as candidates for deeper manual review and future technical reporting.
+    provider_hints.py
 
----
+This is a static heuristic enrichment layer.
 
-## Automated Technical Report Generator
+It provides:
 
-The project now includes an automated Markdown technical report generator.
+- `provider_guess`
+- `asn_hint`
+- `provider_type`
+- `country_hint`
+- `provider_confidence`
+- `provider_detection_method`
 
-This layer is generated by:
+Unknown values are intentionally preserved when no static prefix matches.
 
-    generate_technical_report.py
+### Live ASN Lookup Layer
 
-The script reads:
-
-- `data/latest.json`
-- `data/manual-backfill/manual-backfill-summary.json`
-- `data/rotation-intelligence-summary.json`
-- `data/anomaly-detection-summary.json`
-
-It then generates:
-
-    reports/generated/dac-enode-intelligence-report.md
-
-The generated report is designed as a reusable draft for future DAC Testnet infrastructure technical reports.
-
-It includes:
-
-- executive summary
-- observation scope
-- manual backfill context
-- latest automated watcher state
-- enode count statistics
-- most persistent enodes
-- most persistent IPs
-- anomaly detection summary
-- detected anomaly events
-- observation timeline
-- technical interpretation
-- conclusion
-
-This turns the watcher from a monitoring and analysis tool into a report preparation pipeline.
-
----
-
-## Custom Report Export Layer
-
-The project now includes a custom report export layer that can generate Markdown reports and structured JSON summaries.
-
-This layer generates range-specific Markdown reports that can be reused for technical writing, AI-assisted analysis, archive notes, or future PDF packaging.
-
-Helper file:
-
-    generate_custom_report.py
-
-Supported ranges:
-
-- `7d`
-- `30d`
-- `all`
-
-Supported formats:
-
-- `markdown`
-- `json`
-- `both`
-
-Manual Markdown commands:
-
-    python generate_custom_report.py --range 7d
-    python generate_custom_report.py --range 30d
-    python generate_custom_report.py --range all
-
-Manual JSON commands:
-
-    python generate_custom_report.py --range 7d --format json
-    python generate_custom_report.py --range 30d --format json
-    python generate_custom_report.py --range all --format json
-
-Manual Markdown + JSON commands:
-
-    python generate_custom_report.py --range 7d --format both
-    python generate_custom_report.py --range 30d --format both
-    python generate_custom_report.py --range all --format both
-
-Generated Markdown outputs:
-
-    reports/generated/custom/dac-enode-report-7d.md
-    reports/generated/custom/dac-enode-report-30d.md
-    reports/generated/custom/dac-enode-report-all.md
-
-Generated JSON outputs:
-
-    reports/generated/custom/dac-enode-report-7d.json
-    reports/generated/custom/dac-enode-report-30d.json
-    reports/generated/custom/dac-enode-report-all.json
-
-Data sources:
-
-- `data/latest.json`
-- `data/rotation-intelligence-summary.json`
-- `data/anomaly-detection-summary.json`
-- `data/concentration-risk-summary.json`
-
-Current generated result:
-
-- `7D`: `11 observations`, `1 selected anomaly signal`
-- `30D`: `21 observations`, `5 selected anomaly signals`
-- `ALL TIME`: `21 observations`, `5 selected anomaly signals`
-
-Important note:
-
-The custom Markdown report is designed as a reusable report-preparation layer, while the JSON summary is designed for structured AI-assisted analysis, dashboards, and future export layers.
-
-PDF generation is intentionally treated as optional packaging for a later release.
-
----
-
-## Optional PDF Export Layer
-
-The project now includes an optional PDF export layer.
-
-PDF files are treated as final packaging outputs, while Markdown and JSON remain the primary reusable report sources.
-
-Fixed PDF outputs are generated from the workflow-generated Markdown reports.
-
-Generated PDF outputs:
-
-    reports/generated/custom/dac-enode-report-7d.pdf
-    reports/generated/custom/dac-enode-report-30d.pdf
-    reports/generated/custom/dac-enode-report-all.pdf
-
-Helper file:
-
-    generate_pdf_report.py
-
-Dependency:
-
-    reportlab
-
-Manual commands:
-
-    python generate_pdf_report.py --range 7d
-    python generate_pdf_report.py --range 30d
-    python generate_pdf_report.py --range all
-
-Dashboard support:
-
-- static PDF report links
-- browser-based custom PDF print / save flow
-
-Important behavior:
-
-Static PDF files are generated by the scheduled GitHub Actions watcher workflow.
-
-Custom PDF export runs in the browser through the print dialog.
-
-Browser-generated custom PDFs are not committed back to the repository.
-
-For clean browser-generated PDF output, disable browser print headers and footers if needed.
-
----
-
-## Dashboard Export Links and Custom Range Export
-
-The dashboard now includes an export section.
-
-Static export links provide quick access to workflow-generated Markdown and JSON outputs.
-
-Static Markdown links:
-
-- `Last 7 Days`
-- `Last 30 Days`
-- `All Time`
-
-Static JSON links:
-
-- `Last 7 Days`
-- `Last 30 Days`
-- `All Time`
-
-Custom Range Export:
-
-- select `From observation`
-- select `To observation`
-- download custom Markdown
-- download custom JSON
-
-Important behavior:
-
-The static files are generated by the scheduled GitHub Actions watcher workflow.
-
-The custom range export is generated locally in the browser for download only.
-
-It does not run Python, does not update repository files, and does not commit generated files back to GitHub.
-
-This keeps the dashboard safe for GitHub Pages while still allowing flexible report extraction.
-
----
-
-## Dashboard Chart Layer
-
-The dashboard now includes a lightweight chart layer.
-
-The initial v1.8.0 implementation uses native HTML, CSS, JavaScript, and inline SVG.
-
-No external chart dependency is required.
-
-Current charts:
-
-- Enode Count Over Time
-- Added vs Removed Per Observation
-- Live ASN Distribution
-- DAC Infrastructure Signal Distribution
-- Anomaly Severity Count
-- Manual vs Automated Observations
-
-Core chart controls:
-
-- `7D`
-- `30D`
-- `ALL TIME`
-
-Data sources:
-
-    data/rotation-intelligence-summary.json
-    data/concentration-risk-summary.json
-    data/anomaly-detection-summary.json
-
-Chart input:
-
-    observation_timeline
-
-Fields used:
-
-- `observation_index`
-- `generated_at_source`
-- `current_total`
-- `added_count`
-- `removed_count`
-- `phase`
-- `status`
-
-Chart purpose:
-
-- show enode count movement over time
-- show rotation intensity per observation
-- separate total enode count from added / removed activity
-- show live ASN concentration visually
-- show DAC Infrastructure Signal distribution visually
-- show anomaly severity counts visually
-- show manual backfill vs automated watcher observation coverage
-- improve visual inspection before deeper technical reporting
-
-Core chart readability:
-
-- x-axis labels now use observation time instead of raw observation index
-- chart range controls support 7D, 30D, and ALL TIME views
-- Added / Removed legend now explicitly uses Added enodes and Removed enodes
-- Added / Removed values compare each observation against the previous observed enode list
-
-Completed chart layers:
-
-- Core movement charts
-- Distribution charts
-- Summary charts
-
----
-
-## Provider Concentration / Decentralization Risk Summary
-
-The project now includes a Provider Concentration / Decentralization Risk Summary layer.
-
-This layer provides an observation-based heuristic for checking whether observed enode IPs appear concentrated across a small number of ASNs, provider hints, country codes, or DAC Infrastructure Signal categories.
-
-Helper file:
-
-    build_concentration_risk.py
-
-Generated output:
-
-    data/concentration-risk-summary.json
-
-The current model uses:
-
-- Live ASN concentration
-- Live ASN name concentration
-- Live country concentration
-- Static provider hint concentration
-- Static ASN hint concentration
-- DAC Infrastructure Signal concentration
-
-Risk labels:
-
-- `LOW`
-- `MODERATE`
-- `ELEVATED`
-- `HIGH`
-- `INCONCLUSIVE`
-
-Current generated assessment:
-
-- Overall label: `ELEVATED`
-- Top live ASN: `AS51167`
-- Top live ASN share: `15 / 29 unique IPs` or `51.72%`
-- Top live ASN country: `DE`
-- Top country share: `18 / 29 unique IPs` or `62.07%`
-- Static provider hint remains limited because `Unknown` still dominates static hints.
-
-Dashboard note:
-
-The Observation Timeline now adds a 24-hour hint beside the original source timestamp, for example:
-
-    Tue Jun 2 12:00:01 PM CEST (12:00 CEST)
-    Tue Jun 2 10:00:02 PM CEST (22:00 CEST)
-
-This avoids confusion between 12-hour AM/PM formatting and technical observation order.
-
-Important note:
-
-Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement.
-
----
-
-## Live ASN Lookup Layer
-
-The project now includes an optional Live ASN Lookup Layer.
-
-This layer enriches observed enode IPs with live routing data from Team Cymru WHOIS lookup.
-
-Helper file:
+Generated by:
 
     asn_lookup.py
 
@@ -970,86 +427,36 @@ Cache file:
 
     data/asn-cache.json
 
-The lookup layer is designed to be workflow-safe:
+This layer enriches observed IPs with live routing data from Team Cymru WHOIS lookup.
 
-- static provider hints remain available
-- live ASN lookup is enrichment only
-- lookup results are cached
-- workflow does not fail if live lookup fails
-- failed lookups fall back to safe Unknown-style output
-- ASN data is not treated as official DAC node ownership
+It is workflow-safe:
 
-Generated live ASN fields include:
-
-- `live_asn`
-- `live_asn_name`
-- `live_bgp_prefix`
-- `live_country_code`
-- `live_registry`
-- `live_allocated`
-- `live_asn_lookup_success`
-- `live_asn_lookup_cached`
-- `live_asn_lookup_error`
-
-Generated summary outputs include:
-
-- `live_asn_lookup`
-- `live_asn_counts`
-- `live_asn_name_counts`
-- `live_asn_country_counts`
-- `live_asn_success_counts`
-- `live_asn_summary`
-
-The current implementation uses:
-
-    Team Cymru WHOIS live lookup
+- cache-aware
+- optional
+- fallback-safe
+- not treated as official ownership evidence
 
 Environment control:
 
     DAC_LIVE_ASN_LOOKUP=1    enable live lookup
-    DAC_LIVE_ASN_LOOKUP=0    disable live lookup and use safe fallback/cache behavior
+    DAC_LIVE_ASN_LOOKUP=0    disable live lookup
 
-Important note:
+### DAC Infrastructure Signal Layer
 
-Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership.
-
----
-
-## DAC Infrastructure Signal Layer
-
-The project now includes a DAC Infrastructure Signal Layer.
-
-This layer enriches observed enode IPs with community inference labels derived from:
-
-- observed registry history
-- peer identity strings from prior `admin.peers` evidence
-- persistence / survivorship across observations
-- recurring subnet patterns
-- provider hints
-- manual technical report evidence
-
-Helper file:
+Generated by:
 
     dac_signal_hints.py
 
-Generated signal fields include:
+This community inference layer uses:
 
-- `dac_infrastructure_signal`
-- `signal_category`
-- `signal_confidence`
-- `peer_identity_hint`
-- `historical_registry_status`
-- `signal_basis`
-- `official_ownership_claim`
-- `signal_detection_method`
-- `signal_source_reference`
-- `signal_disclaimer`
+- registry history
+- peer identity hints
+- persistence / survivorship
+- subnet patterns
+- provider hints
+- manual technical report evidence
 
-Important note:
-
-DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.
-
-Current generated DAC Infrastructure Signal examples include:
+Example labels:
 
 - `Authority-like Core Signal`
 - `Relay-like DAC Node Signal`
@@ -1062,97 +469,221 @@ Current generated DAC Infrastructure Signal examples include:
 - `Core Subnet Historical Signal`
 - `Unknown / No Signal`
 
-The layer is designed to improve infrastructure readability without claiming official node ownership.
+Important: this is not an official DAC classification.
+
+### Provider Concentration Risk
+
+Generated by:
+
+    build_concentration_risk.py
+
+Output:
+
+    data/concentration-risk-summary.json
+
+The current model checks concentration across:
+
+- live ASN
+- live ASN name
+- live country
+- static provider hint
+- static ASN hint
+- DAC Infrastructure Signal
+
+Risk labels:
+
+- `LOW`
+- `MODERATE`
+- `ELEVATED`
+- `HIGH`
+- `INCONCLUSIVE`
 
 ---
 
-## Provider / ASN Hint Layer
-
-The project now includes a heuristic Provider / ASN Hint Layer.
-
-This layer enriches observed enode IPs with static provider and ASN hints.
-
-Helper file:
-
-    provider_hints.py
-
-The provider hint layer is used by:
-
-- `build_rotation_intelligence.py`
-- `data/rotation-intelligence-summary.json`
-- `dashboard/index.html`
-- `generate_technical_report.py`
-- `reports/generated/dac-enode-intelligence-report.md`
-
-Generated provider fields include:
-
-- `provider_guess`
-- `asn_hint`
-- `provider_type`
-- `country_hint`
-- `provider_confidence`
-- `provider_detection_method`
-- `matched_prefix`
-- `provider_notes`
-
-The current implementation uses static IP prefix heuristics.
-
-It does not perform live ASN lookup.
-
-Current generated provider summary includes:
-
-- `Contabo / AS51167`
-- `DigitalOcean / AS14061`
-- `Hetzner / AS24940`
-- `OVHcloud / AS16276`
-- `Unknown`
-
-Important note:
-
-Provider and ASN values are enrichment hints, not final verified ASN truth.
-
-Unknown values are intentionally preserved when no static prefix matches. This prevents the system from guessing provider identity without enough evidence.
-
----
-
-## Dashboard Layer
-
-The project now includes a static HTML dashboard for visual inspection.
+## Dashboard
 
 Dashboard file:
 
     dashboard/index.html
 
-The dashboard reads local JSON outputs from:
+Preview locally:
 
-- `data/latest.json`
-- `data/manual-backfill/manual-backfill-summary.json`
-- `data/rotation-intelligence-summary.json`
-- `data/anomaly-detection-summary.json`
+    python3 -m http.server 8090
 
-It displays:
+Open:
+
+    http://localhost:8090/dashboard/
+
+The dashboard should be opened through a local HTTP server or GitHub Pages, not directly through `file://`, because it loads JSON data using `fetch()`.
+
+### Dashboard views
+
+The dashboard includes:
 
 - latest watcher state
-- AI-style summary
-- manual vs automated observation scope
-- total observations
-- unique enodes
-- unique IPs
-- target port
+- deterministic summary output
 - anomaly summary
 - report-ready summary
-- most persistent enodes
-- most persistent IPs
+- provider / ASN summary
+- live ASN summary
+- DAC Infrastructure Signal summary
+- provider concentration summary
+- persistent enode and IP tables
 - detected anomaly events
 - observation timeline
 
-The dashboard also includes the independent DAC Infra Tester identity card from:
+### Dashboard charts
 
-    assets/DAC-CARD.png
+Current charts:
 
-This image is used as a community contributor identity element and does not represent official DAC branding.
+- Enode Count Over Time
+- Added vs Removed Per Observation
+- Live ASN Distribution
+- DAC Infrastructure Signal Distribution
+- Anomaly Severity Count
+- Manual vs Automated Observations
 
-To preview locally, run:
+Chart controls:
+
+- `7D`
+- `30D`
+- `ALL TIME`
+
+The timeline uses readable source timestamps with 24-hour hints to avoid AM/PM ambiguity.
+
+### Dashboard exports
+
+Static dashboard links:
+
+- 7D / 30D / ALL TIME Markdown
+- 7D / 30D / ALL TIME JSON
+- 7D / 30D / ALL TIME PDF
+
+Custom browser export:
+
+- From observation
+- To observation
+- Download Custom Markdown
+- Download Custom JSON
+- Print / Save Custom PDF
+
+Custom browser exports run locally in the browser and are not committed back to the repository.
+
+---
+
+## Report Export Stack
+
+Markdown and JSON are the primary reusable formats.
+
+PDF is optional final packaging.
+
+### Markdown export
+
+Generated by:
+
+    generate_custom_report.py
+
+Commands:
+
+    python generate_custom_report.py --range 7d
+    python generate_custom_report.py --range 30d
+    python generate_custom_report.py --range all
+
+### JSON export
+
+Commands:
+
+    python generate_custom_report.py --range 7d --format json
+    python generate_custom_report.py --range 30d --format json
+    python generate_custom_report.py --range all --format json
+
+Generate both Markdown and JSON:
+
+    python generate_custom_report.py --range 7d --format both
+    python generate_custom_report.py --range 30d --format both
+    python generate_custom_report.py --range all --format both
+
+### PDF export
+
+Generated by:
+
+    generate_pdf_report.py
+
+Dependency:
+
+    reportlab
+
+Commands:
+
+    python generate_pdf_report.py --range 7d
+    python generate_pdf_report.py --range 30d
+    python generate_pdf_report.py --range all
+
+---
+
+## GitHub Actions Automation
+
+Workflow file:
+
+    .github/workflows/dac-enode-watcher.yml
+
+Schedule:
+
+    cron: "*/15 * * * *"
+
+The workflow can also be triggered manually from the GitHub Actions tab.
+
+Current pipeline:
+
+    watcher.py
+    build_rotation_intelligence.py
+    build_anomaly_detection.py
+    build_concentration_risk.py
+    generate_technical_report.py
+    generate_custom_report.py --range 7d --format both
+    generate_custom_report.py --range 30d --format both
+    generate_custom_report.py --range all --format both
+    generate_pdf_report.py --range 7d
+    generate_pdf_report.py --range 30d
+    generate_pdf_report.py --range all
+
+Generated outputs are committed only when files change.
+
+---
+
+## Local Usage
+
+Install dependencies:
+
+    pip install -r requirements.txt
+
+Run the watcher manually:
+
+    python watcher.py
+
+Rebuild intelligence summaries:
+
+    python build_rotation_intelligence.py
+    python build_anomaly_detection.py
+    python build_concentration_risk.py
+
+Generate the main technical report:
+
+    python generate_technical_report.py
+
+Generate custom reports:
+
+    python generate_custom_report.py --range 7d --format both
+    python generate_custom_report.py --range 30d --format both
+    python generate_custom_report.py --range all --format both
+
+Generate optional PDFs:
+
+    python generate_pdf_report.py --range 7d
+    python generate_pdf_report.py --range 30d
+    python generate_pdf_report.py --range all
+
+Preview dashboard:
 
     python3 -m http.server 8090
 
@@ -1160,1027 +691,94 @@ Then open:
 
     http://localhost:8090/dashboard/
 
-The dashboard should be opened through a local HTTP server or GitHub Pages, not directly through `file://`, because it loads JSON data using `fetch()`.
+---
+
+## Current Generated State
+
+Latest source time:
+
+    Wed Jun 3 12:00:02 PM CEST 2026
+
+Latest watcher check:
+
+    2026-06-03T10:23:29.960579+00:00
+
+Latest observed state:
+
+    Current enodes: 10
+    Added: 0
+    Removed: 4
+    Unchanged: 10
+    Target port: 28657
+
+Current observation scope:
+
+    Total observations: 22
+    Manual backfill observations: 14
+    Automated watcher observations: 8
+    First observation: Fri May 15 12:00:01 AM CEST 2026
+    Latest observation: Wed Jun 3 12:00:02 PM CEST 2026
+
+Current anomaly summary:
+
+    Anomaly signals: 5
+    Highest severity: HIGH
+    Severity counts: HIGH = 5
+    Detected types: LARGE_ENODE_COUNT_DROP, HIGH_REMOVAL_EVENT, AGGRESSIVE_ROTATION
+
+Current concentration summary:
+
+    Overall label: ELEVATED
+    Top live ASN: AS51167
+    Top live ASN share: 51.72%
+    Top live country: DE
+    Top live country share: 62.07%
+
+Current custom report outputs:
+
+    Markdown reports: 3
+    JSON summaries: 3
+    PDF reports: 3
 
 ---
 
-## GitHub Actions Schedule
-
-The watcher is executed by GitHub Actions every 15 minutes:
-
-    cron: "*/15 * * * *"
-
-It can also be triggered manually from the GitHub Actions tab.
-
-The workflow now runs the full watcher intelligence pipeline:
-
-    watcher.py
-        ↓
-    build_rotation_intelligence.py
-        ↓
-    build_anomaly_detection.py
-        ↓
-    generate_technical_report.py
-
-This means that when the official enode data changes, the workflow can automatically update:
-
-- `data/latest.json`
-- `data/snapshots/`
-- `data/rotation-intelligence-summary.json`
-- `data/anomaly-detection-summary.json`
-- `reports/generated/dac-enode-intelligence-report.md`
-
-The generated technical report uses the latest watcher timestamp instead of the workflow runtime timestamp.
-
-This keeps the report output deterministic when the watcher data does not change and prevents unnecessary scheduled commits.
-
----
-
-## Email Notification
-
-When a meaningful change is detected, the watcher sends an email notification containing:
-
-- source URL
-- generated time from the official source page
-- checked timestamp in UTC
-- previous total enode count
-- current total enode count
-- added enodes
-- removed enodes
-- unchanged enodes
-- target port status
-- change severity
-- severity reason
-- AI-style summary
-- rotation interpretation
-- technical impact
-- recommended action
-- snapshot file path
-
-Email credentials are stored securely using GitHub Actions repository secrets.
-
-Required secrets:
-
-- `SMTP_HOST`
-- `SMTP_PORT`
-- `SMTP_USER`
-- `SMTP_PASS`
-- `EMAIL_FROM`
-- `EMAIL_TO`
-
----
-
-## Current Intelligence Layer
-
-The current intelligence layer is deterministic and rule-based.
-
-It does not rely on a machine learning model.
-
-The watcher performs structured infrastructure observation by:
-
-- extracting official enode data
-- parsing node ID, IP, and port
-- comparing the current state with the previous snapshot
-- classifying enodes as added, removed, or unchanged
-- detecting target port changes
-- classifying change severity
-- generating severity reasons
-- generating AI-style summaries
-- generating technical impact notes
-- generating recommended actions
-- producing structured output for technical reporting
-
-This makes the system suitable for infrastructure monitoring, evidence preservation, and future report preparation.
-
----
-
-## Current Status
-
-The current version already supports:
-
-- official DAC enode page monitoring
-- scheduled GitHub Actions execution every 15 minutes
-- manual workflow execution
-- email notification
-- JSON snapshot generation
-- latest state tracking
-- historical automated snapshot preservation
-- manual pre-watcher backfill preservation
-- added, removed, and unchanged enode classification
-- target port change detection
-- raw manual archive preservation
-- manual archive parsing into structured JSON
-- change severity classification
-- severity reason generation
-- AI-style summary generation
-- technical impact generation
-- recommended action generation
-- enode rotation intelligence summary generation
-- persistent enode analysis
-- persistent IP analysis
-- manual + automated observation aggregation
-- report-ready rotation summary output
-- anomaly detection summary generation
-- large enode count drop detection
-- high removal event detection
-- aggressive rotation detection
-- report-ready anomaly interpretation
-- automated Markdown technical report generation
-- report-ready observation scope generation
-- report-ready timeline generation
-- report-ready technical interpretation generation
-- static HTML dashboard generation
-- dashboard-based latest watcher inspection
-- dashboard-based anomaly summary inspection
-- dashboard-based persistent enode/IP inspection
-- heuristic provider / ASN hint enrichment
-- provider summary generation
-- ASN summary generation
-- provider confidence labeling
-- provider / ASN dashboard visualization
-- provider / ASN report section generation
-- automated GitHub Actions intelligence pipeline rebuild
-- deterministic generated report timestamp
-- scheduled output commit only when generated files change
-- DAC Infrastructure Signal enrichment
-- DAC signal summary generation
-- DAC signal dashboard visualization
-- DAC signal technical report section generation
-- community inference disclaimer for non-official role signals
-- optional Live ASN lookup enrichment
-- Team Cymru WHOIS ASN lookup support
-- ASN cache generation
-- Live ASN dashboard visualization
-- Live ASN report section generation
-- provider concentration risk generation
-- concentration-risk-summary.json generation
-- concentration summary dashboard visualization
-- concentration section in generated technical report
-- dashboard core chart layer
-- Enode Count Over Time chart
-- Added vs Removed Per Observation chart
-- Live ASN Distribution chart
-- DAC Infrastructure Signal Distribution chart
-- Anomaly Severity Count chart
-- Manual vs Automated Observations chart
-- summary chart units for signals and observations
-- custom Markdown report exporter
-- 7D custom Markdown report
-- 30D custom Markdown report
-- ALL TIME custom Markdown report
-- scheduled workflow generation for custom Markdown reports
-- custom JSON summary exporter
-- 7D custom JSON summary
-- 30D custom JSON summary
-- ALL TIME custom JSON summary
-- scheduled workflow generation for Markdown + JSON custom reports
-- dashboard static export links for Markdown reports
-- dashboard static export links for JSON summaries
-- dashboard browser-generated custom Markdown export
-- dashboard browser-generated custom JSON export
-- custom export From / To observation selector
-- optional fixed PDF report generation
-- static dashboard PDF report links
-- browser-based custom PDF print / save export
-- reportlab dependency for PDF generation
-- 7D / 30D / ALL TIME chart range controls
-- readable observation-time x-axis labels
-- clarified Added enodes / Removed enodes legend
-- 24-hour timestamp hint for dashboard timeline readability
-
----
-
-## Version Notes
-
-### v1.0 — Automated Enode Watcher
-
-Initial working version.
-
-Features:
-
-- monitor official DAC enode page
-- detect added, removed, and unchanged enodes
-- detect target port changes
-- send email notification
-- generate JSON snapshots
-- commit snapshot data through GitHub Actions
-
-### v1.1 — Change Severity Classification
-
-Added deterministic classification for enode changes.
-
-New fields:
-
-- `change_severity`
-- `severity_reason`
-
-Severity levels:
-
-- `INFO`
-- `NONE`
-- `LOW`
-- `MEDIUM`
-- `HIGH`
-- `CRITICAL`
-
-### v1.2 — AI-Style Summary Layer
-
-Added human-readable interpretation output for each meaningful change.
-
-New fields:
-
-- `ai_style_summary`
-- `technical_impact`
-- `recommended_action`
-
-This improves the watcher from a raw monitoring bot into a more useful infrastructure observation assistant.
-
-### v1.3 — Enode Rotation Intelligence
-
-Added aggregated rotation intelligence across manual backfill and automated watcher snapshots.
-
-New files:
-
-- `build_rotation_intelligence.py`
-- `data/rotation-intelligence-summary.json`
-
-New analysis output:
-
-- total observation count
-- manual and automated snapshot count
-- unique enode count
-- unique IP count
-- target port history
-- enode count min, max, and average
-- most persistent enodes
-- most persistent IPs
-- transition summary
-- report-ready summary
-
-This adds a higher-level infrastructure intelligence layer for future technical reporting.
-
-### v1.4 — Anomaly Detection Layer
-
-Added deterministic anomaly detection over the rotation intelligence timeline.
-
-New files:
-
-- `build_anomaly_detection.py`
-- `data/anomaly-detection-summary.json`
-
-New analysis output:
-
-- anomaly signal count
-- highest anomaly severity
-- anomaly severity counts
-- anomaly type counts
-- anomaly event details
-- anomaly rules
-- report-ready anomaly summary
-- technical interpretation
-- recommended action
-
-Initial generated result:
-
-- total observations scanned: 16
-- anomaly signals detected: 5
-- highest severity: `HIGH`
-- detected anomaly types:
-  - `LARGE_ENODE_COUNT_DROP`
-  - `HIGH_REMOVAL_EVENT`
-  - `AGGRESSIVE_ROTATION`
-
-This adds a review layer for identifying unusual enode rotation behavior without automatically assuming network failure.
-
-### v1.5 — Automated Technical Report Generator
-
-Added a Markdown technical report generator.
-
-New files:
-
-- `generate_technical_report.py`
-- `reports/generated/dac-enode-intelligence-report.md`
-
-New report output:
-
-- executive summary
-- observation scope
-- manual backfill context
-- latest automated watcher state
-- enode count statistics
-- persistent enode table
-- persistent IP table
-- anomaly detection summary
-- detected anomaly events
-- observation timeline
-- technical interpretation
-- conclusion
-
-This turns the project into a report preparation pipeline for future DAC Testnet infrastructure reports.
-
----
-
-### v1.6 — Dashboard Layer
-
-Added a static HTML dashboard for visual inspection of watcher outputs.
-
-New files:
-
-- `dashboard/index.html`
-
-Dashboard data sources:
-
-- `data/latest.json`
-- `data/manual-backfill/manual-backfill-summary.json`
-- `data/rotation-intelligence-summary.json`
-- `data/anomaly-detection-summary.json`
-
-Dashboard output includes:
-
-- latest watcher state
-- AI-style summary
-- anomaly summary
-- report-ready summary
-- most persistent enodes
-- most persistent IPs
-- detected anomaly events
-- observation timeline
-
-The dashboard also uses:
-
-- `assets/DAC-CARD.png`
-
-This image represents the independent DAC Infra Tester contributor identity and avoids using official DAC branding.
-
-### v1.6.1 — Provider / ASN Hint Layer
-
-Added heuristic provider and ASN enrichment for observed enode IPs.
-
-New file:
-
-- `provider_hints.py`
-
-Updated files:
-
-- `build_rotation_intelligence.py`
-- `generate_technical_report.py`
-- `dashboard/index.html`
-- `data/rotation-intelligence-summary.json`
-- `reports/generated/dac-enode-intelligence-report.md`
-
-New output fields:
-
-- `provider_guess`
-- `asn_hint`
-- `provider_type`
-- `country_hint`
-- `provider_confidence`
-- `provider_detection_method`
-- `matched_prefix`
-- `provider_notes`
-
-New summary output:
-
-- `provider_counts`
-- `asn_counts`
-- `provider_type_counts`
-- `provider_confidence_counts`
-- `provider_summary`
-- `asn_summary`
-- `provider_asn_summary`
-
-Initial generated result:
-
-- `Contabo / AS51167`: 3 unique IPs
-- `DigitalOcean / AS14061`: 1 unique IP
-- `Hetzner / AS24940`: 1 unique IP
-- `OVHcloud / AS16276`: 1 unique IP
-- `Unknown`: 22 unique IPs
-
-This layer improves infrastructure readability while keeping the result honest by labeling unmatched IPs as `Unknown`.
-
-### v1.6.2 — DAC Infrastructure Signal Layer
-
-Added community inference labels for observed enode IPs.
-
-New file:
-
-- `dac_signal_hints.py`
-
-Updated files:
-
-- `build_rotation_intelligence.py`
-- `generate_technical_report.py`
-- `dashboard/index.html`
-- `data/rotation-intelligence-summary.json`
-- `reports/generated/dac-enode-intelligence-report.md`
-- `README.md`
-
-New output fields:
-
-- `dac_infrastructure_signal`
-- `signal_category`
-- `signal_confidence`
-- `peer_identity_hint`
-- `historical_registry_status`
-- `signal_basis`
-- `official_ownership_claim`
-- `signal_detection_method`
-- `signal_source_reference`
-- `signal_disclaimer`
-
-New summary output:
-
-- `dac_infrastructure_signal_counts`
-- `signal_category_counts`
-- `signal_confidence_counts`
-- `dac_infrastructure_signal_summary`
-
-Initial generated result includes:
-
-- `Authority-like Core Signal`: 3 unique IPs
-- `Community VPS-like Signal`: 4 unique IPs
-- `Relay-like DAC Node Signal`: 1 unique IP
-- `Internal RPC-like Signal`: 1 unique IP
-- `Unlisted Active Peer Signal`: 1 unique IP
-- `Unknown / No Signal`: 12 unique IPs
-
-Important interpretation:
-
-DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.
-
-This layer improves node-role readability without claiming official ownership.
-
-### v1.6.3 — Live ASN Lookup Option
-
-Added optional live ASN lookup enrichment for observed enode IPs.
-
-New file:
-
-- `asn_lookup.py`
-
-New cache file:
-
-- `data/asn-cache.json`
-
-Updated files:
-
-- `build_rotation_intelligence.py`
-- `generate_technical_report.py`
-- `dashboard/index.html`
-- `data/rotation-intelligence-summary.json`
-- `reports/generated/dac-enode-intelligence-report.md`
-- `README.md`
-
-New output fields:
-
-- `live_asn`
-- `live_asn_name`
-- `live_bgp_prefix`
-- `live_country_code`
-- `live_registry`
-- `live_allocated`
-- `live_asn_lookup_success`
-- `live_asn_lookup_cached`
-- `live_asn_lookup_error`
-
-New summary outputs:
-
-- `live_asn_lookup`
-- `live_asn_counts`
-- `live_asn_name_counts`
-- `live_asn_country_counts`
-- `live_asn_success_counts`
-- `live_asn_summary`
-
-Initial generated result includes:
-
-- `AS51167`: 15 unique IPs
-- `AS14061`: 4 unique IPs
-- `AS24940`: 2 unique IPs
-- `AS18403`: 2 unique IPs
-- `AS141995`: 2 unique IPs
-- `AS45899`: 1 unique IP
-- `AS16276`: 1 unique IP
-- `AS47583`: 1 unique IP
-- `AS26832`: 1 unique IP
-
-Live lookup validation:
-
-- all 29 unique IPs returned successful live ASN lookup results
-- `live_asn_success_counts`: `True = 29`
-
-Important interpretation:
-
-Live ASN lookup improves routing/provider visibility, but it does not represent official DAC node ownership.
-
-It should be read together with:
-
-- static Provider / ASN Hint Layer
-- DAC Infrastructure Signal Layer
-- registry observation history
-- manual technical report evidence
-
-### v1.9.3 — Optional PDF Export
-
-Added optional PDF export as the final packaging layer.
-
-Updated files:
-
-- `.github/workflows/dac-enode-watcher.yml`
-- `dashboard/index.html`
-- `requirements.txt`
-- `README.md`
-
-New file:
-
-- `generate_pdf_report.py`
-
-New generated outputs:
-
-- `reports/generated/custom/dac-enode-report-7d.pdf`
-- `reports/generated/custom/dac-enode-report-30d.pdf`
-- `reports/generated/custom/dac-enode-report-all.pdf`
-
-New dependency:
-
-- `reportlab`
-
-Manual commands:
-
-- `python generate_pdf_report.py --range 7d`
-- `python generate_pdf_report.py --range 30d`
-- `python generate_pdf_report.py --range all`
-
-Workflow behavior:
-
-The scheduled watcher workflow now generates fixed PDF reports after Markdown and JSON reports are generated.
-
-Dashboard behavior:
-
-The dashboard now includes static PDF links for:
-
-- `Last 7 Days`
-- `Last 30 Days`
-- `All Time`
-
-The dashboard also supports browser-based custom PDF export using:
-
-- `Print / Save Custom PDF`
-
-Important implementation detail:
-
-Fixed PDF reports are generated by Python from workflow-generated Markdown reports.
-
-Custom browser PDF export is generated through the browser print dialog and does not write files back to the repository.
-
-Why this matters:
-
-v1.9.3 completes the open-source report export stack.
-
-Markdown remains the most editable format.
-JSON remains the best format for AI and structured analysis.
-PDF provides a convenient final sharing and presentation format.
-
-Validation performed:
-
-- `reportlab` installed locally
-- `generate_pdf_report.py` compiled successfully
-- 7D PDF generated successfully
-- 30D PDF generated successfully
-- ALL TIME PDF generated successfully
-- generated PDF files validated as PDF 1.4 documents
-- dashboard static PDF links displayed correctly
-- custom browser PDF export button displayed correctly
-- custom browser PDF export confirmed with selected observation range
-- custom browser PDF orientation adjusted to portrait-friendly layout
-
-Final status:
-
-v1.9.3 completes the planned export roadmap.
-
----
-
-### v1.9.2 — Dashboard Export Links and Custom Range Export
-
-Added dashboard access to generated report outputs and browser-based custom range export.
-
-Updated file:
-
-- `dashboard/index.html`
-
-Updated documentation:
-
-- `README.md`
-
-New dashboard section:
-
-- `Export Links`
-
-Static Markdown links:
-
-- `Last 7 Days`
-- `Last 30 Days`
-- `All Time`
-
-Static JSON links:
-
-- `Last 7 Days`
-- `Last 30 Days`
-- `All Time`
-
-Custom browser export:
-
-- `From observation`
-- `To observation`
-- `Download Custom Markdown`
-- `Download Custom JSON`
-
-Important implementation detail:
-
-Static export links point to files generated by the scheduled watcher workflow.
-
-Custom range export runs entirely in the browser and downloads the selected range as a local file.
-
-It does not run Python, does not update repository files, and does not commit generated files back to GitHub.
-
-Why this matters:
-
-v1.9.2 makes the dashboard usable as a report access surface, not only a visual inspection surface.
-
-Users can quickly open fixed 7D / 30D / ALL TIME reports or generate a custom observation-window export directly from the dashboard.
-
-Validation performed:
-
-- Export Links section displayed correctly in localhost
-- Static Markdown and JSON link layout displayed correctly
-- Custom Range Export UI displayed correctly
-- From / To observation dropdowns populated from `rotation.observation_timeline`
-- Browser-generated custom Markdown export confirmed
-- Browser-generated custom JSON export confirmed
-
-Next planned upgrade:
-
-- Export roadmap completed through v1.9.3
-
----
-
-### v1.9.1 — Custom JSON Report Summary Export
-
-Added structured JSON summary export to the existing custom report generator.
-
-Updated file:
-
-- `generate_custom_report.py`
-
-Updated workflow:
-
-- `.github/workflows/dac-enode-watcher.yml`
-
-Updated documentation:
-
-- `README.md`
-
-New generated outputs:
-
-- `reports/generated/custom/dac-enode-report-7d.json`
-- `reports/generated/custom/dac-enode-report-30d.json`
-- `reports/generated/custom/dac-enode-report-all.json`
-
-New CLI option:
-
-- `--format markdown`
-- `--format json`
-- `--format both`
-
-Default behavior:
-
-- `--format markdown`
-
-Workflow behavior:
-
-The scheduled watcher workflow now runs custom report generation with `--format both`, producing Markdown and JSON outputs for:
-
-- `7d`
-- `30d`
-- `all`
-
-Current generated JSON result:
-
-- `7D`: `11 observations`, `1 selected anomaly signal`, `HIGH = 1`
-- `30D`: `21 observations`, `5 selected anomaly signals`, `HIGH = 5`
-- `ALL TIME`: `21 observations`, `5 selected anomaly signals`, `HIGH = 5`
-
-JSON summary includes:
-
-- latest observation summary
-- selected observation scope
-- enode movement summary
-- selected anomaly summary
-- provider / ASN concentration summary
-- selected timeline rows
-- selected anomaly rows
-- report-use notes
-
-Why this matters:
-
-v1.9.1 makes the custom report layer useful not only for human-readable reports, but also for structured AI-assisted analysis.
-
-The JSON summaries are easier to reuse in dashboards, scripts, data pipelines, and future export layers.
-
-Next planned upgrade:
-
-- Export roadmap completed through v1.9.3
-
----
-
-### v1.9.0 — Custom Markdown Report Export Layer
-
-Added a range-aware custom Markdown report exporter.
-
-New file:
-
-- `generate_custom_report.py`
-
-New generated outputs:
-
-- `reports/generated/custom/dac-enode-report-7d.md`
-- `reports/generated/custom/dac-enode-report-30d.md`
-- `reports/generated/custom/dac-enode-report-all.md`
-
-Updated files:
-
-- `.github/workflows/dac-enode-watcher.yml`
-- `README.md`
-
-Supported ranges:
-
-- `7d`
-- `30d`
-- `all`
-
-Manual commands:
-
-- `python generate_custom_report.py --range 7d`
-- `python generate_custom_report.py --range 30d`
-- `python generate_custom_report.py --range all`
-
-Workflow automation:
-
-The scheduled watcher workflow now rebuilds all custom Markdown reports after the main technical report generation step.
-
-Current generated result:
-
-- `7D`: `11 observations`, `1 selected anomaly signal`
-- `30D`: `21 observations`, `5 selected anomaly signals`
-- `ALL TIME`: `21 observations`, `5 selected anomaly signals`
-
-Why this matters:
-
-v1.9.0 adds a reusable report-preparation layer.
-
-The generated Markdown files can be used directly for technical reports, archive notes, AI-assisted analysis, or later PDF packaging.
-
-Design decision:
-
-Markdown export is implemented before PDF generation because Markdown is easier to inspect, edit, reuse, and process with AI tools.
-
-PDF generation remains optional for a later release.
-
-Next planned upgrade:
-
-- Export roadmap completed through v1.9.3
-
----
-
-### v1.8.2 — Summary Dashboard Chart Layer
-
-Added summary charts to complete the staged v1.8 dashboard chart rollout.
-
-Updated file:
-
-- `dashboard/index.html`
-
-Updated documentation:
-
-- `README.md`
-
-New dashboard section:
-
-- `Summary Charts`
-
-New charts:
-
-- `Anomaly Severity Count`
-- `Manual vs Automated Observations`
-
-Data sources:
-
-- `data/anomaly-detection-summary.json`
-- `data/rotation-intelligence-summary.json`
-
-Summary fields used:
-
-- `anomaly.report_summary.severity_counts`
-- `rotation.observation_timeline[].phase`
-
-Current generated result:
-
-- `HIGH`: `5 signals`
-- `Manual backfill`: `14 observations`
-- `Automated watcher`: `7 observations`
-
-Implementation detail:
-
-Summary charts reuse the existing horizontal distribution renderer but apply context-specific units:
-
-- anomaly severity uses `signals`
-- observation phase coverage uses `observations`
-- provider / ASN distribution charts continue to use `IPs`
-
-Why this matters:
-
-v1.8.2 completes the initial dashboard chart layer.
-
-The dashboard can now visually summarize movement, rotation activity, provider / signal distribution, anomaly severity, and observation coverage.
-
-This improves fast review before deeper report writing and makes the dashboard more useful under the new 15-minute watcher schedule.
-
-Next planned upgrade:
-
-- v1.9 — Custom report export layer / optional PDF generation
-
----
-
-### v1.8.1 — Distribution Dashboard Chart Layer
-
-Added distribution charts and improved core chart readability.
-
-Updated file:
-
-- `dashboard/index.html`
-
-Updated documentation:
-
-- `README.md`
-
-New dashboard section:
-
-- `Distribution Charts`
-
-New charts:
-
-- `Live ASN Distribution`
-- `DAC Infrastructure Signal Distribution`
-
-Data source:
-
-- `data/concentration-risk-summary.json`
-
-Distribution fields used:
-
-- `live_asn_concentration.distribution`
-- `dac_signal_concentration.distribution`
-
-Core chart improvements:
-
-- added `7D`, `30D`, and `ALL TIME` range controls
-- replaced raw observation index x-axis labels with readable observation-time labels
-- moved `Observation time` into a cleaner chart caption
-- clarified rotation legend as `Added enodes` and `Removed enodes`
-- added explanatory note that added / removed values compare each observation against the previous observed enode list
-
-Why this matters:
-
-v1.8.1 makes the dashboard more useful for fast visual interpretation of provider concentration and DAC Infrastructure Signal spread.
-
-It also makes the core rotation charts easier to read when observation history grows under the new 15-minute watcher schedule.
-
-Future chart work:
-
-- v1.9 — Custom report export layer / optional PDF generation
-
----
-
-### v1.8.0 — Core Dashboard Chart Layer
-
-Added the first dashboard chart layer.
-
-Updated file:
-
-- `dashboard/index.html`
-
-New dashboard section:
-
-- `Core Charts`
-
-New charts:
-
-- `Enode Count Over Time`
-- `Added vs Removed Per Observation`
-
-Implementation details:
-
-- native SVG chart rendering
-- no external chart dependency
-- charts read from `rotation.observation_timeline`
-- tooltips use original source timestamp with 24-hour hint where available
-
-Why this matters:
-
-The dashboard can now visually show both total enode count movement and per-observation rotation intensity.
-
-This makes the watcher more useful for quick infrastructure observation before preparing deeper technical reports.
-
-Future chart work:
-
-- v1.8.1 — Live ASN and DAC Infrastructure Signal distribution charts
-- v1.9 — Custom report export layer / optional PDF generation
-
----
-
-### v1.7 — Provider Concentration / Decentralization Risk Summary
-
-Added an observation-based concentration summary layer.
-
-New file:
-
-- `build_concentration_risk.py`
-
-New generated output:
-
-- `data/concentration-risk-summary.json`
-
-Updated files:
-
-- `.github/workflows/dac-enode-watcher.yml`
-- `generate_technical_report.py`
-- `dashboard/index.html`
-- `reports/generated/dac-enode-intelligence-report.md`
-- `README.md`
-
-New report section:
-
-- `Provider Concentration / Decentralization Risk Summary`
-
-New dashboard section:
-
-- `Provider Concentration / Decentralization Risk Summary`
-
-Dashboard readability improvement:
-
-- Observation Timeline now shows a 24-hour hint after original source timestamps.
-- Example: `Tue Jun 2 10:00:02 PM CEST (22:00 CEST)`
-
-Initial generated result:
-
-- Overall concentration label: `ELEVATED`
-- Top live ASN: `AS51167`
-- Top live ASN share: `15 / 29 unique IPs` or `51.72%`
-- Top live country: `DE`
-- Top live country share: `18 / 29 unique IPs` or `62.07%`
-- Static provider hint top value: `Unknown`, showing why live ASN enrichment is useful.
-
-Important interpretation:
-
-This layer does not make a final decentralization claim. It provides a cautious observation-based heuristic for report preparation.
-
----
-
-### Production Automation Polish
-
-Improved GitHub Actions automation so scheduled watcher runs now rebuild the full intelligence pipeline automatically.
-
-Updated workflow:
-
-- runs `watcher.py`
-- rebuilds rotation intelligence
-- rebuilds anomaly detection summary
-- regenerates the Markdown technical report
-- commits generated outputs only when they change
-
-Updated report generator behavior:
-
-- `generate_technical_report.py` now uses the latest watcher timestamp
-- runtime timestamp is no longer used when watcher data exists
-- this prevents unnecessary report changes when no enode data changes
-
-This completes the production automation layer for the current watcher pipeline.
+## Version History
+
+| Version | Summary |
+|---|---|
+| v1.0 | Automated enode watcher with email notification and JSON snapshots |
+| v1.1 | Deterministic change severity classification |
+| v1.2 | AI-style deterministic summary layer |
+| v1.3 | Enode rotation intelligence from manual + automated observations |
+| v1.4 | Rule-based anomaly detection layer |
+| v1.5 | Automated Markdown technical report generator |
+| v1.6 | Static dashboard layer |
+| v1.6.1 | Static Provider / ASN Hint Layer |
+| v1.6.2 | DAC Infrastructure Signal Layer |
+| v1.6.3 | Optional Live ASN Lookup Layer |
+| v1.7 | Provider Concentration / Decentralization Risk Summary |
+| v1.8.0 | Core dashboard chart layer |
+| v1.8.1 | Distribution dashboard chart layer |
+| v1.8.2 | Summary dashboard chart layer |
+| v1.9.0 | Custom Markdown report export |
+| v1.9.1 | Custom JSON report summary export |
+| v1.9.2 | Dashboard export links and custom range export |
+| v1.9.3 | Optional PDF export |
 
 ---
 
 ## Future Upgrade Direction
 
-Future versions may extend this watcher into a broader infrastructure intelligence system.
+The current export roadmap is complete through v1.9.3.
 
-Possible upgrades include:
+Future optional upgrades may include:
 
 - public RPC health monitoring
 - explorer availability monitoring
-- infrastructure status dashboard
-- multi-source DAC Testnet infrastructure watcher
-
-These upgrades are optional and will depend on future observation needs.
+- multi-source DAC infrastructure watcher
+- richer dashboard filtering
+- richer report templates
+- automated comparison between observation windows
 
 ---
 
@@ -2194,10 +792,11 @@ The project `.gitignore` excludes:
 - `__pycache__/`
 - `*.pyc`
 - `.env`
+- broad generated JSON patterns unless explicitly force-added where needed
 
-Watcher-generated JSON files under `data/` are intentionally tracked for technical observation history.
+Watcher-generated data files under `data/` are intentionally tracked for technical observation history.
 
-Manual backfill JSON files under `data/manual-backfill/` are also intentionally tracked because they preserve historical pre-watcher observations.
+Manual backfill data under `data/manual-backfill/` is also intentionally tracked because it preserves historical pre-watcher observations.
 
 ---
 
@@ -2207,7 +806,9 @@ This is an independent community-built observation tool.
 
 It is not an official DAC Labs tool and does not represent official DAC infrastructure policy.
 
-The watcher only observes publicly available enode data and stores snapshots for technical reporting purposes.
+The watcher observes publicly available enode data and stores snapshots for technical reporting purposes.
+
+Provider, ASN, DAC Infrastructure Signal, and concentration labels are observation-based heuristics. They should not be treated as official DAC node ownership, official DAC classification, or definitive decentralization measurement.
 
 ---
 
