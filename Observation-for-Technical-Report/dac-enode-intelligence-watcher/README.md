@@ -691,6 +691,8 @@ Current charts:
 - Added vs Removed Per Observation
 - Live ASN Distribution
 - DAC Infrastructure Signal Distribution
+- Anomaly Severity Count
+- Manual vs Automated Observations
 
 Core chart controls:
 
@@ -702,6 +704,7 @@ Data sources:
 
     data/rotation-intelligence-summary.json
     data/concentration-risk-summary.json
+    data/anomaly-detection-summary.json
 
 Chart input:
 
@@ -724,6 +727,8 @@ Chart purpose:
 - separate total enode count from added / removed activity
 - show live ASN concentration visually
 - show DAC Infrastructure Signal distribution visually
+- show anomaly severity counts visually
+- show manual backfill vs automated watcher observation coverage
 - improve visual inspection before deeper technical reporting
 
 Core chart readability:
@@ -733,10 +738,11 @@ Core chart readability:
 - Added / Removed legend now explicitly uses Added enodes and Removed enodes
 - Added / Removed values compare each observation against the previous observed enode list
 
-Future chart layers:
+Completed chart layers:
 
-- Anomaly Severity Count
-- Manual vs Automated Observation Count
+- Core movement charts
+- Distribution charts
+- Summary charts
 
 ---
 
@@ -1160,6 +1166,9 @@ The current version already supports:
 - Added vs Removed Per Observation chart
 - Live ASN Distribution chart
 - DAC Infrastructure Signal Distribution chart
+- Anomaly Severity Count chart
+- Manual vs Automated Observations chart
+- summary chart units for signals and observations
 - 7D / 30D / ALL TIME chart range controls
 - readable observation-time x-axis labels
 - clarified Added enodes / Removed enodes legend
@@ -1498,6 +1507,65 @@ It should be read together with:
 - registry observation history
 - manual technical report evidence
 
+### v1.8.2 — Summary Dashboard Chart Layer
+
+Added summary charts to complete the staged v1.8 dashboard chart rollout.
+
+Updated file:
+
+- `dashboard/index.html`
+
+Updated documentation:
+
+- `README.md`
+
+New dashboard section:
+
+- `Summary Charts`
+
+New charts:
+
+- `Anomaly Severity Count`
+- `Manual vs Automated Observations`
+
+Data sources:
+
+- `data/anomaly-detection-summary.json`
+- `data/rotation-intelligence-summary.json`
+
+Summary fields used:
+
+- `anomaly.report_summary.severity_counts`
+- `rotation.observation_timeline[].phase`
+
+Current generated result:
+
+- `HIGH`: `5 signals`
+- `Manual backfill`: `14 observations`
+- `Automated watcher`: `7 observations`
+
+Implementation detail:
+
+Summary charts reuse the existing horizontal distribution renderer but apply context-specific units:
+
+- anomaly severity uses `signals`
+- observation phase coverage uses `observations`
+- provider / ASN distribution charts continue to use `IPs`
+
+Why this matters:
+
+v1.8.2 completes the initial dashboard chart layer.
+
+The dashboard can now visually summarize movement, rotation activity, provider / signal distribution, anomaly severity, and observation coverage.
+
+This improves fast review before deeper report writing and makes the dashboard more useful under the new 15-minute watcher schedule.
+
+Next planned upgrade:
+
+- v1.9 — Custom report export layer / optional PDF generation
+
+---
+
 ### v1.8.1 — Distribution Dashboard Chart Layer
 
 Added distribution charts and improved core chart readability.
@@ -1544,7 +1612,7 @@ It also makes the core rotation charts easier to read when observation history g
 
 Future chart work:
 
-- v1.8.2 — Anomaly severity and manual-vs-automated observation charts
+- v1.9 — Custom report export layer / optional PDF generation
 
 ---
 
@@ -1581,7 +1649,7 @@ This makes the watcher more useful for quick infrastructure observation before p
 Future chart work:
 
 - v1.8.1 — Live ASN and DAC Infrastructure Signal distribution charts
-- v1.8.2 — Anomaly severity and manual-vs-automated observation charts
+- v1.9 — Custom report export layer / optional PDF generation
 
 ---
 

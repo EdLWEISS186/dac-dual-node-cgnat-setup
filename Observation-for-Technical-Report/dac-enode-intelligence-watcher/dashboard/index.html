@@ -607,6 +607,22 @@
       </div>
 
       <div class="card section">
+        <h2>Summary Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-panel">
+            <h3>Anomaly Severity Count</h3>
+            <p>Shows detected anomaly count grouped by severity level.</p>
+            <div id="anomalySeverityChart"></div>
+          </div>
+          <div class="chart-panel">
+            <h3>Manual vs Automated Observations</h3>
+            <p>Shows observation coverage split between manual backfill and automated watcher snapshots.</p>
+            <div id="phaseObservationChart"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card section">
         <h2>Provider / ASN Hint Summary</h2>
         <div id="providerSummary"></div>
       </div>
@@ -1078,6 +1094,10 @@
       `;
     }
 
+    function formatChartCount(count, singular, plural) {
+      return `${count} ${count === 1 ? singular : plural}`;
+    }
+
     function renderHorizontalDistributionChart(targetId, distribution, options = {}) {
       const target = $(targetId);
       const rows = (distribution || [])
@@ -1088,20 +1108,23 @@
 
       const maxCount = Math.max(1, ...rows.map(item => Number(item.unique_ip_count || 0)));
       const maxRows = options.maxRows || rows.length;
+      const unitSingular = options.unitSingular || "IP";
+      const unitPlural = options.unitPlural || "IPs";
       const visibleRows = rows.slice(0, maxRows);
 
       const html = visibleRows.map(item => {
         const count = Number(item.unique_ip_count || 0);
         const percentage = Number(item.percentage || 0);
         const width = Math.max(2, (count / maxCount) * 100);
+        const countLabel = formatChartCount(count, unitSingular, unitPlural);
 
         return `
           <div class="distribution-chart-row">
             <div class="distribution-label" title="${safe(item.name)}">${safe(item.name)}</div>
-            <div class="distribution-track" title="${safe(item.name)} | ${count} IPs | ${percentage}%">
+            <div class="distribution-track" title="${safe(item.name)} | ${countLabel} | ${percentage}%">
               <div class="distribution-fill" style="width: ${width}%"></div>
             </div>
-            <div class="distribution-value">${count} IPs · ${percentage}%</div>
+            <div class="distribution-value">${countLabel} · ${percentage}%</div>
           </div>
         `;
       }).join("");
@@ -1114,17 +1137,93 @@
       target.innerHTML = html + note;
     }
 
+    function countsToDistribution(counts, labelMap = {}) {
+      return Object.entries(counts || {})
+        .map(([name, count]) => ({
+          name: labelMap[name] || name,
+          unique_ip_count: Number(count || 0),
+          percentage: 0
+        }))
+        .filter(item => item.unique_ip_count > 0)
+        .sort((a, b) => b.unique_ip_count - a.unique_ip_count);
+    }
+
+    function addPercentageToDistribution(rows) {
+      const total = rows.reduce((sum, item) => sum + Number(item.unique_ip_count || 0), 0);
+
+      return rows.map(item => ({
+        ...item,
+        percentage: total > 0 ? Number(((Number(item.unique_ip_count || 0) / total) * 100).toFixed(2)) : 0
+      }));
+    }
+
+    function buildPhaseObservationDistribution(rotation) {
+      const counts = {};
+
+      (rotation.observation_timeline || []).forEach(item => {
+        const phase = item.phase || "unknown";
+        counts[phase] = (counts[phase] || 0) + 1;
+      });
+
+      const labelMap = {
+        manual_backfill: "Manual backfill",
+        automated_watcher: "Automated watcher",
+        unknown: "Unknown"
+      };
+
+      return addPercentageToDistribution(countsToDistribution(counts, labelMap));
+    }
+
+    function buildAnomalySeverityDistribution(anomaly) {
+      const severityCounts = (anomaly.report_summary && anomaly.report_summary.severity_counts) || {};
+      const preferredOrder = ["HIGH", "MEDIUM", "LOW"];
+
+      const rows = preferredOrder
+        .filter(name => severityCounts[name])
+        .map(name => ({
+          name,
+          unique_ip_count: Number(severityCounts[name] || 0),
+          percentage: 0
+        }));
+
+      Object.entries(severityCounts).forEach(([name, count]) => {
+        if (!preferredOrder.includes(name)) {
+          rows.push({
+            name,
+            unique_ip_count: Number(count || 0),
+            percentage: 0
+          });
+        }
+      });
+
+      return addPercentageToDistribution(rows);
+    }
+
+    function renderSummaryCharts(rotation, anomaly) {
+      renderHorizontalDistributionChart(
+        "anomalySeverityChart",
+        buildAnomalySeverityDistribution(anomaly),
+        { maxRows: 6, unitSingular: "signal", unitPlural: "signals" }
+      );
+
+      renderHorizontalDistributionChart(
+        "phaseObservationChart",
+        buildPhaseObservationDistribution(rotation),
+        { maxRows: 6, unitSingular: "observation", unitPlural: "observations" }
+      );
+    }
+
     function renderDistributionCharts(concentration) {
       renderHorizontalDistributionChart(
         "liveAsnDistributionChart",
         concentration.live_asn_concentration && concentration.live_asn_concentration.distribution,
-        { maxRows: 10 }
+        { maxRows: 10, unitSingular: "IP", unitPlural: "IPs" }
       );
 
       renderHorizontalDistributionChart(
         "dacSignalDistributionChart",
         concentration.dac_signal_concentration && concentration.dac_signal_concentration.distribution,
-        { maxRows: 10 }
+        { maxRows: 10, unitSingular: "IP", unitPlural: "IPs" }
       );
     }
 
@@ -1326,6 +1425,7 @@
         const concentration = await fetchJSON(files.concentration);
         renderConcentrationSummary(concentration);
         renderDistributionCharts(concentration);
+        renderSummaryCharts(rotation, anomaly);
         renderDacSignalSummary(rotation);
         renderPersistentEnodes(rotation);
         renderPersistentIps(rotation);
