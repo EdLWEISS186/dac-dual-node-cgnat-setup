@@ -26,6 +26,13 @@ Instead of manually checking the official enode page and risking missed updates,
 
 ---
 
+Schedule note:
+
+The watcher now runs every 15 minutes to capture shorter enode-list rotation windows more accurately.
+
+GitHub Actions scheduled runs may still experience slight delays depending on platform load, so the project relies on `checked_at_utc`, source generated time, and snapshot timestamps for precise observation ordering.
+
+
 ## Project Architecture / Data Flow Topology
 
 DAC Enode Intelligence Watcher has evolved from a simple watcher into a full observation, intelligence, reporting, and dashboard pipeline.
@@ -124,7 +131,7 @@ GitHub Actions automation:
     .github/workflows/dac-enode-watcher.yml
             │
             ▼
-    Scheduled every 3 hours + manual run
+    Scheduled every 15 minutes + manual run
             │
             ▼
     watcher.py
@@ -935,9 +942,9 @@ The dashboard should be opened through a local HTTP server or GitHub Pages, not 
 
 ## GitHub Actions Schedule
 
-The watcher is executed by GitHub Actions every 3 hours:
+The watcher is executed by GitHub Actions every 15 minutes:
 
-    cron: "0 */3 * * *"
+    cron: "*/15 * * * *"
 
 It can also be triggered manually from the GitHub Actions tab.
 
@@ -1028,7 +1035,7 @@ This makes the system suitable for infrastructure monitoring, evidence preservat
 The current version already supports:
 
 - official DAC enode page monitoring
-- scheduled GitHub Actions execution every 3 hours
+- scheduled GitHub Actions execution every 15 minutes
 - manual workflow execution
 - email notification
 - JSON snapshot generation
