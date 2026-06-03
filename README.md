@@ -102,23 +102,23 @@ Full setup details and deep-dive explanations are available in the Wiki:
 ## Network Topology
 
 ```
-                                      ┌─────────────────────────┐
-                                     │      Official Nodes      │
-                                     │  DAC Testnet · Static    │
-                                     │      Enode Set           │
+                                     ┌─────────────────────────┐
+                                     │      Official Nodes     │
+                                     │  DAC Testnet · Static   │
+                                     │      Enode Set          │
                                      └────────────┬────────────┘
                                                   │
-                                            outbound only
-                                        (CGNAT — no inbound)
-                                                  │
-               ┌──────────────────────────────────┴───────────────────────────────────┐
-               │                                                                      │
-    ┌──────────▼──────────┐                                            ┌──────────────▼──────────┐
-    │    Windows Node      │                                           │          WSL Node        │
-    │    Hub · Anchor      │◄─────────────────────────────────────────►│    Support · Secondary   │
-    │    .bat scripts      │               static · persist            │       shell scripts      │
-    │ 192.168.100.7:28657  │                                           │    192.168.100.7:30304   │
-    └──────────────────────┘                                           └──────────────────────────┘
+                                             outbound only
+                                         (CGNAT — no inbound)
+                                                   │
+                ┌──────────────────────────────────┴───────────────────────────────────┐
+                │                                                                      │
+    ┌───────────▼──────────┐                                            ┌──────────────▼──────────┐
+    │    Windows Node      │                                           │          WSL Node       │
+    │    Hub · Anchor      │◄─────────────────────────────────────────►│    Support · Secondary  │
+    │    .bat scripts      │               static · persist            │       shell scripts     │
+    │ 192.168.100.7:28657  │                                           │    192.168.100.7:30304  │
+    └──────────────────────┘                                           └─────────────────────────┘
                               ── outbound peer       ◄──► internal peering
 ```
 
