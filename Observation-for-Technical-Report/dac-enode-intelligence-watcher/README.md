@@ -689,10 +689,19 @@ Current charts:
 
 - Enode Count Over Time
 - Added vs Removed Per Observation
+- Live ASN Distribution
+- DAC Infrastructure Signal Distribution
 
-Data source:
+Core chart controls:
+
+- `7D`
+- `30D`
+- `ALL TIME`
+
+Data sources:
 
     data/rotation-intelligence-summary.json
+    data/concentration-risk-summary.json
 
 Chart input:
 
@@ -713,12 +722,19 @@ Chart purpose:
 - show enode count movement over time
 - show rotation intensity per observation
 - separate total enode count from added / removed activity
+- show live ASN concentration visually
+- show DAC Infrastructure Signal distribution visually
 - improve visual inspection before deeper technical reporting
+
+Core chart readability:
+
+- x-axis labels now use observation time instead of raw observation index
+- chart range controls support 7D, 30D, and ALL TIME views
+- Added / Removed legend now explicitly uses Added enodes and Removed enodes
+- Added / Removed values compare each observation against the previous observed enode list
 
 Future chart layers:
 
-- Live ASN Distribution
-- DAC Infrastructure Signal Distribution
 - Anomaly Severity Count
 - Manual vs Automated Observation Count
 
@@ -1142,6 +1158,11 @@ The current version already supports:
 - dashboard core chart layer
 - Enode Count Over Time chart
 - Added vs Removed Per Observation chart
+- Live ASN Distribution chart
+- DAC Infrastructure Signal Distribution chart
+- 7D / 30D / ALL TIME chart range controls
+- readable observation-time x-axis labels
+- clarified Added enodes / Removed enodes legend
 - 24-hour timestamp hint for dashboard timeline readability
 
 ---
@@ -1476,6 +1497,56 @@ It should be read together with:
 - DAC Infrastructure Signal Layer
 - registry observation history
 - manual technical report evidence
+
+### v1.8.1 — Distribution Dashboard Chart Layer
+
+Added distribution charts and improved core chart readability.
+
+Updated file:
+
+- `dashboard/index.html`
+
+Updated documentation:
+
+- `README.md`
+
+New dashboard section:
+
+- `Distribution Charts`
+
+New charts:
+
+- `Live ASN Distribution`
+- `DAC Infrastructure Signal Distribution`
+
+Data source:
+
+- `data/concentration-risk-summary.json`
+
+Distribution fields used:
+
+- `live_asn_concentration.distribution`
+- `dac_signal_concentration.distribution`
+
+Core chart improvements:
+
+- added `7D`, `30D`, and `ALL TIME` range controls
+- replaced raw observation index x-axis labels with readable observation-time labels
+- moved `Observation time` into a cleaner chart caption
+- clarified rotation legend as `Added enodes` and `Removed enodes`
+- added explanatory note that added / removed values compare each observation against the previous observed enode list
+
+Why this matters:
+
+v1.8.1 makes the dashboard more useful for fast visual interpretation of provider concentration and DAC Infrastructure Signal spread.
+
+It also makes the core rotation charts easier to read when observation history grows under the new 15-minute watcher schedule.
+
+Future chart work:
+
+- v1.8.2 — Anomaly severity and manual-vs-automated observation charts
+
+---
 
 ### v1.8.0 — Core Dashboard Chart Layer
 
