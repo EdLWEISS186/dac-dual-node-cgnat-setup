@@ -102,20 +102,47 @@ Recommended action: No urgent action is required, but the snapshot is preserved 
 
 ## 7. Most Persistent IPs
 
-| IP | DAC Signal | Signal Confidence | Peer Identity | Provider | ASN | Provider Confidence | Appearances | Ratio | Phases Seen | First Seen | Last Seen |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 213.136.82.243 | Unlisted Active Peer Signal | MEDIUM | SAPInode | Contabo | AS51167 | HIGH | 21 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
-| 157.173.127.30 | Authority-like Core Signal | HIGH | DAC Testnet Authority 2 | Unknown | N/A | LOW | 20 | 0.9524 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
-| 206.189.127.204 | Relay-like DAC Node Signal | HIGH | DAC-Node 05 | DigitalOcean | AS14061 | HIGH | 20 | 0.9524 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
-| 157.173.127.21 | Authority-like Core Signal | HIGH | DAC Testnet Authority 3 | Unknown | N/A | LOW | 18 | 0.8571 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
-| 173.212.217.213 | Retained Infrastructure Signal | MEDIUM | N/A | Contabo | AS51167 | HIGH | 16 | 0.7619 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
-| 157.173.127.31 | Authority-like Core Signal | HIGH | DAC Testnet Authority 1 | Unknown | N/A | LOW | 16 | 0.7619 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 161.97.89.27 | Community VPS-like Signal | MEDIUM | whale-vps3 | Contabo | AS51167 | HIGH | 15 | 0.7143 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
-| 207.154.217.91 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | 12 | 0.5714 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
-| 217.76.53.98 | Community VPS-like Signal | MEDIUM | whale-vps1 | Unknown | N/A | LOW | 12 | 0.5714 | manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Sun May 31 12:00:02 PM CEST 2026 |
-| 95.216.70.180 | Community VPS-like Signal | MEDIUM | Fertal | Hetzner | AS24940 | HIGH | 11 | 0.5238 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
+| IP | DAC Signal | Signal Confidence | Peer Identity | Static Provider | Static ASN | Provider Confidence | Live ASN | Live ASN Name | Country | Appearances | Ratio | Phases Seen | First Seen | Last Seen |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 213.136.82.243 | Unlisted Active Peer Signal | MEDIUM | SAPInode | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 21 | 1.0 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
+| 157.173.127.30 | Authority-like Core Signal | HIGH | DAC Testnet Authority 2 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 20 | 0.9524 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
+| 206.189.127.204 | Relay-like DAC Node Signal | HIGH | DAC-Node 05 | DigitalOcean | AS14061 | HIGH | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC, US | US | 20 | 0.9524 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
+| 157.173.127.21 | Authority-like Core Signal | HIGH | DAC Testnet Authority 3 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 18 | 0.8571 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
+| 173.212.217.213 | Retained Infrastructure Signal | MEDIUM | N/A | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 16 | 0.7619 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
+| 157.173.127.31 | Authority-like Core Signal | HIGH | DAC Testnet Authority 1 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 16 | 0.7619 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 161.97.89.27 | Community VPS-like Signal | MEDIUM | whale-vps3 | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 15 | 0.7143 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun  1 08:00:02 AM CEST 2026 |
+| 207.154.217.91 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC, US | US | 12 | 0.5714 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
+| 217.76.53.98 | Community VPS-like Signal | MEDIUM | whale-vps1 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 12 | 0.5714 | manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Sun May 31 12:00:02 PM CEST 2026 |
+| 95.216.70.180 | Community VPS-like Signal | MEDIUM | Fertal | Hetzner | AS24940 | HIGH | AS24940 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 11 | 0.5238 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Tue Jun  2 10:00:02 PM CEST 2026 |
 
-## 8. DAC Infrastructure Signal Summary
+## 8. Live ASN Lookup Summary
+
+Live ASN lookup is used as an enrichment layer only.
+
+ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership.
+
+| Detection Field | Value |
+| --- | --- |
+| Enabled | True |
+| Method | team_cymru_whois_live_lookup |
+| Source | team_cymru |
+| Cache file | data/asn-cache.json |
+| Failure behavior | fallback_to_unknown_without_failing_pipeline |
+| Disclaimer | Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership. |
+
+| Live ASN | Unique IPs | ASN Name | Country | IPs |
+| --- | --- | --- | --- | --- |
+| AS51167 | 15 | CONTABO - Contabo GmbH, DE | DE, LT | 157.173.127.18, 157.173.127.21, 157.173.127.22, 157.173.127.30, 157.173.127.31, 161.97.89.27, 173.212.217.213, 173.249.42.5, 185.190.143.54, 194.163.186.161, 194.60.201.112, 213.136.82.243, 217.76.53.98, 84.46.253.182, 95.111.227.13 |
+| AS14061 | 4 | DIGITALOCEAN-ASN - DigitalOcean, LLC, US | US | 168.144.140.128, 192.241.148.112, 206.189.127.204, 207.154.217.91 |
+| AS24940 | 2 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 5.9.116.21, 95.216.70.180 |
+| AS18403 | 2 | FPT-VN - FPT Telecom Company, VN | VN | 1.54.141.106, 118.71.126.107 |
+| AS141995 | 2 | CAPL-AS-AP - Contabo Asia Private Limited, SG | DE | 156.67.104.212, 5.104.86.129 |
+| AS45899 | 1 | VNPT-AS-VN - VNPT Corp, VN | VN | 113.173.209.213 |
+| AS16276 | 1 | OVH - OVH SAS, FR | FR | 152.228.141.231 |
+| AS47583 | 1 | AS-HOSTINGER - Hostinger International Limited, CY | US | 145.223.99.167 |
+| AS26832 | 1 | RICAWEBSERVICES - Rica Web Services, CA | US | 38.49.213.251 |
+
+## 9. DAC Infrastructure Signal Summary
 
 DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints.
 
@@ -141,7 +168,7 @@ It is not an official DAC classification and should not be treated as confirmed 
 | Relay-like DAC Node Signal | 1 | HIGH | DAC-Node 05 | 206.189.127.204 |
 | Unlisted Active Peer Signal | 1 | MEDIUM | SAPInode | 213.136.82.243 |
 
-## 9. Provider / ASN Hint Summary
+## 10. Provider / ASN Hint Summary
 
 Provider and ASN values in this section are heuristic hints based on static IP prefix matching.
 
@@ -162,7 +189,7 @@ They should be treated as enrichment for infrastructure analysis, not final veri
 | OVHcloud | AS16276 | VPS / Dedicated | France / Europe | HIGH | 1 | 152.228.141.231 |
 | Unknown | Unknown | Unknown | Unknown | LOW | 23 | 1.54.141.106, 113.173.209.213, 118.71.126.107, 145.223.99.167, 156.67.104.212, 157.173.127.18, 157.173.127.21, 157.173.127.22, 157.173.127.30, 157.173.127.31, 168.144.140.128, 173.249.42.5, 185.190.143.54, 192.241.148.112, 194.163.186.161, 194.60.201.112, 207.154.217.91, 217.76.53.98, 38.49.213.251, 5.104.86.129, 5.9.116.21, 84.46.253.182, 95.111.227.13 |
 
-## 10. Anomaly Detection Summary
+## 11. Anomaly Detection Summary
 
 | Anomaly Metric | Value |
 | --- | --- |
@@ -175,7 +202,7 @@ The anomaly layer highlights observations that may indicate unusually large peer
 
 Recommended action: Use these anomaly events as candidates for deeper manual review and future technical reporting.
 
-## 11. Detected Anomaly Events
+## 12. Detected Anomaly Events
 
 | Type | Severity | Index | Phase | Generated At | Previous | Current | Reason |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -185,7 +212,7 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | AGGRESSIVE_ROTATION | HIGH | 8 | manual_backfill | Sat May 23 12:00:02 PM CEST 2026 | 12 | 12 | Large rotation intensity detected: 4 added and 4 removed. |
 | AGGRESSIVE_ROTATION | HIGH | 11 | manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | 12 | 14 | Large rotation intensity detected: 5 added and 3 removed. |
 
-## 12. Observation Timeline
+## 13. Observation Timeline
 
 | Index | Phase | Generated At | Port | Total | Added | Removed | Severity |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -211,7 +238,7 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | 20 | automated_watcher | Tue Jun  2 12:00:01 PM CEST 2026 | 28657 | 12 | 1 | 1 | LOW |
 | 21 | automated_watcher | Tue Jun  2 10:00:02 PM CEST 2026 | 28657 | 14 | 2 | 0 | LOW |
 
-## 13. Technical Interpretation
+## 14. Technical Interpretation
 
 The current dataset shows a transition from manual observation into automated infrastructure monitoring.
 
@@ -219,13 +246,15 @@ The official enode list shows visible peer rotation across the observation perio
 
 Provider and ASN hints add an additional infrastructure-enrichment layer by grouping observed IPs into likely hosting providers or ASN categories where static prefix matching is available.
 
+Live ASN lookup adds a routing-data enrichment layer that can reduce Unknown provider/ASN coverage while remaining separate from official ownership claims.
+
 DAC Infrastructure Signal adds a separate community inference layer for interpreting observed node roles without claiming official ownership.
 
 The anomaly layer detected selected high-impact rotation events, but these should be interpreted as review signals rather than direct evidence of network failure.
 
 In a testnet environment, enode rotation may reflect infrastructure maintenance, bootstrap peer refreshes, scaling experiments, or network maturation.
 
-## 14. Conclusion
+## 15. Conclusion
 
 DAC Enode Intelligence Watcher now provides a structured evidence pipeline for official enode observation.
 
@@ -241,6 +270,7 @@ The project currently supports:
 - report-ready Markdown generation
 - heuristic provider / ASN hint enrichment
 - DAC Infrastructure Signal enrichment
+- optional live ASN lookup enrichment
 
 This report can be used as a draft foundation for future DAC Testnet infrastructure technical reports.
 

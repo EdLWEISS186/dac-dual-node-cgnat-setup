@@ -286,6 +286,187 @@
       ]
     }
   ],
+  "live_asn_lookup": {
+    "enabled": true,
+    "lookup_method": "team_cymru_whois_live_lookup",
+    "source": "team_cymru",
+    "cache_file": "data/asn-cache.json",
+    "workflow_safe": true,
+    "failure_behavior": "fallback_to_unknown_without_failing_pipeline",
+    "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+  },
+  "live_asn_counts": {
+    "AS51167": 15,
+    "AS14061": 4,
+    "AS24940": 2,
+    "AS18403": 2,
+    "AS45899": 1,
+    "AS141995": 2,
+    "AS16276": 1,
+    "AS47583": 1,
+    "AS26832": 1
+  },
+  "live_asn_name_counts": {
+    "CONTABO - Contabo GmbH, DE": 15,
+    "DIGITALOCEAN-ASN - DigitalOcean, LLC, US": 4,
+    "HETZNER-AS - Hetzner Online GmbH, DE": 2,
+    "FPT-VN - FPT Telecom Company, VN": 2,
+    "VNPT-AS-VN - VNPT Corp, VN": 1,
+    "CAPL-AS-AP - Contabo Asia Private Limited, SG": 2,
+    "OVH - OVH SAS, FR": 1,
+    "AS-HOSTINGER - Hostinger International Limited, CY": 1,
+    "RICAWEBSERVICES - Rica Web Services, CA": 1
+  },
+  "live_asn_country_counts": {
+    "DE": 18,
+    "US": 6,
+    "VN": 3,
+    "FR": 1,
+    "LT": 1
+  },
+  "live_asn_success_counts": {
+    "True": 29
+  },
+  "live_asn_summary": [
+    {
+      "live_asn": "AS51167",
+      "unique_ip_count": 15,
+      "asn_names": [
+        "CONTABO - Contabo GmbH, DE"
+      ],
+      "country_codes": [
+        "DE",
+        "LT"
+      ],
+      "ips": [
+        "157.173.127.18",
+        "157.173.127.21",
+        "157.173.127.22",
+        "157.173.127.30",
+        "157.173.127.31",
+        "161.97.89.27",
+        "173.212.217.213",
+        "173.249.42.5",
+        "185.190.143.54",
+        "194.163.186.161",
+        "194.60.201.112",
+        "213.136.82.243",
+        "217.76.53.98",
+        "84.46.253.182",
+        "95.111.227.13"
+      ]
+    },
+    {
+      "live_asn": "AS14061",
+      "unique_ip_count": 4,
+      "asn_names": [
+        "DIGITALOCEAN-ASN - DigitalOcean, LLC, US"
+      ],
+      "country_codes": [
+        "US"
+      ],
+      "ips": [
+        "168.144.140.128",
+        "192.241.148.112",
+        "206.189.127.204",
+        "207.154.217.91"
+      ]
+    },
+    {
+      "live_asn": "AS24940",
+      "unique_ip_count": 2,
+      "asn_names": [
+        "HETZNER-AS - Hetzner Online GmbH, DE"
+      ],
+      "country_codes": [
+        "DE"
+      ],
+      "ips": [
+        "5.9.116.21",
+        "95.216.70.180"
+      ]
+    },
+    {
+      "live_asn": "AS18403",
+      "unique_ip_count": 2,
+      "asn_names": [
+        "FPT-VN - FPT Telecom Company, VN"
+      ],
+      "country_codes": [
+        "VN"
+      ],
+      "ips": [
+        "1.54.141.106",
+        "118.71.126.107"
+      ]
+    },
+    {
+      "live_asn": "AS141995",
+      "unique_ip_count": 2,
+      "asn_names": [
+        "CAPL-AS-AP - Contabo Asia Private Limited, SG"
+      ],
+      "country_codes": [
+        "DE"
+      ],
+      "ips": [
+        "156.67.104.212",
+        "5.104.86.129"
+      ]
+    },
+    {
+      "live_asn": "AS45899",
+      "unique_ip_count": 1,
+      "asn_names": [
+        "VNPT-AS-VN - VNPT Corp, VN"
+      ],
+      "country_codes": [
+        "VN"
+      ],
+      "ips": [
+        "113.173.209.213"
+      ]
+    },
+    {
+      "live_asn": "AS16276",
+      "unique_ip_count": 1,
+      "asn_names": [
+        "OVH - OVH SAS, FR"
+      ],
+      "country_codes": [
+        "FR"
+      ],
+      "ips": [
+        "152.228.141.231"
+      ]
+    },
+    {
+      "live_asn": "AS47583",
+      "unique_ip_count": 1,
+      "asn_names": [
+        "AS-HOSTINGER - Hostinger International Limited, CY"
+      ],
+      "country_codes": [
+        "US"
+      ],
+      "ips": [
+        "145.223.99.167"
+      ]
+    },
+    {
+      "live_asn": "AS26832",
+      "unique_ip_count": 1,
+      "asn_names": [
+        "RICAWEBSERVICES - Rica Web Services, CA"
+      ],
+      "country_codes": [
+        "US"
+      ],
+      "ips": [
+        "38.49.213.251"
+      ]
+    }
+  ],
   "dac_infrastructure_signal": {
     "method": "static_report_evidence_and_observation_heuristic",
     "official_ownership_claim": false,
@@ -2100,7 +2281,33 @@
           "checked_at_utc": "2026-06-02T21:19:37.546922+00:00",
           "snapshot_file": "data/snapshots/2026-06-02T21-19-37-546922+00-00-changed.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "213.136.82.243",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS51167",
+        "asn_name": "CONTABO - Contabo GmbH, DE",
+        "bgp_prefix": "213.136.82.0/23",
+        "country_code": "DE",
+        "registry": "ripencc",
+        "allocated": "2000-02-28",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:26:29.916639+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS51167",
+      "live_asn_name": "CONTABO - Contabo GmbH, DE",
+      "live_bgp_prefix": "213.136.82.0/23",
+      "live_country_code": "DE",
+      "live_registry": "ripencc",
+      "live_allocated": "2000-02-28",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     },
     {
       "ip": "157.173.127.30",
@@ -2314,7 +2521,33 @@
           "checked_at_utc": "2026-06-02T21:19:37.546922+00:00",
           "snapshot_file": "data/snapshots/2026-06-02T21-19-37-546922+00-00-changed.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "157.173.127.30",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS51167",
+        "asn_name": "CONTABO - Contabo GmbH, DE",
+        "bgp_prefix": "157.173.112.0/20",
+        "country_code": "DE",
+        "registry": "ripencc",
+        "allocated": "1993-09-01",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:26:27.812622+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS51167",
+      "live_asn_name": "CONTABO - Contabo GmbH, DE",
+      "live_bgp_prefix": "157.173.112.0/20",
+      "live_country_code": "DE",
+      "live_registry": "ripencc",
+      "live_allocated": "1993-09-01",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     },
     {
       "ip": "206.189.127.204",
@@ -2529,7 +2762,33 @@
           "checked_at_utc": "2026-06-02T21:19:37.546922+00:00",
           "snapshot_file": "data/snapshots/2026-06-02T21-19-37-546922+00-00-changed.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "206.189.127.204",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS14061",
+        "asn_name": "DIGITALOCEAN-ASN - DigitalOcean, LLC, US",
+        "bgp_prefix": "206.189.112.0/20",
+        "country_code": "US",
+        "registry": "arin",
+        "allocated": "1995-11-15",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:26:28.979381+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS14061",
+      "live_asn_name": "DIGITALOCEAN-ASN - DigitalOcean, LLC, US",
+      "live_bgp_prefix": "206.189.112.0/20",
+      "live_country_code": "US",
+      "live_registry": "arin",
+      "live_allocated": "1995-11-15",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     },
     {
       "ip": "157.173.127.21",
@@ -2729,7 +2988,33 @@
           "checked_at_utc": "2026-06-02T21:19:37.546922+00:00",
           "snapshot_file": "data/snapshots/2026-06-02T21-19-37-546922+00-00-changed.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "157.173.127.21",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS51167",
+        "asn_name": "CONTABO - Contabo GmbH, DE",
+        "bgp_prefix": "157.173.112.0/20",
+        "country_code": "DE",
+        "registry": "ripencc",
+        "allocated": "1993-09-01",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:31:57.689237+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS51167",
+      "live_asn_name": "CONTABO - Contabo GmbH, DE",
+      "live_bgp_prefix": "157.173.112.0/20",
+      "live_country_code": "DE",
+      "live_registry": "ripencc",
+      "live_allocated": "1993-09-01",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     },
     {
       "ip": "173.212.217.213",
@@ -2918,7 +3203,33 @@
           "checked_at_utc": "2026-06-02T21:19:37.546922+00:00",
           "snapshot_file": "data/snapshots/2026-06-02T21-19-37-546922+00-00-changed.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "173.212.217.213",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS51167",
+        "asn_name": "CONTABO - Contabo GmbH, DE",
+        "bgp_prefix": "173.212.192.0/19",
+        "country_code": "DE",
+        "registry": "ripencc",
+        "allocated": "2009-10-26",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:31:58.866995+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS51167",
+      "live_asn_name": "CONTABO - Contabo GmbH, DE",
+      "live_bgp_prefix": "173.212.192.0/19",
+      "live_country_code": "DE",
+      "live_registry": "ripencc",
+      "live_allocated": "2009-10-26",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     },
     {
       "ip": "157.173.127.31",
@@ -3106,7 +3417,33 @@
           "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
           "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "157.173.127.31",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS51167",
+        "asn_name": "CONTABO - Contabo GmbH, DE",
+        "bgp_prefix": "157.173.112.0/20",
+        "country_code": "DE",
+        "registry": "ripencc",
+        "allocated": "1993-09-01",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:31:59.813783+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS51167",
+      "live_asn_name": "CONTABO - Contabo GmbH, DE",
+      "live_bgp_prefix": "157.173.112.0/20",
+      "live_country_code": "DE",
+      "live_registry": "ripencc",
+      "live_allocated": "1993-09-01",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     },
     {
       "ip": "161.97.89.27",
@@ -3286,7 +3623,33 @@
           "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
           "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "161.97.89.27",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS51167",
+        "asn_name": "CONTABO - Contabo GmbH, DE",
+        "bgp_prefix": "161.97.88.0/23",
+        "country_code": "DE",
+        "registry": "ripencc",
+        "allocated": "1992-06-23",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:32:00.706615+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS51167",
+      "live_asn_name": "CONTABO - Contabo GmbH, DE",
+      "live_bgp_prefix": "161.97.88.0/23",
+      "live_country_code": "DE",
+      "live_registry": "ripencc",
+      "live_allocated": "1992-06-23",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     },
     {
       "ip": "207.154.217.91",
@@ -3444,7 +3807,33 @@
           "checked_at_utc": "2026-06-02T21:19:37.546922+00:00",
           "snapshot_file": "data/snapshots/2026-06-02T21-19-37-546922+00-00-changed.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "207.154.217.91",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS14061",
+        "asn_name": "DIGITALOCEAN-ASN - DigitalOcean, LLC, US",
+        "bgp_prefix": "207.154.208.0/20",
+        "country_code": "US",
+        "registry": "arin",
+        "allocated": "2016-04-12",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:32:01.206916+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS14061",
+      "live_asn_name": "DIGITALOCEAN-ASN - DigitalOcean, LLC, US",
+      "live_bgp_prefix": "207.154.208.0/20",
+      "live_country_code": "US",
+      "live_registry": "arin",
+      "live_allocated": "2016-04-12",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     },
     {
       "ip": "217.76.53.98",
@@ -3601,7 +3990,33 @@
           "checked_at_utc": null,
           "snapshot_file": "data/manual-backfill/2026-05-31T12-00-02-CEST-manual.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "217.76.53.98",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS51167",
+        "asn_name": "CONTABO - Contabo GmbH, DE",
+        "bgp_prefix": "217.76.48.0/20",
+        "country_code": "DE",
+        "registry": "ripencc",
+        "allocated": "2003-09-29",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:32:02.383686+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS51167",
+      "live_asn_name": "CONTABO - Contabo GmbH, DE",
+      "live_bgp_prefix": "217.76.48.0/20",
+      "live_country_code": "DE",
+      "live_registry": "ripencc",
+      "live_allocated": "2003-09-29",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     },
     {
       "ip": "95.216.70.180",
@@ -3753,7 +4168,33 @@
           "checked_at_utc": "2026-06-02T21:19:37.546922+00:00",
           "snapshot_file": "data/snapshots/2026-06-02T21-19-37-546922+00-00-changed.json"
         }
-      ]
+      ],
+      "live_asn_lookup": {
+        "ip": "95.216.70.180",
+        "live_lookup_used": true,
+        "live_lookup_success": true,
+        "lookup_method": "team_cymru_whois_live_lookup",
+        "asn": "AS24940",
+        "asn_name": "HETZNER-AS - Hetzner Online GmbH, DE",
+        "bgp_prefix": "95.216.0.0/16",
+        "country_code": "DE",
+        "registry": "ripencc",
+        "allocated": "2009-02-24",
+        "source": "team_cymru",
+        "cached": true,
+        "checked_at_utc": "2026-06-03T04:26:31.147014+00:00",
+        "error": null,
+        "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+      },
+      "live_asn": "AS24940",
+      "live_asn_name": "HETZNER-AS - Hetzner Online GmbH, DE",
+      "live_bgp_prefix": "95.216.0.0/16",
+      "live_country_code": "DE",
+      "live_registry": "ripencc",
+      "live_allocated": "2009-02-24",
+      "live_asn_lookup_success": true,
+      "live_asn_lookup_cached": true,
+      "live_asn_lookup_error": null
     }
   ],
   "transition_summary": {

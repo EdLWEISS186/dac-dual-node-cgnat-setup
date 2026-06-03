@@ -369,6 +369,11 @@
       </div>
 
       <div class="card section">
+        <h2>Live ASN Lookup Summary</h2>
+        <div id="liveAsnSummary"></div>
+      </div>
+
+      <div class="card section">
         <h2>DAC Infrastructure Signal Summary</h2>
         <div id="dacSignalSummary"></div>
       </div>
@@ -531,6 +536,30 @@
       $(id).innerHTML = head + body;
     }
 
+    function renderLiveAsnSummary(rotation) {
+      const liveMeta = rotation.live_asn_lookup || {};
+      const rows = (rotation.live_asn_summary || []).map(item => [
+        safe(item.live_asn),
+        safe(item.unique_ip_count),
+        safe((item.asn_names || []).join(", ")),
+        safe((item.country_codes || []).join(", ")),
+        `<span class="mono ip-list">${(item.ips || []).join(", ")}</span>`
+      ]);
+
+      const note = `
+        <div class="summary-box" style="margin-bottom: 12px;">
+          <p><strong>Enabled:</strong> ${safe(liveMeta.enabled)}</p>
+          <p><strong>Method:</strong> ${safe(liveMeta.lookup_method)}</p>
+          <p><strong>Source:</strong> ${safe(liveMeta.source)}</p>
+          <p><strong>Failure behavior:</strong> ${safe(liveMeta.failure_behavior)}</p>
+          <p class="muted">${safe(liveMeta.disclaimer)}</p>
+        </div>
+      `;
+
+      $("liveAsnSummary").innerHTML = note + `<div class="table-wrap"><table id="liveAsnSummaryTable"></table></div>`;
+      renderTable("liveAsnSummaryTable", ["Live ASN", "Unique IPs", "ASN Name", "Country", "IPs"], rows);
+    }
+
     function renderDacSignalSummary(rotation) {
       const signalMeta = rotation.dac_infrastructure_signal || {};
       const rows = (rotation.dac_infrastructure_signal_summary || []).map(item => [
@@ -601,6 +630,9 @@
         safe(item.provider_guess),
         safe(item.asn_hint),
         safe(item.provider_confidence),
+        safe(item.live_asn),
+        safe(item.live_asn_name),
+        safe(item.live_country_code),
         safe(item.appearance_count),
         safe(item.appearance_ratio),
         safe((item.phases_seen || []).join(", ")),
@@ -608,7 +640,7 @@
         safe(item.last_seen && item.last_seen.generated_at_source)
       ]);
 
-      renderTable("persistentIps", ["IP", "DAC Signal", "Signal Confidence", "Peer Identity", "Provider", "ASN", "Provider Confidence", "Appearances", "Ratio", "Phases", "First Seen", "Last Seen"], rows);
+      renderTable("persistentIps", ["IP", "DAC Signal", "Signal Confidence", "Peer Identity", "Static Provider", "Static ASN", "Provider Confidence", "Live ASN", "Live ASN Name", "Country", "Appearances", "Ratio", "Phases", "First Seen", "Last Seen"], rows);
     }
 
     function renderAnomalyEvents(anomaly) {
@@ -658,6 +690,7 @@
         renderAnomalySummary(anomaly);
         renderReportSummary(rotation);
         renderProviderSummary(rotation);
+        renderLiveAsnSummary(rotation);
         renderDacSignalSummary(rotation);
         renderPersistentEnodes(rotation);
         renderPersistentIps(rotation);

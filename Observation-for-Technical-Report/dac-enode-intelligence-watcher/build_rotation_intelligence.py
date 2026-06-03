@@ -1,8 +1,16 @@
 import json
+import os
 from collections import Counter, defaultdict
 from pathlib import Path
 
 from provider_hints import detect_provider_hint
+from asn_lookup import (
+    DISCLAIMER as LIVE_ASN_DISCLAIMER,
+    LOOKUP_METHOD as LIVE_ASN_LOOKUP_METHOD,
+    load_asn_cache,
+    lookup_asn,
+    save_asn_cache,
+)
 from dac_signal_hints import (
     DISCLAIMER as DAC_SIGNAL_DISCLAIMER,
     SIGNAL_SOURCE_REFERENCE,
@@ -331,6 +339,92 @@ def build_transition_summary(timeline: list[dict]) -> dict:
     }
 
 
+def live_asn_lookup_enabled() -> bool:
+    value = os.getenv("DAC_LIVE_ASN_LOOKUP", "1").strip().lower()
+    return value not in {"0", "false", "no", "off"}
+
+
+def apply_live_asn_lookup(ip_table: list[dict]) -> tuple[list[dict], dict, dict]:
+    use_live_lookup = live_asn_lookup_enabled()
+    cache = load_asn_cache()
+
+    live_asn_counts = Counter()
+    live_asn_name_counts = Counter()
+    live_asn_country_counts = Counter()
+    live_asn_success_counts = Counter()
+
+    for item in ip_table:
+        ip = item.get("ip")
+
+        live_asn, cache = lookup_asn(
+            ip=ip,
+            cache=cache,
+            use_live_lookup=use_live_lookup,
+            refresh=False,
+        )
+
+        item["live_asn_lookup"] = live_asn
+        item["live_asn"] = live_asn.get("asn")
+        item["live_asn_name"] = live_asn.get("asn_name")
+        item["live_bgp_prefix"] = live_asn.get("bgp_prefix")
+        item["live_country_code"] = live_asn.get("country_code")
+        item["live_registry"] = live_asn.get("registry")
+        item["live_allocated"] = live_asn.get("allocated")
+        item["live_asn_lookup_success"] = live_asn.get("live_lookup_success")
+        item["live_asn_lookup_cached"] = live_asn.get("cached")
+        item["live_asn_lookup_error"] = live_asn.get("error")
+
+        live_asn_counts[item["live_asn"] or "Unknown"] += 1
+        live_asn_name_counts[item["live_asn_name"] or "Unknown"] += 1
+        live_asn_country_counts[item["live_country_code"] or "Unknown"] += 1
+        live_asn_success_counts[str(bool(item["live_asn_lookup_success"]))] += 1
+
+    save_asn_cache(cache)
+
+    live_asn_summary = [
+        {
+            "live_asn": asn,
+            "unique_ip_count": count,
+            "asn_names": sorted({
+                item.get("live_asn_name") or "Unknown"
+                for item in ip_table
+                if (item.get("live_asn") or "Unknown") == asn
+            }),
+            "country_codes": sorted({
+                item.get("live_country_code") or "Unknown"
+                for item in ip_table
+                if (item.get("live_asn") or "Unknown") == asn
+            }),
+            "ips": sorted([
+                item["ip"]
+                for item in ip_table
+                if (item.get("live_asn") or "Unknown") == asn
+            ])
+        }
+        for asn, count in live_asn_counts.most_common()
+    ]
+
+    live_asn_meta = {
+        "enabled": use_live_lookup,
+        "lookup_method": LIVE_ASN_LOOKUP_METHOD,
+        "source": "team_cymru",
+        "cache_file": "data/asn-cache.json",
+        "workflow_safe": True,
+        "failure_behavior": "fallback_to_unknown_without_failing_pipeline",
+        "disclaimer": LIVE_ASN_DISCLAIMER,
+    }
+
+    live_asn_stats = {
+        "live_asn_counts": dict(live_asn_counts),
+        "live_asn_name_counts": dict(live_asn_name_counts),
+        "live_asn_country_counts": dict(live_asn_country_counts),
+        "live_asn_success_counts": dict(live_asn_success_counts),
+        "live_asn_summary": live_asn_summary,
+    }
+
+    return ip_table, live_asn_meta, live_asn_stats
+
+
 def main() -> None:
     snapshots = load_snapshots()
 
@@ -340,6 +434,7 @@ def main() -> None:
     timeline = build_observation_timeline(snapshots)
     enode_table = build_presence_table(snapshots)
     ip_table = build_ip_table(snapshots)
+    ip_table, live_asn_meta, live_asn_stats = apply_live_asn_lookup(ip_table)
 
     enode_counts = [item["current_total"] for item in timeline]
     target_ports = sorted({
@@ -509,6 +604,12 @@ def main() -> None:
         "provider_summary": provider_summary,
         "asn_summary": asn_summary,
         "provider_asn_summary": provider_asn_summary,
+        "live_asn_lookup": live_asn_meta,
+        "live_asn_counts": live_asn_stats["live_asn_counts"],
+        "live_asn_name_counts": live_asn_stats["live_asn_name_counts"],
+        "live_asn_country_counts": live_asn_stats["live_asn_country_counts"],
+        "live_asn_success_counts": live_asn_stats["live_asn_success_counts"],
+        "live_asn_summary": live_asn_stats["live_asn_summary"],
         "dac_infrastructure_signal": {
             "method": "static_report_evidence_and_observation_heuristic",
             "official_ownership_claim": False,
@@ -557,6 +658,8 @@ def main() -> None:
     print(f"[OK] Provider hints: {dict(provider_counts)}")
     print(f"[OK] ASN hints: {dict(asn_counts)}")
     print(f"[OK] Provider / ASN groups: {len(provider_asn_summary)}")
+    print(f"[OK] Live ASN lookup enabled: {live_asn_meta['enabled']}")
+    print(f"[OK] Live ASN counts: {live_asn_stats['live_asn_counts']}")
     print(f"[OK] DAC Infrastructure Signals: {dac_signal_counts}")
     print(f"[OK] Target ports observed: {target_ports}")
     print(f"[OK] Enode count min/max/avg: {min(enode_counts)} / {max(enode_counts)} / {round(sum(enode_counts) / len(enode_counts), 2)}")

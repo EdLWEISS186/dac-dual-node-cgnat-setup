@@ -657,6 +657,65 @@ This turns the watcher from a monitoring and analysis tool into a report prepara
 
 ---
 
+## Live ASN Lookup Layer
+
+The project now includes an optional Live ASN Lookup Layer.
+
+This layer enriches observed enode IPs with live routing data from Team Cymru WHOIS lookup.
+
+Helper file:
+
+    asn_lookup.py
+
+Cache file:
+
+    data/asn-cache.json
+
+The lookup layer is designed to be workflow-safe:
+
+- static provider hints remain available
+- live ASN lookup is enrichment only
+- lookup results are cached
+- workflow does not fail if live lookup fails
+- failed lookups fall back to safe Unknown-style output
+- ASN data is not treated as official DAC node ownership
+
+Generated live ASN fields include:
+
+- `live_asn`
+- `live_asn_name`
+- `live_bgp_prefix`
+- `live_country_code`
+- `live_registry`
+- `live_allocated`
+- `live_asn_lookup_success`
+- `live_asn_lookup_cached`
+- `live_asn_lookup_error`
+
+Generated summary outputs include:
+
+- `live_asn_lookup`
+- `live_asn_counts`
+- `live_asn_name_counts`
+- `live_asn_country_counts`
+- `live_asn_success_counts`
+- `live_asn_summary`
+
+The current implementation uses:
+
+    Team Cymru WHOIS live lookup
+
+Environment control:
+
+    DAC_LIVE_ASN_LOOKUP=1    enable live lookup
+    DAC_LIVE_ASN_LOOKUP=0    disable live lookup and use safe fallback/cache behavior
+
+Important note:
+
+Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership.
+
+---
+
 ## DAC Infrastructure Signal Layer
 
 The project now includes a DAC Infrastructure Signal Layer.
@@ -949,6 +1008,11 @@ The current version already supports:
 - DAC signal dashboard visualization
 - DAC signal technical report section generation
 - community inference disclaimer for non-official role signals
+- optional Live ASN lookup enrichment
+- Team Cymru WHOIS ASN lookup support
+- ASN cache generation
+- Live ASN dashboard visualization
+- Live ASN report section generation
 
 ---
 
@@ -1212,6 +1276,76 @@ Important interpretation:
 DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.
 
 This layer improves node-role readability without claiming official ownership.
+
+### v1.6.3 — Live ASN Lookup Option
+
+Added optional live ASN lookup enrichment for observed enode IPs.
+
+New file:
+
+- `asn_lookup.py`
+
+New cache file:
+
+- `data/asn-cache.json`
+
+Updated files:
+
+- `build_rotation_intelligence.py`
+- `generate_technical_report.py`
+- `dashboard/index.html`
+- `data/rotation-intelligence-summary.json`
+- `reports/generated/dac-enode-intelligence-report.md`
+- `README.md`
+
+New output fields:
+
+- `live_asn`
+- `live_asn_name`
+- `live_bgp_prefix`
+- `live_country_code`
+- `live_registry`
+- `live_allocated`
+- `live_asn_lookup_success`
+- `live_asn_lookup_cached`
+- `live_asn_lookup_error`
+
+New summary outputs:
+
+- `live_asn_lookup`
+- `live_asn_counts`
+- `live_asn_name_counts`
+- `live_asn_country_counts`
+- `live_asn_success_counts`
+- `live_asn_summary`
+
+Initial generated result includes:
+
+- `AS51167`: 15 unique IPs
+- `AS14061`: 4 unique IPs
+- `AS24940`: 2 unique IPs
+- `AS18403`: 2 unique IPs
+- `AS141995`: 2 unique IPs
+- `AS45899`: 1 unique IP
+- `AS16276`: 1 unique IP
+- `AS47583`: 1 unique IP
+- `AS26832`: 1 unique IP
+
+Live lookup validation:
+
+- all 29 unique IPs returned successful live ASN lookup results
+- `live_asn_success_counts`: `True = 29`
+
+Important interpretation:
+
+Live ASN lookup improves routing/provider visibility, but it does not represent official DAC node ownership.
+
+It should be read together with:
+
+- static Provider / ASN Hint Layer
+- DAC Infrastructure Signal Layer
+- registry observation history
+- manual technical report evidence
 
 ---
 
