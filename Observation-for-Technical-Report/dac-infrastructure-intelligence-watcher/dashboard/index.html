@@ -562,7 +562,8 @@
       const rows = [];
 
       if (card.key === "official_public_rpc") {
-        rows.push(["Chain ID", card.chain_id_hex]);
+        rows.push(["Chain ID", card.chain_id_decimal]);
+        rows.push(["Chain ID hex", card.chain_id_hex]);
         rows.push(["Latest block", card.latest_block_decimal ? number(card.latest_block_decimal) : card.latest_block_hex]);
         rows.push(["Latest block hex", card.latest_block_hex]);
         rows.push(["Avg response time", card.latency_ms_avg ? `${card.latency_ms_avg} ms` : null]);
@@ -708,6 +709,48 @@
       `;
     }
 
+
+    function renderComparisonReports() {
+      const reports = [
+        {
+          label: "7D Comparison",
+          href: "../reports/generated/comparison/infrastructure-comparison-7d.md",
+          description: "Earlier vs later snapshots within the 7-day observation scope."
+        },
+        {
+          label: "30D Comparison",
+          href: "../reports/generated/comparison/infrastructure-comparison-30d.md",
+          description: "Earlier vs later snapshots within the 30-day observation scope."
+        },
+        {
+          label: "ALL Comparison",
+          href: "../reports/generated/comparison/infrastructure-comparison-all.md",
+          description: "Earlier vs later snapshots across the full tracked dataset."
+        }
+      ];
+
+      return `
+        <section class="section">
+          <h2>Observation Window Comparison</h2>
+          <p class="section-desc">
+            Comparison reports split selected observations into Window A and Window B to identify recovery,
+            deterioration, or unchanged infrastructure behavior.
+          </p>
+          <div class="grid three">
+            ${reports.map(report => `
+              <a class="card endpoint-card" href="${report.href}">
+                <div class="endpoint-title">
+                  <h3>${report.label}</h3>
+                  <span class="status HEALTHY">REPORT</span>
+                </div>
+                <div class="card-note">${report.description}</div>
+              </a>
+            `).join("")}
+          </div>
+        </section>
+      `;
+    }
+
     function renderNotes(data) {
       const notes = data.latest.interpretation_notes || [];
 
@@ -734,6 +777,7 @@
         app.innerHTML = [
           renderTopCards(data),
           renderEndpointCards(data),
+          renderComparisonReports(),
           `<div class="grid two">
             ${renderBars("Overall Status Distribution", "Overall infrastructure health states across tracked snapshots.", data.history.overall_status_counts)}
             ${renderEndpointHistory(data)}

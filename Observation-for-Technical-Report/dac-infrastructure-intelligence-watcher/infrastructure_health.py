@@ -123,6 +123,17 @@ def latency_summary_from_checks(checks):
         "latency_class": classify_latency(max_latency),
     }
 
+
+def hex_to_int(value):
+    if not value:
+        return None
+
+    try:
+        return int(value, 16)
+    except Exception:
+        return None
+
+
 def check_rpc():
     checks = {
         "eth_chainId": rpc_call("eth_chainId"),
@@ -163,6 +174,7 @@ def check_rpc():
         "ok": required_ok,
         "summary": summary,
         "chain_id_hex": checks["eth_chainId"].get("result"),
+        "chain_id_decimal": hex_to_int(checks["eth_chainId"].get("result")),
         "latest_block_hex": latest_block_hex,
         "latest_block_decimal": latest_block_decimal,
         "latency_ms_avg": latency_summary["latency_ms_avg"],

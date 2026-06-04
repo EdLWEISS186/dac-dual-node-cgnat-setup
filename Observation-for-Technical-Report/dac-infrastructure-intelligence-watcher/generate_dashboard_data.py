@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 PROJECT = "DAC Infrastructure Intelligence Watcher"
-VERSION = "v1.3.0"
+VERSION = "v1.5.1"
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -100,6 +100,7 @@ def build_endpoint_cards(latest):
         if key == "official_public_rpc":
             card.update({
                 "chain_id_hex": endpoint.get("chain_id_hex"),
+                "chain_id_decimal": endpoint.get("chain_id_decimal"),
                 "latest_block_hex": endpoint.get("latest_block_hex"),
                 "latest_block_decimal": endpoint.get("latest_block_decimal"),
                 "latency_ms_avg": endpoint.get("latency_ms_avg"),
