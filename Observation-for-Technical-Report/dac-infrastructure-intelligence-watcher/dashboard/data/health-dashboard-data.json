@@ -1,12 +1,12 @@
 {
   "project": "DAC Infrastructure Intelligence Watcher",
   "version": "v1.3.0",
-  "source_latest_checked_at_utc": "2026-06-04T17:39:38.929050+00:00",
+  "source_latest_checked_at_utc": "2026-06-04T19:47:12.825324+00:00",
   "freshness": {
-    "status": "STALE",
-    "age_minutes": 81.52,
+    "status": "FRESH",
+    "age_minutes": 0.08,
     "threshold_minutes": 30,
-    "summary": "Latest watcher state is older than the expected freshness window."
+    "summary": "Latest watcher state is fresh."
   },
   "summary_type": "infrastructure_health_dashboard_data",
   "links": {
@@ -16,10 +16,10 @@
   },
   "latest": {
     "overall": {
-      "overall_status": "DEGRADED",
-      "summary": "All monitored endpoints are reachable, but at least one endpoint is degraded.",
-      "healthy_count": 2,
-      "degraded_count": 1,
+      "overall_status": "HEALTHY",
+      "summary": "All monitored DAC infrastructure endpoints are healthy.",
+      "healthy_count": 3,
+      "degraded_count": 0,
       "unhealthy_count": 0,
       "total_endpoints": 3
     },
@@ -34,15 +34,15 @@
         "key": "official_public_rpc",
         "name": "Official Public RPC",
         "url": "https://rpctest.dachain.tech/",
-        "status": "DEGRADED",
-        "ok": false,
-        "summary": "Public RPC is reachable, but one or more JSON-RPC checks failed.",
+        "status": "HEALTHY",
+        "ok": true,
+        "summary": "Public RPC responded to required and optional JSON-RPC checks.",
         "chain_id_hex": "0x5586",
-        "latest_block_hex": null,
-        "latest_block_decimal": null,
-        "latency_ms_avg": 3284,
-        "latency_ms_max": 3416,
-        "latency_class": "SLOW"
+        "latest_block_hex": "0xe43391",
+        "latest_block_decimal": 14955409,
+        "latency_ms_avg": 1067,
+        "latency_ms_max": 1287,
+        "latency_class": "MODERATE"
       },
       {
         "key": "explorer_web",
@@ -52,7 +52,7 @@
         "ok": true,
         "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
         "http_status": 200,
-        "latency_ms": 662,
+        "latency_ms": 666,
         "latency_class": "MODERATE",
         "title": "DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats",
         "has_explorer_signal": true
@@ -66,9 +66,9 @@
         "summary": "Explorer API responded successfully to supported stats endpoint.",
         "root_expected_validation": true,
         "stats_ok": true,
-        "latency_ms_avg": 476,
-        "latency_ms_max": 492,
-        "latency_class": "FAST"
+        "latency_ms_avg": 520,
+        "latency_ms_max": 530,
+        "latency_class": "MODERATE"
       }
     ],
     "interpretation_notes": [
@@ -79,25 +79,25 @@
     ]
   },
   "history": {
-    "snapshot_count": 13,
+    "snapshot_count": 14,
     "first_snapshot": "2026-06-04T09-54-55-772035+00-00-health.json",
-    "latest_snapshot": "2026-06-04T17-39-38-929050+00-00-health.json",
+    "latest_snapshot": "2026-06-04T19-47-12-825324+00-00-health.json",
     "overall_status_counts": {
       "DEGRADED": 4,
-      "HEALTHY": 4,
+      "HEALTHY": 5,
       "PARTIAL_OUTAGE": 5
     },
     "endpoint_status_counts": {
       "official_public_rpc": {
         "DEGRADED": 4,
-        "HEALTHY": 4,
+        "HEALTHY": 5,
         "UNHEALTHY": 5
       },
       "explorer_web": {
-        "HEALTHY": 13
+        "HEALTHY": 14
       },
       "primary_explorer_api": {
-        "HEALTHY": 13
+        "HEALTHY": 14
       }
     },
     "timeline": [
@@ -243,6 +243,17 @@
         "primary_explorer_api_status": "HEALTHY",
         "rpc_latest_block_decimal": null,
         "rpc_latest_block_hex": null
+      },
+      {
+        "index": 14,
+        "snapshot_file": "2026-06-04T19-47-12-825324+00-00-health.json",
+        "checked_at_utc": "2026-06-04T19:47:12.825324+00:00",
+        "overall_status": "HEALTHY",
+        "official_public_rpc_status": "HEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": 14955409,
+        "rpc_latest_block_hex": "0xe43391"
       }
     ]
   }
