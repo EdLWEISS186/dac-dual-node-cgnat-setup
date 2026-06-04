@@ -1,7 +1,7 @@
 {
   "project": "DAC Infrastructure Intelligence Watcher",
   "version": "v1.2.0",
-  "source_latest_checked_at_utc": "2026-06-04T16:59:50.793517+00:00",
+  "source_latest_checked_at_utc": "2026-06-04T17:34:38.689983+00:00",
   "summary_type": "infrastructure_health_dashboard_data",
   "links": {
     "health_report": "../reports/generated/infrastructure-health-report.md",
@@ -10,11 +10,11 @@
   },
   "latest": {
     "overall": {
-      "overall_status": "PARTIAL_OUTAGE",
-      "summary": "At least one endpoint is unhealthy while other monitored endpoints remain reachable.",
-      "healthy_count": 2,
+      "overall_status": "HEALTHY",
+      "summary": "All monitored DAC infrastructure endpoints are healthy.",
+      "healthy_count": 3,
       "degraded_count": 0,
-      "unhealthy_count": 1,
+      "unhealthy_count": 0,
       "total_endpoints": 3
     },
     "monitoring_scope": {
@@ -28,15 +28,15 @@
         "key": "official_public_rpc",
         "name": "Official Public RPC",
         "url": "https://rpctest.dachain.tech/",
-        "status": "UNHEALTHY",
-        "ok": false,
-        "summary": "Public RPC failed all JSON-RPC checks.",
-        "chain_id_hex": null,
-        "latest_block_hex": null,
-        "latest_block_decimal": null,
-        "latency_ms_avg": 965,
-        "latency_ms_max": 1329,
-        "latency_class": "MODERATE"
+        "status": "HEALTHY",
+        "ok": true,
+        "summary": "Public RPC responded to required and optional JSON-RPC checks.",
+        "chain_id_hex": "0x5586",
+        "latest_block_hex": "0xe43182",
+        "latest_block_decimal": 14954882,
+        "latency_ms_avg": 3071,
+        "latency_ms_max": 5347,
+        "latency_class": "SLOW"
       },
       {
         "key": "explorer_web",
@@ -46,7 +46,7 @@
         "ok": true,
         "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
         "http_status": 200,
-        "latency_ms": 721,
+        "latency_ms": 674,
         "latency_class": "MODERATE",
         "title": "DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats",
         "has_explorer_signal": true
@@ -60,8 +60,8 @@
         "summary": "Explorer API responded successfully to supported stats endpoint.",
         "root_expected_validation": true,
         "stats_ok": true,
-        "latency_ms_avg": 581,
-        "latency_ms_max": 620,
+        "latency_ms_avg": 517,
+        "latency_ms_max": 523,
         "latency_class": "MODERATE"
       }
     ],
@@ -73,25 +73,25 @@
     ]
   },
   "history": {
-    "snapshot_count": 11,
+    "snapshot_count": 12,
     "first_snapshot": "2026-06-04T09-54-55-772035+00-00-health.json",
-    "latest_snapshot": "2026-06-04T16-59-50-793517+00-00-health.json",
+    "latest_snapshot": "2026-06-04T17-34-38-689983+00-00-health.json",
     "overall_status_counts": {
       "DEGRADED": 3,
-      "HEALTHY": 3,
+      "HEALTHY": 4,
       "PARTIAL_OUTAGE": 5
     },
     "endpoint_status_counts": {
       "official_public_rpc": {
         "DEGRADED": 3,
-        "HEALTHY": 3,
+        "HEALTHY": 4,
         "UNHEALTHY": 5
       },
       "explorer_web": {
-        "HEALTHY": 11
+        "HEALTHY": 12
       },
       "primary_explorer_api": {
-        "HEALTHY": 11
+        "HEALTHY": 12
       }
     },
     "timeline": [
@@ -215,6 +215,17 @@
         "primary_explorer_api_status": "HEALTHY",
         "rpc_latest_block_decimal": null,
         "rpc_latest_block_hex": null
+      },
+      {
+        "index": 12,
+        "snapshot_file": "2026-06-04T17-34-38-689983+00-00-health.json",
+        "checked_at_utc": "2026-06-04T17:34:38.689983+00:00",
+        "overall_status": "HEALTHY",
+        "official_public_rpc_status": "HEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": 14954882,
+        "rpc_latest_block_hex": "0xe43182"
       }
     ]
   }
