@@ -1,0 +1,113 @@
+{
+  "project": "DAC Infrastructure Intelligence Watcher",
+  "version": "v1.0.0",
+  "summary_type": "infrastructure_health",
+  "checked_at_utc": "2026-06-04T09:59:08.192048+00:00",
+  "monitoring_scope": {
+    "official_public_rpc": "https://rpctest.dachain.tech/",
+    "explorer_web": "https://exptest.dachain.tech/",
+    "primary_explorer_api": "https://exptest.dachain.tech/api",
+    "timeout_seconds": 15
+  },
+  "overall": {
+    "overall_status": "PARTIAL_OUTAGE",
+    "summary": "At least one endpoint is unhealthy while other monitored endpoints remain reachable.",
+    "healthy_count": 2,
+    "degraded_count": 0,
+    "unhealthy_count": 1,
+    "total_endpoints": 3
+  },
+  "endpoints": {
+    "official_public_rpc": {
+      "name": "Official Public RPC",
+      "url": "https://rpctest.dachain.tech/",
+      "status": "UNHEALTHY",
+      "ok": false,
+      "summary": "Public RPC failed one or more required JSON-RPC checks.",
+      "chain_id_hex": null,
+      "latest_block_hex": "0xe429e4",
+      "latest_block_decimal": 14952932,
+      "checks": {
+        "eth_chainId": {
+          "method": "eth_chainId",
+          "ok": false,
+          "http_status": 502,
+          "latency_ms": 2467,
+          "result": null,
+          "error": null
+        },
+        "eth_blockNumber": {
+          "method": "eth_blockNumber",
+          "ok": true,
+          "http_status": 200,
+          "latency_ms": 5121,
+          "result": "0xe429e4",
+          "error": null
+        },
+        "web3_clientVersion": {
+          "method": "web3_clientVersion",
+          "ok": true,
+          "http_status": 200,
+          "latency_ms": 4775,
+          "result": "gdacnode/DAC Testnet RPC 04/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+          "error": null
+        }
+      }
+    },
+    "explorer_web": {
+      "name": "Explorer Web",
+      "url": "https://exptest.dachain.tech/",
+      "status": "HEALTHY",
+      "ok": true,
+      "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
+      "http_status": 200,
+      "latency_ms": 973,
+      "content_type": "text/html; charset=utf-8",
+      "server": "Apache",
+      "x_powered_by": "Next.js",
+      "title": "DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats",
+      "has_explorer_signal": true
+    },
+    "primary_explorer_api": {
+      "name": "Primary Explorer API",
+      "url": "https://exptest.dachain.tech/api",
+      "status": "HEALTHY",
+      "ok": true,
+      "summary": "Explorer API responded successfully to supported stats endpoint.",
+      "root_expected_validation": true,
+      "stats_ok": true,
+      "checks": {
+        "root": {
+          "url": "https://exptest.dachain.tech/api",
+          "request_ok": true,
+          "http_status": 400,
+          "latency_ms": 660,
+          "json": {
+            "message": "Params 'module' and 'action' are required parameters",
+            "result": null,
+            "status": "0"
+          },
+          "error": null
+        },
+        "stats_ethsupply": {
+          "url": "https://exptest.dachain.tech/api?module=stats&action=ethsupply",
+          "request_ok": true,
+          "http_status": 200,
+          "latency_ms": 769,
+          "json": {
+            "message": "OK",
+            "result": "115792089237316195423570985008687907853269984665740576902525805098010781426276",
+            "status": "1"
+          },
+          "error": null
+        }
+      }
+    }
+  },
+  "interpretation_notes": [
+    "RPC health is based on JSON-RPC POST checks, not HTTP GET root behavior.",
+    "Explorer API root returning a validation error for missing module/action is treated as reachability evidence.",
+    "Explorer API proxy module is not assumed to be supported.",
+    "This health summary is an independent observation aid and not an official DAC service status page."
+  ]
+}

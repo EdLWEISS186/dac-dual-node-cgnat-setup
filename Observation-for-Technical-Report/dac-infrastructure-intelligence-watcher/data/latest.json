@@ -1,0 +1,119 @@
+{
+  "project": "DAC Infrastructure Intelligence Watcher",
+  "version": "v1.0.0",
+  "summary_type": "infrastructure_health",
+  "checked_at_utc": "2026-06-04T11:38:26.409385+00:00",
+  "monitoring_scope": {
+    "official_public_rpc": "https://rpctest.dachain.tech/",
+    "explorer_web": "https://exptest.dachain.tech/",
+    "primary_explorer_api": "https://exptest.dachain.tech/api",
+    "timeout_seconds": 15
+  },
+  "overall": {
+    "overall_status": "DEGRADED",
+    "summary": "All monitored endpoints are reachable, but at least one endpoint is degraded.",
+    "healthy_count": 2,
+    "degraded_count": 1,
+    "unhealthy_count": 0,
+    "total_endpoints": 3
+  },
+  "endpoints": {
+    "official_public_rpc": {
+      "name": "Official Public RPC",
+      "url": "https://rpctest.dachain.tech/",
+      "status": "DEGRADED",
+      "ok": false,
+      "summary": "Public RPC is reachable, but one or more JSON-RPC checks failed.",
+      "chain_id_hex": null,
+      "latest_block_hex": null,
+      "latest_block_decimal": null,
+      "checks": {
+        "eth_chainId": {
+          "method": "eth_chainId",
+          "ok": false,
+          "http_status": 502,
+          "latency_ms": 1027,
+          "result": null,
+          "error": null
+        },
+        "eth_blockNumber": {
+          "method": "eth_blockNumber",
+          "ok": false,
+          "http_status": 502,
+          "latency_ms": 1304,
+          "result": null,
+          "error": null
+        },
+        "web3_clientVersion": {
+          "method": "web3_clientVersion",
+          "ok": true,
+          "http_status": 200,
+          "latency_ms": 1677,
+          "result": "gdacnode/DAC Testnet RPC 02/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+          "error": null
+        }
+      }
+    },
+    "explorer_web": {
+      "name": "Explorer Web",
+      "url": "https://exptest.dachain.tech/",
+      "status": "HEALTHY",
+      "ok": true,
+      "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
+      "http_status": 200,
+      "latency_ms": 1012,
+      "content_type": "text/html; charset=utf-8",
+      "server": "Apache",
+      "x_powered_by": "Next.js",
+      "title": "DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats",
+      "has_explorer_signal": true
+    },
+    "primary_explorer_api": {
+      "name": "Primary Explorer API",
+      "url": "https://exptest.dachain.tech/api",
+      "status": "HEALTHY",
+      "ok": true,
+      "summary": "Explorer API responded successfully to supported stats endpoint.",
+      "root_expected_validation": true,
+      "stats_ok": true,
+      "checks": {
+        "root": {
+          "url": "https://exptest.dachain.tech/api",
+          "request_ok": true,
+          "http_status": 400,
+          "latency_ms": 1093,
+          "json": {
+            "message": "Params 'module' and 'action' are required parameters",
+            "result": null,
+            "status": "0"
+          },
+          "error": null
+        },
+        "stats_ethsupply": {
+          "url": "https://exptest.dachain.tech/api?module=stats&action=ethsupply",
+          "request_ok": true,
+          "http_status": 200,
+          "latency_ms": 689,
+          "json": {
+            "message": "OK",
+            "result": "115792089237316195423570985008687907853269984665740576902288108668858139441339",
+            "status": "1"
+          },
+          "error": null
+        }
+      }
+    }
+  },
+  "state_signature": {
+    "overall_status": "DEGRADED",
+    "official_public_rpc_status": "DEGRADED",
+    "explorer_web_status": "HEALTHY",
+    "primary_explorer_api_status": "HEALTHY"
+  },
+  "interpretation_notes": [
+    "RPC health is based on JSON-RPC POST checks, not HTTP GET root behavior.",
+    "Explorer API root returning a validation error for missing module/action is treated as reachability evidence.",
+    "Explorer API proxy module is not assumed to be supported.",
+    "This health summary is an independent observation aid and not an official DAC service status page."
+  ]
+}
