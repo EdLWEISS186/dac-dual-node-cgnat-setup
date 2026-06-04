@@ -124,9 +124,11 @@ The workflow can also be triggered manually from the GitHub Actions tab.
 
 ## What This Workflow Does
 
-The DAC Infrastructure Intelligence Watcher workflow currently performs the following step:
+The DAC Infrastructure Intelligence Watcher workflow currently performs the following steps:
 
     infrastructure_health.py
+    generate_health_report.py
+    generate_dashboard_data.py
 
 In simple terms, this workflow:
 
@@ -135,11 +137,15 @@ In simple terms, this workflow:
 - checks latest block availability through public RPC
 - checks explorer web frontend availability
 - checks explorer API reachability
-- classifies endpoint-level health
+- classifies endpoint-level availability health
+- classifies endpoint-level response-time class
 - classifies overall infrastructure health
-- writes `data/latest.json`
-- creates health snapshots only when endpoint-level state changes
-- commits generated health output changes back to the repository when needed
+- refreshes `data/latest.json`
+- creates health snapshots when endpoint-level health state changes
+- regenerates `reports/generated/infrastructure-health-report.md`
+- regenerates `dashboard/data/health-dashboard-data.json`
+- supports the static dashboard at `dashboard/index.html`
+- commits generated output changes back to the repository when needed
 
 The actual watcher project, script, generated data, and future report tools are located here:
 

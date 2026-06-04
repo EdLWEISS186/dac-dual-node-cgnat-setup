@@ -37,6 +37,11 @@ jobs:
         run: |
           python generate_health_report.py
 
+      - name: Generate infrastructure dashboard data
+        working-directory: Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher
+        run: |
+          python generate_dashboard_data.py
+
       - name: Commit health outputs
         run: |
           git config user.name "github-actions[bot]"
@@ -44,9 +49,11 @@ jobs:
 
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/infrastructure_health.py
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_health_report.py
+          git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_dashboard_data.py
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/README.md
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/requirements.txt
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/.gitignore
+          git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/dashboard/
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/reports/generated/
           git add -f Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/data/latest.json
           git add -f Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/data/snapshots/

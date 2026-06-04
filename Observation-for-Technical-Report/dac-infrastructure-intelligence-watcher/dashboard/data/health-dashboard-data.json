@@ -1,0 +1,221 @@
+{
+  "project": "DAC Infrastructure Intelligence Watcher",
+  "version": "v1.2.0",
+  "source_latest_checked_at_utc": "2026-06-04T16:59:50.793517+00:00",
+  "summary_type": "infrastructure_health_dashboard_data",
+  "links": {
+    "health_report": "../reports/generated/infrastructure-health-report.md",
+    "latest_json": "../data/latest.json",
+    "project_readme": "../README.md"
+  },
+  "latest": {
+    "overall": {
+      "overall_status": "PARTIAL_OUTAGE",
+      "summary": "At least one endpoint is unhealthy while other monitored endpoints remain reachable.",
+      "healthy_count": 2,
+      "degraded_count": 0,
+      "unhealthy_count": 1,
+      "total_endpoints": 3
+    },
+    "monitoring_scope": {
+      "official_public_rpc": "https://rpctest.dachain.tech/",
+      "explorer_web": "https://exptest.dachain.tech/",
+      "primary_explorer_api": "https://exptest.dachain.tech/api",
+      "timeout_seconds": 15
+    },
+    "endpoint_cards": [
+      {
+        "key": "official_public_rpc",
+        "name": "Official Public RPC",
+        "url": "https://rpctest.dachain.tech/",
+        "status": "UNHEALTHY",
+        "ok": false,
+        "summary": "Public RPC failed all JSON-RPC checks.",
+        "chain_id_hex": null,
+        "latest_block_hex": null,
+        "latest_block_decimal": null,
+        "latency_ms_avg": 965,
+        "latency_ms_max": 1329,
+        "latency_class": "MODERATE"
+      },
+      {
+        "key": "explorer_web",
+        "name": "Explorer Web",
+        "url": "https://exptest.dachain.tech/",
+        "status": "HEALTHY",
+        "ok": true,
+        "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
+        "http_status": 200,
+        "latency_ms": 721,
+        "latency_class": "MODERATE",
+        "title": "DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats",
+        "has_explorer_signal": true
+      },
+      {
+        "key": "primary_explorer_api",
+        "name": "Primary Explorer API",
+        "url": "https://exptest.dachain.tech/api",
+        "status": "HEALTHY",
+        "ok": true,
+        "summary": "Explorer API responded successfully to supported stats endpoint.",
+        "root_expected_validation": true,
+        "stats_ok": true,
+        "latency_ms_avg": 581,
+        "latency_ms_max": 620,
+        "latency_class": "MODERATE"
+      }
+    ],
+    "interpretation_notes": [
+      "RPC health is based on JSON-RPC POST checks, not HTTP GET root behavior.",
+      "Explorer API root returning a validation error for missing module/action is treated as reachability evidence.",
+      "Explorer API proxy module is not assumed to be supported.",
+      "This health summary is an independent observation aid and not an official DAC service status page."
+    ]
+  },
+  "history": {
+    "snapshot_count": 11,
+    "first_snapshot": "2026-06-04T09-54-55-772035+00-00-health.json",
+    "latest_snapshot": "2026-06-04T16-59-50-793517+00-00-health.json",
+    "overall_status_counts": {
+      "DEGRADED": 3,
+      "HEALTHY": 3,
+      "PARTIAL_OUTAGE": 5
+    },
+    "endpoint_status_counts": {
+      "official_public_rpc": {
+        "DEGRADED": 3,
+        "HEALTHY": 3,
+        "UNHEALTHY": 5
+      },
+      "explorer_web": {
+        "HEALTHY": 11
+      },
+      "primary_explorer_api": {
+        "HEALTHY": 11
+      }
+    },
+    "timeline": [
+      {
+        "index": 1,
+        "snapshot_file": "2026-06-04T09-54-55-772035+00-00-health.json",
+        "checked_at_utc": "2026-06-04T09:54:55.772035+00:00",
+        "overall_status": "PARTIAL_OUTAGE",
+        "official_public_rpc_status": "UNHEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": null,
+        "rpc_latest_block_hex": null
+      },
+      {
+        "index": 2,
+        "snapshot_file": "2026-06-04T09-59-08-192048+00-00-health.json",
+        "checked_at_utc": "2026-06-04T09:59:08.192048+00:00",
+        "overall_status": "PARTIAL_OUTAGE",
+        "official_public_rpc_status": "UNHEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": 14952932,
+        "rpc_latest_block_hex": "0xe429e4"
+      },
+      {
+        "index": 3,
+        "snapshot_file": "2026-06-04T09-59-48-937274+00-00-health.json",
+        "checked_at_utc": "2026-06-04T09:59:48.937274+00:00",
+        "overall_status": "HEALTHY",
+        "official_public_rpc_status": "HEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": 14952932,
+        "rpc_latest_block_hex": "0xe429e4"
+      },
+      {
+        "index": 4,
+        "snapshot_file": "2026-06-04T10-00-10-486388+00-00-health.json",
+        "checked_at_utc": "2026-06-04T10:00:10.486388+00:00",
+        "overall_status": "PARTIAL_OUTAGE",
+        "official_public_rpc_status": "UNHEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": null,
+        "rpc_latest_block_hex": null
+      },
+      {
+        "index": 5,
+        "snapshot_file": "2026-06-04T10-02-58-023788+00-00-health.json",
+        "checked_at_utc": "2026-06-04T10:02:58.023788+00:00",
+        "overall_status": "HEALTHY",
+        "official_public_rpc_status": "HEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": 14952932,
+        "rpc_latest_block_hex": "0xe429e4"
+      },
+      {
+        "index": 6,
+        "snapshot_file": "2026-06-04T11-35-39-447567+00-00-health.json",
+        "checked_at_utc": "2026-06-04T11:35:39.447567+00:00",
+        "overall_status": "DEGRADED",
+        "official_public_rpc_status": "DEGRADED",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": 14953437,
+        "rpc_latest_block_hex": "0xe42bdd"
+      },
+      {
+        "index": 7,
+        "snapshot_file": "2026-06-04T11-36-10-013189+00-00-health.json",
+        "checked_at_utc": "2026-06-04T11:36:10.013189+00:00",
+        "overall_status": "DEGRADED",
+        "official_public_rpc_status": "DEGRADED",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": 14953447,
+        "rpc_latest_block_hex": "0xe42be7"
+      },
+      {
+        "index": 8,
+        "snapshot_file": "2026-06-04T11-38-16-082796+00-00-health.json",
+        "checked_at_utc": "2026-06-04T11:38:16.082796+00:00",
+        "overall_status": "PARTIAL_OUTAGE",
+        "official_public_rpc_status": "UNHEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": null,
+        "rpc_latest_block_hex": null
+      },
+      {
+        "index": 9,
+        "snapshot_file": "2026-06-04T11-38-26-409385+00-00-health.json",
+        "checked_at_utc": "2026-06-04T11:38:26.409385+00:00",
+        "overall_status": "DEGRADED",
+        "official_public_rpc_status": "DEGRADED",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": null,
+        "rpc_latest_block_hex": null
+      },
+      {
+        "index": 10,
+        "snapshot_file": "2026-06-04T11-50-50-288397+00-00-health.json",
+        "checked_at_utc": "2026-06-04T11:50:50.288397+00:00",
+        "overall_status": "HEALTHY",
+        "official_public_rpc_status": "HEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": 14913037,
+        "rpc_latest_block_hex": "0xe38e0d"
+      },
+      {
+        "index": 11,
+        "snapshot_file": "2026-06-04T16-59-50-793517+00-00-health.json",
+        "checked_at_utc": "2026-06-04T16:59:50.793517+00:00",
+        "overall_status": "PARTIAL_OUTAGE",
+        "official_public_rpc_status": "UNHEALTHY",
+        "explorer_web_status": "HEALTHY",
+        "primary_explorer_api_status": "HEALTHY",
+        "rpc_latest_block_decimal": null,
+        "rpc_latest_block_hex": null
+      }
+    ]
+  }
+}

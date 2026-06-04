@@ -89,6 +89,40 @@ def rpc_call(method):
         }
 
 
+
+def classify_latency(latency_ms):
+    if latency_ms is None:
+        return "N/A"
+    if latency_ms <= 500:
+        return "FAST"
+    if latency_ms <= 1500:
+        return "MODERATE"
+    return "SLOW"
+
+
+def latency_summary_from_checks(checks):
+    latencies = [
+        check.get("latency_ms")
+        for check in checks.values()
+        if isinstance(check.get("latency_ms"), int)
+    ]
+
+    if not latencies:
+        return {
+            "latency_ms_avg": None,
+            "latency_ms_max": None,
+            "latency_class": "N/A",
+        }
+
+    avg_latency = int(round(sum(latencies) / len(latencies)))
+    max_latency = max(latencies)
+
+    return {
+        "latency_ms_avg": avg_latency,
+        "latency_ms_max": max_latency,
+        "latency_class": classify_latency(max_latency),
+    }
+
 def check_rpc():
     checks = {
         "eth_chainId": rpc_call("eth_chainId"),
@@ -120,6 +154,8 @@ def check_rpc():
         status = "UNHEALTHY"
         summary = "Public RPC failed all JSON-RPC checks."
 
+    latency_summary = latency_summary_from_checks(checks)
+
     return {
         "name": "Official Public RPC",
         "url": RPC_URL,
@@ -129,6 +165,9 @@ def check_rpc():
         "chain_id_hex": checks["eth_chainId"].get("result"),
         "latest_block_hex": latest_block_hex,
         "latest_block_decimal": latest_block_decimal,
+        "latency_ms_avg": latency_summary["latency_ms_avg"],
+        "latency_ms_max": latency_summary["latency_ms_max"],
+        "latency_class": latency_summary["latency_class"],
         "checks": checks,
     }
 
@@ -177,6 +216,7 @@ def check_explorer_web():
             "summary": summary,
             "http_status": response.status_code,
             "latency_ms": elapsed_ms(start),
+            "latency_class": classify_latency(elapsed_ms(start)),
             "content_type": response.headers.get("content-type"),
             "server": response.headers.get("server"),
             "x_powered_by": response.headers.get("x-powered-by"),
@@ -193,6 +233,7 @@ def check_explorer_web():
             "summary": "Explorer web request failed.",
             "http_status": None,
             "latency_ms": elapsed_ms(start),
+            "latency_class": classify_latency(elapsed_ms(start)),
             "error": str(exc),
         }
 
@@ -207,6 +248,7 @@ def get_api(url):
             "request_ok": True,
             "http_status": response.status_code,
             "latency_ms": elapsed_ms(start),
+            "latency_class": classify_latency(elapsed_ms(start)),
             "json": safe_json(response),
             "error": None,
         }
@@ -217,6 +259,7 @@ def get_api(url):
             "request_ok": False,
             "http_status": None,
             "latency_ms": elapsed_ms(start),
+            "latency_class": classify_latency(elapsed_ms(start)),
             "json": None,
             "error": str(exc),
         }
@@ -255,6 +298,11 @@ def check_explorer_api():
         status = "UNHEALTHY"
         summary = "Explorer API did not return expected validation or supported endpoint output."
 
+    api_latency_summary = latency_summary_from_checks({
+        "root": root,
+        "stats_ethsupply": stats,
+    })
+
     return {
         "name": "Primary Explorer API",
         "url": EXPLORER_API_URL,
@@ -263,6 +311,9 @@ def check_explorer_api():
         "summary": summary,
         "root_expected_validation": root_expected,
         "stats_ok": stats_ok,
+        "latency_ms_avg": api_latency_summary["latency_ms_avg"],
+        "latency_ms_max": api_latency_summary["latency_ms_max"],
+        "latency_class": api_latency_summary["latency_class"],
         "checks": {
             "root": root,
             "stats_ethsupply": stats,
@@ -368,19 +419,20 @@ def write_outputs(summary):
     previous_signature = previous.get("state_signature") if isinstance(previous, dict) else None
     current_signature = summary.get("state_signature")
 
-    if previous_signature == current_signature:
-        return None
-
     checked_at = datetime.fromisoformat(summary["checked_at_utc"])
     snapshot_file = SNAPSHOT_DIR / snapshot_name(checked_at)
 
     text = json.dumps(summary, indent=2, ensure_ascii=False) + "\n"
 
+    # latest.json should represent the latest health check, including latency and block state.
+    # Snapshots remain state-change based to avoid noisy historical files.
     LATEST_FILE.write_text(text, encoding="utf-8")
+
+    if previous_signature == current_signature:
+        return None
+
     snapshot_file.write_text(text, encoding="utf-8")
-
     return snapshot_file
-
 
 def main():
     summary = build_summary()
@@ -389,12 +441,13 @@ def main():
     print("[OK] DAC infrastructure health check completed.")
     print(f"[OK] Overall status: {summary['overall']['overall_status']}")
 
+    print(f"[OK] Latest output refreshed: {LATEST_FILE}")
+
     if snapshot_file:
         print(f"[OK] Health state changed.")
-        print(f"[OK] Latest output: {LATEST_FILE}")
         print(f"[OK] Snapshot output: {snapshot_file}")
     else:
-        print("[OK] No health state change detected. Tracked output files were not rewritten.")
+        print("[OK] No health state change detected. Snapshot output was not created.")
 
     for key, endpoint in summary["endpoints"].items():
         print(f"[OK] {key}: {endpoint.get('status')} — {endpoint.get('summary')}")

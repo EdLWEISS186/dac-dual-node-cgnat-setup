@@ -113,6 +113,44 @@ The report is deterministic. It uses the latest watcher state timestamp from `da
 
 ---
 
+## Static Health Dashboard Layer
+
+v1.2.0 adds a static dashboard layer for visual infrastructure health inspection.
+
+Dashboard entry point:
+
+    dashboard/index.html
+
+Generated dashboard data:
+
+    dashboard/data/health-dashboard-data.json
+
+Dashboard data builder:
+
+    generate_dashboard_data.py
+
+The dashboard summarizes:
+
+- latest overall infrastructure health
+- endpoint availability status
+- endpoint response-time class
+- public RPC status and latest block information
+- explorer web status and response time
+- explorer API status and response time
+- overall health-state distribution
+- endpoint history counts
+- health-state timeline
+- interpretation notes
+
+The dashboard is static and reads from generated JSON data. It is designed to work through a local HTTP server or GitHub Pages.
+
+The dashboard uses the local project asset:
+
+    assets/JERUZZALEM-Infra_Tester.png
+
+
+---
+
 ## GitHub Actions Automation
 
 Workflow file:
@@ -127,6 +165,7 @@ Current workflow steps:
 
     infrastructure_health.py
     generate_health_report.py
+    generate_dashboard_data.py
 
 The workflow checks DAC public infrastructure health, updates tracked JSON outputs when endpoint-level health state changes, regenerates the Markdown health report, and commits generated changes back to the repository when needed.
 
@@ -138,3 +177,4 @@ The workflow checks DAC public infrastructure health, updates tracked JSON outpu
 |---|---|
 | v1.0.0 | Initial public RPC, explorer web, and explorer API health watcher |
 | v1.1.0 | Deterministic Markdown health report summary layer |
+| v1.2.0 | Static infrastructure health dashboard layer |
