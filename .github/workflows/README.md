@@ -12,7 +12,7 @@ Workflow files usually use the `.yml` or `.yaml` extension.
 
 ---
 
-## Current Workflow
+## Current Workflows
 
 ### DAC Enode Watcher
 
@@ -94,9 +94,65 @@ The actual watcher project, scripts, dashboard, generated data, and report tools
 
 ---
 
+## Additional Workflow
+
+### DAC Infrastructure Intelligence Watcher
+
+Workflow file:
+
+    dac-infrastructure-intelligence-watcher.yml
+
+Related project:
+
+[DAC Infrastructure Intelligence Watcher](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher)
+
+Purpose:
+
+This workflow powers the standalone DAC Infrastructure Intelligence Watcher.
+
+It monitors public DAC infrastructure services beyond the official enode registry, including the official public RPC, explorer web frontend, and primary explorer API.
+
+Current schedule:
+
+    */15 * * * *
+
+This means the workflow is scheduled to run every 15 minutes.
+
+The workflow can also be triggered manually from the GitHub Actions tab.
+
+---
+
+## What This Workflow Does
+
+The DAC Infrastructure Intelligence Watcher workflow currently performs the following step:
+
+    infrastructure_health.py
+
+In simple terms, this workflow:
+
+- checks the official DAC public RPC endpoint
+- checks JSON-RPC method availability
+- checks latest block availability through public RPC
+- checks explorer web frontend availability
+- checks explorer API reachability
+- classifies endpoint-level health
+- classifies overall infrastructure health
+- writes `data/latest.json`
+- creates health snapshots only when endpoint-level state changes
+- commits generated health output changes back to the repository when needed
+
+The actual watcher project, script, generated data, and future report tools are located here:
+
+[Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher)
+
+
+---
+
 ## Important Notes
 
 Do not move `dac-enode-watcher.yml` outside this folder.
+
+Do not move `dac-infrastructure-intelligence-watcher.yml` outside this folder.
 
 If the workflow file is moved to another folder, GitHub Actions will stop detecting it.
 
