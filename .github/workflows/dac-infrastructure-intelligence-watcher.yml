@@ -49,6 +49,13 @@ jobs:
           python generate_custom_report.py --range 30d
           python generate_custom_report.py --range all
 
+      - name: Generate observation window comparison reports
+        working-directory: Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher
+        run: |
+          python generate_comparison_report.py --range 7d
+          python generate_comparison_report.py --range 30d
+          python generate_comparison_report.py --range all
+
       - name: Commit health outputs
         run: |
           git config user.name "github-actions[bot]"
@@ -58,12 +65,14 @@ jobs:
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_health_report.py
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_dashboard_data.py
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_custom_report.py
+          git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_comparison_report.py
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/README.md
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/requirements.txt
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/.gitignore
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/dashboard/
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/reports/generated/
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/reports/generated/custom/
+          git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/reports/generated/comparison/
           git add -f Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/data/latest.json
           git add -f Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/data/snapshots/
 
