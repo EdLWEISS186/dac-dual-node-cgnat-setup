@@ -77,3 +77,64 @@ Endpoint status, latency, and health labels should be treated as independent tec
 ## Maintainer
 
 JERUZZALEM — DAC Infra Tester
+
+---
+
+## Health Report Summary Layer
+
+v1.1.0 adds a generated Markdown report layer for infrastructure health summaries.
+
+Generator:
+
+    generate_health_report.py
+
+Generated output:
+
+    reports/generated/infrastructure-health-report.md
+
+The report summarizes:
+
+- latest overall infrastructure health
+- monitoring scope
+- endpoint status summary
+- public RPC details
+- explorer web and explorer API details
+- snapshot history summary
+- recent endpoint-level health timeline
+- interpretation notes
+- report-use notes
+
+The report is generated from existing JSON outputs:
+
+    data/latest.json
+    data/snapshots/*.json
+
+The report is deterministic. It uses the latest watcher state timestamp from `data/latest.json`, not wall-clock generation time. This prevents unnecessary workflow commits when the underlying health state has not changed.
+
+---
+
+## GitHub Actions Automation
+
+Workflow file:
+
+    .github/workflows/dac-infrastructure-intelligence-watcher.yml
+
+Current schedule:
+
+    */15 * * * *
+
+Current workflow steps:
+
+    infrastructure_health.py
+    generate_health_report.py
+
+The workflow checks DAC public infrastructure health, updates tracked JSON outputs when endpoint-level health state changes, regenerates the Markdown health report, and commits generated changes back to the repository when needed.
+
+---
+
+## Version Notes
+
+| Version | Summary |
+|---|---|
+| v1.0.0 | Initial public RPC, explorer web, and explorer API health watcher |
+| v1.1.0 | Deterministic Markdown health report summary layer |
