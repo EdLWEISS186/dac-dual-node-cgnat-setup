@@ -8,6 +8,17 @@ It is separated from the DAC Enode Intelligence Watcher because this watcher foc
 
 ---
 
+---
+
+## Live Links
+
+| Resource | Link |
+|---|---|
+| Live Dashboard | https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/dashboard/ |
+| Repository | https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher |
+| Official DAC Sources | https://rpctest.dachain.tech/ · https://exptest.dachain.tech/ · https://exptest.dachain.tech/api |
+
+
 ## Monitoring Scope
 
 Current v1.0.0 endpoints:
@@ -151,6 +162,39 @@ The dashboard uses the local project asset:
 
 ---
 
+## Freshness / Stale-State Layer
+
+v1.3.0 adds dashboard freshness metadata and a visual stale-state indicator.
+
+Freshness is calculated from:
+
+    data/latest.json
+    checked_at_utc
+
+Freshness states:
+
+| State | Meaning |
+|---|---|
+| FRESH | Latest watcher state is within the expected freshness window |
+| STALE | Latest watcher state is older than the expected freshness window |
+| VERY_STALE | Latest watcher state is significantly old and should be refreshed |
+| UNKNOWN | Freshness could not be determined |
+
+Current threshold:
+
+    30 minutes
+
+This layer is separate from endpoint availability and response-time class.
+
+Meaning separation:
+
+- `HEALTHY`, `DEGRADED`, `UNHEALTHY`, and `PARTIAL_OUTAGE` describe service availability.
+- `FAST`, `MODERATE`, and `SLOW` describe endpoint response-time behavior.
+- `FRESH`, `STALE`, and `VERY_STALE` describe whether the dashboard data is current.
+
+
+---
+
 ## GitHub Actions Automation
 
 Workflow file:
@@ -178,3 +222,4 @@ The workflow checks DAC public infrastructure health, updates tracked JSON outpu
 | v1.0.0 | Initial public RPC, explorer web, and explorer API health watcher |
 | v1.1.0 | Deterministic Markdown health report summary layer |
 | v1.2.0 | Static infrastructure health dashboard layer |
+| v1.3.0 | Dashboard freshness and stale-state indicator layer |

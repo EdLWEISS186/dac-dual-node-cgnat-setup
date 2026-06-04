@@ -1,7 +1,13 @@
 {
   "project": "DAC Infrastructure Intelligence Watcher",
-  "version": "v1.2.0",
+  "version": "v1.3.0",
   "source_latest_checked_at_utc": "2026-06-04T17:39:38.929050+00:00",
+  "freshness": {
+    "status": "STALE",
+    "age_minutes": 81.52,
+    "threshold_minutes": 30,
+    "summary": "Latest watcher state is older than the expected freshness window."
+  },
   "summary_type": "infrastructure_health_dashboard_data",
   "links": {
     "health_report": "../reports/generated/infrastructure-health-report.md",

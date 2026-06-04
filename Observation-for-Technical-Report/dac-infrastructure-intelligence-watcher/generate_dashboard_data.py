@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 
 PROJECT = "DAC Infrastructure Intelligence Watcher"
-VERSION = "v1.2.0"
+VERSION = "v1.3.0"
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -129,6 +130,50 @@ def build_endpoint_cards(latest):
     return cards
 
 
+
+def parse_iso_datetime(value):
+    if not value:
+        return None
+
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except Exception:
+        return None
+
+
+def build_freshness(latest_checked_at_utc):
+    checked_at = parse_iso_datetime(latest_checked_at_utc)
+    now = datetime.now(timezone.utc)
+
+    if checked_at is None:
+        return {
+            "status": "UNKNOWN",
+            "age_minutes": None,
+            "threshold_minutes": 30,
+            "summary": "Freshness could not be determined because checked_at_utc is missing or invalid.",
+        }
+
+    age_seconds = max(0, int((now - checked_at).total_seconds()))
+    age_minutes = round(age_seconds / 60, 2)
+
+    if age_minutes <= 30:
+        status = "FRESH"
+        summary = "Latest watcher state is fresh."
+    elif age_minutes <= 90:
+        status = "STALE"
+        summary = "Latest watcher state is older than the expected freshness window."
+    else:
+        status = "VERY_STALE"
+        summary = "Latest watcher state is significantly old and should be refreshed."
+
+    return {
+        "status": status,
+        "age_minutes": age_minutes,
+        "threshold_minutes": 30,
+        "summary": summary,
+    }
+
+
 def build_dashboard_data():
     latest = load_latest()
     snapshots = load_snapshots()
@@ -141,10 +186,13 @@ def build_dashboard_data():
 
     latest_overall = latest.get("overall", {})
 
+    freshness = build_freshness(latest.get("checked_at_utc"))
+
     return {
         "project": PROJECT,
         "version": VERSION,
         "source_latest_checked_at_utc": latest.get("checked_at_utc"),
+        "freshness": freshness,
         "summary_type": "infrastructure_health_dashboard_data",
         "links": {
             "health_report": "../reports/generated/infrastructure-health-report.md",

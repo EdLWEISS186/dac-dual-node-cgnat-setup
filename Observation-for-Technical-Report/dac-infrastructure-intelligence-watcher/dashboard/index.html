@@ -233,6 +233,20 @@
       color: var(--red);
     }
 
+    .status.FRESH {
+      color: var(--green);
+    }
+
+    .status.STALE {
+      color: var(--yellow);
+    }
+
+    .status.VERY_STALE,
+    .status.UNKNOWN {
+      color: var(--red);
+    }
+
+
     .section {
       margin-top: 18px;
     }
@@ -499,17 +513,21 @@
       const overall = latest.overall || {};
       const history = data.history || {};
 
+      const freshness = data.freshness || {};
+
       heroMeta.innerHTML = [
         `<span class="pill">Maintainer: <strong>JERUZZALEM — DAC Infra Tester</strong></span>`,
         `<span class="pill">Source: <strong>RPC · Explorer · API</strong></span>`,
         `<span class="pill">Mode: <strong>Static JSON Dashboard</strong></span>`,
-        `<span class="pill">Overall: <strong>${safe(overall.overall_status)}</strong></span>`
+        `<span class="pill">Overall: <strong>${safe(overall.overall_status)}</strong></span>`,
+        `<span class="pill">Freshness: <strong>${safe(freshness.status)}</strong></span>`
       ].join("");
     }
 
     function renderTopCards(data) {
       const overall = data.latest.overall || {};
       const history = data.history || {};
+      const freshness = data.freshness || {};
 
       return `
         <div class="grid cards">
@@ -519,19 +537,22 @@
             <div class="card-note">${safe(overall.summary)}</div>
           </div>
           <div class="card">
+            <div class="card-label">Data Freshness</div>
+            <div class="card-value">${statusBadge(freshness.status)}</div>
+            <div class="card-note">
+              Age: ${safe(freshness.age_minutes)} minutes · Threshold: ${safe(freshness.threshold_minutes)} minutes<br>
+              ${safe(freshness.summary)}
+            </div>
+          </div>
+          <div class="card">
             <div class="card-label">Healthy Endpoints</div>
             <div class="card-value">${number(overall.healthy_count)} / ${number(overall.total_endpoints)}</div>
-            <div class="card-note">Current endpoint-level health count.</div>
+            <div class="card-note">Current endpoint-level availability health count.</div>
           </div>
           <div class="card">
             <div class="card-label">Snapshot Count</div>
             <div class="card-value">${number(history.snapshot_count)}</div>
             <div class="card-note">State-change snapshots tracked by the watcher.</div>
-          </div>
-          <div class="card">
-            <div class="card-label">Latest Snapshot</div>
-            <div class="card-value" style="font-size:16px;line-height:1.4">${safe(history.latest_snapshot)}</div>
-            <div class="card-note">Latest tracked health-state snapshot file.</div>
           </div>
         </div>
       `;
