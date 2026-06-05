@@ -41,7 +41,6 @@ This project monitors DAC public RPC, Explorer Web, and Explorer API endpoints, 
 * [Local Usage](#local-usage)
 * [Current Generated State](#current-generated-state)
 * [Version History](#version-history)
-* [Future Upgrade Direction](#future-upgrade-direction)
 * [Security Notes](#security-notes)
 * [Disclaimer](#disclaimer)
 * [Maintainer](#maintainer)
@@ -774,21 +773,6 @@ Comparison PDF reports: 3
 | v1.8.0 | Optional PDF export, export links hub, and chart polish |
 | v1.8.1 | Observation comparison Markdown / JSON / PDF export parity |
 | v1.8.2 | PDF report style alignment and status glossary patch |
-
----
-
-## Future Upgrade Direction
-
-The current infrastructure watcher roadmap is complete through v1.8.2.
-
-Future optional upgrades may include:
-
-* endpoint uptime percentage summary
-* longer historical trend reports
-* richer chart filtering
-* multi-chain infrastructure comparison
-* public RPC vs local node comparison notes
-* alert notification if the maintainer later decides public endpoint issues are important enough to notify
 
 ---
 
