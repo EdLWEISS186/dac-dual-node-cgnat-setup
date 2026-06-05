@@ -82,7 +82,21 @@ This report compares two infrastructure observation windows derived from tracked
 | 13 | 2026-06-04T17:39:38.929050+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | MODERATE | HEALTHY | FAST |
 | 14 | 2026-06-04T19:47:12.825324+00:00 | HEALTHY | HEALTHY | MODERATE | HEALTHY | MODERATE | HEALTHY | MODERATE |
 
-## 6. Interpretation Guide
+## 6. Status & Response-Class Glossary
+
+| Status / Class | Meaning |
+|---|---|
+| HEALTHY | The endpoint or overall infrastructure state is reachable and behaving as expected. |
+| DEGRADED | The endpoint is reachable, but one or more checks or response-time indicators show reduced quality. |
+| PARTIAL_OUTAGE | At least one monitored endpoint is unavailable or failing while other endpoints remain reachable. |
+| UNHEALTHY | The endpoint failed required checks or did not provide usable responses. |
+| FAST | The observed response-time class is fast for this watcher context. |
+| MODERATE | The observed response-time class is acceptable but not fast. |
+| SLOW | The observed response-time class is slow and may indicate degraded user experience. |
+| UNKNOWN | The watcher could not classify the response-time state, often because older snapshots did not include this field. |
+| N/A | Not available or not applicable for the selected observation, endpoint, or historical snapshot. |
+
+## 7. Interpretation Guide
 
 - Window A represents the earlier observation segment.
 - Window B represents the later observation segment.

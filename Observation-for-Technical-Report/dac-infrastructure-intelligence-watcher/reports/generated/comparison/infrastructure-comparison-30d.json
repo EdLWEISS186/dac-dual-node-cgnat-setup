@@ -3,7 +3,7 @@
   "report_type": "observation_window_comparison",
   "comparison_layer_version": "v1.8.1",
   "comparison_scope": "30d",
-  "generated_at_utc": "2026-06-05T04:02:50.655192+00:00",
+  "generated_at_utc": "2026-06-05T05:09:20.846032+00:00",
   "window_a": {
     "label": "Window A",
     "description": "Earlier observation segment.",
@@ -332,6 +332,44 @@
     "For response time, lower is better.",
     "Older snapshots may show N/A or UNKNOWN response classes because response-time classification was added after the initial watcher release.",
     "This comparison report is independent observation material and not an official DAC service status page."
+  ],
+  "status_glossary": [
+    {
+      "label": "HEALTHY",
+      "meaning": "The endpoint or overall infrastructure state is reachable and behaving as expected."
+    },
+    {
+      "label": "DEGRADED",
+      "meaning": "The endpoint is reachable, but one or more checks or response-time indicators show reduced quality."
+    },
+    {
+      "label": "PARTIAL_OUTAGE",
+      "meaning": "At least one monitored endpoint is unavailable or failing while other endpoints remain reachable."
+    },
+    {
+      "label": "UNHEALTHY",
+      "meaning": "The endpoint failed required checks or did not provide usable responses."
+    },
+    {
+      "label": "FAST",
+      "meaning": "The observed response-time class is fast for this watcher context."
+    },
+    {
+      "label": "MODERATE",
+      "meaning": "The observed response-time class is acceptable but not fast."
+    },
+    {
+      "label": "SLOW",
+      "meaning": "The observed response-time class is slow and may indicate degraded user experience."
+    },
+    {
+      "label": "UNKNOWN",
+      "meaning": "The watcher could not classify the response-time state, often because older snapshots did not include this field."
+    },
+    {
+      "label": "N/A",
+      "meaning": "Not available or not applicable for the selected observation, endpoint, or historical snapshot."
+    }
   ],
   "prepared_by": "JERUZZALEM — DAC Infra Tester"
 }

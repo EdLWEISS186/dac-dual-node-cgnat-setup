@@ -260,6 +260,60 @@ def build_interpretation(summary_a, summary_b):
     return notes
 
 
+
+def status_glossary():
+    return [
+        {
+            "label": "HEALTHY",
+            "meaning": "The endpoint or overall infrastructure state is reachable and behaving as expected.",
+        },
+        {
+            "label": "DEGRADED",
+            "meaning": "The endpoint is reachable, but one or more checks or response-time indicators show reduced quality.",
+        },
+        {
+            "label": "PARTIAL_OUTAGE",
+            "meaning": "At least one monitored endpoint is unavailable or failing while other endpoints remain reachable.",
+        },
+        {
+            "label": "UNHEALTHY",
+            "meaning": "The endpoint failed required checks or did not provide usable responses.",
+        },
+        {
+            "label": "FAST",
+            "meaning": "The observed response-time class is fast for this watcher context.",
+        },
+        {
+            "label": "MODERATE",
+            "meaning": "The observed response-time class is acceptable but not fast.",
+        },
+        {
+            "label": "SLOW",
+            "meaning": "The observed response-time class is slow and may indicate degraded user experience.",
+        },
+        {
+            "label": "UNKNOWN",
+            "meaning": "The watcher could not classify the response-time state, often because older snapshots did not include this field.",
+        },
+        {
+            "label": "N/A",
+            "meaning": "Not available or not applicable for the selected observation, endpoint, or historical snapshot.",
+        },
+    ]
+
+
+def render_status_glossary_markdown(glossary_rows):
+    lines = [
+        "| Status / Class | Meaning |",
+        "|---|---|",
+    ]
+
+    for item in glossary_rows:
+        lines.append(f"| {safe(item.get('label'))} | {safe(item.get('meaning'))} |")
+
+    return "\n".join(lines)
+
+
 def build_timeline(rows):
     timeline = []
 
@@ -323,6 +377,7 @@ def build_payload(label, rows_a, rows_b):
             "Older snapshots may show N/A or UNKNOWN response classes because response-time classification was added after the initial watcher release.",
             "This comparison report is independent observation material and not an official DAC service status page.",
         ],
+        "status_glossary": status_glossary(),
         "prepared_by": "JERUZZALEM — DAC Infra Tester",
     }
 
@@ -455,7 +510,11 @@ def build_markdown_report(payload):
         "",
         render_timeline("Window B Timeline", payload["window_b"]["timeline"]),
         "",
-        "## 6. Interpretation Guide",
+        "## 6. Status & Response-Class Glossary",
+        "",
+        render_status_glossary_markdown(payload.get("status_glossary", [])),
+        "",
+        "## 7. Interpretation Guide",
         "",
     ])
 

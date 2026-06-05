@@ -1,1 +1,5 @@
 *.exe filter=lfs diff=lfs merge=lfs -text
+
+# Generated PDF reports are binary artifacts.
+*.pdf binary
+*.pdf -diff

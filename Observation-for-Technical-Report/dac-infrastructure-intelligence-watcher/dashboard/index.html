@@ -1217,19 +1217,19 @@
 
       const groups = [
         {
-          title: "Markdown Reports",
+          title: "Health Markdown Reports",
           description: "Editable range-based Markdown reports for technical review.",
           extension: "md",
           tag: "MD"
         },
         {
-          title: "JSON Summaries",
+          title: "Health JSON Summaries",
           description: "Structured custom range summaries for automated inspection.",
           extension: "json",
           tag: "JSON"
         },
         {
-          title: "PDF Reports",
+          title: "Health PDF Reports",
           description: "Shareable report exports generated from the custom range summaries.",
           extension: "pdf",
           tag: "PDF"
@@ -1245,9 +1245,9 @@
 
       return `
         <section class="section">
-          <h2>Export Links</h2>
+          <h2>Standard Range Health Report Exports</h2>
           <p class="section-desc">
-            Standard 7D, 30D, and ALL exports are generated in Markdown, JSON, and PDF formats.
+            Single-window health reports for 7D, 30D, and ALL observation scopes. These exports summarize one selected range, while Observation Window Comparison compares Window A against Window B.
           </p>
 
           <div class="export-grid">
@@ -1415,14 +1415,287 @@
       downloadText(filename, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
     }
 
-    function printCustomPdf() {
-      const payload = customPayload();
-      const markdown = customMarkdown(payload)
+
+    function escapeHtml(value) {
+      return String(value ?? "N/A")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
-        .replaceAll("\\n", "<br>");
+        .replaceAll('"', "&quot;");
+    }
 
+    function countsPlainText(counts) {
+      const entries = Object.entries(counts || {});
+      if (!entries.length) return "N/A";
+      return entries.map(([key, value]) => `${key}: ${value}`).join(", ");
+    }
+
+    function formatPrintTime(value) {
+      if (!value) return "N/A";
+
+      return String(value)
+        .replace(".000000", "")
+        .replace("+00:00", " UTC");
+    }
+
+    function printStatus(value) {
+      const status = value || "N/A";
+      return `<span class="print-status print-status-${escapeHtml(status)}">${escapeHtml(status)}</span>`;
+    }
+
+    function printCountList(counts) {
+      const entries = Object.entries(counts || {});
+      if (!entries.length) return `<span class="muted-print">N/A</span>`;
+
+      return entries
+        .map(([key, value]) => `<span class="print-chip">${escapeHtml(key)}: ${escapeHtml(value)}</span>`)
+        .join("");
+    }
+
+    function printTimelineTable(rows) {
+      return `
+        <table class="timeline-table">
+          <thead>
+            <tr>
+              <th style="width: 5%;">#</th>
+              <th style="width: 22%;">Checked at UTC</th>
+              <th style="width: 15%;">Overall</th>
+              <th style="width: 13%;">RPC</th>
+              <th style="width: 10%;">RPC class</th>
+              <th style="width: 12%;">Explorer Web</th>
+              <th style="width: 10%;">Web class</th>
+              <th style="width: 13%;">Explorer API</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(rows || []).map(item => `
+              <tr>
+                <td>${escapeHtml(item.index)}</td>
+                <td>${escapeHtml(formatPrintTime(item.checked_at_utc))}</td>
+                <td class="status-${escapeHtml(item.overall_status)}">${escapeHtml(item.overall_status)}</td>
+                <td class="status-${escapeHtml(item.official_public_rpc_status)}">${escapeHtml(item.official_public_rpc_status)}</td>
+                <td class="status-${escapeHtml(item.official_public_rpc_response_class)}">${escapeHtml(item.official_public_rpc_response_class)}</td>
+                <td class="status-${escapeHtml(item.explorer_web_status)}">${escapeHtml(item.explorer_web_status)}</td>
+                <td class="status-${escapeHtml(item.explorer_web_response_class)}">${escapeHtml(item.explorer_web_response_class)}</td>
+                <td class="status-${escapeHtml(item.primary_explorer_api_status)}">${escapeHtml(item.primary_explorer_api_status)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function statusGlossaryRows() {
+      return [
+        ["HEALTHY", "The endpoint or overall infrastructure state is reachable and behaving as expected."],
+        ["DEGRADED", "The endpoint is reachable, but one or more checks or response-time indicators show reduced quality."],
+        ["PARTIAL_OUTAGE", "At least one monitored endpoint is unavailable or failing while other endpoints remain reachable."],
+        ["UNHEALTHY", "The endpoint failed required checks or did not provide usable responses."],
+        ["FAST", "The observed response-time class is fast for this watcher context."],
+        ["MODERATE", "The observed response-time class is acceptable but not fast."],
+        ["SLOW", "The observed response-time class is slow and may indicate degraded user experience."],
+        ["UNKNOWN", "The watcher could not classify the response-time state, often because older snapshots did not include this field."],
+        ["N/A", "Not available or not applicable for the selected observation, endpoint, or historical snapshot."]
+      ];
+    }
+
+    function renderStatusGlossaryHtml() {
+      return `
+        <section class="section">
+          <h2>Status & Response-Class Glossary</h2>
+          <p class="section-desc">
+            These labels are used across dashboard cards, timelines, generated reports, JSON summaries, and PDF exports.
+          </p>
+
+          <div class="status-list">
+            ${statusGlossaryRows().map(([label, description]) => `
+              <div class="status-list-row">
+                <div class="status-list-title">${safe(label)}</div>
+                <div class="status-chip-wrap">
+                  <span class="status-chip">${safe(description)}</span>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+      `;
+    }
+
+    function printGlossaryTable() {
+      return `
+        <table class="field-table">
+          <thead>
+            <tr>
+              <th>Status / Class</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${statusGlossaryRows().map(([label, description]) => `
+              <tr>
+                <td><strong>${escapeHtml(label)}</strong></td>
+                <td>${escapeHtml(description)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function printStyles() {
+      return `
+        <style>
+          @page {
+            size: A4 portrait;
+            margin: 14mm;
+          }
+
+          * {
+            box-sizing: border-box;
+          }
+
+          body {
+            margin: 0;
+            background: #ffffff;
+            color: #0f172a;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            line-height: 1.45;
+          }
+
+          .report-page {
+            width: 100%;
+          }
+
+          .report-title {
+            margin: 0 0 12px;
+            font-size: 27px;
+            line-height: 1.15;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.03em;
+          }
+
+          .report-meta {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: #1e293b;
+          }
+
+          .report-note {
+            margin: 14px 0 24px;
+            color: #475569;
+            font-size: 12.5px;
+            max-width: 680px;
+          }
+
+          h2 {
+            margin: 28px 0 12px;
+            font-size: 20px;
+            line-height: 1.2;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+          }
+
+          h2::after {
+            content: "";
+            display: block;
+            height: 1px;
+            background: #cbd5e1;
+            margin-top: 10px;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 0 20px;
+            table-layout: fixed;
+            font-size: 10px;
+          }
+
+          th {
+            background: #0f172a;
+            color: #ffffff;
+            border: 1px solid #cbd5e1;
+            text-align: left;
+            padding: 7px;
+            font-weight: 800;
+          }
+
+          td {
+            border: 1px solid #cbd5e1;
+            padding: 7px;
+            vertical-align: top;
+            color: #0f172a;
+            word-break: break-word;
+          }
+
+          .field-table th:first-child,
+          .field-table td:first-child {
+            width: 50%;
+          }
+
+          .timeline-table {
+            font-size: 8.4px;
+          }
+
+          .timeline-table th,
+          .timeline-table td {
+            padding: 5px;
+          }
+
+          .status-HEALTHY,
+          .status-FAST {
+            color: #166534;
+            font-weight: 800;
+          }
+
+          .status-DEGRADED,
+          .status-MODERATE {
+            color: #854d0e;
+            font-weight: 800;
+          }
+
+          .status-PARTIAL_OUTAGE,
+          .status-SLOW {
+            color: #9a3412;
+            font-weight: 800;
+          }
+
+          .status-UNHEALTHY {
+            color: #991b1b;
+            font-weight: 800;
+          }
+
+          .footer {
+            margin-top: 22px;
+            color: #475569;
+            font-size: 10px;
+          }
+
+          .page-break {
+            break-before: page;
+          }
+
+          @media print {
+            table {
+              page-break-inside: auto;
+            }
+
+            tr {
+              page-break-inside: avoid;
+              page-break-after: auto;
+            }
+
+            h2 {
+              break-after: avoid;
+            }
+          }
+        </style>
+      `;
+    }
+
+    function openPrintReport(title, bodyHtml) {
       const win = window.open("", "_blank");
       if (!win) return;
 
@@ -1430,22 +1703,163 @@
         <!doctype html>
         <html>
           <head>
-            <title>DAC Infrastructure Custom Export</title>
-            <style>
-              body { font-family: Arial, sans-serif; color: #0f172a; padding: 32px; line-height: 1.5; }
-              h1 { font-size: 24px; }
-              table { border-collapse: collapse; width: 100%; font-size: 12px; }
-              th, td { border: 1px solid #cbd5e1; padding: 6px; text-align: left; }
-              @media print { body { padding: 12mm; } }
-            </style>
+            <title>${escapeHtml(title)}</title>
+            ${printStyles()}
           </head>
-          <body>${markdown}</body>
+          <body>
+            <main class="report-page">
+              ${bodyHtml}
+            </main>
+          </body>
         </html>
       `);
 
       win.document.close();
       win.focus();
-      win.print();
+
+      setTimeout(() => {
+        win.print();
+      }, 250);
+    }
+
+    function customRangePrintHtml(payload) {
+      const rows = payload.timeline || [];
+
+      return `
+        <h1 class="report-title">DAC Infrastructure Intelligence Watcher - Custom Browser PDF Export</h1>
+
+        <p class="report-meta"><strong>Generated at browser UTC:</strong> ${escapeHtml(payload.generated_at_utc)}</p>
+        <p class="report-meta"><strong>Range:</strong> Observation #${escapeHtml(payload.from_observation)} -> #${escapeHtml(payload.to_observation)}</p>
+
+        <p class="report-note">
+          This browser-generated PDF export is observation-based. It does not make official DAC service-status claims
+          and is not automatically committed to the repository.
+        </p>
+
+        <h2>1. Observation Scope</h2>
+        <table class="field-table">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Observation count</td><td>${escapeHtml(payload.snapshot_count)}</td></tr>
+            <tr><td>From observation</td><td>${escapeHtml(payload.from_observation)}</td></tr>
+            <tr><td>To observation</td><td>${escapeHtml(payload.to_observation)}</td></tr>
+            <tr><td>Overall status counts</td><td>${escapeHtml(countsPlainText(payload.overall_status_counts))}</td></tr>
+          </tbody>
+        </table>
+
+        <h2>2. Endpoint Health Summary</h2>
+        <table class="field-table">
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Status counts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Official Public RPC</td><td>${escapeHtml(countsPlainText(payload.endpoint_status_counts.official_public_rpc))}</td></tr>
+            <tr><td>Explorer Web</td><td>${escapeHtml(countsPlainText(payload.endpoint_status_counts.explorer_web))}</td></tr>
+            <tr><td>Primary Explorer API</td><td>${escapeHtml(countsPlainText(payload.endpoint_status_counts.primary_explorer_api))}</td></tr>
+          </tbody>
+        </table>
+
+        <h2>3. Response Class Context</h2>
+        <table class="field-table">
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Response class counts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Official Public RPC</td><td>${escapeHtml(countsPlainText(payload.response_class_counts.official_public_rpc))}</td></tr>
+            <tr><td>Explorer Web</td><td>${escapeHtml(countsPlainText(payload.response_class_counts.explorer_web))}</td></tr>
+            <tr><td>Primary Explorer API</td><td>${escapeHtml(countsPlainText(payload.response_class_counts.primary_explorer_api))}</td></tr>
+          </tbody>
+        </table>
+
+        <h2>4. Observation Timeline</h2>
+        ${printTimelineTable(rows)}
+
+        <h2>5. Status & Response-Class Glossary</h2>
+        ${printGlossaryTable()}
+
+        <div class="footer">Prepared by JERUZZALEM - DAC Infra Tester.</div>
+      `;
+    }
+
+    function customComparisonPrintHtml(payload) {
+      const rowsA = payload.window_a.timeline || [];
+      const rowsB = payload.window_b.timeline || [];
+
+      return `
+        <h1 class="report-title">DAC Infrastructure Intelligence Watcher - Custom Browser Comparison PDF Export</h1>
+
+        <p class="report-meta"><strong>Generated at browser UTC:</strong> ${escapeHtml(payload.generated_at_utc)}</p>
+        <p class="report-meta">
+          <strong>Range:</strong>
+          Window A #${escapeHtml(payload.window_a.from_observation)} -> #${escapeHtml(payload.window_a.to_observation)}
+          vs Window B #${escapeHtml(payload.window_b.from_observation)} -> #${escapeHtml(payload.window_b.to_observation)}
+        </p>
+
+        <p class="report-note">
+          This browser-generated PDF export is observation-based. It compares selected dashboard observations only.
+          It does not make official DAC service-status claims and is not automatically committed to the repository.
+        </p>
+
+        <h2>1. Comparison Scope</h2>
+        <table class="field-table">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Window A observation count</td><td>${escapeHtml(payload.window_a.snapshot_count)}</td></tr>
+            <tr><td>Window A range</td><td>#${escapeHtml(payload.window_a.from_observation)} -> #${escapeHtml(payload.window_a.to_observation)}</td></tr>
+            <tr><td>Window B observation count</td><td>${escapeHtml(payload.window_b.snapshot_count)}</td></tr>
+            <tr><td>Window B range</td><td>#${escapeHtml(payload.window_b.from_observation)} -> #${escapeHtml(payload.window_b.to_observation)}</td></tr>
+            <tr><td>Window A average health score</td><td>${escapeHtml(payload.comparison.availability_score_a)}</td></tr>
+            <tr><td>Window B average health score</td><td>${escapeHtml(payload.comparison.availability_score_b)}</td></tr>
+            <tr><td>Direction</td><td>${escapeHtml(payload.comparison.direction)}</td></tr>
+          </tbody>
+        </table>
+
+        <h2>2. Window Status Summary</h2>
+        <table class="field-table">
+          <thead>
+            <tr>
+              <th>Window</th>
+              <th>Overall status counts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Window A</td><td>${escapeHtml(countsPlainText(payload.window_a.overall_status_counts))}</td></tr>
+            <tr><td>Window B</td><td>${escapeHtml(countsPlainText(payload.window_b.overall_status_counts))}</td></tr>
+          </tbody>
+        </table>
+
+        <h2>3. Window A Timeline</h2>
+        ${printTimelineTable(rowsA)}
+
+        <h2 class="page-break">4. Window B Timeline</h2>
+        ${printTimelineTable(rowsB)}
+
+        <h2>5. Status & Response-Class Glossary</h2>
+        ${printGlossaryTable()}
+
+        <div class="footer">Prepared by JERUZZALEM - DAC Infra Tester.</div>
+      `;
+    }
+
+    function printCustomPdf() {
+      const payload = customPayload();
+      openPrintReport("DAC Infrastructure Custom Export", customRangePrintHtml(payload));
     }
 
     function renderChartLayer(data) {
@@ -1715,8 +2129,197 @@
               </div>
             `).join("")}
           </div>
+
+          ${renderCustomComparisonExport()}
         </section>
       `;
+    }
+
+    function renderCustomComparisonExport() {
+      const timeline = window.dashboardData?.history?.timeline || [];
+      const options = timeline.map(item => `
+        <option value="${item.index}">
+          #${item.index} · ${safe(item.checked_at_utc)} · ${safe(item.overall_status)}
+        </option>
+      `).join("");
+
+      return `
+        <div class="custom-export">
+          <h3>Custom Range Observation Window Comparison</h3>
+          <p class="section-desc">
+            Build a browser-side comparison between two custom observation windows.
+            Window A is treated as the earlier or baseline segment, while Window B is treated as the later comparison segment.
+            Custom comparison exports are downloaded locally and do not write files back to the repository.
+          </p>
+
+          <div class="custom-export-grid">
+            <div class="filter-field">
+              <label for="comparisonAFrom">Window A from</label>
+              <select id="comparisonAFrom">${options}</select>
+            </div>
+
+            <div class="filter-field">
+              <label for="comparisonATo">Window A to</label>
+              <select id="comparisonATo">${options}</select>
+            </div>
+
+            <div class="filter-field">
+              <label for="comparisonBFrom">Window B from</label>
+              <select id="comparisonBFrom">${options}</select>
+            </div>
+
+            <div class="filter-field">
+              <label for="comparisonBTo">Window B to</label>
+              <select id="comparisonBTo">${options}</select>
+            </div>
+          </div>
+
+          <div class="custom-export-actions">
+            <button class="filter-button" onclick="downloadCustomComparisonMarkdown()">Download Custom Comparison Markdown</button>
+            <button class="filter-button" onclick="downloadCustomComparisonJson()">Download Custom Comparison JSON</button>
+            <button class="filter-button" onclick="printCustomComparisonPdf()">Print / Save Custom Comparison PDF</button>
+          </div>
+
+          <div class="custom-export-note">
+            Ready. ${number(timeline.length)} observations available for custom comparison export.
+          </div>
+        </div>
+      `;
+    }
+
+
+    function selectedRangeRows(fromId, toId) {
+      if (!window.dashboardData) return [];
+
+      const fromValue = Number(document.getElementById(fromId)?.value || 0);
+      const toValue = Number(document.getElementById(toId)?.value || 0);
+      const start = Math.min(fromValue, toValue);
+      const end = Math.max(fromValue, toValue);
+
+      return (window.dashboardData.history.timeline || []).filter(item => item.index >= start && item.index <= end);
+    }
+
+    function scoreStatus(status) {
+      const scores = {
+        HEALTHY: 100,
+        DEGRADED: 55,
+        PARTIAL_OUTAGE: 20,
+        UNHEALTHY: 0,
+        UNKNOWN: 0
+      };
+
+      return scores[status || "UNKNOWN"] ?? 0;
+    }
+
+    function averageScore(rows) {
+      if (!rows.length) return 0;
+
+      const total = rows.reduce((sum, item) => sum + scoreStatus(item.overall_status), 0);
+      return Math.round(total / rows.length);
+    }
+
+    function directionText(aScore, bScore) {
+      if (bScore > aScore) return "IMPROVED";
+      if (bScore < aScore) return "WORSENED";
+      return "UNCHANGED";
+    }
+
+    function customComparisonPayload() {
+      const windowA = selectedRangeRows("comparisonAFrom", "comparisonATo");
+      const windowB = selectedRangeRows("comparisonBFrom", "comparisonBTo");
+      const scoreA = averageScore(windowA);
+      const scoreB = averageScore(windowB);
+
+      return {
+        project: "DAC Infrastructure Intelligence Watcher",
+        export_type: "browser_custom_observation_window_comparison",
+        generated_at_utc: new Date().toISOString(),
+        window_a: {
+          from_observation: windowA[0]?.index || null,
+          to_observation: windowA[windowA.length - 1]?.index || null,
+          snapshot_count: windowA.length,
+          average_health_score: scoreA,
+          overall_status_counts: countCustomRows(windowA, "overall_status"),
+          timeline: windowA
+        },
+        window_b: {
+          from_observation: windowB[0]?.index || null,
+          to_observation: windowB[windowB.length - 1]?.index || null,
+          snapshot_count: windowB.length,
+          average_health_score: scoreB,
+          overall_status_counts: countCustomRows(windowB, "overall_status"),
+          timeline: windowB
+        },
+        comparison: {
+          availability_score_a: scoreA,
+          availability_score_b: scoreB,
+          direction: directionText(scoreA, scoreB)
+        },
+        prepared_by: "JERUZZALEM — DAC Infra Tester"
+      };
+    }
+
+    function customComparisonMarkdown(payload) {
+      const rowsA = payload.window_a.timeline || [];
+      const rowsB = payload.window_b.timeline || [];
+
+      const timelineTable = rows => [
+        "| # | Checked at UTC | Overall | RPC | RPC class | Explorer Web | Web class | Explorer API | API class |",
+        "|---:|---|---|---|---|---|---|---|---|",
+        ...rows.map(item => `| ${item.index} | ${item.checked_at_utc} | ${item.overall_status || "N/A"} | ${item.official_public_rpc_status || "N/A"} | ${item.official_public_rpc_response_class || "N/A"} | ${item.explorer_web_status || "N/A"} | ${item.explorer_web_response_class || "N/A"} | ${item.primary_explorer_api_status || "N/A"} | ${item.primary_explorer_api_response_class || "N/A"} |`)
+      ].join("\\n");
+
+      return [
+        "# DAC Infrastructure Intelligence Watcher — Browser Custom Observation Window Comparison",
+        "",
+        `Generated at UTC: **${payload.generated_at_utc}**`,
+        "",
+        "## Comparison Summary",
+        "",
+        `- Window A: #${payload.window_a.from_observation} → #${payload.window_a.to_observation}`,
+        `- Window B: #${payload.window_b.from_observation} → #${payload.window_b.to_observation}`,
+        `- Window A average health score: **${payload.comparison.availability_score_a}**`,
+        `- Window B average health score: **${payload.comparison.availability_score_b}**`,
+        `- Direction: **${payload.comparison.direction}**`,
+        "",
+        "## Window A Overall Status Counts",
+        "",
+        countsToMarkdown(payload.window_a.overall_status_counts),
+        "",
+        "## Window B Overall Status Counts",
+        "",
+        countsToMarkdown(payload.window_b.overall_status_counts),
+        "",
+        "## Window A Timeline",
+        "",
+        timelineTable(rowsA),
+        "",
+        "## Window B Timeline",
+        "",
+        timelineTable(rowsB),
+        "",
+        "---",
+        "",
+        "Prepared by **JERUZZALEM — DAC Infra Tester**.",
+        ""
+      ].join("\\n");
+    }
+
+    function downloadCustomComparisonMarkdown() {
+      const payload = customComparisonPayload();
+      const filename = `infrastructure-comparison-custom-a-${payload.window_a.from_observation}-to-${payload.window_a.to_observation}-vs-b-${payload.window_b.from_observation}-to-${payload.window_b.to_observation}.md`;
+      downloadText(filename, customComparisonMarkdown(payload), "text/markdown;charset=utf-8");
+    }
+
+    function downloadCustomComparisonJson() {
+      const payload = customComparisonPayload();
+      const filename = `infrastructure-comparison-custom-a-${payload.window_a.from_observation}-to-${payload.window_a.to_observation}-vs-b-${payload.window_b.from_observation}-to-${payload.window_b.to_observation}.json`;
+      downloadText(filename, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
+    }
+
+    function printCustomComparisonPdf() {
+      const payload = customComparisonPayload();
+      openPrintReport("DAC Infrastructure Custom Comparison Export", customComparisonPrintHtml(payload));
     }
 
     function renderNotes(data) {
@@ -1755,6 +2358,7 @@
           </div>`,
           renderTimelineFilters(data),
           renderTimeline(data),
+          renderStatusGlossaryHtml(),
           renderNotes(data)
         ].join("");
       } catch (error) {

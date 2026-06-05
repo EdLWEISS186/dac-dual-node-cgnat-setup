@@ -43,7 +43,7 @@ def para(value, style):
 def make_table(rows, widths=None, repeat_rows=1):
     table = Table(rows, colWidths=widths, repeatRows=repeat_rows)
     table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#10233d")),
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
         ("FONTSIZE", (0, 0), (-1, -1), 7.3),
@@ -68,6 +68,25 @@ def footer(canvas, doc):
     canvas.drawString(14 * mm, 10 * mm, "Made by JERUZZALEM - DAC Infra Tester")
     canvas.drawRightString(196 * mm, 10 * mm, f"Page {doc.page}")
     canvas.restoreState()
+
+
+
+def status_glossary():
+    return [
+        ("HEALTHY", "The endpoint or overall infrastructure state is reachable and behaving as expected."),
+        ("DEGRADED", "The endpoint is reachable, but one or more checks or response-time indicators show reduced quality."),
+        ("PARTIAL_OUTAGE", "At least one monitored endpoint is unavailable or failing while other endpoints remain reachable."),
+        ("UNHEALTHY", "The endpoint failed required checks or did not provide usable responses."),
+        ("FAST", "The observed response-time class is fast for this watcher context."),
+        ("MODERATE", "The observed response-time class is acceptable but not fast."),
+        ("SLOW", "The observed response-time class is slow and may indicate degraded user experience."),
+        ("UNKNOWN", "The watcher could not classify the response-time state, often because older snapshots did not include this field."),
+        ("N/A", "Not available or not applicable for the selected observation, endpoint, or historical snapshot."),
+    ]
+
+
+def glossary_table_rows():
+    return [["Status / Class", "Meaning"]] + [[label, meaning] for label, meaning in status_glossary()]
 
 
 def build_pdf(payload, output_path):
@@ -190,6 +209,13 @@ def build_pdf(payload, output_path):
     story.append(Paragraph("6. Interpretation Guide", heading_style))
     for note in payload.get("interpretation_guide", []):
         story.append(Paragraph(f"- {clean(note)}", body_style))
+
+    story.append(Spacer(1, 8))
+    story.append(Paragraph("Status & Response-Class Glossary", heading_style))
+    story.append(make_table(
+        [[para(c, small_style) for c in row] for row in glossary_table_rows()],
+        widths=[45 * mm, 137 * mm],
+    ))
 
     story.append(Spacer(1, 8))
     story.append(Paragraph(f"Prepared by <b>{clean(payload.get('prepared_by'))}</b>.", body_style))
