@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 PROJECT = "DAC Infrastructure Intelligence Watcher"
-VERSION = "v1.5.1"
+VERSION = "v1.6.0"
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -69,16 +69,23 @@ def build_timeline(snapshots):
     for index, (path, data) in enumerate(snapshots, start=1):
         endpoints = data.get("endpoints", {})
 
+        rpc = endpoints.get("official_public_rpc", {})
+        web = endpoints.get("explorer_web", {})
+        api = endpoints.get("primary_explorer_api", {})
+
         rows.append({
             "index": index,
             "snapshot_file": path.name,
             "checked_at_utc": data.get("checked_at_utc"),
             "overall_status": data.get("overall", {}).get("overall_status"),
-            "official_public_rpc_status": endpoints.get("official_public_rpc", {}).get("status"),
-            "explorer_web_status": endpoints.get("explorer_web", {}).get("status"),
-            "primary_explorer_api_status": endpoints.get("primary_explorer_api", {}).get("status"),
-            "rpc_latest_block_decimal": endpoints.get("official_public_rpc", {}).get("latest_block_decimal"),
-            "rpc_latest_block_hex": endpoints.get("official_public_rpc", {}).get("latest_block_hex"),
+            "official_public_rpc_status": rpc.get("status"),
+            "official_public_rpc_response_class": rpc.get("latency_class"),
+            "explorer_web_status": web.get("status"),
+            "explorer_web_response_class": web.get("latency_class"),
+            "primary_explorer_api_status": api.get("status"),
+            "primary_explorer_api_response_class": api.get("latency_class"),
+            "rpc_latest_block_decimal": rpc.get("latest_block_decimal"),
+            "rpc_latest_block_hex": rpc.get("latest_block_hex"),
         })
 
     return rows

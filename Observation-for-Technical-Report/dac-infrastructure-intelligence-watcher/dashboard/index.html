@@ -382,6 +382,71 @@
       white-space: normal;
     }
 
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .filter-field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .filter-field label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .filter-field select {
+      width: 100%;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(7, 17, 31, 0.78);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 11px;
+      font: inherit;
+      outline: none;
+    }
+
+    .filter-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      align-items: center;
+    }
+
+    .filter-button {
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      background: rgba(96, 165, 250, 0.1);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .filter-button:hover {
+      background: rgba(96, 165, 250, 0.16);
+    }
+
+    @media (max-width: 1100px) {
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .filters {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .table-wrap {
       overflow-x: auto;
       border: 1px solid var(--line);
@@ -670,45 +735,188 @@
       `;
     }
 
-    function renderTimeline(data) {
+    function optionList(values) {
+      const unique = Array.from(new Set(values.filter(value => value !== null && value !== undefined && value !== "")));
+      unique.sort();
+
+      return `<option value="ALL">ALL</option>` + unique
+        .map(value => `<option value="${safe(value)}">${safe(value)}</option>`)
+        .join("");
+    }
+
+    function renderTimelineFilters(data) {
       const timeline = data.history.timeline || [];
 
+      return `
+        <section class="section">
+          <h2>Dashboard Filters</h2>
+          <p class="section-desc">
+            Filter the health-state timeline by endpoint availability status and response-time class.
+          </p>
+
+          <div class="filters">
+            <div class="filter-field">
+              <label for="filterOverall">Overall</label>
+              <select id="filterOverall" onchange="applyTimelineFilters()">
+                ${optionList(timeline.map(item => item.overall_status))}
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterRpc">RPC status</label>
+              <select id="filterRpc" onchange="applyTimelineFilters()">
+                ${optionList(timeline.map(item => item.official_public_rpc_status))}
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterWeb">Explorer Web</label>
+              <select id="filterWeb" onchange="applyTimelineFilters()">
+                ${optionList(timeline.map(item => item.explorer_web_status))}
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterApi">Explorer API</label>
+              <select id="filterApi" onchange="applyTimelineFilters()">
+                ${optionList(timeline.map(item => item.primary_explorer_api_status))}
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterResponseClass">Response class</label>
+              <select id="filterResponseClass" onchange="applyTimelineFilters()">
+                ${optionList([
+                  ...timeline.map(item => item.official_public_rpc_response_class),
+                  ...timeline.map(item => item.explorer_web_response_class),
+                  ...timeline.map(item => item.primary_explorer_api_response_class)
+                ])}
+              </select>
+            </div>
+          </div>
+
+          <div class="filter-actions">
+            <button class="filter-button" onclick="resetTimelineFilters()">Reset filters</button>
+            <span class="muted" id="filteredCount">Showing ${number(timeline.length)} of ${number(timeline.length)} snapshots</span>
+          </div>
+        </section>
+      `;
+    }
+
+    function getFilterValue(id) {
+      const element = document.getElementById(id);
+      return element ? element.value : "ALL";
+    }
+
+    function timelineMatchesFilter(value, filterValue) {
+      return filterValue === "ALL" || safe(value) === filterValue;
+    }
+
+    function filterTimeline(data) {
+      const timeline = data.history.timeline || [];
+      const overall = getFilterValue("filterOverall");
+      const rpc = getFilterValue("filterRpc");
+      const web = getFilterValue("filterWeb");
+      const api = getFilterValue("filterApi");
+      const responseClass = getFilterValue("filterResponseClass");
+
+      return timeline.filter(item => {
+        const responseClasses = [
+          item.official_public_rpc_response_class,
+          item.explorer_web_response_class,
+          item.primary_explorer_api_response_class
+        ].map(value => safe(value));
+
+        return (
+          timelineMatchesFilter(item.overall_status, overall) &&
+          timelineMatchesFilter(item.official_public_rpc_status, rpc) &&
+          timelineMatchesFilter(item.explorer_web_status, web) &&
+          timelineMatchesFilter(item.primary_explorer_api_status, api) &&
+          (responseClass === "ALL" || responseClasses.includes(responseClass))
+        );
+      });
+    }
+
+    function renderTimelineTable(timeline) {
       const rows = timeline.map(item => `
         <tr>
           <td>${number(item.index)}</td>
           <td>${safe(item.checked_at_utc)}</td>
           <td>${statusBadge(item.overall_status)}</td>
           <td>${statusBadge(item.official_public_rpc_status)}</td>
+          <td>${safe(item.official_public_rpc_response_class)}</td>
           <td>${statusBadge(item.explorer_web_status)}</td>
+          <td>${safe(item.explorer_web_response_class)}</td>
           <td>${statusBadge(item.primary_explorer_api_status)}</td>
+          <td>${safe(item.primary_explorer_api_response_class)}</td>
           <td>${item.rpc_latest_block_decimal ? number(item.rpc_latest_block_decimal) : safe(item.rpc_latest_block_hex)}</td>
         </tr>
       `).join("");
 
       return `
-        <section class="section">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Checked at UTC</th>
+                <th>Overall</th>
+                <th>RPC</th>
+                <th>RPC class</th>
+                <th>Explorer Web</th>
+                <th>Web class</th>
+                <th>Explorer API</th>
+                <th>API class</th>
+                <th>RPC Block</th>
+              </tr>
+            </thead>
+            <tbody>${rows || `<tr><td colspan="10" class="muted">No snapshots matched the selected filters.</td></tr>`}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderTimeline(data, timelineOverride = null) {
+      const timeline = timelineOverride || data.history.timeline || [];
+
+      return `
+        <section class="section" id="timelineSection">
           <h2>Health-State Timeline</h2>
           <p class="section-desc">Timeline of tracked health-state snapshots. Snapshots are created when endpoint-level state changes.</p>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Checked at UTC</th>
-                  <th>Overall</th>
-                  <th>RPC</th>
-                  <th>Explorer Web</th>
-                  <th>Explorer API</th>
-                  <th>RPC Block</th>
-                </tr>
-              </thead>
-              <tbody>${rows}</tbody>
-            </table>
-          </div>
+          ${renderTimelineTable(timeline)}
         </section>
       `;
     }
 
+    function applyTimelineFilters() {
+      if (!window.dashboardData) return;
+
+      const filtered = filterTimeline(window.dashboardData);
+      const timelineSection = document.getElementById("timelineSection");
+      const filteredCount = document.getElementById("filteredCount");
+      const total = (window.dashboardData.history.timeline || []).length;
+
+      if (timelineSection) {
+        timelineSection.innerHTML = `
+          <h2>Health-State Timeline</h2>
+          <p class="section-desc">Timeline of tracked health-state snapshots. Snapshots are created when endpoint-level state changes.</p>
+          ${renderTimelineTable(filtered)}
+        `;
+      }
+
+      if (filteredCount) {
+        filteredCount.textContent = `Showing ${number(filtered.length)} of ${number(total)} snapshots`;
+      }
+    }
+
+    function resetTimelineFilters() {
+      ["filterOverall", "filterRpc", "filterWeb", "filterApi", "filterResponseClass"].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.value = "ALL";
+      });
+
+      applyTimelineFilters();
+    }
 
     function renderComparisonReports() {
       const reports = [
@@ -771,6 +979,7 @@
         if (!response.ok) throw new Error(`Failed to load ${DATA_FILE}: HTTP ${response.status}`);
 
         const data = await response.json();
+        window.dashboardData = data;
 
         renderHeroMeta(data);
 
@@ -782,6 +991,7 @@
             ${renderBars("Overall Status Distribution", "Overall infrastructure health states across tracked snapshots.", data.history.overall_status_counts)}
             ${renderEndpointHistory(data)}
           </div>`,
+          renderTimelineFilters(data),
           renderTimeline(data),
           renderNotes(data)
         ].join("");
