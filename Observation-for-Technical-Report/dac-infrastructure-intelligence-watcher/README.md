@@ -13,11 +13,13 @@ This project monitors DAC public RPC, Explorer Web, and Explorer API endpoints, 
 
 ## Live Links
 
-* **Live Dashboard:** https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/dashboard/
-* **Repository:** https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher
-* **Official DAC Public RPC:** https://rpctest.dachain.tech/
-* **Official DAC Explorer Web:** https://exptest.dachain.tech/
-* **Official DAC Explorer API:** https://exptest.dachain.tech/api
+| Resource | Link |
+|---|---|
+| Live Dashboard | https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/dashboard/ |
+| Repository | https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher |
+| Official DAC Public RPC | https://rpctest.dachain.tech/ |
+| Official DAC Explorer Web | https://exptest.dachain.tech/ |
+| Official DAC Explorer API | https://exptest.dachain.tech/api |
 
 ---
 
