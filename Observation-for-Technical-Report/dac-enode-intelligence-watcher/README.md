@@ -876,21 +876,6 @@ PDF reports: 3
 
 ---
 
-## Future Upgrade Direction
-
-The current export roadmap is complete through v1.9.3.
-
-Future optional upgrades may include:
-
-* public RPC health monitoring
-* explorer availability monitoring
-* multi-source DAC infrastructure watcher
-* richer dashboard filtering
-* richer report templates
-* automated comparison between observation windows
-
----
-
 ## Security Notes
 
 Do not commit email passwords, SMTP credentials, `.env` files, or tokens.
