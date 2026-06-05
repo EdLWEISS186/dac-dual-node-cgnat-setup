@@ -1,0 +1,22 @@
+{
+  "name": "dac-domain",
+  "version": "1.0.0",
+  "description": "DAC Domain is an experimental on-chain domain registry for the DAC testnet.",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy:dac": "hardhat run scripts/deploy.js --network dacTestnet",
+    "register:dac": "hardhat run scripts/register.js --network dacTestnet",
+    "resolve:dac": "hardhat run scripts/resolve.js --network dacTestnet",
+    "decode-events:dac": "node scripts/decode-events.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^17.4.2",
+    "hardhat": "^2.28.6"
+  }
+}

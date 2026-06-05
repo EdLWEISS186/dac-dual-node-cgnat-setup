@@ -1,0 +1,29 @@
+{
+  "network": "DAC Testnet",
+  "hardhatNetwork": "dacTestnet",
+  "chainId": 21894,
+  "rpcUrl": "http://127.0.0.1:8546",
+  "explorerUrl": "https://exptest.dachain.tech",
+  "explorerApiUrl": "https://exptest.dachain.tech/api",
+  "contractName": "DACDomainRegistry",
+  "version": "v1.0.0-explorer-friendly",
+  "contractAddress": "0x90F07E7EFa772c40B90d68BB54267Ea0658a090F",
+  "deploymentTxHash": "0x4e3ab77b099bb7e2149f17dc9465e5e760c0d3dd96790df11aafce482eeb1c90",
+  "deployer": "0x870ad63acc507cdfd878F170606d19ae78988AFE",
+  "deployedAt": "2026-06-05T15:58:03.202Z",
+  "previousVersion": {
+    "version": "v0.5-archived-prototype",
+    "contractAddress": "0x72BD75723ADA5e37F6bA4b8909864c3bbaBccB63",
+    "deploymentTxHash": "0xe97e92b860257dacdbb791ad5d12862127d9e8d0b74c28e063df44f2f68968e5"
+  },
+  "pricing": {
+    "1_year": "5 DACC",
+    "2_years": "8 DACC",
+    "3_years": "10 DACC"
+  },
+  "tld": ".dac",
+  "eventModel": {
+    "indexedNameHash": "bytes32 indexed nameHash",
+    "readableName": "string name"
+  }
+}

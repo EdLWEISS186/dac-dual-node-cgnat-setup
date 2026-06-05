@@ -1,0 +1,17 @@
+node_modules/
+.env
+artifacts/
+cache/
+typechain/
+coverage/
+deployments/*.local.json
+
+# Keep DAC Domain project metadata tracked
+!package.json
+!package-lock.json
+
+# Keep deployment metadata tracked
+!deployments/
+!deployments/**/*.json
+!deployments/archive/
+!deployments/archive/**/*.json

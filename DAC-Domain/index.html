@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>DAC Domain</title>
+
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+  <div class="background-layer bg-a"></div>
+  <div class="background-layer bg-b"></div>
+  <div class="dark-overlay"></div>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="topbar-shield">
+        <div class="brand">
+          <div class="brand-main">.dac</div>
+          <div class="brand-sub">Domain</div>
+        </div>
+
+        <div class="signature">
+          <div>MADE BY JERUZZALEM — DAC INFRA TESTER</div>
+          <span>BUILT BY COMMUNITIES FOR COMMUNITIES</span>
+        </div>
+
+        <div class="wallet-area">
+          <button id="walletBox" class="wallet-box disconnected" type="button">
+            <span>Connect Wallet</span>
+          </button>
+
+          <div id="walletMenu" class="wallet-menu hidden">
+            <button id="disconnectBtn" type="button">Disconnect Wallet →</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="divider"></div>
+
+    <nav class="tabs">
+      <button id="registerTabBtn" class="tab-btn active" type="button">+ Register Domain</button>
+      <button id="managementTabBtn" class="tab-btn" type="button">Domain Management</button>
+    </nav>
+
+    <section id="registerPanel" class="content-panel register-panel active">
+      <h1>Register Domain</h1>
+
+      <label class="field">
+        <span>Domain Name</span>
+        <div class="domain-input-wrap">
+          <input
+            id="registerLabel"
+            type="text"
+            placeholder="e.g., mydomain"
+            autocomplete="off"
+          />
+          <div class="suffix">.dac</div>
+        </div>
+        <small>Only lowercase letters, numbers, and hyphens are allowed. Special characters will be removed.</small>
+      </label>
+
+      <section id="registrationPreview" class="registration-preview hidden">
+        <div id="availabilityCard" class="availability-card neutral">
+          <div class="availability-title">
+            <span id="availabilityIcon">○</span>
+            <strong id="availabilityTitle">Checking domain</strong>
+          </div>
+          <p id="availabilityDescription">Type a domain name to check availability.</p>
+          <div id="availabilityMeta" class="availability-meta"></div>
+        </div>
+
+        <div class="duration-box">
+          <h2>Choose Registration Duration</h2>
+
+          <div class="duration-options">
+            <button class="duration-option active" type="button" data-years="1" data-price="5">
+              <strong>1 Year</strong>
+              <span>5 DACC</span>
+            </button>
+
+            <button class="duration-option" type="button" data-years="2" data-price="8">
+              <strong>2 Years</strong>
+              <span>8 DACC</span>
+            </button>
+
+            <button class="duration-option" type="button" data-years="3" data-price="10">
+              <strong>3 Years</strong>
+              <span>10 DACC</span>
+            </button>
+          </div>
+
+          <div class="total-price">
+            Total: <strong id="totalPrice">5 DACC</strong>
+          </div>
+        </div>
+      </section>
+
+      <button id="registerBtn" class="primary-action" type="button" disabled>Register Domain</button>
+    </section>
+
+    <section id="managementPanel" class="content-panel management-panel">
+      <div class="management-header">
+        <h1>Domain Management</h1>
+        <button id="refreshDomainsBtn" class="secondary-action compact" type="button">Refresh</button>
+      </div>
+
+      <article class="primary-domain-card">
+        <div>
+          <span class="star">★</span>
+          <strong>Primary Domain:</strong>
+          <span id="primaryDomainText">Not selected</span>
+        </div>
+
+        <button id="clearPrimaryBtn" class="small-button" type="button">Clear Primary</button>
+      </article>
+
+      <div id="domainList" class="domain-list"></div>
+
+      <div id="domainEmptyState" class="empty-state">
+        Connect your wallet to view and manage domains associated with your address.
+      </div>
+
+      <details class="advanced-settings">
+        <summary>Advanced Settings</summary>
+
+        <div class="advanced-body">
+          <p>
+            Developer-only setting used before the DAC Domain registry contract address is finalized in the frontend.
+          </p>
+
+          <label class="field">
+            <span>Registry Contract Address</span>
+            <input
+              id="contractAddressInput"
+              type="text"
+              placeholder="0x..."
+              autocomplete="off"
+            />
+          </label>
+
+          <button id="saveContractBtn" class="secondary-action" type="button">Save Registry Contract</button>
+          <p class="mini-status">Active Registry: <strong id="activeContract">Not set</strong></p>
+        </div>
+      </details>
+    </section>
+
+    <p id="inlineStatus" class="inline-status">
+      Ready. Connect wallet, save registry contract, then register your first .dac domain.
+    </p>
+
+    <footer class="footer">
+      <div class="footer-plate">
+        <div class="footer-domain">.dac</div>
+        <p>DECENTRALIZED DOMAIN REGISTRATION SYSTEM RUNNING ON DAC TESTNET</p>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
