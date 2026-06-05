@@ -568,5 +568,3 @@ Availability, ownership, primary-domain status, and event logs are based on the 
 ## Author
 
 **JERUZZALEM — DAC Infra Tester**
-
-Built by Communities for Communities
