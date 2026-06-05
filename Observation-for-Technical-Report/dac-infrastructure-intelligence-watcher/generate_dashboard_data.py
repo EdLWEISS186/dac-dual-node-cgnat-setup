@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 PROJECT = "DAC Infrastructure Intelligence Watcher"
-VERSION = "v1.6.0"
+VERSION = "v1.7.0"
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -182,6 +182,78 @@ def build_freshness(latest_checked_at_utc):
     }
 
 
+
+def status_score(status):
+    scores = {
+        "HEALTHY": 100,
+        "DEGRADED": 55,
+        "PARTIAL_OUTAGE": 20,
+        "UNHEALTHY": 0,
+        "UNKNOWN": 0,
+    }
+
+    return scores.get(status or "UNKNOWN", 0)
+
+
+def counts_to_chart_rows(counts, label_key="label"):
+    return [
+        {
+            label_key: key,
+            "count": value,
+        }
+        for key, value in sorted((counts or {}).items())
+    ]
+
+
+def build_response_class_counts(timeline):
+    return {
+        "official_public_rpc": count_statuses([
+            item.get("official_public_rpc_response_class") or "UNKNOWN"
+            for item in timeline
+        ]),
+        "explorer_web": count_statuses([
+            item.get("explorer_web_response_class") or "UNKNOWN"
+            for item in timeline
+        ]),
+        "primary_explorer_api": count_statuses([
+            item.get("primary_explorer_api_response_class") or "UNKNOWN"
+            for item in timeline
+        ]),
+    }
+
+
+def build_chart_data(timeline, overall_status_counts, endpoint_counts):
+    response_class_counts = build_response_class_counts(timeline)
+
+    endpoint_rows = []
+    for endpoint, counts in (endpoint_counts or {}).items():
+        row = {"endpoint": endpoint}
+        row.update(counts or {})
+        endpoint_rows.append(row)
+
+    response_rows = []
+    for endpoint, counts in response_class_counts.items():
+        row = {"endpoint": endpoint}
+        row.update(counts or {})
+        response_rows.append(row)
+
+    health_score_rows = []
+    for item in timeline:
+        health_score_rows.append({
+            "index": item.get("index"),
+            "checked_at_utc": item.get("checked_at_utc"),
+            "overall_status": item.get("overall_status") or "UNKNOWN",
+            "score": status_score(item.get("overall_status")),
+        })
+
+    return {
+        "overall_status_distribution": counts_to_chart_rows(overall_status_counts),
+        "endpoint_status_distribution": endpoint_rows,
+        "response_class_distribution": response_rows,
+        "timeline_health_score": health_score_rows,
+    }
+
+
 def build_dashboard_data():
     latest = load_latest()
     snapshots = load_snapshots()
@@ -195,6 +267,10 @@ def build_dashboard_data():
     latest_overall = latest.get("overall", {})
 
     freshness = build_freshness(latest.get("checked_at_utc"))
+
+    overall_status_counts = count_statuses(overall_status_values)
+    endpoint_counts = endpoint_status_counts(snapshots)
+    charts = build_chart_data(timeline, overall_status_counts, endpoint_counts)
 
     return {
         "project": PROJECT,
@@ -217,10 +293,11 @@ def build_dashboard_data():
             "snapshot_count": len(snapshots),
             "first_snapshot": snapshots[0][0].name if snapshots else None,
             "latest_snapshot": snapshots[-1][0].name if snapshots else None,
-            "overall_status_counts": count_statuses(overall_status_values),
-            "endpoint_status_counts": endpoint_status_counts(snapshots),
+            "overall_status_counts": overall_status_counts,
+            "endpoint_status_counts": endpoint_counts,
             "timeline": timeline,
         },
+        "charts": charts,
     }
 
 

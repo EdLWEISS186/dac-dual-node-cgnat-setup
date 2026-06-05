@@ -382,6 +382,138 @@
       white-space: normal;
     }
 
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .chart-card {
+      border: 1px solid var(--line);
+      background: rgba(13, 27, 47, 0.82);
+      border-radius: 20px;
+      padding: 18px;
+      min-height: 260px;
+    }
+
+    .chart-card.wide {
+      grid-column: 1 / -1;
+    }
+
+    .chart-title {
+      margin: 0 0 5px;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .chart-caption {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0 0 15px;
+    }
+
+    .bar-chart {
+      display: grid;
+      gap: 11px;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 0.38fr) minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chart-label {
+      overflow-wrap: anywhere;
+    }
+
+    .chart-track {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.14);
+      overflow: hidden;
+    }
+
+    .chart-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      min-width: 3px;
+    }
+
+    .stack-chart {
+      display: grid;
+      gap: 14px;
+    }
+
+    .stack-title {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 7px;
+      overflow-wrap: anywhere;
+    }
+
+    .stack-track {
+      display: flex;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.14);
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .stack-segment {
+      min-width: 2px;
+      background: rgba(56, 189, 248, 0.68);
+    }
+
+    .stack-segment:nth-child(2) {
+      background: rgba(167, 139, 250, 0.68);
+    }
+
+    .stack-segment:nth-child(3) {
+      background: rgba(250, 204, 21, 0.68);
+    }
+
+    .stack-segment:nth-child(4) {
+      background: rgba(239, 68, 68, 0.68);
+    }
+
+    .stack-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 8px;
+    }
+
+    .mini-trend {
+      display: flex;
+      align-items: end;
+      gap: 6px;
+      height: 120px;
+      padding: 10px 0 0;
+    }
+
+    .trend-bar {
+      flex: 1;
+      min-width: 7px;
+      border-radius: 8px 8px 0 0;
+      background: linear-gradient(180deg, var(--blue), rgba(56, 189, 248, 0.32));
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    @media (max-width: 900px) {
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .filters {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -744,6 +876,127 @@
         .join("");
     }
 
+
+    function maxCount(rows, key = "count") {
+      return Math.max(1, ...rows.map(row => Number(row[key] || 0)));
+    }
+
+    function renderSimpleBarChart(rows, labelKey = "label", valueKey = "count") {
+      const max = maxCount(rows, valueKey);
+
+      return `
+        <div class="bar-chart">
+          ${rows.map(row => {
+            const value = Number(row[valueKey] || 0);
+            const pct = Math.round((value / max) * 100);
+
+            return `
+              <div class="chart-row">
+                <div class="chart-label">${safe(row[labelKey])}</div>
+                <div class="chart-track">
+                  <div class="chart-fill" style="width:${pct}%"></div>
+                </div>
+                <strong>${number(value)}</strong>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function renderStackedChart(rows, labelKey = "endpoint") {
+      return `
+        <div class="stack-chart">
+          ${rows.map(row => {
+            const entries = Object.entries(row)
+              .filter(([key]) => key !== labelKey)
+              .filter(([, value]) => Number(value || 0) > 0);
+
+            const total = entries.reduce((sum, [, value]) => sum + Number(value || 0), 0) || 1;
+
+            return `
+              <div>
+                <div class="stack-title">${safe(row[labelKey])}</div>
+                <div class="stack-track">
+                  ${entries.map(([, value]) => {
+                    const pct = Math.max(2, Math.round((Number(value || 0) / total) * 100));
+                    return `<div class="stack-segment" style="width:${pct}%"></div>`;
+                  }).join("")}
+                </div>
+                <div class="stack-legend">
+                  ${entries.map(([key, value]) => `<span class="status-chip">${safe(key)}: ${number(value)}</span>`).join("")}
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function renderHealthScoreTrend(rows) {
+      const values = rows || [];
+
+      return `
+        <div class="mini-trend">
+          ${values.map(row => {
+            const height = Math.max(4, Number(row.score || 0));
+            return `
+              <div
+                class="trend-bar"
+                style="height:${height}%"
+                title="#${safe(row.index)} · ${safe(row.overall_status)} · score ${safe(row.score)}"
+              ></div>
+            `;
+          }).join("")}
+        </div>
+        <div class="stack-legend">
+          <span class="status-chip">100 = HEALTHY</span>
+          <span class="status-chip">55 = DEGRADED</span>
+          <span class="status-chip">20 = PARTIAL_OUTAGE</span>
+          <span class="status-chip">0 = UNHEALTHY / UNKNOWN</span>
+        </div>
+      `;
+    }
+
+    function renderChartLayer(data) {
+      const charts = data.charts || {};
+
+      return `
+        <section class="section">
+          <h2>Dashboard Chart Layer</h2>
+          <p class="section-desc">
+            Visual summary of infrastructure health distribution, endpoint status, response-time classes, and overall health score trend.
+          </p>
+
+          <div class="chart-grid">
+            <div class="chart-card">
+              <h3 class="chart-title">Overall Status Distribution</h3>
+              <p class="chart-caption">Counts of overall infrastructure states across tracked snapshots.</p>
+              ${renderSimpleBarChart(charts.overall_status_distribution || [])}
+            </div>
+
+            <div class="chart-card">
+              <h3 class="chart-title">Endpoint Status Distribution</h3>
+              <p class="chart-caption">Stacked endpoint availability states across tracked snapshots.</p>
+              ${renderStackedChart(charts.endpoint_status_distribution || [])}
+            </div>
+
+            <div class="chart-card">
+              <h3 class="chart-title">Response Class Distribution</h3>
+              <p class="chart-caption">FAST, MODERATE, SLOW, or UNKNOWN response class distribution per endpoint.</p>
+              ${renderStackedChart(charts.response_class_distribution || [])}
+            </div>
+
+            <div class="chart-card">
+              <h3 class="chart-title">Overall Health Score Trend</h3>
+              <p class="chart-caption">Compact visual trend where higher bars indicate stronger availability health.</p>
+              ${renderHealthScoreTrend(charts.timeline_health_score || [])}
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
     function renderTimelineFilters(data) {
       const timeline = data.history.timeline || [];
 
@@ -987,6 +1240,7 @@
           renderTopCards(data),
           renderEndpointCards(data),
           renderComparisonReports(),
+          renderChartLayer(data),
           `<div class="grid two">
             ${renderBars("Overall Status Distribution", "Overall infrastructure health states across tracked snapshots.", data.history.overall_status_counts)}
             ${renderEndpointHistory(data)}
