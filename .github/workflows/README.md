@@ -146,8 +146,9 @@ In simple terms, this workflow:
 - creates health snapshots when endpoint-level health state changes
 - regenerates `reports/generated/infrastructure-health-report.md`
 - regenerates `dashboard/data/health-dashboard-data.json`
-- regenerates standard custom range reports for 7D, 30D, and ALL scopes
+- regenerates standard custom range reports for 7D, 30D, and ALL scopes in Markdown and JSON formats
 - regenerates standard observation window comparison reports for 7D, 30D, and ALL scopes
+- regenerates PDF reports for 7D, 30D, and ALL scopes
 - supports the static dashboard at `dashboard/index.html`
 - commits generated output changes back to the repository when needed
 

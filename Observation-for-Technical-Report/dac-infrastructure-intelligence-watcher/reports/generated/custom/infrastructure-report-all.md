@@ -2,7 +2,7 @@
 
 Range: **all**
 
-Report layer version: **v1.4.0**
+Report layer version: **v1.8.0**
 
 This report is generated from infrastructure health snapshots and is intended for range-based technical review.
 
@@ -59,7 +59,7 @@ This report is generated from infrastructure health snapshots and is intended fo
 
 - Availability status describes whether a service is reachable and usable.
 - Response class describes response-time behavior, not availability.
-- Older snapshots may show `N/A` response class because response-time classification was added after the initial watcher release.
+- Older snapshots may show UNKNOWN or null response class because response-time classification was added after the initial watcher release.
 - This custom range report is independent observation material and not an official DAC service status page.
 
 ---

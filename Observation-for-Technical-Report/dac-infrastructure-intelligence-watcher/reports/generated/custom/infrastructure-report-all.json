@@ -1,0 +1,265 @@
+{
+  "project": "DAC Infrastructure Intelligence Watcher",
+  "report_type": "custom_range_infrastructure_report",
+  "report_layer_version": "v1.8.0",
+  "range": "all",
+  "generated_at_utc": "2026-06-05T02:50:54.280772+00:00",
+  "summary": {
+    "snapshot_count": 14,
+    "first_snapshot": "2026-06-04T09-54-55-772035+00-00-health.json",
+    "latest_snapshot": "2026-06-04T19-47-12-825324+00-00-health.json",
+    "first_checked_at_utc": "2026-06-04T09:54:55.772035+00:00",
+    "latest_checked_at_utc": "2026-06-04T19:47:12.825324+00:00",
+    "overall_status_counts": {
+      "DEGRADED": 4,
+      "HEALTHY": 5,
+      "PARTIAL_OUTAGE": 5
+    },
+    "endpoint_status_counts": {
+      "official_public_rpc": {
+        "DEGRADED": 4,
+        "HEALTHY": 5,
+        "UNHEALTHY": 5
+      },
+      "explorer_web": {
+        "HEALTHY": 14
+      },
+      "primary_explorer_api": {
+        "HEALTHY": 14
+      }
+    },
+    "response_time_summary": {
+      "official_public_rpc": {
+        "average_response_ms": 2096.75,
+        "max_response_ms": 5347.0,
+        "response_class_counts": {
+          "MODERATE": 2,
+          "SLOW": 2,
+          "UNKNOWN": 10
+        }
+      },
+      "explorer_web": {
+        "average_response_ms": 1149.71,
+        "max_response_ms": 2299.0,
+        "response_class_counts": {
+          "MODERATE": 4,
+          "UNKNOWN": 10
+        }
+      },
+      "primary_explorer_api": {
+        "average_response_ms": 523.5,
+        "max_response_ms": 620.0,
+        "response_class_counts": {
+          "FAST": 1,
+          "MODERATE": 3,
+          "UNKNOWN": 10
+        }
+      }
+    }
+  },
+  "timeline": [
+    {
+      "index": 1,
+      "snapshot_file": "2026-06-04T09-54-55-772035+00-00-health.json",
+      "checked_at_utc": "2026-06-04T09:54:55.772035+00:00",
+      "overall_status": "PARTIAL_OUTAGE",
+      "official_public_rpc_status": "UNHEALTHY",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": null,
+      "rpc_latest_block_hex": null
+    },
+    {
+      "index": 2,
+      "snapshot_file": "2026-06-04T09-59-08-192048+00-00-health.json",
+      "checked_at_utc": "2026-06-04T09:59:08.192048+00:00",
+      "overall_status": "PARTIAL_OUTAGE",
+      "official_public_rpc_status": "UNHEALTHY",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": 14952932,
+      "rpc_latest_block_hex": "0xe429e4"
+    },
+    {
+      "index": 3,
+      "snapshot_file": "2026-06-04T09-59-48-937274+00-00-health.json",
+      "checked_at_utc": "2026-06-04T09:59:48.937274+00:00",
+      "overall_status": "HEALTHY",
+      "official_public_rpc_status": "HEALTHY",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": 14952932,
+      "rpc_latest_block_hex": "0xe429e4"
+    },
+    {
+      "index": 4,
+      "snapshot_file": "2026-06-04T10-00-10-486388+00-00-health.json",
+      "checked_at_utc": "2026-06-04T10:00:10.486388+00:00",
+      "overall_status": "PARTIAL_OUTAGE",
+      "official_public_rpc_status": "UNHEALTHY",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": null,
+      "rpc_latest_block_hex": null
+    },
+    {
+      "index": 5,
+      "snapshot_file": "2026-06-04T10-02-58-023788+00-00-health.json",
+      "checked_at_utc": "2026-06-04T10:02:58.023788+00:00",
+      "overall_status": "HEALTHY",
+      "official_public_rpc_status": "HEALTHY",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": 14952932,
+      "rpc_latest_block_hex": "0xe429e4"
+    },
+    {
+      "index": 6,
+      "snapshot_file": "2026-06-04T11-35-39-447567+00-00-health.json",
+      "checked_at_utc": "2026-06-04T11:35:39.447567+00:00",
+      "overall_status": "DEGRADED",
+      "official_public_rpc_status": "DEGRADED",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": 14953437,
+      "rpc_latest_block_hex": "0xe42bdd"
+    },
+    {
+      "index": 7,
+      "snapshot_file": "2026-06-04T11-36-10-013189+00-00-health.json",
+      "checked_at_utc": "2026-06-04T11:36:10.013189+00:00",
+      "overall_status": "DEGRADED",
+      "official_public_rpc_status": "DEGRADED",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": 14953447,
+      "rpc_latest_block_hex": "0xe42be7"
+    },
+    {
+      "index": 8,
+      "snapshot_file": "2026-06-04T11-38-16-082796+00-00-health.json",
+      "checked_at_utc": "2026-06-04T11:38:16.082796+00:00",
+      "overall_status": "PARTIAL_OUTAGE",
+      "official_public_rpc_status": "UNHEALTHY",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": null,
+      "rpc_latest_block_hex": null
+    },
+    {
+      "index": 9,
+      "snapshot_file": "2026-06-04T11-38-26-409385+00-00-health.json",
+      "checked_at_utc": "2026-06-04T11:38:26.409385+00:00",
+      "overall_status": "DEGRADED",
+      "official_public_rpc_status": "DEGRADED",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": null,
+      "rpc_latest_block_hex": null
+    },
+    {
+      "index": 10,
+      "snapshot_file": "2026-06-04T11-50-50-288397+00-00-health.json",
+      "checked_at_utc": "2026-06-04T11:50:50.288397+00:00",
+      "overall_status": "HEALTHY",
+      "official_public_rpc_status": "HEALTHY",
+      "official_public_rpc_response_class": null,
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": null,
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": null,
+      "rpc_latest_block_decimal": 14913037,
+      "rpc_latest_block_hex": "0xe38e0d"
+    },
+    {
+      "index": 11,
+      "snapshot_file": "2026-06-04T16-59-50-793517+00-00-health.json",
+      "checked_at_utc": "2026-06-04T16:59:50.793517+00:00",
+      "overall_status": "PARTIAL_OUTAGE",
+      "official_public_rpc_status": "UNHEALTHY",
+      "official_public_rpc_response_class": "MODERATE",
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": "MODERATE",
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": "MODERATE",
+      "rpc_latest_block_decimal": null,
+      "rpc_latest_block_hex": null
+    },
+    {
+      "index": 12,
+      "snapshot_file": "2026-06-04T17-34-38-689983+00-00-health.json",
+      "checked_at_utc": "2026-06-04T17:34:38.689983+00:00",
+      "overall_status": "HEALTHY",
+      "official_public_rpc_status": "HEALTHY",
+      "official_public_rpc_response_class": "SLOW",
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": "MODERATE",
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": "MODERATE",
+      "rpc_latest_block_decimal": 14954882,
+      "rpc_latest_block_hex": "0xe43182"
+    },
+    {
+      "index": 13,
+      "snapshot_file": "2026-06-04T17-39-38-929050+00-00-health.json",
+      "checked_at_utc": "2026-06-04T17:39:38.929050+00:00",
+      "overall_status": "DEGRADED",
+      "official_public_rpc_status": "DEGRADED",
+      "official_public_rpc_response_class": "SLOW",
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": "MODERATE",
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": "FAST",
+      "rpc_latest_block_decimal": null,
+      "rpc_latest_block_hex": null
+    },
+    {
+      "index": 14,
+      "snapshot_file": "2026-06-04T19-47-12-825324+00-00-health.json",
+      "checked_at_utc": "2026-06-04T19:47:12.825324+00:00",
+      "overall_status": "HEALTHY",
+      "official_public_rpc_status": "HEALTHY",
+      "official_public_rpc_response_class": "MODERATE",
+      "explorer_web_status": "HEALTHY",
+      "explorer_web_response_class": "MODERATE",
+      "primary_explorer_api_status": "HEALTHY",
+      "primary_explorer_api_response_class": "MODERATE",
+      "rpc_latest_block_decimal": 14955409,
+      "rpc_latest_block_hex": "0xe43391"
+    }
+  ],
+  "interpretation_guide": [
+    "Availability status describes whether a service is reachable and usable.",
+    "Response class describes response-time behavior, not availability.",
+    "Older snapshots may show UNKNOWN or null response class because response-time classification was added after the initial watcher release.",
+    "This custom range report is independent observation material and not an official DAC service status page."
+  ],
+  "prepared_by": "JERUZZALEM — DAC Infra Tester"
+}

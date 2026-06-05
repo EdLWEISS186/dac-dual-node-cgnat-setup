@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 PROJECT = "DAC Infrastructure Intelligence Watcher"
-VERSION = "v1.7.0"
+VERSION = "v1.8.0"
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"

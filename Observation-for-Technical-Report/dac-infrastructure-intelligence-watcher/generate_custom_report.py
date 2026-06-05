@@ -7,12 +7,19 @@ from pathlib import Path
 
 
 PROJECT = "DAC Infrastructure Intelligence Watcher"
-VERSION = "v1.4.0"
+VERSION = "v1.8.0"
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 SNAPSHOT_DIR = DATA_DIR / "snapshots"
 OUTPUT_DIR = BASE_DIR / "reports" / "generated" / "custom"
+
+
+ENDPOINTS = [
+    "official_public_rpc",
+    "explorer_web",
+    "primary_explorer_api",
+]
 
 
 def load_json(path):
@@ -38,6 +45,7 @@ def safe(value, fallback="N/A"):
 def safe_number(value):
     if value is None or value == "":
         return None
+
     try:
         return float(value)
     except Exception:
@@ -145,9 +153,26 @@ def summarize(rows):
         for row in rows
     ]
 
-    rpc_rows = [endpoint(row["data"], "official_public_rpc") for row in rows]
-    web_rows = [endpoint(row["data"], "explorer_web") for row in rows]
-    api_rows = [endpoint(row["data"], "primary_explorer_api") for row in rows]
+    endpoint_rows = {
+        key: [endpoint(row["data"], key) for row in rows]
+        for key in ENDPOINTS
+    }
+
+    response_time_summary = {}
+
+    for key, items in endpoint_rows.items():
+        if key == "explorer_web":
+            average_values = [item.get("latency_ms") for item in items]
+            max_values = [item.get("latency_ms") for item in items]
+        else:
+            average_values = [item.get("latency_ms_avg") for item in items]
+            max_values = [item.get("latency_ms_max") for item in items]
+
+        response_time_summary[key] = {
+            "average_response_ms": avg(average_values),
+            "max_response_ms": max_value(max_values),
+            "response_class_counts": count([item.get("latency_class") for item in items]),
+        }
 
     return {
         "snapshot_count": len(rows),
@@ -157,35 +182,15 @@ def summarize(rows):
         "latest_checked_at_utc": rows[-1]["data"].get("checked_at_utc") if rows else None,
         "overall_status_counts": count(overall_statuses),
         "endpoint_status_counts": {
-            "official_public_rpc": count([item.get("status") for item in rpc_rows]),
-            "explorer_web": count([item.get("status") for item in web_rows]),
-            "primary_explorer_api": count([item.get("status") for item in api_rows]),
+            key: count([item.get("status") for item in items])
+            for key, items in endpoint_rows.items()
         },
-        "response_time_summary": {
-            "official_public_rpc": {
-                "avg_response_ms_avg": avg([item.get("latency_ms_avg") for item in rpc_rows]),
-                "max_response_ms": max_value([item.get("latency_ms_max") for item in rpc_rows]),
-                "response_class_counts": count([item.get("latency_class") for item in rpc_rows]),
-            },
-            "explorer_web": {
-                "avg_response_ms": avg([item.get("latency_ms") for item in web_rows]),
-                "max_response_ms": max_value([item.get("latency_ms") for item in web_rows]),
-                "response_class_counts": count([item.get("latency_class") for item in web_rows]),
-            },
-            "primary_explorer_api": {
-                "avg_response_ms_avg": avg([item.get("latency_ms_avg") for item in api_rows]),
-                "max_response_ms": max_value([item.get("latency_ms_max") for item in api_rows]),
-                "response_class_counts": count([item.get("latency_class") for item in api_rows]),
-            },
-        },
+        "response_time_summary": response_time_summary,
     }
 
 
 def build_timeline(rows):
-    lines = [
-        "| # | Checked at UTC | Overall | RPC | RPC class | Explorer Web | Web class | Explorer API | API class |",
-        "|---:|---|---|---|---|---|---|---|---|",
-    ]
+    timeline = []
 
     for row in rows:
         data = row["data"]
@@ -193,30 +198,77 @@ def build_timeline(rows):
         web = endpoint(data, "explorer_web")
         api = endpoint(data, "primary_explorer_api")
 
+        timeline.append({
+            "index": row["index"],
+            "snapshot_file": row["file"],
+            "checked_at_utc": data.get("checked_at_utc"),
+            "overall_status": data.get("overall", {}).get("overall_status"),
+            "official_public_rpc_status": rpc.get("status"),
+            "official_public_rpc_response_class": rpc.get("latency_class"),
+            "explorer_web_status": web.get("status"),
+            "explorer_web_response_class": web.get("latency_class"),
+            "primary_explorer_api_status": api.get("status"),
+            "primary_explorer_api_response_class": api.get("latency_class"),
+            "rpc_latest_block_decimal": rpc.get("latest_block_decimal"),
+            "rpc_latest_block_hex": rpc.get("latest_block_hex"),
+        })
+
+    return timeline
+
+
+def build_report_payload(rows, label):
+    summary = summarize(rows)
+    timeline = build_timeline(rows)
+
+    return {
+        "project": PROJECT,
+        "report_type": "custom_range_infrastructure_report",
+        "report_layer_version": VERSION,
+        "range": label,
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "summary": summary,
+        "timeline": timeline,
+        "interpretation_guide": [
+            "Availability status describes whether a service is reachable and usable.",
+            "Response class describes response-time behavior, not availability.",
+            "Older snapshots may show UNKNOWN or null response class because response-time classification was added after the initial watcher release.",
+            "This custom range report is independent observation material and not an official DAC service status page.",
+        ],
+        "prepared_by": "JERUZZALEM — DAC Infra Tester",
+    }
+
+
+def render_timeline_markdown(timeline):
+    lines = [
+        "| # | Checked at UTC | Overall | RPC | RPC class | Explorer Web | Web class | Explorer API | API class |",
+        "|---:|---|---|---|---|---|---|---|---|",
+    ]
+
+    for item in timeline:
         lines.append(
-            f"| {row['index']} | "
-            f"{safe(data.get('checked_at_utc'))} | "
-            f"{safe(data.get('overall', {}).get('overall_status'))} | "
-            f"{safe(rpc.get('status'))} | "
-            f"{safe(rpc.get('latency_class'))} | "
-            f"{safe(web.get('status'))} | "
-            f"{safe(web.get('latency_class'))} | "
-            f"{safe(api.get('status'))} | "
-            f"{safe(api.get('latency_class'))} |"
+            f"| {item.get('index')} | "
+            f"{safe(item.get('checked_at_utc'))} | "
+            f"{safe(item.get('overall_status'))} | "
+            f"{safe(item.get('official_public_rpc_status'))} | "
+            f"{safe(item.get('official_public_rpc_response_class'))} | "
+            f"{safe(item.get('explorer_web_status'))} | "
+            f"{safe(item.get('explorer_web_response_class'))} | "
+            f"{safe(item.get('primary_explorer_api_status'))} | "
+            f"{safe(item.get('primary_explorer_api_response_class'))} |"
         )
 
     return "\n".join(lines)
 
 
-def build_report(rows, label):
-    summary = summarize(rows)
+def build_markdown_report(payload):
+    summary = payload["summary"]
 
     lines = [
-        f"# DAC Infrastructure Intelligence Watcher — Custom Range Report",
+        "# DAC Infrastructure Intelligence Watcher — Custom Range Report",
         "",
-        f"Range: **{label}**",
+        f"Range: **{payload['range']}**",
         "",
-        f"Report layer version: **{VERSION}**",
+        f"Report layer version: **{payload['report_layer_version']}**",
         "",
         "This report is generated from infrastructure health snapshots and is intended for range-based technical review.",
         "",
@@ -252,10 +304,9 @@ def build_report(rows, label):
     ])
 
     for key, item in summary["response_time_summary"].items():
-        avg_response = item.get("avg_response_ms_avg", item.get("avg_response_ms"))
         lines.append(
             f"| {key} | "
-            f"{safe(avg_response)} ms | "
+            f"{safe(item.get('average_response_ms'))} ms | "
             f"{safe(item.get('max_response_ms'))} ms | "
             f"{safe(format_counts(item.get('response_class_counts')))} |"
         )
@@ -264,27 +315,48 @@ def build_report(rows, label):
         "",
         "## 4. Snapshot Timeline",
         "",
-        build_timeline(rows),
+        render_timeline_markdown(payload["timeline"]),
         "",
         "## 5. Interpretation Guide",
         "",
-        "- Availability status describes whether a service is reachable and usable.",
-        "- Response class describes response-time behavior, not availability.",
-        "- Older snapshots may show `N/A` response class because response-time classification was added after the initial watcher release.",
-        "- This custom range report is independent observation material and not an official DAC service status page.",
+    ])
+
+    for note in payload["interpretation_guide"]:
+        lines.append(f"- {note}")
+
+    lines.extend([
         "",
         "---",
         "",
-        "Prepared by **JERUZZALEM — DAC Infra Tester**.",
+        f"Prepared by **{payload['prepared_by']}**.",
         "",
     ])
 
     return "\n".join(lines)
 
 
-def output_name(label):
+def output_stem(label):
     safe_label = label.lower().replace(" ", "-").replace("_", "-").replace("#", "obs-")
-    return f"infrastructure-report-{safe_label}.md"
+    return f"infrastructure-report-{safe_label}"
+
+
+def write_outputs(payload, output_format):
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    stem = output_stem(payload["range"])
+    outputs = []
+
+    if output_format in ("md", "both"):
+        md_file = OUTPUT_DIR / f"{stem}.md"
+        md_file.write_text(build_markdown_report(payload), encoding="utf-8")
+        outputs.append(md_file)
+
+    if output_format in ("json", "both"):
+        json_file = OUTPUT_DIR / f"{stem}.json"
+        json_file.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        outputs.append(json_file)
+
+    return outputs
 
 
 def main():
@@ -292,6 +364,7 @@ def main():
     parser.add_argument("--range", choices=["7d", "30d", "all"], help="Predefined snapshot time range.")
     parser.add_argument("--from", dest="from_index", help="Custom start snapshot index.")
     parser.add_argument("--to", dest="to_index", help="Custom end snapshot index.")
+    parser.add_argument("--format", choices=["md", "json", "both"], default="md", help="Output format. Default: md.")
     args = parser.parse_args()
 
     rows = load_snapshots()
@@ -308,16 +381,16 @@ def main():
     if not selected:
         raise SystemExit(f"No snapshots matched range: {label}")
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-    report = build_report(selected, label)
-    output_file = OUTPUT_DIR / output_name(label)
-    output_file.write_text(report, encoding="utf-8")
+    payload = build_report_payload(selected, label)
+    outputs = write_outputs(payload, args.format)
 
     print("[OK] Custom infrastructure range report generated.")
     print(f"[OK] Range: {label}")
+    print(f"[OK] Format: {args.format}")
     print(f"[OK] Snapshot count: {len(selected)}")
-    print(f"[OK] Output: {output_file}")
+
+    for output in outputs:
+        print(f"[OK] Output: {output}")
 
 
 if __name__ == "__main__":

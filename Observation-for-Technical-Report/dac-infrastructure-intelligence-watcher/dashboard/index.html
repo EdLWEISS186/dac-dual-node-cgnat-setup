@@ -382,6 +382,102 @@
       white-space: normal;
     }
 
+    .export-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .export-card {
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at top right, rgba(96, 165, 250, 0.14), transparent 34%),
+        rgba(13, 27, 47, 0.82);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .export-card h3 {
+      margin: 0 0 7px;
+      font-size: 17px;
+    }
+
+    .export-card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .export-link-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .export-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      background: rgba(255, 255, 255, 0.035);
+      border-radius: 14px;
+      padding: 10px 11px;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .export-link:hover {
+      transform: translateY(-1px);
+      background: rgba(96, 165, 250, 0.11);
+      border-color: rgba(96, 165, 250, 0.28);
+    }
+
+    .export-tag {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .custom-export {
+      margin-top: 16px;
+      border: 1px solid rgba(96, 165, 250, 0.22);
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 34%),
+        rgba(15, 38, 68, 0.76);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .custom-export-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 13px;
+    }
+
+    .custom-export-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .custom-export-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .export-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .chart-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -506,6 +602,126 @@
       border-radius: 8px 8px 0 0;
       background: linear-gradient(180deg, var(--blue), rgba(56, 189, 248, 0.32));
       border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .chart-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.14), transparent 32%),
+        radial-gradient(circle at bottom left, rgba(167, 139, 250, 0.09), transparent 30%);
+      pointer-events: none;
+    }
+
+    .chart-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .chart-stat-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .chart-stat-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .chart-stat-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .chart-stat-label {
+      color: var(--text);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .chart-value {
+      display: inline-flex;
+      justify-content: flex-end;
+      gap: 6px;
+      color: var(--text);
+      font-weight: 800;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .chart-pct {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .chart-fill {
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.28);
+    }
+
+    .score-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .score-box {
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      background: rgba(255, 255, 255, 0.035);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .score-label {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .score-value {
+      margin-top: 5px;
+      color: var(--text);
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .trend-bar.latest {
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+      border-color: rgba(125, 211, 252, 0.72);
+    }
+
+    .stack-total {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: -2px;
+      margin-bottom: 7px;
+    }
+
+    .stack-segment {
+      position: relative;
+    }
+
+    .stack-track {
+      box-shadow: inset 0 0 18px rgba(15, 23, 42, 0.3);
+    }
+
+    @media (max-width: 700px) {
+      .score-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 900px) {
@@ -883,20 +1099,27 @@
 
     function renderSimpleBarChart(rows, labelKey = "label", valueKey = "count") {
       const max = maxCount(rows, valueKey);
+      const total = rows.reduce((sum, row) => sum + Number(row[valueKey] || 0), 0) || 1;
 
       return `
-        <div class="bar-chart">
+        <div class="chart-stat-list">
           ${rows.map(row => {
             const value = Number(row[valueKey] || 0);
-            const pct = Math.round((value / max) * 100);
+            const pctOfMax = Math.round((value / max) * 100);
+            const pctOfTotal = Math.round((value / total) * 100);
 
             return `
-              <div class="chart-row">
-                <div class="chart-label">${safe(row[labelKey])}</div>
-                <div class="chart-track">
-                  <div class="chart-fill" style="width:${pct}%"></div>
+              <div class="chart-stat-row">
+                <div class="chart-stat-head">
+                  <div class="chart-stat-label">${safe(row[labelKey])}</div>
+                  <div class="chart-value">
+                    <span>${number(value)}</span>
+                    <span class="chart-pct">${pctOfTotal}%</span>
+                  </div>
                 </div>
-                <strong>${number(value)}</strong>
+                <div class="chart-track">
+                  <div class="chart-fill" style="width:${pctOfMax}%"></div>
+                </div>
               </div>
             `;
           }).join("")}
@@ -917,6 +1140,7 @@
             return `
               <div>
                 <div class="stack-title">${safe(row[labelKey])}</div>
+                <div class="stack-total">Total tracked states: ${number(total)}</div>
                 <div class="stack-track">
                   ${entries.map(([, value]) => {
                     const pct = Math.max(2, Math.round((Number(value || 0) / total) * 100));
@@ -935,14 +1159,39 @@
 
     function renderHealthScoreTrend(rows) {
       const values = rows || [];
+      const scores = values.map(row => Number(row.score || 0));
+      const latest = values[values.length - 1] || {};
+      const average = scores.length ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length) : 0;
+      const highest = scores.length ? Math.max(...scores) : 0;
+      const lowest = scores.length ? Math.min(...scores) : 0;
 
       return `
+        <div class="score-summary">
+          <div class="score-box">
+            <div class="score-label">Latest</div>
+            <div class="score-value">${number(latest.score || 0)}</div>
+          </div>
+          <div class="score-box">
+            <div class="score-label">Average</div>
+            <div class="score-value">${number(average)}</div>
+          </div>
+          <div class="score-box">
+            <div class="score-label">Highest</div>
+            <div class="score-value">${number(highest)}</div>
+          </div>
+          <div class="score-box">
+            <div class="score-label">Lowest</div>
+            <div class="score-value">${number(lowest)}</div>
+          </div>
+        </div>
+
         <div class="mini-trend">
-          ${values.map(row => {
+          ${values.map((row, idx) => {
             const height = Math.max(4, Number(row.score || 0));
+            const isLatest = idx === values.length - 1;
             return `
               <div
-                class="trend-bar"
+                class="trend-bar ${isLatest ? "latest" : ""}"
                 style="height:${height}%"
                 title="#${safe(row.index)} · ${safe(row.overall_status)} · score ${safe(row.score)}"
               ></div>
@@ -956,6 +1205,247 @@
           <span class="status-chip">0 = UNHEALTHY / UNKNOWN</span>
         </div>
       `;
+    }
+
+
+    function renderExportLinks(data) {
+      const ranges = [
+        { label: "7D", slug: "7d" },
+        { label: "30D", slug: "30d" },
+        { label: "ALL", slug: "all" }
+      ];
+
+      const groups = [
+        {
+          title: "Markdown Reports",
+          description: "Editable range-based Markdown reports for technical review.",
+          extension: "md",
+          tag: "MD"
+        },
+        {
+          title: "JSON Summaries",
+          description: "Structured custom range summaries for automated inspection.",
+          extension: "json",
+          tag: "JSON"
+        },
+        {
+          title: "PDF Reports",
+          description: "Shareable report exports generated from the custom range summaries.",
+          extension: "pdf",
+          tag: "PDF"
+        }
+      ];
+
+      const timeline = data.history.timeline || [];
+      const options = timeline.map(item => `
+        <option value="${item.index}">
+          #${item.index} · ${safe(item.checked_at_utc)} · ${safe(item.overall_status)}
+        </option>
+      `).join("");
+
+      return `
+        <section class="section">
+          <h2>Export Links</h2>
+          <p class="section-desc">
+            Standard 7D, 30D, and ALL exports are generated in Markdown, JSON, and PDF formats.
+          </p>
+
+          <div class="export-grid">
+            ${groups.map(group => `
+              <div class="export-card">
+                <h3>${group.title}</h3>
+                <p>${group.description}</p>
+                <div class="export-link-list">
+                  ${ranges.map(range => `
+                    <a class="export-link" href="../reports/generated/custom/infrastructure-report-${range.slug}.${group.extension}">
+                      <span>${range.label} Export</span>
+                      <span class="export-tag">${group.tag}</span>
+                    </a>
+                  `).join("")}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="custom-export">
+            <h3>Custom Range Export</h3>
+            <p class="section-desc">
+              Select observation windows and generate browser-side Markdown, JSON, or print-ready PDF output.
+              Custom exports are for local download and do not write files back to the repository.
+            </p>
+
+            <div class="custom-export-grid">
+              <div class="filter-field">
+                <label for="customFrom">From observation</label>
+                <select id="customFrom">${options}</select>
+              </div>
+
+              <div class="filter-field">
+                <label for="customTo">To observation</label>
+                <select id="customTo">${options}</select>
+              </div>
+            </div>
+
+            <div class="custom-export-actions">
+              <button class="filter-button" onclick="downloadCustomMarkdown()">Download Custom Markdown</button>
+              <button class="filter-button" onclick="downloadCustomJson()">Download Custom JSON</button>
+              <button class="filter-button" onclick="printCustomPdf()">Print / Save Custom PDF</button>
+            </div>
+
+            <div class="custom-export-note">
+              Ready. ${number(timeline.length)} observations available for custom export.
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function selectedCustomRows() {
+      if (!window.dashboardData) return [];
+
+      const fromValue = Number(document.getElementById("customFrom")?.value || 0);
+      const toValue = Number(document.getElementById("customTo")?.value || 0);
+      const start = Math.min(fromValue, toValue);
+      const end = Math.max(fromValue, toValue);
+
+      return (window.dashboardData.history.timeline || []).filter(item => item.index >= start && item.index <= end);
+    }
+
+    function countCustomRows(rows, key) {
+      return rows.reduce((acc, item) => {
+        const value = item[key] || "UNKNOWN";
+        acc[value] = (acc[value] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function customPayload() {
+      const rows = selectedCustomRows();
+
+      return {
+        project: "DAC Infrastructure Intelligence Watcher",
+        export_type: "browser_custom_range_export",
+        generated_at_utc: new Date().toISOString(),
+        from_observation: rows[0]?.index || null,
+        to_observation: rows[rows.length - 1]?.index || null,
+        snapshot_count: rows.length,
+        overall_status_counts: countCustomRows(rows, "overall_status"),
+        endpoint_status_counts: {
+          official_public_rpc: countCustomRows(rows, "official_public_rpc_status"),
+          explorer_web: countCustomRows(rows, "explorer_web_status"),
+          primary_explorer_api: countCustomRows(rows, "primary_explorer_api_status")
+        },
+        response_class_counts: {
+          official_public_rpc: countCustomRows(rows, "official_public_rpc_response_class"),
+          explorer_web: countCustomRows(rows, "explorer_web_response_class"),
+          primary_explorer_api: countCustomRows(rows, "primary_explorer_api_response_class")
+        },
+        timeline: rows,
+        prepared_by: "JERUZZALEM — DAC Infra Tester"
+      };
+    }
+
+    function countsToMarkdown(counts) {
+      return Object.entries(counts || {}).map(([key, value]) => `${key}: ${value}`).join(", ") || "N/A";
+    }
+
+    function customMarkdown(payload) {
+      const rows = payload.timeline || [];
+
+      return [
+        "# DAC Infrastructure Intelligence Watcher — Browser Custom Range Export",
+        "",
+        `Generated at UTC: **${payload.generated_at_utc}**`,
+        "",
+        `Observation range: **#${payload.from_observation} → #${payload.to_observation}**`,
+        "",
+        `Snapshot count: **${payload.snapshot_count}**`,
+        "",
+        "## Overall Status Counts",
+        "",
+        countsToMarkdown(payload.overall_status_counts),
+        "",
+        "## Endpoint Status Counts",
+        "",
+        `- Official Public RPC: ${countsToMarkdown(payload.endpoint_status_counts.official_public_rpc)}`,
+        `- Explorer Web: ${countsToMarkdown(payload.endpoint_status_counts.explorer_web)}`,
+        `- Primary Explorer API: ${countsToMarkdown(payload.endpoint_status_counts.primary_explorer_api)}`,
+        "",
+        "## Response Class Counts",
+        "",
+        `- Official Public RPC: ${countsToMarkdown(payload.response_class_counts.official_public_rpc)}`,
+        `- Explorer Web: ${countsToMarkdown(payload.response_class_counts.explorer_web)}`,
+        `- Primary Explorer API: ${countsToMarkdown(payload.response_class_counts.primary_explorer_api)}`,
+        "",
+        "## Timeline",
+        "",
+        "| # | Checked at UTC | Overall | RPC | RPC class | Explorer Web | Web class | Explorer API | API class |",
+        "|---:|---|---|---|---|---|---|---|---|",
+        ...rows.map(item => `| ${item.index} | ${item.checked_at_utc} | ${item.overall_status || "N/A"} | ${item.official_public_rpc_status || "N/A"} | ${item.official_public_rpc_response_class || "N/A"} | ${item.explorer_web_status || "N/A"} | ${item.explorer_web_response_class || "N/A"} | ${item.primary_explorer_api_status || "N/A"} | ${item.primary_explorer_api_response_class || "N/A"} |`),
+        "",
+        "---",
+        "",
+        "Prepared by **JERUZZALEM — DAC Infra Tester**.",
+        ""
+      ].join("\\n");
+    }
+
+    function downloadText(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadCustomMarkdown() {
+      const payload = customPayload();
+      const filename = `infrastructure-custom-${payload.from_observation}-to-${payload.to_observation}.md`;
+      downloadText(filename, customMarkdown(payload), "text/markdown;charset=utf-8");
+    }
+
+    function downloadCustomJson() {
+      const payload = customPayload();
+      const filename = `infrastructure-custom-${payload.from_observation}-to-${payload.to_observation}.json`;
+      downloadText(filename, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
+    }
+
+    function printCustomPdf() {
+      const payload = customPayload();
+      const markdown = customMarkdown(payload)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\\n", "<br>");
+
+      const win = window.open("", "_blank");
+      if (!win) return;
+
+      win.document.write(`
+        <!doctype html>
+        <html>
+          <head>
+            <title>DAC Infrastructure Custom Export</title>
+            <style>
+              body { font-family: Arial, sans-serif; color: #0f172a; padding: 32px; line-height: 1.5; }
+              h1 { font-size: 24px; }
+              table { border-collapse: collapse; width: 100%; font-size: 12px; }
+              th, td { border: 1px solid #cbd5e1; padding: 6px; text-align: left; }
+              @media print { body { padding: 12mm; } }
+            </style>
+          </head>
+          <body>${markdown}</body>
+        </html>
+      `);
+
+      win.document.close();
+      win.focus();
+      win.print();
     }
 
     function renderChartLayer(data) {
@@ -1240,6 +1730,7 @@
           renderTopCards(data),
           renderEndpointCards(data),
           renderComparisonReports(),
+          renderExportLinks(data),
           renderChartLayer(data),
           `<div class="grid two">
             ${renderBars("Overall Status Distribution", "Overall infrastructure health states across tracked snapshots.", data.history.overall_status_counts)}

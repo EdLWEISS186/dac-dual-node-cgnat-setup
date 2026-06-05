@@ -45,9 +45,9 @@ jobs:
       - name: Generate custom range reports
         working-directory: Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher
         run: |
-          python generate_custom_report.py --range 7d
-          python generate_custom_report.py --range 30d
-          python generate_custom_report.py --range all
+          python generate_custom_report.py --range 7d --format both
+          python generate_custom_report.py --range 30d --format both
+          python generate_custom_report.py --range all --format both
 
       - name: Generate observation window comparison reports
         working-directory: Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher
@@ -55,6 +55,13 @@ jobs:
           python generate_comparison_report.py --range 7d
           python generate_comparison_report.py --range 30d
           python generate_comparison_report.py --range all
+
+      - name: Generate PDF reports
+        working-directory: Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher
+        run: |
+          python generate_pdf_report.py --range 7d
+          python generate_pdf_report.py --range 30d
+          python generate_pdf_report.py --range all
 
       - name: Commit health outputs
         run: |
@@ -66,6 +73,7 @@ jobs:
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_dashboard_data.py
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_custom_report.py
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_comparison_report.py
+          git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/generate_pdf_report.py
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/README.md
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/requirements.txt
           git add Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/.gitignore

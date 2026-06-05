@@ -11,3 +11,13 @@ venv/
 !dashboard/
 !dashboard/data/
 !dashboard/data/*.json
+
+# Keep generated custom report exports tracked for technical report use.
+!reports/
+!reports/generated/
+!reports/generated/custom/
+!reports/generated/custom/*.md
+!reports/generated/custom/*.json
+!reports/generated/custom/*.pdf
+
+.venv/
