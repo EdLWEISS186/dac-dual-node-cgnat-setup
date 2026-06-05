@@ -12,9 +12,11 @@ This project monitors the public DAC Testnet enode source, preserves historical 
 
 ## Live Links
 
-* **Live Dashboard:** https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Observation-for-Technical-Report/dac-enode-intelligence-watcher/dashboard/
-* **Repository:** https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup
-* **Official DAC Enode Source:** https://enodes.dachain.tech/testnet/
+| Resource | Link |
+|---|---|
+| Live Dashboard | https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Observation-for-Technical-Report/dac-enode-intelligence-watcher/dashboard/ |
+| Repository | https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup |
+| Official DAC Enode Source | https://enodes.dachain.tech/testnet/ |
 
 ---
 
