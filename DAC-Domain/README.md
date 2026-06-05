@@ -109,7 +109,7 @@ DAC Domain uses a lightweight static dApp architecture connected to a custom on-
 
 ```text
                            ┌──────────────────────────────┐
-                           │          End User             │
+                           │          End User            │
                            │  Wallet + Browser Interface  │
                            └──────────────┬───────────────┘
                                           │
@@ -117,7 +117,7 @@ DAC Domain uses a lightweight static dApp architecture connected to a custom on-
                                           │ Sign tx / read state
                                           ▼
 ┌────────────────────────────────────────────────────────────────────┐
-│                         DAC Domain Frontend                         │
+│                         DAC Domain Frontend                        │
 │                                                                    │
 │  index.html                                                        │
 │  ├─ Register Domain UI                                             │
@@ -135,7 +135,7 @@ DAC Domain uses a lightweight static dApp architecture connected to a custom on-
 │  └─ Registry contract binding                                      │
 │                                                                    │
 │  src/style.css + assets/background                                 │
-│  └─ DAC visual identity, rotating background, glass UI              │
+│  └─ DAC visual identity, rotating background, glass UI             │
 └──────────────────────────────┬─────────────────────────────────────┘
                                │
                                │ ethers.js
@@ -161,7 +161,7 @@ DAC Domain uses a lightweight static dApp architecture connected to a custom on-
 │  Local RPC used for deployment/testing                             │
 │  └─ http://127.0.0.1:8546                                          │
 │                                                                    │
-│  Local RPC was used because public RPC showed instability during    │
+│  Local RPC was used because public RPC showed instability during   │
 │  deployment preparation.                                           │
 └──────────────────────────────┬─────────────────────────────────────┘
                                │
@@ -195,11 +195,11 @@ DAC Domain uses a lightweight static dApp architecture connected to a custom on-
 │  └─ Address activity                                               │
 │                                                                    │
 │  v0.5 Limitation                                                   │
-│  └─ Domain names are functionally stored, but not ideal for         │
-│     explorer-readable logs because of indexed string events.        │
+│  └─ Domain names are functionally stored, but not ideal for        │
+│     explorer-readable logs because of indexed string events.       │
 │                                                                    │
 │  v1 Goal                                                           │
-│  └─ Emit readable domain names in event data with indexed hashes.   │
+│  └─ Emit readable domain names in event data with indexed hashes.  │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
