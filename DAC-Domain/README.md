@@ -1,10 +1,16 @@
 # DAC Domain
 
-DAC Domain is an experimental on-chain `.dac` domain registry for the DAC Testnet.
+![status](https://img.shields.io/badge/status-v1%20deployed-brightgreen)
+![registry](https://img.shields.io/badge/registry-explorer--friendly-blue)
+![network](https://img.shields.io/badge/network-DAC%20Testnet-orange)
+![chain](https://img.shields.io/badge/chain%20id-21894%20%7C%200x5586-yellow)
+![tld](https://img.shields.io/badge/TLD-.dac-purple)
+![frontend](https://img.shields.io/badge/frontend-GitHub%20Pages-black)
+![author](https://img.shields.io/badge/author-JERUZZALEM-gold)
+
+**DAC Domain** is an experimental on-chain `.dac` domain registry for the DAC Testnet.
 
 The project provides a wallet-name identity layer where readable `.dac` names can resolve to DAC Testnet wallet addresses.
-
-Example:
 
 ```text
 jeruzzalem.dac -> 0x870ad63acc507cdfd878F170606d19ae78988AFE
@@ -14,22 +20,58 @@ jeruzzalem.dac -> 0x870ad63acc507cdfd878F170606d19ae78988AFE
 
 ---
 
-## Current Project Direction
+## Live Links
 
-DAC Domain is moving from **v0.5 Archived Prototype** into **v1 Explorer-Friendly Registry**.
+| Resource | Link |
+|---|---|
+| Live Frontend | https://edlweiss186.github.io/dac-dual-node-cgnat-setup/DAC-Domain/ |
+| Repository Folder | https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Domain |
+| Active v1 Registry | https://exptest.dachain.tech/address/0x90F07E7EFa772c40B90d68BB54267Ea0658a090F |
+| v1 Deployment TX | https://exptest.dachain.tech/tx/0x4e3ab77b099bb7e2149f17dc9465e5e760c0d3dd96790df11aafce482eeb1c90 |
+| v1 Domain Registration TX | https://exptest.dachain.tech/tx/0xb8524d29a47261be3ea65eefe9fe089a11d4a806d8e9b3ace5359c9ad9e110ce |
+| v1 Primary Domain TX | https://exptest.dachain.tech/tx/0x0c093b06cfb5525d4734bb5af2539a970f6ab1b280cdbb763a6728d9a1fdf82a |
+| DAC Public RPC | https://rpctest.dachain.tech/ |
+| DAC Explorer | https://exptest.dachain.tech/ |
+| DAC Explorer API | https://exptest.dachain.tech/api |
 
-The v0.5 prototype successfully proved the full end-to-end flow:
+---
 
-- smart contract deployment
-- wallet connection
-- `.dac` domain availability checking
-- `.dac` domain registration
-- domain management UI
-- primary domain selection
-- script-based resolution
-- local RPC deployment through a self-hosted DAC node
+## Table of Contents
 
-However, v0.5 is archived because its event schema is not optimized for explorer readability. v1 will improve the contract events so registered domain names are easier to inspect in explorer logs and technical reports.
+- [Overview](#overview)
+- [Network](#network)
+- [Current Status](#current-status)
+- [v1 Explorer-Friendly Registry](#v1-explorer-friendly-registry)
+- [v0.5 Archived Prototype](#v05-archived-prototype)
+- [Architecture Topology](#architecture-topology)
+- [Features](#features)
+- [Folder Structure](#folder-structure)
+- [Local Development](#local-development)
+- [Useful Commands](#useful-commands)
+- [Deployment Notes](#deployment-notes)
+- [Explorer Visibility Notes](#explorer-visibility-notes)
+- [Archive Notes](#archive-notes)
+- [Disclaimer](#disclaimer)
+- [Author](#author)
+
+---
+
+## Overview
+
+DAC Domain started as a lightweight `.dac` registry prototype and evolved into a deployed explorer-friendly registry for DAC Testnet.
+
+The project includes:
+
+- A static GitHub-hosted frontend.
+- A DAC-themed domain registration UI.
+- Wallet connection and DACC balance display.
+- Smart contract based `.dac` domain registration.
+- Owned-domain management.
+- Primary domain selection.
+- CLI scripts for deployment, registration, resolution, and event decoding.
+- Archive notes for technical reporting and infrastructure observation.
+
+The current active version is **v1.0.0 — Explorer-Friendly Registry**.
 
 ---
 
@@ -48,6 +90,83 @@ However, v0.5 is archived because its event schema is not optimized for explorer
 
 ---
 
+## Current Status
+
+```text
+v0.5: Archived Prototype
+v1: Deployed and validated
+Active Registry: 0x90F07E7EFa772c40B90d68BB54267Ea0658a090F
+Test Domain: jeruzzalem.dac
+Primary Domain: jeruzzalem.dac
+```
+
+v0.5 proved the core `.dac` registry flow.  
+v1 improved event readability by emitting readable domain names in decoded event logs.
+
+---
+
+## v1 Explorer-Friendly Registry
+
+| Item | Value |
+|---|---|
+| Version | v1.0.0 — Explorer-Friendly Registry |
+| Registry Contract | `0x90F07E7EFa772c40B90d68BB54267Ea0658a090F` |
+| Deployment TX | `0x4e3ab77b099bb7e2149f17dc9465e5e760c0d3dd96790df11aafce482eeb1c90` |
+| Deployer | `0x870ad63acc507cdfd878F170606d19ae78988AFE` |
+| Registered Test Domain | `jeruzzalem.dac` |
+| Registration TX | `0xb8524d29a47261be3ea65eefe9fe089a11d4a806d8e9b3ace5359c9ad9e110ce` |
+| Primary Domain TX | `0x0c093b06cfb5525d4734bb5af2539a970f6ab1b280cdbb763a6728d9a1fdf82a` |
+| NameHash | `0x25992959442c572a45da6926192bd643f9c52487d3bc370bfa8fb24a5f52f246` |
+| Status | Deployed and validated |
+
+### v1 Validation Result
+
+v1 successfully registered and resolved `jeruzzalem.dac`.
+
+```text
+Domain: jeruzzalem.dac
+Registry: 0x90F07E7EFa772c40B90d68BB54267Ea0658a090F
+Owner: 0x870ad63acc507cdfd878F170606d19ae78988AFE
+Target: 0x870ad63acc507cdfd878F170606d19ae78988AFE
+Registered At: 2026-06-05T16:26:17.000Z
+Updated At: 2026-06-05T16:26:17.000Z
+Expires At: 2027-06-05T16:26:17.000Z
+Registration Years: 1
+Active: true
+```
+
+Decoded v1 event logs confirmed readable domain data:
+
+```text
+Event: DomainRegistered
+nameHash: 0x25992959442c572a45da6926192bd643f9c52487d3bc370bfa8fb24a5f52f246
+name: jeruzzalem.dac
+owner: 0x870ad63acc507cdfd878F170606d19ae78988AFE
+target: 0x870ad63acc507cdfd878F170606d19ae78988AFE
+registrationYears: 1
+pricePaid: 5000000000000000000
+```
+
+```text
+Event: PrimaryDomainSet
+owner: 0x870ad63acc507cdfd878F170606d19ae78988AFE
+nameHash: 0x25992959442c572a45da6926192bd643f9c52487d3bc370bfa8fb24a5f52f246
+name: jeruzzalem.dac
+```
+
+### v1 Event Model
+
+v1 emits both an indexed hash and a readable domain name:
+
+```solidity
+bytes32 indexed nameHash
+string name
+```
+
+This makes the event useful for both filtering/indexing and human-readable reporting.
+
+---
+
 ## v0.5 Archived Prototype
 
 | Item | Value |
@@ -63,43 +182,26 @@ However, v0.5 is archived because its event schema is not optimized for explorer
 | Primary Domain Test | Successful |
 | Status | Archived prototype |
 
-### v0.5 Result
-
-The v0.5 registry was successfully deployed and tested on DAC Testnet.
-
-Resolution test result:
-
-```text
-Domain: jeruzzalem.dac
-Owner: 0x870ad63acc507cdfd878F170606d19ae78988AFE
-Target: 0x870ad63acc507cdfd878F170606d19ae78988AFE
-Registered At: 2026-06-05T15:02:17.000Z
-Updated At: 2026-06-05T15:02:17.000Z
-Expires At: 2027-06-05T15:02:17.000Z
-Registration Years: 1
-Active: true
-```
-
 ### Why v0.5 Was Archived
 
-v0.5 works functionally, but the event schema is not ideal for explorer-readable domain logs.
+v0.5 worked functionally, but its event schema was not ideal for explorer-readable domain logs.
 
-The main limitation:
+The main limitation was:
 
 ```text
 string indexed name
 ```
 
-For indexed dynamic types like `string`, the event topic stores a hash rather than the readable text. This means explorer logs may not clearly show `jeruzzalem.dac` as plain text.
+For indexed dynamic types like `string`, event topics store hashes rather than readable text. This made `jeruzzalem.dac` harder to inspect directly in logs.
 
-v1 will replace this pattern with an explorer-friendlier event structure:
+v1 replaced that pattern with:
 
 ```text
 bytes32 indexed nameHash
 string name
 ```
 
-This keeps the event filterable while also making the domain name visible as readable event data.
+This keeps the event filterable while also preserving the domain name as readable event data.
 
 ---
 
@@ -169,8 +271,8 @@ DAC Domain uses a lightweight static dApp architecture connected to a custom on-
 ┌────────────────────────────────────────────────────────────────────┐
 │                           DAC Testnet                              │
 │                                                                    │
-│  DACDomainRegistry v0.5                                            │
-│  └─ 0x72BD75723ADA5e37F6bA4b8909864c3bbaBccB63                     │
+│  DACDomainRegistry v1                                              │
+│  └─ 0x90F07E7EFa772c40B90d68BB54267Ea0658a090F                     │
 │                                                                    │
 │  Registry State                                                    │
 │  ├─ records[name]                                                  │
@@ -194,12 +296,12 @@ DAC Domain uses a lightweight static dApp architecture connected to a custom on-
 │  ├─ Event/log visibility                                           │
 │  └─ Address activity                                               │
 │                                                                    │
-│  v0.5 Limitation                                                   │
-│  └─ Domain names are functionally stored, but not ideal for        │
-│     explorer-readable logs because of indexed string events.       │
+│  v1 Improvement                                                    │
+│  └─ Domain names are emitted as readable event data together with  │
+│     an indexed nameHash for filtering/indexing.                    │
 │                                                                    │
-│  v1 Goal                                                           │
-│  └─ Emit readable domain names in event data with indexed hashes.  │
+│  Future Integration Goal                                           │
+│  └─ Explorer/indexer-level .dac name-service support.              │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -212,9 +314,11 @@ Developer / DAC Infra Tester
         ▼
 DAC-Domain/scripts/
 ├─ deploy.js              -> deploy registry contract
+├─ deploy-v1.js           -> deploy v1 registry with manual gas settings
 ├─ replace-deploy.js      -> replace pending deployment tx by nonce
 ├─ register.js            -> register .dac domain from CLI
-└─ resolve.js             -> inspect registry state from CLI
+├─ resolve.js             -> inspect registry state from CLI
+└─ decode-events.js       -> decode registry events from tx receipts
 
         │
         │ Uses .env
@@ -244,42 +348,9 @@ DAC Testnet
 | `src/app.js` | Wallet connection, domain normalization, availability check, registration, owned-domain loading, primary-domain actions. |
 | Browser Wallet | Provides account, balance, chain connection, and transaction signing. |
 | RPC Layer | Sends reads and transactions to DAC Testnet. Local RPC was used for reliable deployment/testing. |
-| `DACDomainRegistry.sol` | Stores `.dac` records, owner mappings, expiry data, and primary domain state. |
-| Hardhat Scripts | Compile, deploy, replace pending deploy tx, register domains, and resolve registry records. |
-| DAC Explorer | Used for transaction, address, and contract inspection. |
-
----
-
-## v1 Planned Direction
-
-v1 will preserve the working features from v0.5 while improving event design and reportability.
-
-Planned v1 goals:
-
-- explorer-friendly `DomainRegistered` event
-- plain readable domain names in event data
-- indexed `nameHash` for filtering
-- cleaner registration logs
-- clearer primary domain logs
-- improved deployment metadata
-- frontend default registry update to the v1 contract
-- re-register `jeruzzalem.dac` on the v1 registry
-- validate registration, management, and primary domain flow again
-
-Recommended v1 event direction:
-
-```solidity
-event DomainRegistered(
-    bytes32 indexed nameHash,
-    string name,
-    address indexed owner,
-    address indexed target,
-    uint8 registrationYears,
-    uint256 expiresAt,
-    uint256 pricePaid,
-    uint256 timestamp
-);
-```
+| `DACDomainRegistry.sol` | Stores `.dac` records, owner mappings, expiry data, primary domain state, and readable event data. |
+| Hardhat Scripts | Compile, deploy, replace pending deploy tx, register domains, resolve registry records, and decode events. |
+| DAC Explorer | Used for transaction, address, and contract inspection. Explorer-wide name replacement still requires explorer/indexer integration. |
 
 ---
 
@@ -316,6 +387,8 @@ event DomainRegistered(
 - domain renewal
 - owned domain listing
 - primary domain selection
+- readable domain event data
+- indexed name hash for filtering/indexing
 - contract owner withdrawal
 
 ### Pricing
@@ -340,12 +413,21 @@ DAC-Domain/
 ├── contracts/
 │   └── DACDomainRegistry.sol
 ├── deployments/
-│   └── dac-testnet.json
+│   ├── dac-testnet.json
+│   └── archive/
+│       └── v0.5/
+│           └── dac-testnet-v0.5.json
 ├── docs/
 │   └── archive/
-│       └── dac-domain-v0.5-archive-note.md
+│       ├── dac-domain-v0.5-archive-note.md
+│       ├── dac-domain-v1-explorer-friendly-archive-note.md
+│       └── v0.5/
+│           ├── DACDomainRegistry-v0.5.sol
+│           └── README.md
 ├── scripts/
+│   ├── decode-events.js
 │   ├── deploy.js
+│   ├── deploy-v1.js
 │   ├── register.js
 │   ├── replace-deploy.js
 │   └── resolve.js
@@ -391,9 +473,45 @@ http://localhost:8081
 
 ---
 
+## Useful Commands
+
+Compile:
+
+```bash
+npm run compile
+```
+
+Deploy v1 registry:
+
+```bash
+GAS_PRICE_GWEI=100 npx hardhat run scripts/deploy-v1.js --network dacTestnet
+```
+
+Register a domain:
+
+```bash
+DOMAIN_NAME=jeruzzalem.dac REGISTRATION_YEARS=1 npm run register:dac
+```
+
+Resolve a domain:
+
+```bash
+DOMAIN_NAME=jeruzzalem.dac npm run resolve:dac
+```
+
+Decode v1 events:
+
+```bash
+npm run decode-events:dac -- \
+  0xb8524d29a47261be3ea65eefe9fe089a11d4a806d8e9b3ace5359c9ad9e110ce \
+  0x0c093b06cfb5525d4734bb5af2539a970f6ab1b280cdbb763a6728d9a1fdf82a
+```
+
+---
+
 ## Deployment Notes
 
-The v0.5 deployment used the user's local DAC node RPC:
+The v0.5 and v1 deployments used the user's local DAC node RPC:
 
 ```text
 http://127.0.0.1:8546
@@ -401,40 +519,54 @@ http://127.0.0.1:8546
 
 This was used because the official public RPC showed instability during deployment preparation.
 
-The initial deployment transaction became pending due to low gas price and was replaced using the same nonce with a higher gas price.
-
-Successful replacement command:
+v0.5 required a replacement deployment transaction because the first contract creation became pending due to low gas price. v1 was deployed directly with manual gas settings:
 
 ```bash
-GAS_PRICE_GWEI=100 REPLACE_NONCE=2627 npx hardhat run scripts/replace-deploy.js --network dacTestnet
-```
-
-This preserved the deterministic contract creation address:
-
-```text
-0x72BD75723ADA5e37F6bA4b8909864c3bbaBccB63
+GAS_PRICE_GWEI=100 npx hardhat run scripts/deploy-v1.js --network dacTestnet
 ```
 
 ---
 
-## Archive
+## Explorer Visibility Notes
 
-Detailed v0.5 archive note:
+DAC Domain v1 improves explorer-facing data by emitting readable names in event data:
+
+```text
+nameHash: 0x25992959442c572a45da6926192bd643f9c52487d3bc370bfa8fb24a5f52f246
+name: jeruzzalem.dac
+```
+
+This does not automatically make DAC Explorer replace every wallet address with `.dac` names in normal transactions. Explorer-wide address replacement requires explorer/indexer-level name-service integration.
+
+---
+
+## Archive Notes
+
+Detailed archive notes:
 
 ```text
 docs/archive/dac-domain-v0.5-archive-note.md
+docs/archive/dac-domain-v1-explorer-friendly-archive-note.md
 ```
 
-v0.5 will remain as an archived proof-of-concept. v1 will be the next active development version.
+v0.5 remains as an archived proof-of-concept. v1 is the active deployed registry version.
 
 ---
 
-## Status
+## Disclaimer
 
-```text
-v0.5: Archived Prototype
-v1: In development
-```
+This is an independent community-built DAC Testnet infrastructure experiment.
 
-Made by JERUZZALEM — DAC Infra Tester  
+It is not an official DAC name service and does not represent official DAC infrastructure policy.
+
+The `.dac` registry data is stored in a custom smart contract deployed on DAC Testnet. Explorer-wide name replacement, such as displaying `jeruzzalem.dac` instead of a wallet address on every transaction page, requires explorer-side or indexer-side name-service integration.
+
+Availability, ownership, primary-domain status, and event logs are based on the deployed DAC Domain registry contract and should be interpreted as experimental testnet data.
+
+---
+
+## Author
+
+**JERUZZALEM — DAC Infra Tester**
+
 Built by Communities for Communities
