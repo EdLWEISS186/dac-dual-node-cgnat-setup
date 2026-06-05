@@ -1,478 +1,633 @@
 # DAC Infrastructure Intelligence Watcher
 
-Independent DAC Testnet infrastructure health and availability watcher by **JERUZZALEM — DAC Infra Tester**.
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+![Watcher](https://img.shields.io/badge/watcher-GitHub%20Actions-blue)
+![Reports](https://img.shields.io/badge/reports-Markdown%20%7C%20JSON%20%7C%20PDF-purple)
+![Dashboard](https://img.shields.io/badge/dashboard-GitHub%20Pages%20ready-0ea5e9)
+![Chain ID](https://img.shields.io/badge/DAC%20Testnet-21894%20%7C%200x5586-orange)
+![Maintainer](https://img.shields.io/badge/maintainer-JERUZZALEM-orange)
 
-This project monitors public DAC infrastructure endpoints beyond the official enode registry.
+Community-built DAC Testnet public infrastructure observation, dashboard, comparison, and report export pipeline by **JERUZZALEM — DAC Infra Tester**.
 
-It is separated from the DAC Enode Intelligence Watcher because this watcher focuses on service availability, RPC responsiveness, explorer reachability, and multi-source infrastructure health.
-
----
-
----
+This project monitors DAC public RPC, Explorer Web, and Explorer API endpoints, preserves health snapshots, builds a live static dashboard, and generates reusable Markdown, JSON, and PDF reports for technical infrastructure review.
 
 ## Live Links
 
-| Resource | Link |
-|---|---|
-| Live Dashboard | https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/dashboard/ |
-| Repository | https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher |
-| Official DAC Sources | https://rpctest.dachain.tech/ · https://exptest.dachain.tech/ · https://exptest.dachain.tech/api |
+* **Live Dashboard:** https://edlweiss186.github.io/dac-dual-node-cgnat-setup/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher/dashboard/
+* **Repository:** https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Observation-for-Technical-Report/dac-infrastructure-intelligence-watcher
+* **Official DAC Public RPC:** https://rpctest.dachain.tech/
+* **Official DAC Explorer Web:** https://exptest.dachain.tech/
+* **Official DAC Explorer API:** https://exptest.dachain.tech/api
 
+---
 
-## Monitoring Scope
+## Table of Contents
 
-Current v1.0.0 endpoints:
+* [Overview](#overview)
+* [Background](#background)
+* [Why This Matters](#why-this-matters)
+* [Monitoring Targets](#monitoring-targets)
+* [Current Capabilities](#current-capabilities)
+* [Architecture / Data Flow Topology](#architecture--data-flow-topology)
+* [Observation Model](#observation-model)
+* [Generated Outputs](#generated-outputs)
+* [Dashboard](#dashboard)
+* [Report Export Stack](#report-export-stack)
+* [Observation Window Comparison](#observation-window-comparison)
+* [Status & Response-Class Glossary](#status--response-class-glossary)
+* [GitHub Actions Automation](#github-actions-automation)
+* [Local Usage](#local-usage)
+* [Current Generated State](#current-generated-state)
+* [Version History](#version-history)
+* [Future Upgrade Direction](#future-upgrade-direction)
+* [Security Notes](#security-notes)
+* [Disclaimer](#disclaimer)
+* [Maintainer](#maintainer)
+
+---
+
+## Overview
+
+**DAC Infrastructure Intelligence Watcher** is an independent observation tool for DAC Testnet public infrastructure.
+
+It started as a lightweight endpoint health checker and evolved into a complete infrastructure observation pipeline:
+
+* public RPC health monitoring
+* explorer web availability monitoring
+* explorer API reachability monitoring
+* JSON snapshot preservation
+* response-time classification
+* freshness / stale-state detection
+* static dashboard visualization
+* dashboard filtering
+* dashboard charts
+* standard range exports
+* custom browser-side exports
+* observation window comparison
+* Markdown, JSON, and PDF report generation
+* status and response-class glossary
+
+The project is designed for infrastructure observation and technical reporting.
+
+It does not make official DAC service-status claims.
+
+---
+
+## Background
+
+DAC testnet participants may rely on different infrastructure surfaces:
+
+* official public RPC
+* explorer frontend
+* explorer API
+* self-hosted local nodes
+* locally injected wallet RPC endpoints
+
+A public endpoint can become slow, degraded, or unavailable without directly affecting every tester equally.
+
+This watcher preserves independent observation data so public infrastructure behavior can be reviewed later instead of relying only on memory, screenshots, or one-time checks.
+
+The project turns manual endpoint checking into a repeatable workflow:
+
+```text
+Manual endpoint check
+        ↓
+Risk of missed degradation or recovery
+        ↓
+Automated watcher
+        ↓
+Structured JSON snapshots
+        ↓
+Dashboard + reports + comparison exports
+```
+
+---
+
+## Why This Matters
+
+Public infrastructure health changes may reflect:
+
+* RPC availability issues
+* RPC response-time degradation
+* explorer frontend downtime
+* explorer API instability
+* chain data visibility issues
+* delayed block visibility
+* stale dashboard data
+* recovery after degraded windows
+* differences between availability and response speed
+
+A single observation is not enough to understand infrastructure behavior.
+
+By preserving snapshots and generated reports, this project makes it easier to inspect how DAC public infrastructure behaves over time.
+
+---
+
+## Monitoring Targets
 
 | Component | URL | Purpose |
 |---|---|---|
-| Official Public RPC | https://rpctest.dachain.tech/ | JSON-RPC health and block availability |
-| Explorer Web | https://exptest.dachain.tech/ | Explorer frontend availability |
-| Primary Explorer API | https://exptest.dachain.tech/api | Explorer API reachability and supported endpoint checks |
+| Official Public RPC | `https://rpctest.dachain.tech/` | JSON-RPC reachability, chain ID, latest block, client version |
+| Explorer Web | `https://exptest.dachain.tech/` | Explorer website availability and explorer-signal detection |
+| Primary Explorer API | `https://exptest.dachain.tech/api` | Explorer API reachability and supported stats checks |
+
+Known DAC Testnet chain ID:
+
+```text
+Decimal: 21894
+Hex:     0x5586
+```
+
+The dashboard displays `21894` first because it is easier for general readers.
+The hex value `0x5586` is preserved as technical detail.
 
 ---
 
-## Current Focus
+## Current Capabilities
 
-v1.0.0 focuses on:
+The project currently supports:
 
-- public RPC health monitoring
-- explorer web availability monitoring
-- explorer API availability monitoring
-- response status tracking
-- response latency tracking
-- JSON health snapshots
-- report-ready infrastructure health summaries
+* scheduled infrastructure health observation
+* manual GitHub Actions execution
+* latest-state tracking
+* historical snapshot preservation
+* public RPC JSON-RPC checks
+* explorer web checks
+* explorer API checks
+* chain ID display in decimal and hex
+* response-time classification
+* overall health classification
+* freshness / stale-state indicator
+* Markdown health report generation
+* static dashboard visualization
+* dashboard status filtering
+* dashboard response-class filtering
+* dashboard charts
+* standard 7D / 30D / ALL custom range reports
+* standard 7D / 30D / ALL observation comparison reports
+* Markdown, JSON, and PDF export outputs
+* browser-side custom range export
+* browser-side custom observation window comparison export
+* status and response-class glossary across UI and reports
 
----
+Alert notification is intentionally skipped for this project.
 
-## Why This Project Is Separate
-
-The existing DAC Enode Intelligence Watcher focuses on:
-
-- official enode registry monitoring
-- enode rotation
-- peer list changes
-- provider / ASN / infrastructure signal analysis
-- enode-based dashboard and reports
-
-This project focuses on:
-
-- public RPC health
-- explorer frontend availability
-- explorer API reachability
-- service-level health signals
-- future multi-source infrastructure correlation
-
-Keeping the projects separate makes each watcher easier to maintain, audit, and explain.
+The maintainer also runs local node infrastructure and can inject local RPC into wallet usage, so public RPC degradation is useful to observe but not critical enough to require email alerting.
 
 ---
 
-## Planned Output Files
+## Architecture / Data Flow Topology
 
-    data/latest.json
-    data/snapshots/*.json
-    reports/generated/
+Current v1.8.2 topology:
 
----
+```text
+GitHub Actions Scheduler
+manual dispatch / scheduled run
+        │
+        ▼
+infrastructure_health.py
+- check Official Public RPC
+- check Explorer Web
+- check Primary Explorer API
+- classify endpoint health
+- classify overall health
+- classify response-time behavior
+- update latest.json
+- create snapshot when health state changes
+        │
+        ├──────────────────────────────────────────────┐
+        ▼                                              ▼
+data/latest.json                              data/snapshots/*.json
+latest watcher state                          historical health states
+        │                                              │
+        └──────────────────────┬───────────────────────┘
+                               ▼
+generate_health_report.py
+- generate latest Markdown health report
+                               │
+                               ▼
+reports/generated/infrastructure-health-report.md
+                               │
+                               ▼
+generate_dashboard_data.py
+- build dashboard JSON
+- build chart summaries
+- build freshness metadata
+- build timeline fields
+                               │
+                               ▼
+dashboard/data/health-dashboard-data.json
+                               │
+                               ▼
+dashboard/index.html
+- latest health cards
+- endpoint cards
+- comparison links
+- export links
+- custom browser exports
+- dashboard filters
+- dashboard charts
+- status glossary
+                               │
+                               ▼
+GitHub Pages Live Dashboard
+```
 
-## Interpretation Notes
+Report and export topology:
 
-This watcher is an observation aid.
+```text
+data/snapshots/*.json
+        │
+        ├──────────────────────────────────────────────┐
+        ▼                                              ▼
+generate_custom_report.py                 generate_comparison_report.py
+- 7D custom range report                   - 7D comparison report
+- 30D custom range report                  - 30D comparison report
+- ALL custom range report                  - ALL comparison report
+- Markdown output                          - Markdown output
+- JSON output                              - JSON output
+        │                                              │
+        ▼                                              ▼
+reports/generated/custom/*.md             reports/generated/comparison/*.md
+reports/generated/custom/*.json           reports/generated/comparison/*.json
+        │                                              │
+        ▼                                              ▼
+generate_pdf_report.py                    generate_comparison_pdf_report.py
+- PDF from custom range JSON               - PDF from comparison JSON
+        │                                              │
+        ▼                                              ▼
+reports/generated/custom/*.pdf            reports/generated/comparison/*.pdf
+```
 
-It is not an official DAC service status page.
+GitHub Actions automation:
 
-Endpoint status, latency, and health labels should be treated as independent technical observations, not official infrastructure guarantees.
-
----
-
-## Maintainer
-
-JERUZZALEM — DAC Infra Tester
-
----
-
-## Health Report Summary Layer
-
-v1.1.0 adds a generated Markdown report layer for infrastructure health summaries.
-
-Generator:
-
-    generate_health_report.py
-
-Generated output:
-
-    reports/generated/infrastructure-health-report.md
-
-The report summarizes:
-
-- latest overall infrastructure health
-- monitoring scope
-- endpoint status summary
-- public RPC details
-- explorer web and explorer API details
-- snapshot history summary
-- recent endpoint-level health timeline
-- interpretation notes
-- report-use notes
-
-The report is generated from existing JSON outputs:
-
-    data/latest.json
-    data/snapshots/*.json
-
-The report is deterministic. It uses the latest watcher state timestamp from `data/latest.json`, not wall-clock generation time. This prevents unnecessary workflow commits when the underlying health state has not changed.
-
----
-
-## Static Health Dashboard Layer
-
-v1.2.0 adds a static dashboard layer for visual infrastructure health inspection.
-
-Dashboard entry point:
-
-    dashboard/index.html
-
-Generated dashboard data:
-
-    dashboard/data/health-dashboard-data.json
-
-Dashboard data builder:
-
-    generate_dashboard_data.py
-
-The dashboard summarizes:
-
-- latest overall infrastructure health
-- endpoint availability status
-- endpoint response-time class
-- public RPC status and latest block information
-- explorer web status and response time
-- explorer API status and response time
-- overall health-state distribution
-- endpoint history counts
-- health-state timeline
-- interpretation notes
-
-The dashboard is static and reads from generated JSON data. It is designed to work through a local HTTP server or GitHub Pages.
-
-The dashboard uses the local project asset:
-
-    assets/JERUZZALEM-Infra_Tester.png
-
-
----
-
-## Custom Range Report Layer
-
-v1.4.0 adds custom range report generation for infrastructure health snapshots.
-
-Generator:
-
-    generate_custom_report.py
-
-Standard generated outputs:
-
-    reports/generated/custom/infrastructure-report-7d.md
-    reports/generated/custom/infrastructure-report-30d.md
-    reports/generated/custom/infrastructure-report-all.md
-
-Supported predefined ranges:
-
-    --range 7d
-    --range 30d
-    --range all
-
-Supported custom observation range:
-
-    --from <START_INDEX> --to <END_INDEX>
-
-Example:
-
-    python generate_custom_report.py --from 3 --to 8
-
-The custom range report summarizes:
-
-- snapshot count within the selected range
-- overall status distribution
-- endpoint status counts
-- response-time summary
-- response class distribution
-- selected snapshot timeline
-- interpretation guide
-
-Standard 7D, 30D, and ALL reports are regenerated by GitHub Actions. Custom index-based reports are intended for manual inspection and technical report preparation.
-
+```text
+.github/workflows/dac-infrastructure-intelligence-watcher.yml
+        │
+        ▼
+Scheduled run + manual run
+        │
+        ▼
+infrastructure_health.py
+generate_health_report.py
+generate_dashboard_data.py
+generate_custom_report.py --range 7d --format both
+generate_custom_report.py --range 30d --format both
+generate_custom_report.py --range all --format both
+generate_comparison_report.py --range 7d --format both
+generate_comparison_report.py --range 30d --format both
+generate_comparison_report.py --range all --format both
+generate_pdf_report.py --range 7d
+generate_pdf_report.py --range 30d
+generate_pdf_report.py --range all
+generate_comparison_pdf_report.py --range 7d
+generate_comparison_pdf_report.py --range 30d
+generate_comparison_pdf_report.py --range all
+        │
+        ▼
+Commit generated outputs only when files change
+```
 
 ---
 
-## Observation Window Comparison Layer
+## Observation Model
 
-v1.5.0 adds observation window comparison reports for DAC infrastructure health snapshots.
+This project separates infrastructure interpretation into three different concepts.
 
-Generator:
-
-    generate_comparison_report.py
-
-Standard generated outputs:
-
-    reports/generated/comparison/infrastructure-comparison-7d.md
-    reports/generated/comparison/infrastructure-comparison-30d.md
-    reports/generated/comparison/infrastructure-comparison-all.md
-
-Supported predefined comparison scopes:
-
-    --range 7d
-    --range 30d
-    --range all
-
-For predefined scopes, the selected snapshot set is split into two windows:
-
-    Window A = earlier half
-    Window B = later half
-
-Supported custom comparison windows:
-
-    --a-from <START_INDEX> --a-to <END_INDEX> --b-from <START_INDEX> --b-to <END_INDEX>
-
-Example:
-
-    python generate_comparison_report.py --a-from 1 --a-to 6 --b-from 7 --b-to 13
-
-The comparison report summarizes:
-
-- Window A vs Window B snapshot counts
-- overall availability score comparison
-- endpoint availability status counts
-- endpoint response-time comparison
-- response class distribution
-- recovery, deterioration, or unchanged interpretation
-- per-window snapshot timeline
-
-Standard 7D, 30D, and ALL comparison reports are regenerated by GitHub Actions. Custom comparison reports are intended for manual inspection and technical report preparation.
-
-
----
-
-## PDF Report Style Alignment and Status Glossary Patch
-
-v1.8.2 improves browser-side PDF exports and report interpretation clarity.
-
-This patch aligns browser-generated custom PDF exports with the cleaner technical report style used by the Enode Intelligence Watcher:
-
-- formal report title
-- generated browser UTC timestamp
-- selected range context
-- observation-based disclaimer
-- numbered report sections
-- formal Field / Value tables
-- formal timeline tables
-- cleaner PDF table header contrast
-- no raw Markdown rendering in browser PDF output
-
-This patch also adds a shared status and response-class glossary across:
-
-- dashboard UI
-- browser-side custom range PDF
-- browser-side custom comparison PDF
-- generated Markdown custom range reports
-- generated JSON custom range summaries
-- generated PDF custom range reports
-- generated Markdown comparison reports
-- generated JSON comparison summaries
-- generated PDF comparison reports
-
-Glossary labels covered:
-
-- HEALTHY
-- DEGRADED
-- PARTIAL_OUTAGE
-- UNHEALTHY
-- FAST
-- MODERATE
-- SLOW
-- UNKNOWN
-- N/A
-
-
----
-
-## Observation Comparison Export Parity Patch
-
-v1.8.1 completes export parity for Observation Window Comparison reports.
-
-Generated comparison outputs:
-
-    reports/generated/comparison/infrastructure-comparison-7d.md
-    reports/generated/comparison/infrastructure-comparison-7d.json
-    reports/generated/comparison/infrastructure-comparison-7d.pdf
-    reports/generated/comparison/infrastructure-comparison-30d.md
-    reports/generated/comparison/infrastructure-comparison-30d.json
-    reports/generated/comparison/infrastructure-comparison-30d.pdf
-    reports/generated/comparison/infrastructure-comparison-all.md
-    reports/generated/comparison/infrastructure-comparison-all.json
-    reports/generated/comparison/infrastructure-comparison-all.pdf
-
-Generators:
-
-    generate_comparison_report.py
-    generate_comparison_pdf_report.py
-
-Comparison report formats:
-
-    --format md
-    --format json
-    --format both
-
-The dashboard Observation Window Comparison section now exposes Markdown, JSON, and PDF links for 7D, 30D, and ALL comparison scopes.
-
-
----
-
-## Optional PDF Export and Export Links Layer
-
-v1.8.0 adds optional PDF export support, JSON custom range summaries, dashboard export links, browser-side custom range export, and chart polish.
-
-Generated standard custom range outputs:
-
-    reports/generated/custom/infrastructure-report-7d.md
-    reports/generated/custom/infrastructure-report-7d.json
-    reports/generated/custom/infrastructure-report-7d.pdf
-    reports/generated/custom/infrastructure-report-30d.md
-    reports/generated/custom/infrastructure-report-30d.json
-    reports/generated/custom/infrastructure-report-30d.pdf
-    reports/generated/custom/infrastructure-report-all.md
-    reports/generated/custom/infrastructure-report-all.json
-    reports/generated/custom/infrastructure-report-all.pdf
-
-Generators:
-
-    generate_custom_report.py
-    generate_pdf_report.py
-
-Custom range report formats:
-
-    --format md
-    --format json
-    --format both
-
-Dashboard export section:
-
-- Markdown Reports
-- JSON Summaries
-- PDF Reports
-- Custom Range Export
-
-The PDF files are stored in the same `reports/generated/custom/` folder as their corresponding Markdown and JSON range reports.
-
-The dashboard also includes chart polish for clearer visual reading of overall status distribution, endpoint status distribution, response class distribution, and health score trend.
-
-
----
-
-## Dashboard Chart Layer
-
-v1.7.0 adds a visual chart layer to the static dashboard.
-
-Chart data source:
-
-    dashboard/data/health-dashboard-data.json
-
-Chart data builder:
-
-    generate_dashboard_data.py
-
-Dashboard charts:
-
-- overall status distribution
-- endpoint status distribution
-- response class distribution
-- overall health score trend
-
-The chart layer is rendered with native HTML, CSS, and JavaScript. It does not require an external chart library.
-
-Why this matters:
-
-- makes infrastructure state easier to read visually
-- helps identify recurring DEGRADED, PARTIAL_OUTAGE, or UNHEALTHY periods
-- makes endpoint-level differences easier to compare
-- prepares the dashboard for future PDF/export-ready presentation layers
-
-
----
-
-## Richer Dashboard Filtering Layer
-
-v1.6.0 adds dashboard-level filtering for the health-state timeline.
-
-Dashboard filters:
-
-- overall infrastructure status
-- Official Public RPC status
-- Explorer Web status
-- Primary Explorer API status
-- response-time class
-
-The dashboard also includes:
-
-- filtered snapshot count indicator
-- reset filters button
-- response class columns in the timeline table
-
-This makes it easier to inspect specific infrastructure conditions such as degraded RPC events, partial outage windows, slow response periods, or explorer/API stability.
-
-
----
-
-## Dashboard Chain ID and Comparison Link Patch
-
-v1.5.1 improves dashboard readability and report discoverability.
-
-Dashboard improvements:
-
-- displays DAC Testnet Chain ID as decimal `21894`
-- keeps hexadecimal Chain ID `0x5586` as technical detail
-- adds Observation Window Comparison section to the dashboard
-- adds dashboard links to 7D, 30D, and ALL comparison reports
-
-Why this matters:
-
-- `0x5586` is the JSON-RPC hexadecimal representation of Chain ID `21894`
-- decimal Chain ID is easier to understand for non-technical readers
-- comparison reports are now discoverable from the live dashboard UI
-
-
----
-
-## Freshness / Stale-State Layer
-
-v1.3.0 adds dashboard freshness metadata and a visual stale-state indicator.
-
-Freshness is calculated from:
-
-    data/latest.json
-    checked_at_utc
-
-Freshness states:
-
-| State | Meaning |
+| Concept | Meaning |
 |---|---|
-| FRESH | Latest watcher state is within the expected freshness window |
-| STALE | Latest watcher state is older than the expected freshness window |
-| VERY_STALE | Latest watcher state is significantly old and should be refreshed |
-| UNKNOWN | Freshness could not be determined |
+| Availability status | Whether an endpoint is reachable and usable |
+| Response class | How fast or slow the endpoint responded |
+| Freshness status | Whether the latest dashboard data is current enough for review |
 
-Current threshold:
+Important distinction:
 
-    30 minutes
+```text
+A service can be available but slow.
+```
 
-This layer is separate from endpoint availability and response-time class.
+That means `HEALTHY` availability can appear together with `MODERATE` or `SLOW` response class.
 
-Meaning separation:
+Example:
 
-- `HEALTHY`, `DEGRADED`, `UNHEALTHY`, and `PARTIAL_OUTAGE` describe service availability.
-- `FAST`, `MODERATE`, and `SLOW` describe endpoint response-time behavior.
-- `FRESH`, `STALE`, and `VERY_STALE` describe whether the dashboard data is current.
+```text
+Explorer Web: HEALTHY
+Response class: MODERATE
+```
 
+This means the endpoint is reachable, but response speed is not classified as fast.
+
+---
+
+## Generated Outputs
+
+Latest state:
+
+```text
+data/latest.json
+```
+
+Historical snapshots:
+
+```text
+data/snapshots/*.json
+```
+
+Dashboard data:
+
+```text
+dashboard/data/health-dashboard-data.json
+```
+
+Main health report:
+
+```text
+reports/generated/infrastructure-health-report.md
+```
+
+Custom range exports:
+
+```text
+reports/generated/custom/infrastructure-report-7d.md
+reports/generated/custom/infrastructure-report-7d.json
+reports/generated/custom/infrastructure-report-7d.pdf
+
+reports/generated/custom/infrastructure-report-30d.md
+reports/generated/custom/infrastructure-report-30d.json
+reports/generated/custom/infrastructure-report-30d.pdf
+
+reports/generated/custom/infrastructure-report-all.md
+reports/generated/custom/infrastructure-report-all.json
+reports/generated/custom/infrastructure-report-all.pdf
+```
+
+Observation comparison exports:
+
+```text
+reports/generated/comparison/infrastructure-comparison-7d.md
+reports/generated/comparison/infrastructure-comparison-7d.json
+reports/generated/comparison/infrastructure-comparison-7d.pdf
+
+reports/generated/comparison/infrastructure-comparison-30d.md
+reports/generated/comparison/infrastructure-comparison-30d.json
+reports/generated/comparison/infrastructure-comparison-30d.pdf
+
+reports/generated/comparison/infrastructure-comparison-all.md
+reports/generated/comparison/infrastructure-comparison-all.json
+reports/generated/comparison/infrastructure-comparison-all.pdf
+```
+
+---
+
+## Dashboard
+
+Dashboard file:
+
+```text
+dashboard/index.html
+```
+
+Preview locally:
+
+```text
+python3 -m http.server 8091 --bind 127.0.0.1
+```
+
+Open:
+
+```text
+http://127.0.0.1:8091/dashboard/
+```
+
+The dashboard should be opened through a local HTTP server or GitHub Pages, not directly through `file://`, because it loads JSON data using `fetch()`.
+
+### Dashboard views
+
+The dashboard includes:
+
+* latest overall infrastructure health
+* data freshness indicator
+* endpoint health cards
+* public RPC chain ID display
+* latest block information
+* response-time class summaries
+* observation window comparison links
+* standard range health report exports
+* browser-side custom range export
+* browser-side custom observation comparison export
+* dashboard chart layer
+* dashboard filters
+* health-state timeline
+* status and response-class glossary
+* interpretation notes
+
+### Dashboard filters
+
+Current filters:
+
+* overall infrastructure status
+* Official Public RPC status
+* Explorer Web status
+* Primary Explorer API status
+* response-time class
+
+### Dashboard charts
+
+Current charts:
+
+* Overall Status Distribution
+* Endpoint Status Distribution
+* Response Class Distribution
+* Overall Health Score Trend
+
+The chart layer uses native HTML, CSS, and JavaScript.
+It does not require an external chart library.
+
+### Dashboard exports
+
+Standard range health reports:
+
+* 7D Markdown
+* 7D JSON
+* 7D PDF
+* 30D Markdown
+* 30D JSON
+* 30D PDF
+* ALL Markdown
+* ALL JSON
+* ALL PDF
+
+Observation window comparison reports:
+
+* 7D Markdown
+* 7D JSON
+* 7D PDF
+* 30D Markdown
+* 30D JSON
+* 30D PDF
+* ALL Markdown
+* ALL JSON
+* ALL PDF
+
+Custom browser exports:
+
+* Custom Range Export
+* Custom Range Observation Window Comparison
+
+Custom browser exports run locally in the browser and are not committed back to the repository.
+
+---
+
+## Report Export Stack
+
+Markdown and JSON are the primary reusable formats.
+
+PDF is the final report packaging layer.
+
+### Markdown and JSON custom range export
+
+Generated by:
+
+```text
+generate_custom_report.py
+```
+
+Commands:
+
+```text
+python generate_custom_report.py --range 7d --format both
+python generate_custom_report.py --range 30d --format both
+python generate_custom_report.py --range all --format both
+```
+
+Supported formats:
+
+```text
+--format md
+--format json
+--format both
+```
+
+### Custom range PDF export
+
+Generated by:
+
+```text
+generate_pdf_report.py
+```
+
+Dependency:
+
+```text
+reportlab
+```
+
+Commands:
+
+```text
+python generate_pdf_report.py --range 7d
+python generate_pdf_report.py --range 30d
+python generate_pdf_report.py --range all
+```
+
+### Browser-side custom export
+
+Available from the dashboard:
+
+```text
+Custom Range Export
+```
+
+Options:
+
+* From observation
+* To observation
+* Download Custom Markdown
+* Download Custom JSON
+* Print / Save Custom PDF
+
+Browser-side custom exports are local downloads and do not write files back to the repository.
+
+---
+
+## Observation Window Comparison
+
+Observation Window Comparison compares two observation windows.
+
+| Window | Meaning |
+|---|---|
+| Window A | Earlier or baseline observation segment |
+| Window B | Later comparison segment |
+
+The comparison layer helps review:
+
+* whether later infrastructure availability improved
+* whether later infrastructure availability worsened
+* whether the state was mostly unchanged
+* whether response-time behavior shifted
+* whether endpoint-level status distribution changed
+
+Generated by:
+
+```text
+generate_comparison_report.py
+```
+
+Commands:
+
+```text
+python generate_comparison_report.py --range 7d --format both
+python generate_comparison_report.py --range 30d --format both
+python generate_comparison_report.py --range all --format both
+```
+
+Comparison PDF generated by:
+
+```text
+generate_comparison_pdf_report.py
+```
+
+Commands:
+
+```text
+python generate_comparison_pdf_report.py --range 7d
+python generate_comparison_pdf_report.py --range 30d
+python generate_comparison_pdf_report.py --range all
+```
+
+Browser-side custom comparison is available in the dashboard:
+
+```text
+Custom Range Observation Window Comparison
+```
+
+Options:
+
+* Window A from observation
+* Window A to observation
+* Window B from observation
+* Window B to observation
+* Download Custom Comparison Markdown
+* Download Custom Comparison JSON
+* Print / Save Custom Comparison PDF
+
+---
+
+## Status & Response-Class Glossary
+
+These labels are used across dashboard UI, Markdown reports, JSON summaries, and PDF exports.
+
+| Status / Class | Meaning |
+|---|---|
+| HEALTHY | The endpoint or overall infrastructure state is reachable and behaving as expected. |
+| DEGRADED | The endpoint is reachable, but one or more checks or response-time indicators show reduced quality. |
+| PARTIAL_OUTAGE | At least one monitored endpoint is unavailable or failing while other endpoints remain reachable. |
+| UNHEALTHY | The endpoint failed required checks or did not provide usable responses. |
+| FAST | The observed response-time class is fast for this watcher context. |
+| MODERATE | The observed response-time class is acceptable but not fast. |
+| SLOW | The observed response-time class is slow and may indicate degraded user experience. |
+| UNKNOWN | The watcher could not classify the response-time state, often because older snapshots did not include this field. |
+| N/A | Not available or not applicable for the selected observation, endpoint, or historical snapshot. |
 
 ---
 
@@ -480,29 +635,132 @@ Meaning separation:
 
 Workflow file:
 
-    .github/workflows/dac-infrastructure-intelligence-watcher.yml
+```text
+.github/workflows/dac-infrastructure-intelligence-watcher.yml
+```
 
-Current schedule:
+The workflow can be triggered manually from the GitHub Actions tab.
 
-    */15 * * * *
+Current pipeline:
 
-Current workflow steps:
+```text
+infrastructure_health.py
+generate_health_report.py
+generate_dashboard_data.py
+generate_custom_report.py --range 7d --format both
+generate_custom_report.py --range 30d --format both
+generate_custom_report.py --range all --format both
+generate_comparison_report.py --range 7d --format both
+generate_comparison_report.py --range 30d --format both
+generate_comparison_report.py --range all --format both
+generate_pdf_report.py --range 7d
+generate_pdf_report.py --range 30d
+generate_pdf_report.py --range all
+generate_comparison_pdf_report.py --range 7d
+generate_comparison_pdf_report.py --range 30d
+generate_comparison_pdf_report.py --range all
+```
 
-    infrastructure_health.py
-    generate_health_report.py
-    generate_dashboard_data.py
-    generate_custom_report.py
-    generate_comparison_report.py
-
-The workflow checks DAC public infrastructure health, updates tracked JSON outputs when endpoint-level health state changes, regenerates the Markdown health report, and commits generated changes back to the repository when needed.
+Generated outputs are committed only when files change.
 
 ---
 
-## Version Notes
+## Local Usage
+
+Install dependencies:
+
+```text
+python3 -m venv .venv
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r requirements.txt
+```
+
+Run the watcher manually:
+
+```text
+python3 infrastructure_health.py
+```
+
+Generate main report and dashboard data:
+
+```text
+python3 generate_health_report.py
+python3 generate_dashboard_data.py
+```
+
+Generate custom reports:
+
+```text
+python3 generate_custom_report.py --range 7d --format both
+python3 generate_custom_report.py --range 30d --format both
+python3 generate_custom_report.py --range all --format both
+```
+
+Generate comparison reports:
+
+```text
+python3 generate_comparison_report.py --range 7d --format both
+python3 generate_comparison_report.py --range 30d --format both
+python3 generate_comparison_report.py --range all --format both
+```
+
+Generate optional PDFs:
+
+```text
+.venv/bin/python generate_pdf_report.py --range 7d
+.venv/bin/python generate_pdf_report.py --range 30d
+.venv/bin/python generate_pdf_report.py --range all
+
+.venv/bin/python generate_comparison_pdf_report.py --range 7d
+.venv/bin/python generate_comparison_pdf_report.py --range 30d
+.venv/bin/python generate_comparison_pdf_report.py --range all
+```
+
+Preview dashboard:
+
+```text
+python3 -m http.server 8091 --bind 127.0.0.1
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8091/dashboard/
+```
+
+---
+
+## Current Generated State
+
+Current generated state is intentionally stored in repository outputs instead of being hardcoded here.
+
+Review current state from:
+
+```text
+data/latest.json
+dashboard/data/health-dashboard-data.json
+reports/generated/infrastructure-health-report.md
+```
+
+Current report bundles:
+
+```text
+Custom range Markdown reports: 3
+Custom range JSON summaries: 3
+Custom range PDF reports: 3
+
+Comparison Markdown reports: 3
+Comparison JSON summaries: 3
+Comparison PDF reports: 3
+```
+
+---
+
+## Version History
 
 | Version | Summary |
 |---|---|
-| v1.0.0 | Initial public RPC, explorer web, and explorer API health watcher |
+| v1.0.0 | Initial infrastructure health watcher |
 | v1.1.0 | Deterministic Markdown health report summary layer |
 | v1.2.0 | Static infrastructure health dashboard layer |
 | v1.3.0 | Dashboard freshness and stale-state indicator layer |
@@ -512,5 +770,56 @@ The workflow checks DAC public infrastructure health, updates tracked JSON outpu
 | v1.6.0 | Richer dashboard filtering layer |
 | v1.7.0 | Dashboard chart visualization layer |
 | v1.8.0 | Optional PDF export, export links hub, and chart polish |
-| v1.8.1 | Observation comparison MD/JSON/PDF export parity |
+| v1.8.1 | Observation comparison Markdown / JSON / PDF export parity |
 | v1.8.2 | PDF report style alignment and status glossary patch |
+
+---
+
+## Future Upgrade Direction
+
+The current infrastructure watcher roadmap is complete through v1.8.2.
+
+Future optional upgrades may include:
+
+* endpoint uptime percentage summary
+* longer historical trend reports
+* richer chart filtering
+* multi-chain infrastructure comparison
+* public RPC vs local node comparison notes
+* alert notification if the maintainer later decides public endpoint issues are important enough to notify
+
+---
+
+## Security Notes
+
+Do not commit credentials, `.env` files, access tokens, SMTP passwords, or wallet/private key material.
+
+The project ignores:
+
+* `.venv/`
+* `venv/`
+* `__pycache__/`
+* `*.pyc`
+* `.env`
+
+Generated observation artifacts are intentionally tracked because they preserve infrastructure history.
+
+Generated PDFs are treated as binary artifacts through `.gitattributes`.
+
+---
+
+## Disclaimer
+
+This is an independent community-built observation tool.
+
+It is not an official DAC tool and does not represent official DAC infrastructure policy.
+
+The watcher observes publicly reachable DAC testnet infrastructure endpoints and stores snapshots for technical reporting purposes.
+
+Availability labels, response classes, freshness states, and comparison summaries are observation-based. They should not be treated as official DAC service-status claims.
+
+---
+
+## Maintainer
+
+**JERUZZALEM — DAC Infra Tester**
