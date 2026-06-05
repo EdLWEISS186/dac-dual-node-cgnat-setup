@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 PROJECT = "DAC Infrastructure Intelligence Watcher"
-VERSION = "v1.5.0"
+VERSION = "v1.8.1"
 
 BASE_DIR = Path(__file__).resolve().parent
 SNAPSHOT_DIR = BASE_DIR / "data" / "snapshots"
@@ -149,7 +149,6 @@ def split_rows(rows):
         raise SystemExit("At least 2 snapshots are required for comparison.")
 
     midpoint = len(rows) // 2
-
     return rows[:midpoint], rows[midpoint:]
 
 
@@ -171,26 +170,11 @@ def summarize_window(rows):
         ])
 
         if key == "explorer_web":
-            response_values = [
-                item.get("latency_ms")
-                for item in endpoint_rows
-            ]
+            response_values = [item.get("latency_ms") for item in endpoint_rows]
+            max_response_values = [item.get("latency_ms") for item in endpoint_rows]
         else:
-            response_values = [
-                item.get("latency_ms_avg")
-                for item in endpoint_rows
-            ]
-
-        if key == "explorer_web":
-            max_response_values = [
-                item.get("latency_ms")
-                for item in endpoint_rows
-            ]
-        else:
-            max_response_values = [
-                item.get("latency_ms_max")
-                for item in endpoint_rows
-            ]
+            response_values = [item.get("latency_ms_avg") for item in endpoint_rows]
+            max_response_values = [item.get("latency_ms_max") for item in endpoint_rows]
 
         endpoint_response_summary[key] = {
             "average_response_ms": average(response_values),
@@ -222,7 +206,6 @@ def score_availability(summary):
     partial = counts.get("PARTIAL_OUTAGE", 0)
     unhealthy = counts.get("UNHEALTHY", 0)
 
-    # Higher is better.
     return round(
         ((healthy * 1.0) + (degraded * 0.55) + (partial * 0.2) + (unhealthy * 0.0)) / total,
         4,
@@ -277,6 +260,73 @@ def build_interpretation(summary_a, summary_b):
     return notes
 
 
+def build_timeline(rows):
+    timeline = []
+
+    for row in rows:
+        data = row["data"]
+        rpc = endpoint(data, "official_public_rpc")
+        web = endpoint(data, "explorer_web")
+        api = endpoint(data, "primary_explorer_api")
+
+        timeline.append({
+            "index": row["index"],
+            "snapshot_file": row["file"],
+            "checked_at_utc": data.get("checked_at_utc"),
+            "overall_status": data.get("overall", {}).get("overall_status"),
+            "official_public_rpc_status": rpc.get("status"),
+            "official_public_rpc_response_class": rpc.get("latency_class"),
+            "explorer_web_status": web.get("status"),
+            "explorer_web_response_class": web.get("latency_class"),
+            "primary_explorer_api_status": api.get("status"),
+            "primary_explorer_api_response_class": api.get("latency_class"),
+            "rpc_latest_block_decimal": rpc.get("latest_block_decimal"),
+            "rpc_latest_block_hex": rpc.get("latest_block_hex"),
+        })
+
+    return timeline
+
+
+def build_payload(label, rows_a, rows_b):
+    summary_a = summarize_window(rows_a)
+    summary_b = summarize_window(rows_b)
+
+    return {
+        "project": PROJECT,
+        "report_type": "observation_window_comparison",
+        "comparison_layer_version": VERSION,
+        "comparison_scope": label,
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "window_a": {
+            "label": "Window A",
+            "description": "Earlier observation segment.",
+            "summary": summary_a,
+            "timeline": build_timeline(rows_a),
+        },
+        "window_b": {
+            "label": "Window B",
+            "description": "Later observation segment.",
+            "summary": summary_b,
+            "timeline": build_timeline(rows_b),
+        },
+        "comparison": {
+            "availability_score_a": score_availability(summary_a),
+            "availability_score_b": score_availability(summary_b),
+            "availability_direction": compare_direction(score_availability(summary_a), score_availability(summary_b)),
+            "interpretation": build_interpretation(summary_a, summary_b),
+        },
+        "interpretation_guide": [
+            "Window A represents the earlier observation segment.",
+            "Window B represents the later observation segment.",
+            "For availability score, higher is better.",
+            "For response time, lower is better.",
+            "Older snapshots may show N/A or UNKNOWN response classes because response-time classification was added after the initial watcher release.",
+            "This comparison report is independent observation material and not an official DAC service status page.",
+        ],
+        "prepared_by": "JERUZZALEM — DAC Infra Tester",
+    }
+
+
 def render_summary_table(title, summary):
     lines = [
         f"### {title}",
@@ -284,7 +334,7 @@ def render_summary_table(title, summary):
         "| Field | Value |",
         "|---|---|",
         f"| Snapshot count | {safe(summary.get('snapshot_count'))} |",
-        f"| Observation index range | {safe(summary.get('first_index'))} → {safe(summary.get('latest_index'))} |",
+        f"| Observation index range | {safe(summary.get('first_index'))} -> {safe(summary.get('latest_index'))} |",
         f"| First checked at UTC | {safe(summary.get('first_checked_at_utc'))} |",
         f"| Latest checked at UTC | {safe(summary.get('latest_checked_at_utc'))} |",
         f"| Overall status counts | {safe(format_counts(summary.get('overall_status_counts')))} |",
@@ -339,7 +389,7 @@ def render_response_class_comparison(summary_a, summary_b):
     return "\n".join(lines)
 
 
-def render_timeline(title, rows):
+def render_timeline(title, timeline):
     lines = [
         f"### {title}",
         "",
@@ -347,38 +397,32 @@ def render_timeline(title, rows):
         "|---:|---|---|---|---|---|---|---|---|",
     ]
 
-    for row in rows:
-        data = row["data"]
-        rpc = endpoint(data, "official_public_rpc")
-        web = endpoint(data, "explorer_web")
-        api = endpoint(data, "primary_explorer_api")
-
+    for item in timeline:
         lines.append(
-            f"| {row['index']} | "
-            f"{safe(data.get('checked_at_utc'))} | "
-            f"{safe(data.get('overall', {}).get('overall_status'))} | "
-            f"{safe(rpc.get('status'))} | "
-            f"{safe(rpc.get('latency_class'))} | "
-            f"{safe(web.get('status'))} | "
-            f"{safe(web.get('latency_class'))} | "
-            f"{safe(api.get('status'))} | "
-            f"{safe(api.get('latency_class'))} |"
+            f"| {item.get('index')} | "
+            f"{safe(item.get('checked_at_utc'))} | "
+            f"{safe(item.get('overall_status'))} | "
+            f"{safe(item.get('official_public_rpc_status'))} | "
+            f"{safe(item.get('official_public_rpc_response_class'))} | "
+            f"{safe(item.get('explorer_web_status'))} | "
+            f"{safe(item.get('explorer_web_response_class'))} | "
+            f"{safe(item.get('primary_explorer_api_status'))} | "
+            f"{safe(item.get('primary_explorer_api_response_class'))} |"
         )
 
     return "\n".join(lines)
 
 
-def build_report(label, rows_a, rows_b):
-    summary_a = summarize_window(rows_a)
-    summary_b = summarize_window(rows_b)
-    notes = build_interpretation(summary_a, summary_b)
+def build_markdown_report(payload):
+    summary_a = payload["window_a"]["summary"]
+    summary_b = payload["window_b"]["summary"]
 
     lines = [
         "# DAC Infrastructure Intelligence Watcher — Observation Window Comparison",
         "",
-        f"Comparison scope: **{label}**",
+        f"Comparison scope: **{payload['comparison_scope']}**",
         "",
-        f"Comparison layer version: **{VERSION}**",
+        f"Comparison layer version: **{payload['comparison_layer_version']}**",
         "",
         "This report compares two infrastructure observation windows derived from tracked health snapshots.",
         "",
@@ -400,38 +444,57 @@ def build_report(label, rows_a, rows_b):
         "",
     ]
 
-    for note in notes:
+    for note in payload["comparison"]["interpretation"]:
         lines.append(f"- {note}")
 
     lines.extend([
         "",
         "## 5. Window Timelines",
         "",
-        render_timeline("Window A Timeline", rows_a),
+        render_timeline("Window A Timeline", payload["window_a"]["timeline"]),
         "",
-        render_timeline("Window B Timeline", rows_b),
+        render_timeline("Window B Timeline", payload["window_b"]["timeline"]),
         "",
         "## 6. Interpretation Guide",
         "",
-        "- Window A represents the earlier observation segment.",
-        "- Window B represents the later observation segment.",
-        "- For availability score, higher is better.",
-        "- For response time, lower is better.",
-        "- Older snapshots may show `N/A` response classes because response-time classification was added after the initial watcher release.",
-        "- This comparison report is independent observation material and not an official DAC service status page.",
+    ])
+
+    for note in payload["interpretation_guide"]:
+        lines.append(f"- {note}")
+
+    lines.extend([
         "",
         "---",
         "",
-        "Prepared by **JERUZZALEM — DAC Infra Tester**.",
+        f"Prepared by **{payload['prepared_by']}**.",
         "",
     ])
 
     return "\n".join(lines)
 
 
-def output_name(label):
+def output_stem(label):
     safe_label = label.lower().replace(" ", "-").replace("_", "-")
-    return f"infrastructure-comparison-{safe_label}.md"
+    return f"infrastructure-comparison-{safe_label}"
+
+
+def write_outputs(payload, output_format):
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    stem = output_stem(payload["comparison_scope"])
+    outputs = []
+
+    if output_format in ("md", "both"):
+        md_file = OUTPUT_DIR / f"{stem}.md"
+        md_file.write_text(build_markdown_report(payload), encoding="utf-8")
+        outputs.append(md_file)
+
+    if output_format in ("json", "both"):
+        json_file = OUTPUT_DIR / f"{stem}.json"
+        json_file.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        outputs.append(json_file)
+
+    return outputs
 
 
 def main():
@@ -441,6 +504,7 @@ def main():
     parser.add_argument("--a-to", dest="a_to", help="Window A end snapshot index.")
     parser.add_argument("--b-from", dest="b_from", help="Window B start snapshot index.")
     parser.add_argument("--b-to", dest="b_to", help="Window B end snapshot index.")
+    parser.add_argument("--format", choices=["md", "json", "both"], default="md", help="Output format. Default: md.")
     args = parser.parse_args()
 
     rows = load_snapshots()
@@ -459,17 +523,17 @@ def main():
     else:
         raise SystemExit("Use --range 7d|30d|all or --a-from/--a-to/--b-from/--b-to.")
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-    report = build_report(label, rows_a, rows_b)
-    output_file = OUTPUT_DIR / output_name(label)
-    output_file.write_text(report, encoding="utf-8")
+    payload = build_payload(label, rows_a, rows_b)
+    outputs = write_outputs(payload, args.format)
 
     print("[OK] Infrastructure observation comparison report generated.")
     print(f"[OK] Scope: {label}")
+    print(f"[OK] Format: {args.format}")
     print(f"[OK] Window A snapshots: {len(rows_a)}")
     print(f"[OK] Window B snapshots: {len(rows_b)}")
-    print(f"[OK] Output: {output_file}")
+
+    for output in outputs:
+        print(f"[OK] Output: {output}")
 
 
 if __name__ == "__main__":

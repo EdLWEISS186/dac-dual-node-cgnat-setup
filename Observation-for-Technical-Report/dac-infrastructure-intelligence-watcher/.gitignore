@@ -21,3 +21,9 @@ venv/
 !reports/generated/custom/*.pdf
 
 .venv/
+
+# Keep generated comparison report exports tracked for technical report use.
+!reports/generated/comparison/
+!reports/generated/comparison/*.md
+!reports/generated/comparison/*.json
+!reports/generated/comparison/*.pdf

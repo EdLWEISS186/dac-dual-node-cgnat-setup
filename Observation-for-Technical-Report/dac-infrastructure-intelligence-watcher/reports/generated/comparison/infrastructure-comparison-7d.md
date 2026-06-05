@@ -2,7 +2,7 @@
 
 Comparison scope: **7d**
 
-Comparison layer version: **v1.5.0**
+Comparison layer version: **v1.8.1**
 
 This report compares two infrastructure observation windows derived from tracked health snapshots.
 
@@ -15,7 +15,7 @@ This report compares two infrastructure observation windows derived from tracked
 | Field | Value |
 |---|---|
 | Snapshot count | 7 |
-| Observation index range | 1 → 7 |
+| Observation index range | 1 -> 7 |
 | First checked at UTC | 2026-06-04T09:54:55.772035+00:00 |
 | Latest checked at UTC | 2026-06-04T11:36:10.013189+00:00 |
 | Overall status counts | DEGRADED: 2, HEALTHY: 2, PARTIAL_OUTAGE: 3 |
@@ -26,7 +26,7 @@ This report compares two infrastructure observation windows derived from tracked
 | Field | Value |
 |---|---|
 | Snapshot count | 7 |
-| Observation index range | 8 → 14 |
+| Observation index range | 8 -> 14 |
 | First checked at UTC | 2026-06-04T11:38:16.082796+00:00 |
 | Latest checked at UTC | 2026-06-04T19:47:12.825324+00:00 |
 | Overall status counts | DEGRADED: 2, HEALTHY: 3, PARTIAL_OUTAGE: 2 |
@@ -88,7 +88,7 @@ This report compares two infrastructure observation windows derived from tracked
 - Window B represents the later observation segment.
 - For availability score, higher is better.
 - For response time, lower is better.
-- Older snapshots may show `N/A` response classes because response-time classification was added after the initial watcher release.
+- Older snapshots may show N/A or UNKNOWN response classes because response-time classification was added after the initial watcher release.
 - This comparison report is independent observation material and not an official DAC service status page.
 
 ---

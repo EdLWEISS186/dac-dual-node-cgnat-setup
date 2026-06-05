@@ -1665,19 +1665,25 @@
       const reports = [
         {
           label: "7D Comparison",
-          href: "../reports/generated/comparison/infrastructure-comparison-7d.md",
+          slug: "7d",
           description: "Earlier vs later snapshots within the 7-day observation scope."
         },
         {
           label: "30D Comparison",
-          href: "../reports/generated/comparison/infrastructure-comparison-30d.md",
+          slug: "30d",
           description: "Earlier vs later snapshots within the 30-day observation scope."
         },
         {
           label: "ALL Comparison",
-          href: "../reports/generated/comparison/infrastructure-comparison-all.md",
+          slug: "all",
           description: "Earlier vs later snapshots across the full tracked dataset."
         }
+      ];
+
+      const formats = [
+        { label: "MD", extension: "md" },
+        { label: "JSON", extension: "json" },
+        { label: "PDF", extension: "pdf" }
       ];
 
       return `
@@ -1685,17 +1691,28 @@
           <h2>Observation Window Comparison</h2>
           <p class="section-desc">
             Comparison reports split selected observations into Window A and Window B to identify recovery,
-            deterioration, or unchanged infrastructure behavior.
+            deterioration, or unchanged infrastructure behavior. Each scope is available as Markdown, JSON, and PDF.
           </p>
+
           <div class="grid three">
             ${reports.map(report => `
-              <a class="card endpoint-card" href="${report.href}">
+              <div class="card endpoint-card">
                 <div class="endpoint-title">
                   <h3>${report.label}</h3>
                   <span class="status HEALTHY">REPORT</span>
                 </div>
+
                 <div class="card-note">${report.description}</div>
-              </a>
+
+                <div class="export-link-list" style="margin-top: 14px;">
+                  ${formats.map(format => `
+                    <a class="export-link" href="../reports/generated/comparison/infrastructure-comparison-${report.slug}.${format.extension}">
+                      <span>${report.label}</span>
+                      <span class="export-tag">${format.label}</span>
+                    </a>
+                  `).join("")}
+                </div>
+              </div>
             `).join("")}
           </div>
         </section>
