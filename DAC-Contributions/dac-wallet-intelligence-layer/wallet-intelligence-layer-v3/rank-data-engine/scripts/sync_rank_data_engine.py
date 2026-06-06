@@ -271,7 +271,7 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
         "last_sync_wallets_changed": len(wallet_deltas),
     }
 
-    snapshot_name = "sync-from-genesis.json" if checkpoint_before.get("sync_phase") == "NOT_STARTED" else f"{snapshot_timestamp()}-changed.json"
+    snapshot_name = "backfill-from-latest-to-genesis.json" if checkpoint_before.get("sync_phase") == "NOT_STARTED" else f"{snapshot_timestamp()}-changed.json"
     snapshot_rel = f"data/snapshots/{snapshot_name}"
 
     snapshot = {
@@ -281,7 +281,7 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
         "chain_id": latest["chain_id"],
         "data_model": latest["data_model"],
         "raw_transaction_dump": False,
-        "snapshot_type": "sync_from_genesis" if checkpoint_before.get("sync_phase") == "NOT_STARTED" else "incremental_changed",
+        "snapshot_type": "historical_backfill_from_latest_to_genesis" if checkpoint_before.get("sync_phase") == "NOT_STARTED" else "incremental_changed",
         "status": "SYNCED",
         "created_at": now_utc(),
         "checkpoint_before": checkpoint_before,
