@@ -257,7 +257,16 @@ def main() -> None:
         "rank_data_source": "rank-data-engine/data/latest.json",
         "engine_status": latest.get("status"),
         "engine_updated_at": latest.get("updated_at"),
+        "engine_latest_snapshot": latest.get("latest_snapshot"),
         "engine_checkpoint": latest.get("checkpoint"),
+        "sync_status": {
+            "historical_backfill_complete": bool((latest.get("checkpoint") or {}).get("historical_backfill_complete")),
+            "backfill_status": (latest.get("checkpoint") or {}).get("backfill_status"),
+            "sync_phase": (latest.get("checkpoint") or {}).get("sync_phase"),
+            "last_sync_at": (latest.get("checkpoint") or {}).get("last_sync_at"),
+            "latest_snapshot": latest.get("latest_snapshot"),
+            "latest_snapshot_time": latest.get("updated_at")
+        },
         "total_ranked_wallets": total_ranked,
         "total_processed_transactions": latest.get("counters", {}).get("total_processed_transactions"),
         "ranking_variables": [

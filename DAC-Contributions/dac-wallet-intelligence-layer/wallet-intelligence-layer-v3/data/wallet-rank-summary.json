@@ -12,10 +12,11 @@
     "last_transaction_hash": "0xc817c03fe688241b3284f20b6986f9023c841c0a61dea947c829008666867774",
     "sync_phase": "INCREMENTAL_SYNC"
   },
+  "engine_latest_snapshot": "data/snapshots/2026-06-06T20-46-48-114399+00-00-changed.json",
   "engine_status": "SYNCED",
   "engine_updated_at": "2026-06-06T20:46:48+00:00",
   "feature": "Wallet Rank Intelligence",
-  "generated_at": "2026-06-06T20:46:48+00:00",
+  "generated_at": "2026-06-06T20:57:05+00:00",
   "index_scope": {
     "note": "Ranks are calculated from currently synced rank-data-engine wallet metrics.",
     "raw_transaction_dump": false,
@@ -45,6 +46,14 @@
     "overall_rank"
   ],
   "status": "GENERATED_FROM_RANK_DATA_ENGINE",
+  "sync_status": {
+    "backfill_status": null,
+    "historical_backfill_complete": false,
+    "last_sync_at": "2026-06-06T20:46:48+00:00",
+    "latest_snapshot": "data/snapshots/2026-06-06T20-46-48-114399+00-00-changed.json",
+    "latest_snapshot_time": "2026-06-06T20:46:48+00:00",
+    "sync_phase": "INCREMENTAL_SYNC"
+  },
   "total_processed_transactions": 850,
   "total_ranked_wallets": 785
 }

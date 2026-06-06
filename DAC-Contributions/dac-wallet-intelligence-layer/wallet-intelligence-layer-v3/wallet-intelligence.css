@@ -1637,3 +1637,52 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
 .wallet-rank-metric-nan strong {
   color: #facc15;
 }
+
+/* Wallet Rank Intelligence — data sync status */
+.wallet-rank-sync-status {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(15, 23, 42, 0.64);
+}
+
+.wallet-rank-sync-status span:first-child {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wallet-rank-sync-status small {
+  margin-left: auto;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.wallet-rank-sync-status.is-synced {
+  border-color: rgba(34, 197, 94, 0.42);
+}
+
+.wallet-rank-sync-status.is-synced span:first-child {
+  color: #bbf7d0;
+}
+
+.wallet-rank-sync-status.is-backfilling {
+  border-color: rgba(250, 204, 21, 0.38);
+}
+
+.wallet-rank-sync-status.is-backfilling span:first-child {
+  color: #fde68a;
+}
+
+.wallet-rank-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  color: #93c5fd;
+  font-size: 15px;
+}
