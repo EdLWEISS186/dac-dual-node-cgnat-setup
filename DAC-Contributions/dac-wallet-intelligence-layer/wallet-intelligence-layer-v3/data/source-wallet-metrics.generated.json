@@ -1,63 +1,335 @@
 {
   "chain_id": 21894,
   "feature": "Wallet Rank Intelligence",
-  "generated_at": "2026-06-06T13:56:24+00:00",
+  "generated_at": "2026-06-06T14:14:26+00:00",
   "native_token": "DACC",
   "network": "DAC Testnet",
   "project": "Wallet Intelligence Layer v3.0.0",
   "source": {
-    "address_list": "DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/data/wallet-addresses.generated.txt",
+    "address_list": "/home/jeruzzalem/dac-contribution/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/data/wallet-addresses.generated.txt",
     "explorer_api": "https://exptest.dachain.tech/api",
     "rpc_url": "https://rpctest.dachain.tech/"
   },
-  "wallet_count": 10,
+  "wallet_count": 50,
   "wallets": [
     {
-      "address": "0x15ba612e822e8d1bbfec6f3002a1157f9d41d0c1",
+      "address": "0x0020e6ba51de5862c94e67fd06fc2c6a236cefdb",
       "collection_status": "OK",
       "errors": [],
       "metrics": {
         "collection_diversity": 1,
         "estimated_stake": "0",
-        "gas_used": 969196,
-        "native_balance": "4.307641262663324623",
-        "native_volume": "1.806082590147524522",
-        "nft_holdings": 1,
-        "reputation_score": 27,
-        "sybil_risk_score": 37,
-        "tx_count": 34
+        "gas_used": 5290662,
+        "native_balance": "2.067091296022119194",
+        "native_volume": "41.073044443608299356",
+        "nft_holdings": 6,
+        "reputation_score": 45,
+        "sybil_risk_score": 22,
+        "tx_count": 233
       }
     },
     {
-      "address": "0x2938f339e91b74634de538e18e7ffa33260aff7f",
-      "collection_status": "OK",
-      "errors": [],
-      "metrics": {
-        "collection_diversity": 1,
-        "estimated_stake": "0",
-        "gas_used": 3337816,
-        "native_balance": "5.956256200548285256",
-        "native_volume": "5.675892333682728573",
-        "nft_holdings": 5,
-        "reputation_score": 31,
-        "sybil_risk_score": 37,
-        "tx_count": 80
-      }
-    },
-    {
-      "address": "0x3376992c7c18833ecae9c8b2254ab437974ac779",
+      "address": "0x0033ae89f850e8afd17c60223179fad40764f8a0",
       "collection_status": "OK",
       "errors": [],
       "metrics": {
         "collection_diversity": 0,
         "estimated_stake": "0",
         "gas_used": 21000,
-        "native_balance": "0.000108536364277887",
-        "native_volume": "0.000108536364277887",
+        "native_balance": "0",
+        "native_volume": "0.99998091751",
+        "nft_holdings": 0,
+        "reputation_score": 11,
+        "sybil_risk_score": 75,
+        "tx_count": 1
+      }
+    },
+    {
+      "address": "0x05e788f5d8aa70e03809eeaee51a3386046f79d2",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 896305,
+        "native_balance": "39.061467736357977027",
+        "native_volume": "5.061510124514471547",
+        "nft_holdings": 2,
+        "reputation_score": 31,
+        "sybil_risk_score": 29,
+        "tx_count": 34
+      }
+    },
+    {
+      "address": "0x08d3d1c4921bcaaf35bde7d6aaa59c692f241a5d",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 1971804,
+        "native_balance": "9.657958383779763025",
+        "native_volume": "22.767223206287266402",
+        "nft_holdings": 4,
+        "reputation_score": 27,
+        "sybil_risk_score": 37,
+        "tx_count": 81
+      }
+    },
+    {
+      "address": "0x0a083cded3e92c1c8d88b96c6ef4e623222ea175",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 2328443,
+        "native_balance": "0.50248344411719418",
+        "native_volume": "24.325645120860066285",
+        "nft_holdings": 5,
+        "reputation_score": 31,
+        "sybil_risk_score": 37,
+        "tx_count": 52
+      }
+    },
+    {
+      "address": "0x0c050a2988e312e9b45b8d5937016006a837e50c",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 291405,
+        "native_balance": "0.49999975591205105",
+        "native_volume": "1.499943083182308",
+        "nft_holdings": 3,
+        "reputation_score": 22,
+        "sybil_risk_score": 45,
+        "tx_count": 4
+      }
+    },
+    {
+      "address": "0x0c89caedc255b46f3c7ba66451fedd7a4ceca203",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 4512780,
+        "native_balance": "7.132005793158093544",
+        "native_volume": "1.35379222282693747",
+        "nft_holdings": 4,
+        "reputation_score": 35,
+        "sybil_risk_score": 30,
+        "tx_count": 202
+      }
+    },
+    {
+      "address": "0x0f9f6d8524d92c58d23ca84eb48c59623eec4e92",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 417393,
+        "native_balance": "3.000999528443440969",
+        "native_volume": "29.644258599034769",
+        "nft_holdings": 3,
+        "reputation_score": 28,
+        "sybil_risk_score": 37,
+        "tx_count": 10
+      }
+    },
+    {
+      "address": "0x13c558c3ab6c6849c322312d7e97c0b0714cf39a",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 3026356,
+        "native_balance": "13.824449741450388719",
+        "native_volume": "11.67",
+        "nft_holdings": 0,
+        "reputation_score": 24,
+        "sybil_risk_score": 34,
+        "tx_count": 58
+      }
+    },
+    {
+      "address": "0x1c8b3f44b0a06e933819a6d73688023843f04887",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 2,
+        "estimated_stake": "0",
+        "gas_used": 6962548,
+        "native_balance": "29.580942373750944021",
+        "native_volume": "4.345075298431615538",
+        "nft_holdings": 7,
+        "reputation_score": 46,
+        "sybil_risk_score": 17,
+        "tx_count": 165
+      }
+    },
+    {
+      "address": "0x1e0832927f5169d1e23839950523de7338399441",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 21000,
+        "native_balance": "0.07896986154931437",
+        "native_volume": "0.07896986154931437",
         "nft_holdings": 0,
         "reputation_score": 15,
         "sybil_risk_score": 65,
         "tx_count": 1
+      }
+    },
+    {
+      "address": "0x1eace1c54aa5ce8c41f52d0760a52a7ecec84f03",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 2176699,
+        "native_balance": "5.00164119471224825",
+        "native_volume": "0.801",
+        "nft_holdings": 4,
+        "reputation_score": 27,
+        "sybil_risk_score": 37,
+        "tx_count": 42
+      }
+    },
+    {
+      "address": "0x20442e2d161d9856bb565c02afecae39b729f7d2",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 3147828,
+        "native_balance": "12.12013340304689997",
+        "native_volume": "1.319993112938203798",
+        "nft_holdings": 4,
+        "reputation_score": 39,
+        "sybil_risk_score": 22,
+        "tx_count": 137
+      }
+    },
+    {
+      "address": "0x218ddf7b17737b6dc5efb992480df66b136e41af",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 322380,
+        "native_balance": "0.000264180342843715",
+        "native_volume": "0.0004",
+        "nft_holdings": 0,
+        "reputation_score": 15,
+        "sybil_risk_score": 50,
+        "tx_count": 8
+      }
+    },
+    {
+      "address": "0x228d8a922b2cc50c372a6ae7825c68a16cfaea8f",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 1255245,
+        "native_balance": "2.811404855089457709",
+        "native_volume": "1.23614925782211142",
+        "nft_holdings": 4,
+        "reputation_score": 27,
+        "sybil_risk_score": 37,
+        "tx_count": 26
+      }
+    },
+    {
+      "address": "0x2421331ed87680d043a3ffa9c550ba301905288b",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 1323000,
+        "native_balance": "6.101772564370388573",
+        "native_volume": "6.101772564370388573",
+        "nft_holdings": 0,
+        "reputation_score": 20,
+        "sybil_risk_score": 42,
+        "tx_count": 63
+      }
+    },
+    {
+      "address": "0x25d0e4fc8c4f73908f9374133d5f37b3c7581469",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 84000,
+        "native_balance": "0",
+        "native_volume": "4173.603613337256",
+        "nft_holdings": 0,
+        "reputation_score": 25,
+        "sybil_risk_score": 52,
+        "tx_count": 4
+      }
+    },
+    {
+      "address": "0x27f1d7be1a3adb5255966718745a20b6a9dddce6",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 1551405,
+        "native_balance": "6.571057042837914412",
+        "native_volume": "1.571096995147634972",
+        "nft_holdings": 3,
+        "reputation_score": 27,
+        "sybil_risk_score": 37,
+        "tx_count": 64
+      }
+    },
+    {
+      "address": "0x2adef4340dcbb7d0e8f33695a01cd3c670fceec8",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 3849625,
+        "native_balance": "26.380583653544908302",
+        "native_volume": "24.49001161898312497",
+        "nft_holdings": 5,
+        "reputation_score": 43,
+        "sybil_risk_score": 22,
+        "tx_count": 137
+      }
+    },
+    {
+      "address": "0x35a20ffad0ae0607124b716e0231afebf263050d",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 2272375,
+        "native_balance": "1.17944938964254247",
+        "native_volume": "6.177797857955488637",
+        "nft_holdings": 4,
+        "reputation_score": 27,
+        "sybil_risk_score": 37,
+        "tx_count": 47
       }
     },
     {
@@ -68,7 +340,7 @@
         "collection_diversity": 0,
         "estimated_stake": "0",
         "gas_used": 553586668,
-        "native_balance": "1582975.82000041506745871",
+        "native_balance": "1582925.956502922668365316",
         "native_volume": "2713.524225634141095147",
         "nft_holdings": 0,
         "reputation_score": 65,
@@ -77,79 +349,127 @@
       }
     },
     {
-      "address": "0x60de4eb94a16ffedf27124ec9b4bbd903d7988d9",
+      "address": "0x3b81961ea5814751773c00299ee7295b84baaec7",
       "collection_status": "OK",
       "errors": [],
       "metrics": {
         "collection_diversity": 0,
         "estimated_stake": "0",
-        "gas_used": 210000000,
-        "native_balance": "50640.520715827456686831",
-        "native_volume": "1010302.047852462513229504",
+        "gas_used": 3166992,
+        "native_balance": "24.214426526706294636",
+        "native_volume": "14.3",
         "nft_holdings": 0,
-        "reputation_score": 65,
-        "sybil_risk_score": 19,
-        "tx_count": 10000
+        "reputation_score": 24,
+        "sybil_risk_score": 34,
+        "tx_count": 63
       }
     },
     {
-      "address": "0x6164a7e0acc033bb8064e0b5d3c4715cd42fdb41",
+      "address": "0x3d060106f7e1237fce550e16236964495c2385ce",
       "collection_status": "OK",
       "errors": [],
       "metrics": {
         "collection_diversity": 1,
         "estimated_stake": "0",
-        "gas_used": 3517936,
-        "native_balance": "0.88395038645465804",
-        "native_volume": "5.042605494326371938",
-        "nft_holdings": 1,
+        "gas_used": 3441816,
+        "native_balance": "6.03686130579514178",
+        "native_volume": "1.484495457414725228",
+        "nft_holdings": 4,
         "reputation_score": 35,
         "sybil_risk_score": 30,
+        "tx_count": 151
+      }
+    },
+    {
+      "address": "0x413d370b26f4ac07a2b8b31bffda8ef64894fac1",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 2670998,
+        "native_balance": "28.766028078226540124",
+        "native_volume": "7.98",
+        "nft_holdings": 3,
+        "reputation_score": 31,
+        "sybil_risk_score": 29,
+        "tx_count": 52
+      }
+    },
+    {
+      "address": "0x41ecd378769a38549ce40b15053b33c156e4a634",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 4347445,
+        "native_balance": "30.485202695511005995",
+        "native_volume": "26.16581275612339088",
+        "nft_holdings": 5,
+        "reputation_score": 49,
+        "sybil_risk_score": 14,
+        "tx_count": 155
+      }
+    },
+    {
+      "address": "0x47ddf42a0df527f0a5a9cda84faabd63f42c88d1",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 4103809,
+        "native_balance": "7.153641319816386382",
+        "native_volume": "61.271483543502245927",
+        "nft_holdings": 7,
+        "reputation_score": 45,
+        "sybil_risk_score": 22,
         "tx_count": 161
       }
     },
     {
-      "address": "0x6674538ec3c934dfd5217f2ccfbb709d730f0e64",
+      "address": "0x4a7b18c8bc1271e8e6c03f5ba2ebf634543ded7f",
       "collection_status": "OK",
       "errors": [],
       "metrics": {
         "collection_diversity": 1,
         "estimated_stake": "0",
-        "gas_used": 2810911,
-        "native_balance": "39.106222707716204585",
-        "native_volume": "4.121380659394360782",
-        "nft_holdings": 5,
-        "reputation_score": 35,
-        "sybil_risk_score": 29,
-        "tx_count": 82
+        "gas_used": 580363,
+        "native_balance": "3.000999242057051036",
+        "native_volume": "16.807664028374614",
+        "nft_holdings": 4,
+        "reputation_score": 22,
+        "sybil_risk_score": 45,
+        "tx_count": 11
       }
     },
     {
-      "address": "0x66911a2f843526e48def6054e4b75eedd010e27a",
+      "address": "0x5494f8eb147d75b3df83ca95f68a9cfef5de3ea4",
       "collection_status": "OK",
       "errors": [],
       "metrics": {
-        "collection_diversity": 0,
+        "collection_diversity": 1,
         "estimated_stake": "0",
-        "gas_used": 5930017,
-        "native_balance": "9.976207037323376091",
-        "native_volume": "8.171460098501880476",
-        "nft_holdings": 0,
-        "reputation_score": 28,
-        "sybil_risk_score": 35,
-        "tx_count": 281
+        "gas_used": 2157033,
+        "native_balance": "8.377984447783709657",
+        "native_volume": "10.48216360632324826",
+        "nft_holdings": 5,
+        "reputation_score": 31,
+        "sybil_risk_score": 37,
+        "tx_count": 54
       }
     },
     {
-      "address": "0x706e02be07af84ad28fa38ee21610a3ed4e2b4c4",
+      "address": "0x55d54df9c942f19e9c5b6641a0f6aa9090597ea4",
       "collection_status": "OK",
       "errors": [],
       "metrics": {
         "collection_diversity": 0,
         "estimated_stake": "0",
         "gas_used": 21000,
-        "native_balance": "0.000220109722279696",
-        "native_volume": "0.000220109722279696",
+        "native_balance": "0.038809961764159885",
+        "native_volume": "0.038809961764159885",
         "nft_holdings": 0,
         "reputation_score": 15,
         "sybil_risk_score": 65,
@@ -157,19 +477,339 @@
       }
     },
     {
-      "address": "0x86279ac708496ab48d6d8e570540c8c6a010015a",
+      "address": "0x596a05e9ec6736d1da2bbf85ba3b3164b71e4939",
       "collection_status": "OK",
       "errors": [],
       "metrics": {
         "collection_diversity": 1,
         "estimated_stake": "0",
-        "gas_used": 2294077,
-        "native_balance": "41.41359995559725524",
-        "native_volume": "1.724",
-        "nft_holdings": 6,
+        "gas_used": 8678208,
+        "native_balance": "2.609745038205464812",
+        "native_volume": "10.775967636501520519",
+        "nft_holdings": 5,
+        "reputation_score": 39,
+        "sybil_risk_score": 30,
+        "tx_count": 247
+      }
+    },
+    {
+      "address": "0x5d63adb4c4942b3efc3a3b26029ee7022c7105c0",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 3840816,
+        "native_balance": "3.464975856728636861",
+        "native_volume": "1.694724214401139846",
+        "nft_holdings": 4,
         "reputation_score": 35,
-        "sybil_risk_score": 29,
-        "tx_count": 68
+        "sybil_risk_score": 30,
+        "tx_count": 170
+      }
+    },
+    {
+      "address": "0x5e675e8c4392937f6feb56d889a6afae4eba82cb",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 2420437,
+        "native_balance": "0.215832753070145423",
+        "native_volume": "13.472947371415419523",
+        "nft_holdings": 5,
+        "reputation_score": 31,
+        "sybil_risk_score": 37,
+        "tx_count": 49
+      }
+    },
+    {
+      "address": "0x632c0e8869148e3e77e25bee220238af0aef0a23",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 2704824,
+        "native_balance": "17.236312233519493598",
+        "native_volume": "11.04",
+        "nft_holdings": 0,
+        "reputation_score": 24,
+        "sybil_risk_score": 34,
+        "tx_count": 54
+      }
+    },
+    {
+      "address": "0x63b29946e9f4a873f1ca00290704311f082bcbb0",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 10921065,
+        "native_balance": "0.012058027343804904",
+        "native_volume": "40.493225",
+        "nft_holdings": 1,
+        "reputation_score": 41,
+        "sybil_risk_score": 22,
+        "tx_count": 397
+      }
+    },
+    {
+      "address": "0x6728ad57f72f433721696ad2be0b8a14ad612a44",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 10239218,
+        "native_balance": "0.00061214039680918",
+        "native_volume": "21.8876576",
+        "nft_holdings": 4,
+        "reputation_score": 35,
+        "sybil_risk_score": 30,
+        "tx_count": 377
+      }
+    },
+    {
+      "address": "0x6c3512f364c9b7a2d4d6a78f4d380d3572c71478",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 5989925,
+        "native_balance": "0.408936585525528441",
+        "native_volume": "12.012894804328138442",
+        "nft_holdings": 5,
+        "reputation_score": 39,
+        "sybil_risk_score": 30,
+        "tx_count": 154
+      }
+    },
+    {
+      "address": "0x6d2960535eb44afdef12d036143fc98370c8bfc8",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 210058034,
+        "native_balance": "171004.223705640511316977",
+        "native_volume": "1281.157878627670993686",
+        "nft_holdings": 0,
+        "reputation_score": 65,
+        "sybil_risk_score": 19,
+        "tx_count": 10000
+      }
+    },
+    {
+      "address": "0x6ec978a24da4fb2d3eb2ec959a27b341f73d94be",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 3379263,
+        "native_balance": "4.523544536032170444",
+        "native_volume": "21.692051615767861764",
+        "nft_holdings": 5,
+        "reputation_score": 39,
+        "sybil_risk_score": 30,
+        "tx_count": 145
+      }
+    },
+    {
+      "address": "0x6f1528c3912f2229f773f19bfefc3a7ef26d3893",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 2958022,
+        "native_balance": "3.979720321807465382",
+        "native_volume": "0.0397",
+        "nft_holdings": 0,
+        "reputation_score": 20,
+        "sybil_risk_score": 42,
+        "tx_count": 91
+      }
+    },
+    {
+      "address": "0x7448a8fdc436f5188d1715b219bafe09414a5127",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 1397841,
+        "native_balance": "3.949728030056987462",
+        "native_volume": "1.179757794737272848",
+        "nft_holdings": 5,
+        "reputation_score": 31,
+        "sybil_risk_score": 37,
+        "tx_count": 29
+      }
+    },
+    {
+      "address": "0x776638ff655e13ddc8f80d173abf1bc6a027c07c",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 21000,
+        "native_balance": "0.00017361652675164",
+        "native_volume": "0.00017361652675164",
+        "nft_holdings": 0,
+        "reputation_score": 15,
+        "sybil_risk_score": 65,
+        "tx_count": 1
+      }
+    },
+    {
+      "address": "0x79109681e2226fc3bd17e7f6128303f55c2d91d0",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 3864622,
+        "native_balance": "6.209998588856069344",
+        "native_volume": "0.537827223609856588",
+        "nft_holdings": 5,
+        "reputation_score": 31,
+        "sybil_risk_score": 37,
+        "tx_count": 91
+      }
+    },
+    {
+      "address": "0x7a8f387ef56e365a88be929c1fe04aa1eaa99342",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 3753229,
+        "native_balance": "24.669709853752308002",
+        "native_volume": "14.58",
+        "nft_holdings": 0,
+        "reputation_score": 24,
+        "sybil_risk_score": 34,
+        "tx_count": 74
+      }
+    },
+    {
+      "address": "0x7e7efbe79b81421198194bf10ce45d16a36449c8",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 3714393,
+        "native_balance": "7.971521664273649801",
+        "native_volume": "15.087698378282699288",
+        "nft_holdings": 3,
+        "reputation_score": 35,
+        "sybil_risk_score": 30,
+        "tx_count": 167
+      }
+    },
+    {
+      "address": "0x81ef30f47e912e4906291e2d3e578577ff9de3b9",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 3882816,
+        "native_balance": "8.655455741501134611",
+        "native_volume": "18.892966995050024111",
+        "nft_holdings": 4,
+        "reputation_score": 35,
+        "sybil_risk_score": 30,
+        "tx_count": 172
+      }
+    },
+    {
+      "address": "0x85a543dbc416b7d897d30ea9aa16f8b976aae532",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 2500686,
+        "native_balance": "17.492441502276715921",
+        "native_volume": "9.47",
+        "nft_holdings": 0,
+        "reputation_score": 24,
+        "sybil_risk_score": 34,
+        "tx_count": 49
+      }
+    },
+    {
+      "address": "0x85e055acb8b2433957c926a708d0601f16ae35e9",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 481263,
+        "native_balance": "1.029885458871376838",
+        "native_volume": "1.0298859103242527",
+        "nft_holdings": 5,
+        "reputation_score": 26,
+        "sybil_risk_score": 45,
+        "tx_count": 7
+      }
+    },
+    {
+      "address": "0x86d12a31b277573d764257c64d024fb6ffe9f145",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 3047076,
+        "native_balance": "5.326075996639025234",
+        "native_volume": "1.538815173483599707",
+        "nft_holdings": 3,
+        "reputation_score": 35,
+        "sybil_risk_score": 30,
+        "tx_count": 135
+      }
+    },
+    {
+      "address": "0x870556613d616286578c67e78ac96fac920393cd",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 1,
+        "estimated_stake": "0",
+        "gas_used": 2655935,
+        "native_balance": "1.055028698208101038",
+        "native_volume": "9.994815835838743355",
+        "nft_holdings": 5,
+        "reputation_score": 31,
+        "sybil_risk_score": 37,
+        "tx_count": 54
+      }
+    },
+    {
+      "address": "0x885349fd7d9cddb834eeed7d2aec1b5e361674f3",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 0,
+        "estimated_stake": "0",
+        "gas_used": 1210305,
+        "native_balance": "0.840701176385910533",
+        "native_volume": "0.008839950710546093",
+        "nft_holdings": 0,
+        "reputation_score": 20,
+        "sybil_risk_score": 42,
+        "tx_count": 32
       }
     }
   ]

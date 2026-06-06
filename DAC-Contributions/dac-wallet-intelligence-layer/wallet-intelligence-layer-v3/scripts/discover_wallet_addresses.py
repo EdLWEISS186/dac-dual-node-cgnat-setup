@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import time
 import urllib.request
 from datetime import datetime, timezone
@@ -25,12 +24,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Set
 
 
-DEFAULT_DAC_RPC_URL = "https://rpctest.dachain.tech/"
-RPC_URLS = [
-    url.strip()
-    for url in os.environ.get("DAC_RPC_URLS", os.environ.get("DAC_RPC_URL", DEFAULT_DAC_RPC_URL)).split(",")
-    if url.strip()
-]
+DAC_RPC_URL = "https://rpctest.dachain.tech/"
+RPC_URLS = [DAC_RPC_URL]
 DAC_CHAIN_ID = 21894
 REQUEST_TIMEOUT_SECONDS = 25
 REQUEST_DELAY_SECONDS = 0.08
@@ -211,7 +206,7 @@ def main() -> None:
         "module": "Wallet Discovery Layer",
         "network": "DAC Testnet",
         "chain_id": DAC_CHAIN_ID,
-        "rpc_urls": RPC_URLS,
+        "rpc_url": DAC_RPC_URL,
         "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
         "latest_block": latest,
         "start_block": start_block,

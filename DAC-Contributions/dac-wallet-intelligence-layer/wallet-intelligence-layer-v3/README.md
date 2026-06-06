@@ -179,10 +179,11 @@ Current output:
 
 The collector reads wallet addresses from a text file, collects public wallet metrics using the existing DAC Testnet Explorer API and RPC endpoint, and writes a generated source metrics file that can be consumed by the rank generator.
 
-Current data sources:
+Current official public data sources:
 
+    RPC:          https://rpctest.dachain.tech/
+    Explorer:     https://exptest.dachain.tech/
     Explorer API: https://exptest.dachain.tech/api
-    RPC URL:      https://rpctest.dachain.tech/
     Chain ID:     21894
     Native token: DACC
 
@@ -293,25 +294,60 @@ Current discovery behavior:
 - Reads the latest block from RPC.
 - Scans a configurable recent block window.
 - Extracts `from` and `to` wallet addresses from transactions.
-- Supports multiple RPC endpoints through `DAC_RPC_URLS`.
+- Uses the official DAC public RPC endpoint.
 - Retries failed RPC calls.
-- Falls back from local RPC to public RPC when configured.
+- Keeps the public tool independent from local/private RPC infrastructure.
 - Writes discovery metadata to `wallet-discovery-summary.json`.
 
 Validation result:
 
     discovery status: DISCOVERED_FROM_RECENT_RPC_BLOCKS
-    RPC URLs: http://127.0.0.1:8545, https://rpctest.dachain.tech/
-    blocks scanned: 1
-    transactions scanned: 16
-    unique discovered addresses: 25
-    collected wallets: 10
-    ranked wallets: 10
+    RPC: https://rpctest.dachain.tech/
+    blocks requested: 500
+    unique discovered addresses: 100
+    collected wallets: 50
+    ranked wallets: 50
     rank status: GENERATED_FROM_EXPLORER_RPC_COLLECTOR
 
-The local RPC endpoint was unavailable during validation, so the script automatically continued with the public DAC RPC fallback. Discovery still completed successfully.
+A local RPC endpoint was used only during early development testing to validate fallback behavior. The public v3 pipeline was then cleaned to use official DAC public sources only.
 
 This confirms that Wallet Intelligence Layer v3 can now move from recent block activity into discovered wallet addresses, collected wallet metrics, generated rank data, and frontend-readable rank JSON.
+
+---
+
+## Wallet Rank Pipeline Runner
+
+The v3 project now includes a local pipeline runner:
+
+    scripts/run_wallet_rank_pipeline.py
+
+The runner executes the rank pipeline in sequence:
+
+    discover_wallet_addresses.py
+            ↓
+    collect_wallet_metrics.py
+            ↓
+    generate_wallet_rank_index.py
+
+The runner is the local and future automation entrypoint for refreshing Wallet Rank Intelligence data.
+
+Current public source configuration:
+
+    RPC:          https://rpctest.dachain.tech/
+    Explorer:     https://exptest.dachain.tech/
+    Explorer API: https://exptest.dachain.tech/api
+
+The public v3 pipeline uses official DAC public sources only. A local RPC endpoint was used during early development testing to validate fallback behavior, but it is not required and is not part of the public tool dependency.
+
+Validation result:
+
+    blocks requested: 500
+    discovered addresses: 100
+    collected wallets: 50
+    ranked wallets: 50
+    rank status: GENERATED_FROM_EXPLORER_RPC_COLLECTOR
+
+This confirms that Wallet Intelligence Layer v3 can refresh rank data through a single pipeline command using official DAC public infrastructure.
 
 ---
 
@@ -347,24 +383,26 @@ The rank layer is a community-built public testnet intelligence signal.
     scripts/generate_wallet_rank_index.py
     scripts/collect_wallet_metrics.py
     scripts/discover_wallet_addresses.py
+    scripts/run_wallet_rank_pipeline.py
     README.md
 
 ---
 
 ## Current Status
 
-    Status: v3 foundation, frontend rank lookup layer, local indexer skeleton, Explorer/RPC collector, and wallet discovery layer added
-    Discovery: recent RPC block scanner implemented
+    Status: v3 foundation, frontend rank lookup layer, local indexer skeleton, Explorer/RPC collector, wallet discovery layer, and rank pipeline runner added
+    Discovery: recent official RPC block scanner implemented
     Indexer: local generator implemented
-    Collector: Explorer/RPC collector implemented
-    Rank data: generated from discovered wallet metrics
+    Collector: official Explorer/RPC collector implemented
+    Pipeline runner: discovery -> collection -> rank generation
+    Rank data: generated from 50 collected wallets out of 100 discovered addresses
     Dashboard: ready to read generated rank JSON
-    Next indexer phase: larger block windows, broader indexed wallet set, and automation
+    Next phase: larger indexed wallet set and optional scheduled automation
 
 ---
 
 ## Next Step
 
-Expand the wallet rank pipeline with larger block windows, broader indexed wallet sets, and optional automation.
+Expand the wallet rank pipeline with a larger indexed wallet set and optional scheduled automation.
 
-The next phase should make the generated rank output more meaningful by increasing the number of discovered and ranked DAC Testnet wallets.
+The next phase should make the generated rank output more meaningful by increasing the number of ranked DAC Testnet wallets while keeping the public tool based on official DAC public sources only.
