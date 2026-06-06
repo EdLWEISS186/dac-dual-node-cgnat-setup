@@ -373,11 +373,64 @@ The rank layer is a community-built public testnet intelligence signal.
 
 ---
 
+## Full Explorer Address Rank Indexer Foundation
+
+The v3 project now includes the foundation for a full Explorer-visible address rank indexer:
+
+    scripts/build_full_explorer_address_rank_index.py
+
+Purpose:
+
+    Build valid Native Funds Rank and Transactions Rank from the official DAC Explorer API address population.
+
+Official source:
+
+    https://exptest.dachain.tech/api/v2/addresses
+
+Confirmed address fields:
+
+    hash
+    coin_balance
+    transactions_count
+    is_contract
+
+The indexer has two important modes:
+
+    --probe
+        Verifies Explorer API fields and writes no public rank data.
+
+    --full --publish
+        Reserved for full Explorer-visible address pagination.
+        Publishes rank data only if pagination completes without a page cap.
+
+Integrity rule:
+
+    Capped or limited runs must not be published as final Wallet Rank Intelligence data.
+
+The full indexer is designed to support sharded rank output:
+
+    data/rank-shards/{address_prefix}.json
+
+This avoids loading a very large wallet-rank-index file in the browser. The dashboard can later fetch only the shard needed for the checked wallet address.
+
+Latest probe result:
+
+    total_addresses: 6,410,389
+    total_transactions: 21,533,530
+    transactions_today: 474,628
+    gas_used_today: 19,892,450,018
+    total_blocks: 14,965,794
+    first address page item count: 50
+
+No public rank data was written during the probe.
+
+---
+
 ## Current Status
 
     Status: final hybrid v3 architecture locked
     Network snapshot: live Explorer API
-    Rank index: pending valid custom indexer
+    Rank index: pending full valid custom indexer
     Manual/sample rank artifacts: removed
     UI model: single wallet input, single CHECK button, one integrated Wallet Rank Intelligence section
     Public dependency model: official DAC public sources only
@@ -388,6 +441,10 @@ The rank layer is a community-built public testnet intelligence signal.
 
 ## Next Step
 
-Build the valid custom indexer logic for rank metrics not directly available from Explorer API.
+Continue the full Explorer-visible address rank indexer.
 
-The indexer must calculate ranks from the correct Explorer/RPC/Explorer API data sources and must not present limited test runs as final rank data.
+Next implementation steps:
+1. Add safe resume/checkpoint handling for long full pagination.
+2. Add sharded frontend lookup for rank-shards/{address_prefix}.json.
+3. Run full pagination only when ready to publish valid rank data.
+4. Keep limited runs as probe/validation only, never as final Wallet Rank Intelligence output.

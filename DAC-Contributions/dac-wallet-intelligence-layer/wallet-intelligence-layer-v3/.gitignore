@@ -17,3 +17,10 @@ __pycache__/
 # Wallet discovery artifacts
 !data/wallet-addresses.generated.txt
 !data/wallet-discovery-summary.json
+
+# Full Explorer address rank indexer work/cache
+data/indexer-work/
+
+# Published rank shards
+!data/rank-shards/
+!data/rank-shards/*.json
