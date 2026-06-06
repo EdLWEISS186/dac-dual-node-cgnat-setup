@@ -1,0 +1,44 @@
+name: WIL v3 Rank Data Engine
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-rank-data-engine:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Sync rank data engine
+        run: |
+          python3 DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/scripts/sync_rank_data_engine.py --max-pages 5
+
+      - name: Commit rank data engine outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/data/latest.json
+          git add DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/data/snapshots/*.json
+
+          if git diff --cached --quiet; then
+            echo "No rank data engine changes to commit."
+          else
+            git commit -m "chore: sync WIL v3 rank data engine"
+            git pull --rebase origin main
+            git push origin main
+          fi

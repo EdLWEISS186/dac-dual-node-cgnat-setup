@@ -1,23 +1,29 @@
 {
   "chain_id": 21894,
   "checkpoint": {
-    "last_sync_at": null,
-    "last_synced_block": null,
-    "last_transaction_cursor": null,
-    "last_transaction_hash": null,
-    "mode": "NOT_STARTED"
+    "last_sync_at": "2026-06-06T19:42:21+00:00",
+    "last_synced_block": 14966911,
+    "last_transaction_cursor": {
+      "block_number": 14966911,
+      "index": 22,
+      "items_count": 100
+    },
+    "last_transaction_hash": "0x78f16ca55799e7b597cc15441d90b37fa798111bec99159d8a57a22da405f772",
+    "sync_phase": "INCREMENTAL_SYNC"
   },
   "counters": {
-    "changed_transactions": 0,
-    "indexed_wallets": 0,
-    "processed_transactions": 0
+    "last_sync_processed_transactions": 100,
+    "last_sync_wallets_changed": 132,
+    "total_indexed_wallets": 132,
+    "total_processed_transactions": 100
   },
+  "data_model": "NORMALIZED_WALLET_METRIC_DELTAS",
   "engine": "rank-data-engine",
   "latest_snapshot": "data/snapshots/sync-from-genesis.json",
   "network": "DAC Testnet",
-  "note": "Rank Data Engine scaffold created. Blockchain sync has not started yet.",
+  "note": "Initial rank-data-engine state. Stores normalized wallet metrics only, not raw transaction dumps.",
   "project": "Wallet Intelligence Layer v3.0.0",
-  "purpose": "Blockchain data sync source for WIL v3 rank calculation scripts.",
+  "raw_transaction_dump": false,
   "sources": {
     "explorer": "https://exptest.dachain.tech/",
     "explorer_api": "https://exptest.dachain.tech/api",
@@ -26,11 +32,1064 @@
     "stats_endpoint": "https://exptest.dachain.tech/api/v2/stats",
     "transactions_endpoint": "https://exptest.dachain.tech/api/v2/transactions"
   },
-  "status": "SEED_PENDING_GENESIS_SYNC",
-  "sync_model": {
-    "incremental_sync_interval_seconds": 300,
-    "initial_sync": "from_genesis",
-    "runner": "github_actions"
-  },
-  "updated_at": "2026-06-06T19:32:55.638901+00:00"
+  "status": "SYNCED",
+  "updated_at": "2026-06-06T19:42:21+00:00",
+  "wallet_metrics": {
+    "0x03068eb4286521b79e346a3fd4ecb9c12cc95bfb": {
+      "first_seen_block": 14966911,
+      "gas_used": 42000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "2000000000000000",
+      "tx_count": 2,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x053ff0cabccfdbf21825affe85bd5a8b56d0006b": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "170404672978613",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x0651fa6a7f37992d58701f068ce7c46ff46911e8": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1275936564804839",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x097427dc3d2aa4c4e49b376240844bef9c9d097c": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1317831051033540",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x0a6c47b7fac36f2bd0af4fcfb5fed5ab28c2f83c": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "3894464827154757",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x0bb79e2706b441991ff627528764d278946eaa84": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "100000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x0cca063cfdf6c05d23526dce6a0f080e423f941b": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1608434232565989",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x0dc3dc05163b7b0155f9831ced24d66989a4dafc": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "499999959360254000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x0e6ec5fc18bffed493e39d2b7d6c7c6c159f75d8": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "170000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x0fb08e6ac3f01fd589b5e6aa70fdcfd47644fa86": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x1248cd0f7ab92ffd3030bf2d26c9a3dcbd3c712e": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "415400000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x13c029ad72bb6f140b50c88c5f3a2d716a520aa9": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1244097778783556",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x141de2c2f355720dd549e48e3c94eb95afe88547": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x148bb4e9387e0d92e72076d4fa4f08770eed8d57": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "100000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x14fd7de96b9ac422e4730226ffea85a27bb7b42c": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "5000000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x16c3960acefa559adedf2abc8979e4763afd1ad1": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x1761cbf721f2f6da5e713632b14d224e894a372a": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "50000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x1dbbb7074563b7b0f4bae1397cb720f8ffead277": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1803878628365130",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x2456d0e22bb09633b6e498b4186407d72869b5e7": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "484928242586480",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x2ef55f21d73fb54c600018047bef630538942b94": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "100000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x2f48eed51321ad48158290fecc7310546b63b633": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "163363453141258390",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x308a789bcd02691ea165619133b33a7741c19969": {
+      "first_seen_block": 14966912,
+      "gas_used": 52221,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "100000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x333d58b07c38813966165a626fa6fb4d88c9dae5": {
+      "first_seen_block": 14966912,
+      "gas_used": 84423,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x334a3d89ad978a9e77737e7f72e600ad1b9d5776": {
+      "first_seen_block": 14966912,
+      "gas_used": 25683,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x334bc013c9cf77fc2eeaabbd039956922fbb426f": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x3358b5d2622b5f1f040da33b8d4927f1eb3a0d69": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x336c6261d4fd1a2d991d99af0fec86b13ea080ba": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x33722afb06293e1311d4d91a3ac6f5e0eb5d2521": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x3378f07d144ca3898b6c40cf7cd013e0dc01e926": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x33848bd1408b24976829881ff3ae329b635859cb": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x339206e2999d113fdf53a9b2d8b9b3e3d7374264": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x33a430dce66db90f36bae9947be884ec5ff70ca4": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "40000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x33c71ab3376932cfc2462ebcda8dc3e2bd204d91": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "50000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x33cbed684225d3a83484e1c788d50b66ad957f0b": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "40000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x33cf2add3c8f39d2f524c8c1adfe64f751450f44": {
+      "first_seen_block": 14966912,
+      "gas_used": 77401,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "40000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x33d000d0b0710db5696c13327adfd64135c9a70c": {
+      "first_seen_block": 14966912,
+      "gas_used": 148418,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "110000000000000000",
+      "tx_count": 3,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x33d12992522fc5f1957d73c2694735f6810fe478": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "30000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x3691a78be270db1f3b1a86177a8f23f89a8cef24": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "6775128281331722331",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x39202928f841747e16ad35cfa7bd1b481d735573": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "2076504178362821",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x3a984df48a30ecaa4eb51185328d6544ac685af0": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1208378581927488",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x3aaeb40415fef968792420e9d5848c6b848ea55d": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "5085653136335620",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x3bbfc5b8db8f1a1f449b17ba1b8ecef17e11b464": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "100000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x3c651771ba873d1819cc61a2cca7e663f7e162ec": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1597024969879121",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x3fa08d1152e8a1128c6986512c8355605b550a15": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1273062251782883",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x4024666939194dcd031ea241bcf8956d672be514": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1446757763665334",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x4237b507710aec82e06f9e2a65cf286b9d039217": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "206690809564596977",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x4263f0f8f8d1d2f0579ae3af6baa6af5db88acc9": {
+      "first_seen_block": 14966912,
+      "gas_used": 25683,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x44cdf5623ab3da5951b1fea6e1fdade8d14f9006": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "74000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x469ce66a5f7d30fb55bdd36b127ba8acaf9b08cb": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "3482426190146484",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x479d4290ee5d46c3a2dfb1acce742e4737ee1ac3": {
+      "first_seen_block": 14966912,
+      "gas_used": 52221,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "52811823857308820",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x4ba2677a4f87f9750cbdcba3e05508f5636af8bf": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "2406571118575165",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x4d0565efcdfed721371516a3a3394d582d11bdec": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "499999958075012000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x521e10a769e0aceb4ac8dad130487ab17c5a6555": {
+      "first_seen_block": 14966912,
+      "gas_used": 84435,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x5967cdcfb23301b91ee611a5f3632f11a27bc307": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "499999958075012000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x5a45512eb7d0487e5afd47f97a845a6241c3842f": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "484928242586480",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x5a46cc673d84a35ee28a2dc81a1579145574a530": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "99999959714188000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x5b0275a948b0b65b598b00e020496982bf498d34": {
+      "first_seen_block": 14966912,
+      "gas_used": 42935,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x5b79dc446434f60a2365ad93e371d26a39a55178": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1054251517226989",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x5ca59e05ff3c51c4c1564b5e0fc7bfd23a6008d4": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "99999959714188000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x5db39182d5b1ce3b309e51917ad542ea3cb1952a": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1759184438571788",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x60fec4cbfc918f9586a138ed4f20fd17a7626bb2": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "4867732863239783",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x6160b3df6a5e2c5424a529c3b7b5a5ca81849863": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1374221156896105",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x620520fade13484de5b94d23dc9fe05f9176423b": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "651999959714188000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x6299a12c1ffde5945229149f5b0dde7f1b833b05": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "120000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x62fc3df043c6919a5cf9a93134c87bee632fe660": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "30000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x675f47f7c6a55cc60eca03d1a944b11cc8b8975d": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "415400000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x67f35b61c576cc56b0e8ddce445c6ed1cb14b839": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "30000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x69ba6cd04accf7fcf4ab871e83647d6a898a6bdf": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "651999959714188000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x6a9f9c5d4b6c9437a5d88bb04129b7829edd22d5": {
+      "first_seen_block": 14966912,
+      "gas_used": 52221,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "143000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x6b3b5bd08a6bb41bdd80bed7e4e76f29d6285f85": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "22575088412324",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x6b8713cbfaadfa16a131fb83f5f4e371d4810882": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x6e1701fe2bdb05a2f7a92bf62d8cdf4c0bc6e35f": {
+      "first_seen_block": 14966912,
+      "gas_used": 77401,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "106000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x74603e6dede777b07b2a6931bff4e1ef7ea47381": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "3000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x7591586ee465e20753a7e2540353336d318a2c3a": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "3207835170068482",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x75ae7a86c84f9f4d1a26704ff72657db9d54215d": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1273062251782883",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x79c5b85b7dfab5b4dd847396fa7393f6a38f01db": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "2968456000035940",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x7d0204bff0998f6dbd5de3906629a26f11c93efc": {
+      "first_seen_block": 14966911,
+      "gas_used": 42000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "2000000000000000",
+      "tx_count": 2,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x7f3c20c474b15fa9b8b838fd0101c2a0288366ef": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "76000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x80f394013aae128f3366c37fdd68685bddf7ccfc": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x851a2dffcbe9b4db95637a1cf3479d4ed989edd8": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1977725319374528",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x85c12bf445fda8dde74843c402a1677e74433b1e": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "22575088412324",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x87406e78d99fb6f9125ad67b5c510ace89881d35": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "45560552417097",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x8a3fae651fa8efddb2a5605965ba6098ed8ac4eb": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1087838057941091",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x8a796801cd8f26ffd201a3d5e97620535576ae04": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1510832874265262",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x8da04d1ec214c6add9d4e2ee4893620e76aeaffa": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "4080407671908629",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x8de03d47930f7c9d0e26419d3dc418a28f23da49": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "10000000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x8f1e46c536b2f4601e2f3d8f3ba0b7dfbf8db3a9": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1462088736228968",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x8f45e00994210b0ab4ac805176ba0088448f68cf": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "53000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x95fa7a186f0a05b3953c7f75ac17cd782c32d46a": {
+      "first_seen_block": 14966911,
+      "gas_used": 52221,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "152000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x9759430f9a98ebc106a2517124d84a47f635e484": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "499999959360254000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x996eb4e4a34a7cc0a784109304759cbaafc33f33": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "499999958075012000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x99ce5602b4484b27e2b10ac78b68b0a6314d221f": {
+      "first_seen_block": 14966911,
+      "gas_used": 50017,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "79000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x9a05257f7e4583e192e931394c2d1528e1f7fde6": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "560000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x9c2f7be49afe199376acb7a90c4df1bc2768af6c": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1790717373634455",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x9c3cdb51565e15fc5c87392ce2f758dfb412cc8f": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0x9c58b09e8d23b863778ef132912154880fcc00b8": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "5231171347722974",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xa0af02951a9da3f997c098e78a2d25efc48a9a0f": {
+      "first_seen_block": 14966911,
+      "gas_used": 50017,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "407650505728724014",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xa1210a039c363ac4aec26d08db67e3a781082614": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1684749538091369",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xa2f29b1778ff0bbae55aaacad91bca9754d220d9": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xa4679d38c3628f229d5e91565b1d607b3297af9e": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "580000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xa656f45b93135b9cb46f56eeccb4c041148cad14": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1971593315881222",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xae32795a35d542870d6f1c3ef18e0954e7e4219c": {
+      "first_seen_block": 14966911,
+      "gas_used": 84000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1430000000000000",
+      "tx_count": 4,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xb171756804b790a1efdf16a813c06e667b426396": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1977725319374528",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xb23e40b6c53c4edf7df6f057a009c08e04827a89": {
+      "first_seen_block": 14966912,
+      "gas_used": 41952,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xb312b7a907b3fca29b6cbf0b8c82b6be6ce66fff": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1872728035806084",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xb36ab4c2bd6acfc36e9d6c53f39f4301901bd647": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xb5c010b370b81d0e7642c3b0a13299d1a78e74df": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "170404672978613",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xbd72ca58ff1743043e276d49910f3bd85d63ef39": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1393761994011591",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xbd81ca277482a15d555f0533742f90c116183ba8": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1120252745566273",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xbdc5cb8d8387c4a4fb0722d06f36943f0a060c41": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1120252745566273",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xbf8b639d9a649f76904bb2c0020fe57252a56ab1": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "3238511834312843",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xc012842f454175b1b4fd665afeb058b1941704a8": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "499999959360254000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xc409243100c903573a6e7fda84da4804536428b1": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "206690809564596977",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xc7e8615cbbcdd888fdb7584ae247306b3b6e692f": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "53000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xca8ca0430277e926ca220e9ac59de03ebafc32f0": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "53000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xcb98fa54d3dea40795924112215a34004d078c10": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xcc9661e5e63735139ec39dd17d15364c9952f40d": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1872728035806084",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xcd0df595859249eac677f38959562f4cee2911d1": {
+      "first_seen_block": 14966912,
+      "gas_used": 25659,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xd0ee8cbe323f79ffe8feb1a41d52d97c339ba471": {
+      "first_seen_block": 14966911,
+      "gas_used": 0,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1604302586058463",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xd45d197e6cecc1c3f6a3f8b613ee311a59672c58": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1844749840301252",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xdcca9732cf9381b7529435ce397e3915be41b209": {
+      "first_seen_block": 14966911,
+      "gas_used": 178785,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 3,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xe246f364bd9565fafb46acba3218a1aa06505ad8": {
+      "first_seen_block": 14966912,
+      "gas_used": 25671,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "0",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xe60735dfa82aaa9f3cc51a989ceade0447260b94": {
+      "first_seen_block": 14966912,
+      "gas_used": 50017,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "200000000000000000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xe916746db282addf49cf542c8bad6330cf56dea5": {
+      "first_seen_block": 14966911,
+      "gas_used": 21000,
+      "last_seen_block": 14966911,
+      "native_volume_wei": "1604302586058463",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xe91e491fba09140b242c7f91c1d901a1144abdfd": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1454225502025812",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xeda439455a56c964f978a6949951362251426d9d": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xeea3757f9df4a8be57cfc4cbf8f4377b191cf73a": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "499999959360254000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xeef5e632ae5defced99fc52c6fe88813b619d0f3": {
+      "first_seen_block": 14966912,
+      "gas_used": 402812,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "10000000000000000000",
+      "tx_count": 2,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xf2591c8d12a74032b771656119c734addd692367": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "1000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xf5a48d8ab71ae848f32a63b45bb83250cc751a5d": {
+      "first_seen_block": 14966912,
+      "gas_used": 52221,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "4142703546767",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xfa417923a6a87f9642eac93ba8bcd2cc78e5336b": {
+      "first_seen_block": 14966912,
+      "gas_used": 0,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "40000000000000000",
+      "tx_count": 0,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    },
+    "0xfda7dbe805b06db1c43777802b855469dc2b6242": {
+      "first_seen_block": 14966912,
+      "gas_used": 21000,
+      "last_seen_block": 14966912,
+      "native_volume_wei": "499999958075012000",
+      "tx_count": 1,
+      "updated_at": "2026-06-06T19:42:21+00:00"
+    }
+  }
 }
