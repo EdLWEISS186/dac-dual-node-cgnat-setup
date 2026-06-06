@@ -29,6 +29,7 @@
   let networkSnapshot = null;
   let rankSummary = null;
   let rankIndex = {};
+  let rankShardCache = {};
 
   function isValidAddress(value) {
     return /^0x[a-fA-F0-9]{40}$/.test((value || "").trim());
@@ -72,9 +73,40 @@
     };
   }
 
+  function isShardedIndex(index) {
+    return Boolean(index && typeof index === "object" && index.mode === "SHARDED" && index.directory);
+  }
+
+  function getAddressShard(address) {
+    const normalized = normalizeAddress(address);
+    return normalized.slice(2, 4);
+  }
+
+  async function fetchRankShard(address) {
+    if (!isShardedIndex(rankIndex)) return null;
+
+    const shard = getAddressShard(address);
+    if (!shard) return null;
+
+    if (rankShardCache[shard]) {
+      return rankShardCache[shard];
+    }
+
+    const directory = String(rankIndex.directory || "data/rank-shards").replace(/^\.?\//, "");
+    const shardUrl = `./${directory}/${shard}.json`;
+    const payload = await fetchJson(shardUrl, {});
+    rankShardCache[shard] = payload && typeof payload === "object" ? payload : {};
+    return rankShardCache[shard];
+  }
+
   function hasValidCustomRankIndex(summary, index) {
     if (!summary || !index || typeof index !== "object") return false;
     if (summary.status === "HYBRID_MODEL_PENDING_VALID_INDEX") return false;
+
+    if (isShardedIndex(index)) {
+      return Boolean(summary.rank_shards && summary.rank_shards.directory);
+    }
+
     return Object.keys(index).length > 0;
   }
 
@@ -128,7 +160,14 @@
       };
     }
 
-    const profile = rankIndex[normalized];
+    let profile = null;
+
+    if (isShardedIndex(rankIndex)) {
+      const shardPayload = await fetchRankShard(normalized);
+      profile = shardPayload ? shardPayload[normalized] : null;
+    } else {
+      profile = rankIndex[normalized];
+    }
 
     if (!profile) {
       return {

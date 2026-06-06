@@ -571,6 +571,44 @@ This confirms that capped validation runs cannot accidentally publish final Wall
 
 ---
 
+## Frontend Sharded Rank Lookup
+
+The Wallet Rank Intelligence frontend is now prepared for sharded rank data.
+
+When a valid custom rank index is eventually published, the dashboard can read:
+
+    data/wallet-rank-summary.json
+    data/wallet-rank-index.json
+    data/rank-shards/{address_prefix}.json
+
+Lookup flow:
+
+    user checks wallet address
+            ↓
+    rank-engine.js reads wallet-rank-summary.json
+            ↓
+    rank-engine.js detects sharded rank mode
+            ↓
+    rank-engine.js derives address prefix from the checked wallet
+            ↓
+    dashboard fetches only the matching rank shard
+            ↓
+    Wallet Rank Intelligence renders the wallet rank profile
+
+Example:
+
+    wallet: 0x870a...
+    shard: 87
+    file: data/rank-shards/87.json
+
+This avoids loading a very large rank index file in the browser and keeps the public dashboard suitable for large indexed wallet populations.
+
+If no valid custom rank index exists yet, the dashboard continues to display the live Explorer API network snapshot and the honest pending state:
+
+    Rank index pending valid custom index
+
+---
+
 ## Current Status
 
     Status: final hybrid v3 architecture locked
@@ -578,6 +616,7 @@ This confirms that capped validation runs cannot accidentally publish final Wall
     Rank index: pending completed full transaction-stream custom indexer run
     Manual/sample rank artifacts: removed
     UI model: single wallet input, single CHECK button, one integrated Wallet Rank Intelligence section
+    Frontend rank lookup: sharded rank mode ready
     Public dependency model: official DAC public sources only
 
 
@@ -589,8 +628,7 @@ This confirms that capped validation runs cannot accidentally publish final Wall
 Continue the full Explorer-visible address rank indexer.
 
 Next implementation steps:
-1. Add or confirm resume behavior for long transaction-stream full indexing.
-2. Run longer validation windows to check stability across more transaction pages.
-3. Add sharded frontend lookup for rank-shards/{address_prefix}.json.
-4. Publish rank data only after full/integrity-safe indexing is completed.
-5. Keep limited runs as probe/validation only, never as final Wallet Rank Intelligence output.
+1. Continue improving transaction-stream indexer reliability and resume behavior.
+2. Publish rank data only after full/integrity-safe indexing is completed.
+3. Keep limited runs as probe/validation only, never as final Wallet Rank Intelligence output.
+4. Use sharded frontend lookup when valid rank shards exist.
