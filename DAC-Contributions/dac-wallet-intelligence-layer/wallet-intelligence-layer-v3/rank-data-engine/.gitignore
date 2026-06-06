@@ -1,5 +1,11 @@
-# Local/runtime only
+# Runtime/local files
 __pycache__/
 *.pyc
 *.log
 .env
+
+# Keep rank-data-engine data tracked even if root .gitignore ignores JSON
+!data/
+!data/latest.json
+!data/snapshots/
+!data/snapshots/*.json

@@ -32,8 +32,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/data/latest.json
-          git add DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/data/snapshots/*.json
+          git add -f DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/data/latest.json
+          git add -f DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/data/snapshots/*.json
 
           if git diff --cached --quiet; then
             echo "No rank data engine changes to commit."
