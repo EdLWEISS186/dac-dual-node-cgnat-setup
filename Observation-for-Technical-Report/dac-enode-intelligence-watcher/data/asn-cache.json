@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-06-06T11:00:45.487526+00:00",
+  "updated_at_utc": "2026-06-06T12:18:24.781612+00:00",
   "lookup_method": "team_cymru_whois_live_lookup",
   "entries": {
     "1.54.141.106": {
@@ -442,6 +442,23 @@
       "source": "team_cymru",
       "cached": false,
       "checked_at_utc": "2026-06-03T04:32:04.074067+00:00",
+      "error": null,
+      "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+    },
+    "58.187.95.220": {
+      "ip": "58.187.95.220",
+      "live_lookup_used": true,
+      "live_lookup_success": true,
+      "lookup_method": "team_cymru_whois_live_lookup",
+      "asn": "AS18403",
+      "asn_name": "FPT-VN - FPT Telecom Company, VN",
+      "bgp_prefix": "58.187.95.0/24",
+      "country_code": "VN",
+      "registry": "apnic",
+      "allocated": "2005-07-14",
+      "source": "team_cymru",
+      "cached": false,
+      "checked_at_utc": "2026-06-06T12:18:24.781400+00:00",
       "error": null,
       "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
     },
