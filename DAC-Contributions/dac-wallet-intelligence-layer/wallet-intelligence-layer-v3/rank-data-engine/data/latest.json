@@ -1,0 +1,36 @@
+{
+  "chain_id": 21894,
+  "checkpoint": {
+    "last_sync_at": null,
+    "last_synced_block": null,
+    "last_transaction_cursor": null,
+    "last_transaction_hash": null,
+    "mode": "NOT_STARTED"
+  },
+  "counters": {
+    "changed_transactions": 0,
+    "indexed_wallets": 0,
+    "processed_transactions": 0
+  },
+  "engine": "rank-data-engine",
+  "latest_snapshot": "data/snapshots/sync-from-genesis.json",
+  "network": "DAC Testnet",
+  "note": "Rank Data Engine scaffold created. Blockchain sync has not started yet.",
+  "project": "Wallet Intelligence Layer v3.0.0",
+  "purpose": "Blockchain data sync source for WIL v3 rank calculation scripts.",
+  "sources": {
+    "explorer": "https://exptest.dachain.tech/",
+    "explorer_api": "https://exptest.dachain.tech/api",
+    "explorer_api_v2": "https://exptest.dachain.tech/api/v2",
+    "rpc": "https://rpctest.dachain.tech/",
+    "stats_endpoint": "https://exptest.dachain.tech/api/v2/stats",
+    "transactions_endpoint": "https://exptest.dachain.tech/api/v2/transactions"
+  },
+  "status": "SEED_PENDING_GENESIS_SYNC",
+  "sync_model": {
+    "incremental_sync_interval_seconds": 300,
+    "initial_sync": "from_genesis",
+    "runner": "github_actions"
+  },
+  "updated_at": "2026-06-06T19:32:55.638901+00:00"
+}

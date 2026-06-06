@@ -1,0 +1,15 @@
+# Runtime/local files
+logs/
+state/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.log
+__pycache__/
+*.pyc
+
+# Tracked engine data outputs
+!data/
+!data/latest.json
+!data/snapshots/
+!data/snapshots/*.json
