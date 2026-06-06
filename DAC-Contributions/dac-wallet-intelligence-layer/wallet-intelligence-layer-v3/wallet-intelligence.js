@@ -3281,6 +3281,45 @@ function renderRankSyncStatus(summary) {
 }
 
 
+
+function formatWalletRankTierDisplay(value) {
+  const raw = String(value || "Indexed").trim();
+  const normalized = raw
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "_")
+    .replace(/^TOP_?([0-9]+)_?PERCENT$/, "TOP_$1_PERCENT");
+
+  const labels = {
+    TOP_1_PERCENT: "Top 1%",
+    TOP_5_PERCENT: "Top 5%",
+    TOP_10_PERCENT: "Top 10%",
+    TOP_25_PERCENT: "Top 25%",
+    TOP_50_PERCENT: "Top 50%",
+    INDEXED: "Indexed"
+  };
+
+  return labels[normalized] || raw.replace(/_/g, " ");
+}
+
+function formatWalletRankMetricLabelDisplay(value) {
+  const key = String(value || "").toLowerCase();
+
+  const labels = {
+    native_funds: "Native Funds",
+    transactions: "Transactions",
+    gas_used: "Gas Used",
+    native_volume: "Native Volume",
+    nft_holdings: "NFT Holdings",
+    collection_diversity: "Collection Diversity",
+    reputation_score: "Reputation Score",
+    low_sybil_risk: "Low-Risk Profile",
+    overall_rank: "Overall Wallet Rank"
+  };
+
+  return labels[key] || String(value || "—").replace(/_/g, " ");
+}
+
+
 function renderWalletRankIntelligence(rankData) {
   if (!el.walletRankCard || !el.walletRankStatus || !el.walletRankGrid || !el.walletRankMeta) return;
 
@@ -3415,16 +3454,16 @@ function renderWalletRankIntelligence(rankData) {
   }
 
   const totalRanked = Number(profile.total_ranked_wallets || summary.total_ranked_wallets || 0);
-  el.walletRankStatus.textContent = `${formatWalletRankTier(profile.rank_tier)} · ${formatRankValue(totalRanked)} ranked wallets`;
+  el.walletRankStatus.textContent = `${formatWalletRankTierDisplay(profile.rank_tier)} · ${formatRankValue(totalRanked)} ranked wallets`;
 
-  el.walletRankMeta.innerHTML = snapshotHtml + `
+  el.walletRankMeta.innerHTML = snapshotHtml + renderRankSyncStatus(summary) + `
     <div class="wallet-rank-meta-item">
       <span>Rank tier</span>
-      <strong>${escapeRankHtml(formatWalletRankTier(profile.rank_tier))}</strong>
+      <strong>${escapeRankHtml(formatWalletRankTierDisplay(profile.rank_tier))}</strong>
     </div>
     <div class="wallet-rank-meta-item">
       <span>Strongest signal</span>
-      <strong>${escapeRankHtml(profile.strongest_metric || "—")}</strong>
+      <strong>${escapeRankHtml(formatWalletRankMetricLabelDisplay(profile.strongest_metric || "—"))}</strong>
     </div>
     <div class="wallet-rank-meta-item">
       <span>Rank denominator</span>
