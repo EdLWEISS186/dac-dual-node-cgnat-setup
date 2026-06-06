@@ -1,26 +1,30 @@
 {
-  "chain_id": 21894,
-  "core_statement": "v3 turns every verified wallet variable into a comparative public rank signal.",
-  "feature": "Wallet Rank Intelligence",
-  "generated_at": "2026-06-06T14:31:21+00:00",
-  "latest_indexed_block": null,
-  "native_token": "DACC",
-  "network": "DAC Testnet",
-  "note": "Generated from Wallet Intelligence Layer v3 Explorer/RPC collector output.",
   "project": "Wallet Intelligence Layer v3.0.0",
-  "rank_model": "wallet-rank-intelligence-v3.0.0",
+  "feature": "Wallet Rank Intelligence",
+  "core_statement": "v3 turns every verified wallet variable into a comparative public rank signal.",
+  "network": "DAC Testnet",
+  "chain_id": 21894,
+  "native_token": "DACC",
+  "rank_model": "wallet-rank-intelligence-v3.0.0-hybrid",
+  "status": "HYBRID_MODEL_PENDING_VALID_INDEX",
+  "public_sources": {
+    "rpc": "https://rpctest.dachain.tech/",
+    "explorer": "https://exptest.dachain.tech/",
+    "explorer_api": "https://exptest.dachain.tech/api"
+  },
+  "network_snapshot_source": "Explorer API /api/v2/stats",
+  "total_ranked_wallets": 0,
+  "latest_indexed_block": null,
   "ranking_variables": [
-    "tx_count",
+    "native_funds",
+    "transactions",
     "gas_used",
     "native_volume",
-    "native_balance",
-    "estimated_stake",
     "nft_holdings",
     "collection_diversity",
     "reputation_score",
-    "low_sybil_risk"
+    "low_sybil_risk",
+    "overall_rank"
   ],
-  "source": "/home/jeruzzalem/dac-contribution/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/data/source-wallet-metrics.generated.json",
-  "status": "GENERATED_FROM_EXPLORER_RPC_COLLECTOR",
-  "total_ranked_wallets": 100
+  "note": "Previous manual 100-wallet test artifacts were removed because they were only pipeline validation data, not final valid rank data. Final v3 uses real-time Explorer API network snapshot plus a custom indexer for unavailable rank metrics."
 }
