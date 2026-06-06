@@ -212,10 +212,42 @@ def process_transaction(tx: Dict[str, Any], wallet_deltas: Dict[str, Dict[str, A
     }
 
 
+
+def load_initial_backfill_anchor() -> Optional[str]:
+    path = snapshots_dir() / "backfill-from-latest-to-genesis.json"
+
+    if not path.exists():
+        return None
+
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+    audit = payload.get("minimal_audit") or {}
+    tx_hash = normalize_hash(audit.get("first_transaction_hash"))
+    return tx_hash or None
+
+
 def run_sync(max_pages: int) -> Dict[str, Any]:
     latest = read_json(latest_path())
     checkpoint_before = deepcopy(latest.get("checkpoint", {}))
-    cursor = latest.get("checkpoint", {}).get("last_transaction_cursor")
+
+    historical_backfill_complete = bool(
+        checkpoint_before.get("historical_backfill_complete")
+    )
+
+    mode = "INCREMENTAL_SYNC" if historical_backfill_complete else "HISTORICAL_BACKFILL"
+
+    cursor = checkpoint_before.get("last_transaction_cursor")
+    if mode == "INCREMENTAL_SYNC" and checkpoint_before.get("sync_phase") != "INCREMENTAL_SYNC_IN_PROGRESS":
+        cursor = None
+
+    incremental_anchor_hash = (
+        checkpoint_before.get("incremental_anchor_hash")
+        or checkpoint_before.get("latest_seen_transaction_hash")
+        or load_initial_backfill_anchor()
+    )
 
     wallet_deltas: Dict[str, Dict[str, Any]] = {}
     processed_transactions = 0
@@ -224,17 +256,28 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
     first_block = None
     last_block = None
     next_cursor = cursor
+    reached_incremental_anchor = False
+    stop_reason = None
 
-    for page_index in range(max_pages):
+    for _page_index in range(max_pages):
         payload = fetch_json(TRANSACTIONS_ENDPOINT, next_cursor)
         items = payload.get("items", [])
 
         if not isinstance(items, list) or not items:
+            stop_reason = "NO_MORE_ITEMS"
+            next_cursor = None
             break
 
         for tx in items:
             if not isinstance(tx, dict):
                 continue
+
+            tx_hash = normalize_hash(tx.get("hash"))
+
+            if mode == "INCREMENTAL_SYNC" and incremental_anchor_hash and tx_hash == incremental_anchor_hash:
+                reached_incremental_anchor = True
+                stop_reason = "REACHED_PREVIOUS_INCREMENTAL_ANCHOR"
+                break
 
             audit = process_transaction(tx, wallet_deltas)
             if not audit:
@@ -246,20 +289,52 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
             first_block = audit["block_number"] if first_block is None else max(first_block, audit["block_number"])
             last_block = audit["block_number"] if last_block is None else min(last_block, audit["block_number"])
 
+        if reached_incremental_anchor:
+            next_cursor = None
+            break
+
         next_cursor = payload.get("next_page_params")
 
         if not next_cursor:
+            stop_reason = "NO_NEXT_PAGE_PARAMS_REACHED_GENESIS" if mode == "HISTORICAL_BACKFILL" else "NO_NEXT_PAGE_PARAMS"
             break
+
+    if stop_reason is None:
+        stop_reason = "MAX_PAGES_REACHED"
 
     apply_deltas(latest, wallet_deltas)
 
-    checkpoint_after = {
-        "sync_phase": "INCREMENTAL_SYNC",
-        "last_synced_block": last_block if last_block is not None else checkpoint_before.get("last_synced_block"),
-        "last_transaction_cursor": next_cursor,
-        "last_transaction_hash": last_tx_hash or checkpoint_before.get("last_transaction_hash"),
-        "last_sync_at": now_utc(),
-    }
+    if mode == "HISTORICAL_BACKFILL":
+        historical_backfill_complete = next_cursor is None and stop_reason == "NO_NEXT_PAGE_PARAMS_REACHED_GENESIS"
+
+        checkpoint_after = {
+            "sync_phase": "BACKFILL_COMPLETE" if historical_backfill_complete else "HISTORICAL_BACKFILL_IN_PROGRESS",
+            "historical_backfill_complete": historical_backfill_complete,
+            "backfill_status": "COMPLETE" if historical_backfill_complete else "IN_PROGRESS",
+            "backfill_stop_reason": stop_reason,
+            "last_synced_block": last_block if last_block is not None else checkpoint_before.get("last_synced_block"),
+            "last_transaction_cursor": None if historical_backfill_complete else next_cursor,
+            "last_transaction_hash": last_tx_hash or checkpoint_before.get("last_transaction_hash"),
+            "latest_seen_transaction_hash": checkpoint_before.get("latest_seen_transaction_hash") or load_initial_backfill_anchor() or first_tx_hash,
+            "incremental_anchor_hash": checkpoint_before.get("incremental_anchor_hash") or load_initial_backfill_anchor() or first_tx_hash,
+            "last_sync_at": now_utc(),
+        }
+    else:
+        incremental_complete = reached_incremental_anchor or next_cursor is None
+
+        checkpoint_after = {
+            "sync_phase": "INCREMENTAL_SYNC" if incremental_complete else "INCREMENTAL_SYNC_IN_PROGRESS",
+            "historical_backfill_complete": True,
+            "backfill_status": "COMPLETE",
+            "backfill_stop_reason": checkpoint_before.get("backfill_stop_reason"),
+            "last_synced_block": last_block if last_block is not None else checkpoint_before.get("last_synced_block"),
+            "last_transaction_cursor": None if incremental_complete else next_cursor,
+            "last_transaction_hash": last_tx_hash or checkpoint_before.get("last_transaction_hash"),
+            "latest_seen_transaction_hash": first_tx_hash or checkpoint_before.get("latest_seen_transaction_hash"),
+            "incremental_anchor_hash": first_tx_hash or incremental_anchor_hash,
+            "last_sync_at": now_utc(),
+            "incremental_stop_reason": stop_reason,
+        }
 
     latest["status"] = "SYNCED"
     latest["updated_at"] = now_utc()
@@ -271,7 +346,16 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
         "last_sync_wallets_changed": len(wallet_deltas),
     }
 
-    snapshot_name = "backfill-from-latest-to-genesis.json" if checkpoint_before.get("sync_phase") == "NOT_STARTED" else f"{snapshot_timestamp()}-changed.json"
+    if checkpoint_before.get("sync_phase") == "NOT_STARTED":
+        snapshot_name = "backfill-from-latest-to-genesis.json"
+        snapshot_type = "historical_backfill_from_latest_to_genesis"
+    elif mode == "HISTORICAL_BACKFILL":
+        snapshot_name = f"backfill-{snapshot_timestamp()}-changed.json"
+        snapshot_type = "historical_backfill_changed"
+    else:
+        snapshot_name = f"incremental-{snapshot_timestamp()}-changed.json"
+        snapshot_type = "incremental_changed"
+
     snapshot_rel = f"data/snapshots/{snapshot_name}"
 
     snapshot = {
@@ -281,9 +365,11 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
         "chain_id": latest["chain_id"],
         "data_model": latest["data_model"],
         "raw_transaction_dump": False,
-        "snapshot_type": "historical_backfill_from_latest_to_genesis" if checkpoint_before.get("sync_phase") == "NOT_STARTED" else "incremental_changed",
+        "snapshot_type": snapshot_type,
         "status": "SYNCED",
         "created_at": now_utc(),
+        "sync_mode": mode,
+        "stop_reason": stop_reason,
         "checkpoint_before": checkpoint_before,
         "checkpoint_after": checkpoint_after,
         "processed_transactions_this_sync": processed_transactions,
@@ -303,9 +389,12 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
     write_json(latest_path(), latest)
 
     return {
+        "mode": mode,
         "processed_transactions": processed_transactions,
         "wallets_changed": len(wallet_deltas),
         "latest_snapshot": snapshot_rel,
+        "stop_reason": stop_reason,
+        "historical_backfill_complete": checkpoint_after.get("historical_backfill_complete"),
         "checkpoint_after": checkpoint_after,
     }
 
