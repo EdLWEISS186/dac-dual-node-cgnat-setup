@@ -1,0 +1,108 @@
+{
+  "0x9f6c8b11b7898f0c6dde638cbd80ad4afb83fe56": {
+    "address": "0x9f6c8b11b7898f0c6dde638cbd80ad4afb83fe56",
+    "available_rank_variables": [
+      "native_funds",
+      "transactions",
+      "gas_used",
+      "native_volume",
+      "nft_holdings",
+      "collection_diversity",
+      "reputation_score",
+      "low_sybil_risk",
+      "overall_rank"
+    ],
+    "first_seen_block": 14967745,
+    "last_seen_block": 14967745,
+    "metrics": {
+      "collection_diversity": 1,
+      "gas_used": 0,
+      "low_sybil_risk": 145,
+      "native_funds": "5.055932782764658007",
+      "native_volume": "0.00052",
+      "nft_holdings": 5,
+      "reputation_score": 119,
+      "transactions": 1
+    },
+    "pending_rank_variables": [],
+    "percentiles": {
+      "collection_diversity": "20.622568",
+      "gas_used": "89.883268",
+      "low_sybil_risk": "28.404669",
+      "native_funds": "17.509728",
+      "native_volume": "78.210117",
+      "nft_holdings": "8.949416",
+      "overall_rank": "43.579767",
+      "reputation_score": "56.031128",
+      "transactions": "77.821012"
+    },
+    "rank_tier": "TOP_10_PERCENT",
+    "ranks": {
+      "collection_diversity": 53,
+      "gas_used": 231,
+      "low_sybil_risk": 73,
+      "native_funds": 45,
+      "native_volume": 201,
+      "nft_holdings": 23,
+      "overall_rank": 112,
+      "reputation_score": 144,
+      "transactions": 200
+    },
+    "strongest_metric": "nft_holdings",
+    "total_ranked_wallets": 257,
+    "updated_at": "2026-06-06T23:21:24+00:00"
+  },
+  "0x9fc57de35b7cec5013e132e4ae90f06ef372f8e8": {
+    "address": "0x9fc57de35b7cec5013e132e4ae90f06ef372f8e8",
+    "available_rank_variables": [
+      "native_funds",
+      "transactions",
+      "gas_used",
+      "native_volume",
+      "nft_holdings",
+      "collection_diversity",
+      "reputation_score",
+      "low_sybil_risk",
+      "overall_rank"
+    ],
+    "first_seen_block": 14967747,
+    "last_seen_block": 14967747,
+    "metrics": {
+      "collection_diversity": 0,
+      "gas_used": 0,
+      "low_sybil_risk": 0,
+      "native_funds": "0",
+      "native_volume": "0.015451450155760182",
+      "nft_holdings": 0,
+      "reputation_score": 19,
+      "transactions": 1
+    },
+    "pending_rank_variables": [],
+    "percentiles": {
+      "collection_diversity": "78.599222",
+      "gas_used": "90.272374",
+      "low_sybil_risk": "91.828794",
+      "native_funds": "84.046693",
+      "native_volume": "47.859922",
+      "nft_holdings": "78.599222",
+      "overall_rank": "94.163424",
+      "reputation_score": "88.326848",
+      "transactions": "78.210117"
+    },
+    "rank_tier": "TOP_50_PERCENT",
+    "ranks": {
+      "collection_diversity": 202,
+      "gas_used": 232,
+      "low_sybil_risk": 236,
+      "native_funds": 216,
+      "native_volume": 123,
+      "nft_holdings": 202,
+      "overall_rank": 242,
+      "reputation_score": 227,
+      "transactions": 201
+    },
+    "strongest_metric": "native_volume",
+    "total_ranked_wallets": 257,
+    "updated_at": "2026-06-06T23:20:37+00:00"
+  }
+}
