@@ -163,6 +163,49 @@ currently produces:
 This confirms that the ranking logic, JSON generation, and frontend-readable data format are working before connecting the indexer to Explorer API or RPC-derived data.
 
 ---
+## Explorer/RPC Wallet Metrics Collector
+
+The v3 project now includes an Explorer/RPC metrics collector:
+
+    scripts/collect_wallet_metrics.py
+
+Current input:
+
+    data/wallet-addresses.sample.txt
+
+Current output:
+
+    data/source-wallet-metrics.generated.json
+
+The collector reads wallet addresses from a text file, collects public wallet metrics using the existing DAC Testnet Explorer API and RPC endpoint, and writes a generated source metrics file that can be consumed by the rank generator.
+
+Current data sources:
+
+    Explorer API: https://exptest.dachain.tech/api
+    RPC URL:      https://rpctest.dachain.tech/
+    Chain ID:     21894
+    Native token: DACC
+
+Current collector behavior:
+
+- Reads address-list input.
+- Uses Explorer API for transaction list, native balance, token list, and NFT transfer data.
+- Uses RPC fallback for native balance and transaction count when Explorer data is unavailable.
+- Computes wallet-level source metrics.
+- Writes `source-wallet-metrics.generated.json`.
+- Allows `generate_wallet_rank_index.py` to generate rank artifacts from collected data.
+
+Validation result:
+
+    collected wallets: 1
+    ranked wallets: 1
+    indexed address: 0x870ad63acc507cdfd878f170606d19ae78988afe
+    rank status: GENERATED_FROM_EXPLORER_RPC_COLLECTOR
+
+This confirms that the v3 ranking pipeline can now move from wallet address input into Explorer/RPC-derived metrics and frontend-readable rank JSON.
+
+---
+
 
 
 ## Frontend Rank Engine
@@ -263,16 +306,17 @@ The rank layer is a community-built public testnet intelligence signal.
 
 ## Current Status
 
-    Status: v3 foundation, frontend rank lookup layer, and local indexer skeleton added
-    Indexer: local skeleton implemented
-    Rank data: generated from sample source wallet metrics
+    Status: v3 foundation, frontend rank lookup layer, local indexer skeleton, and Explorer/RPC collector added
+    Indexer: local generator implemented
+    Collector: Explorer/RPC address-list collector implemented
+    Rank data: generated from collected wallet metrics
     Dashboard: ready to read generated rank JSON
-    Next indexer phase: Explorer API / RPC data integration
+    Next indexer phase: broader wallet discovery and larger indexed wallet set
 
 ---
 
 ## Next Step
 
-Connect the wallet rank indexer to Explorer API and/or RPC-derived wallet variables.
+Expand the wallet rank pipeline from address-list based collection into a broader wallet discovery and indexing flow.
 
-The next phase will move from sample local wallet metrics into real DAC Testnet wallet activity data.
+The next phase should increase the indexed wallet population so rank outputs become meaningful across more DAC Testnet wallets.

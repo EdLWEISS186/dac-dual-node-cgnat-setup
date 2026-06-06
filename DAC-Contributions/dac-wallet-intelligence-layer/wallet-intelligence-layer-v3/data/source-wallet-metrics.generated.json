@@ -1,0 +1,32 @@
+{
+  "chain_id": 21894,
+  "feature": "Wallet Rank Intelligence",
+  "generated_at": "2026-06-06T13:42:21+00:00",
+  "native_token": "DACC",
+  "network": "DAC Testnet",
+  "project": "Wallet Intelligence Layer v3.0.0",
+  "source": {
+    "address_list": "/home/jeruzzalem/dac-contribution/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/data/wallet-addresses.sample.txt",
+    "explorer_api": "https://exptest.dachain.tech/api",
+    "rpc_url": "https://rpctest.dachain.tech/"
+  },
+  "wallet_count": 1,
+  "wallets": [
+    {
+      "address": "0x870ad63acc507cdfd878f170606d19ae78988afe",
+      "collection_status": "OK",
+      "errors": [],
+      "metrics": {
+        "collection_diversity": 28,
+        "estimated_stake": "0",
+        "gas_used": 159674458,
+        "native_balance": "2.832332633168000269",
+        "native_volume": "163.994362232495279735",
+        "nft_holdings": 226,
+        "reputation_score": 74,
+        "sybil_risk_score": 17,
+        "tx_count": 3111
+      }
+    }
+  ]
+}

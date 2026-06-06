@@ -9,3 +9,7 @@
 # Python cache
 __pycache__/
 *.pyc
+
+# Wallet metrics collector artifacts
+!data/wallet-addresses.sample.txt
+!data/source-wallet-metrics.generated.json
