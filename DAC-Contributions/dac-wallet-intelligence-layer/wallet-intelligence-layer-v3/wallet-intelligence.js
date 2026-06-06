@@ -441,7 +441,6 @@ async function checkWallet(address) {
       output.sybilHeuristics = await getSybilHeuristicsSafely(address, output);
       output.dynamicIntelligenceBadge = buildDynamicIntelligenceBadge(output);
       output.dynamicIntelligenceBadge.onchain = await getWalletStatusBadgeStateSafely(address);
-      output.walletRankIntelligence = await getWalletRankIntelligenceSafely(address);
       renderFullOutput(output);
       setStatus(
         "success",
@@ -456,7 +455,6 @@ async function checkWallet(address) {
       const output = buildPartialExplorerOutput(address, explorerResult);
       output.historicalActivity = await getHistoricalActivitySafely(address);
       output.sybilHeuristics = await getSybilHeuristicsSafely(address, output);
-      output.walletRankIntelligence = await getWalletRankIntelligenceSafely(address);
       renderPartialOutput(output);
       setStatus(
         "partial",
@@ -480,7 +478,6 @@ async function checkWallet(address) {
 
     try {
       const rpcOutput = await buildRpcFallbackOutput(address, explorerError);
-      rpcOutput.walletRankIntelligence = await getWalletRankIntelligenceSafely(address);
       renderRpcFallbackOutput(rpcOutput);
       setStatus(
         "fallback",
@@ -3522,7 +3519,15 @@ function renderFullOutput(output) {
   renderHistoricalActivity(output.historicalActivity);
   renderSybilHeuristics(output.sybilHeuristics);
   renderDynamicIntelligenceBadge(output.dynamicIntelligenceBadge);
-  renderWalletRankIntelligence(output.walletRankIntelligence);
+  renderWalletRankIntelligence(null);
+
+  if (output && output.wallet) {
+    getWalletRankIntelligenceSafely(output.wallet)
+      .then(renderWalletRankIntelligence)
+      .catch((error) => {
+        console.warn("Wallet Rank Intelligence isolated render failed:", error);
+      });
+  }
   renderScoringBreakdown(output.reputationScoring);
   renderKnownCollectionRegistry(output.knownCollectionRegistry);
   renderCollections(output.nftCollections || []);
