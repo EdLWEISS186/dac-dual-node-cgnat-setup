@@ -1,6 +1,8 @@
 name: WIL v3 Rank Data Engine
 
 on:
+  schedule:
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
