@@ -3393,7 +3393,7 @@ function renderWalletRankIntelligence(rankData) {
       </article>
     `).join("");
 
-    el.walletRankGrid.innerHTML = syncStatusHtml + nanRankCards;
+    el.walletRankGrid.innerHTML = renderRankSyncStatus(summary) + nanRankCards;
     return;
   }
 
@@ -3518,7 +3518,7 @@ function renderWalletRankIntelligence(rankData) {
     `
     : "";
 
-  el.walletRankGrid.innerHTML = syncStatusHtml + availableMetricCards + pendingHtml;
+  el.walletRankGrid.innerHTML = availableMetricCards + pendingHtml;
 }
 
 // Rendering
