@@ -161,9 +161,11 @@ def insert_address_batch(conn: sqlite3.Connection, items: Iterable[Dict[str, Any
     if not rows:
         return 0
 
+    before_count = conn.execute("SELECT COUNT(*) FROM addresses").fetchone()[0]
+
     conn.executemany(
         """
-        INSERT OR REPLACE INTO addresses (
+        INSERT OR IGNORE INTO addresses (
             address,
             native_funds_wei,
             native_funds_digits,
@@ -175,24 +177,82 @@ def insert_address_batch(conn: sqlite3.Connection, items: Iterable[Dict[str, Any
         rows,
     )
     conn.commit()
-    return len(rows)
+
+    after_count = conn.execute("SELECT COUNT(*) FROM addresses").fetchone()[0]
+    return after_count - before_count
 
 
-def fetch_all_addresses(conn: sqlite3.Connection, max_pages: int = 0, page_size_hint: int = 50) -> Dict[str, Any]:
-    page = 0
-    inserted = 0
-    next_page_params: Optional[Dict[str, Any]] = None
+
+def read_checkpoint(path: Path) -> Dict[str, Any]:
+    if not path.exists():
+        return {}
+
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def write_checkpoint(path: Path, payload: Dict[str, Any]) -> None:
+    write_json(path, payload)
+
+
+def clear_checkpoint(path: Path) -> None:
+    if path.exists():
+        path.unlink()
+
+
+def normalize_page_params(params: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    if not isinstance(params, dict):
+        return {}
+
+    return {
+        key: value
+        for key, value in params.items()
+        if value is not None
+    }
+
+
+def fetch_all_addresses(
+    conn: sqlite3.Connection,
+    max_pages: int = 0,
+    page_size_hint: int = 50,
+    checkpoint_path: Optional[Path] = None,
+    resume: bool = True,
+    reset: bool = False,
+) -> Dict[str, Any]:
+    checkpoint_path = checkpoint_path or Path("full-address-indexer-checkpoint.json")
+
+    if reset:
+        print("[INFO] Reset requested. Clearing checkpoint and indexed address table.")
+        clear_checkpoint(checkpoint_path)
+        conn.execute("DELETE FROM addresses")
+        conn.commit()
+
+    checkpoint = read_checkpoint(checkpoint_path) if resume else {}
+    page = int(checkpoint.get("pages_fetched", 0))
+    inserted = int(checkpoint.get("rows_inserted_or_replaced", 0))
+    next_page_params = checkpoint.get("next_page_params")
+    resumed_from_checkpoint = bool(checkpoint and next_page_params)
+
+    if resumed_from_checkpoint:
+        print(f"[INFO] Resuming from checkpoint after page {page}.")
+    else:
+        print("[INFO] Starting Explorer address pagination from the first page.")
+
     completed_full_pagination = False
+    stop_reason = None
 
     while True:
         page += 1
 
         if max_pages and page > max_pages:
             completed_full_pagination = False
+            stop_reason = "MAX_PAGES_REACHED_VALIDATION_ONLY"
             break
 
-        params = dict(next_page_params or {})
-        if page_size_hint:
+        params = normalize_page_params(next_page_params)
+        if page_size_hint and not params:
             params.setdefault("items_count", page_size_hint)
 
         url = build_url("/addresses", params)
@@ -203,14 +263,50 @@ def fetch_all_addresses(conn: sqlite3.Connection, max_pages: int = 0, page_size_
 
         if not isinstance(items, list) or not items:
             completed_full_pagination = True
+            stop_reason = "NO_MORE_ITEMS"
             print("[INFO] Explorer returned no more address items.")
             break
 
-        inserted += insert_address_batch(conn, items)
+        inserted_this_page = insert_address_batch(conn, items)
+        inserted += inserted_this_page
 
-        next_page_params = payload.get("next_page_params")
+        previous_page_params = normalize_page_params(next_page_params)
+        next_page_params = normalize_page_params(payload.get("next_page_params"))
+        total_rows = conn.execute("SELECT COUNT(*) FROM addresses").fetchone()[0]
+
+        if inserted_this_page == 0:
+            completed_full_pagination = False
+            stop_reason = "STALLED_PAGINATION_DUPLICATE_PAGE"
+            print("[WARN] Pagination appears stalled: page returned no new unique addresses.")
+            print("[WARN] Refusing to continue because full rank output requires reliable full pagination.")
+            break
+
+        if next_page_params and next_page_params == previous_page_params:
+            completed_full_pagination = False
+            stop_reason = "STALLED_PAGINATION_REPEATED_NEXT_PAGE_PARAMS"
+            print("[WARN] Pagination appears stalled: next_page_params repeated.")
+            print("[WARN] Refusing to continue because full rank output requires reliable full pagination.")
+            break
+
+        checkpoint_payload = {
+            "project": "Wallet Intelligence Layer v3.0.0",
+            "feature": "Wallet Rank Intelligence",
+            "status": "IN_PROGRESS",
+            "updated_at": now_utc(),
+            "pages_fetched": page,
+            "rows_inserted_or_replaced": inserted,
+            "total_rows": total_rows,
+            "last_page_item_count": len(items),
+            "last_page_inserted_new_unique_rows": inserted_this_page,
+            "next_page_params": next_page_params,
+            "source_endpoint": f"{EXPLORER_API_V2}/addresses",
+            "integrity_note": "This checkpoint is for resume safety only. It is not final rank data."
+        }
+        write_checkpoint(checkpoint_path, checkpoint_payload)
+
         if not next_page_params:
             completed_full_pagination = True
+            stop_reason = "NO_NEXT_PAGE_PARAMS"
             print("[INFO] Explorer pagination completed. No next_page_params returned.")
             break
 
@@ -218,11 +314,30 @@ def fetch_all_addresses(conn: sqlite3.Connection, max_pages: int = 0, page_size_
 
     total_rows = conn.execute("SELECT COUNT(*) FROM addresses").fetchone()[0]
 
+    final_checkpoint = {
+        "project": "Wallet Intelligence Layer v3.0.0",
+        "feature": "Wallet Rank Intelligence",
+        "status": "FULL_PAGINATION_COMPLETE" if completed_full_pagination else "VALIDATION_OR_INCOMPLETE_RUN",
+        "updated_at": now_utc(),
+        "pages_fetched": page if not (max_pages and page > max_pages) else max_pages,
+        "rows_inserted_or_replaced": inserted,
+        "total_rows": total_rows,
+        "next_page_params": None if completed_full_pagination else next_page_params,
+        "completed_full_pagination": completed_full_pagination,
+        "stop_reason": stop_reason,
+        "source_endpoint": f"{EXPLORER_API_V2}/addresses",
+        "integrity_note": "Capped/incomplete runs are validation only and must not be published as final rank data."
+    }
+    write_checkpoint(checkpoint_path, final_checkpoint)
+
     return {
-        "pages_fetched": page if not max_pages or page <= max_pages else max_pages,
+        "pages_fetched": final_checkpoint["pages_fetched"],
         "rows_inserted_or_replaced": inserted,
         "total_rows": total_rows,
         "completed_full_pagination": completed_full_pagination,
+        "resumed_from_checkpoint": resumed_from_checkpoint,
+        "checkpoint_path": str(checkpoint_path),
+        "stop_reason": stop_reason,
     }
 
 
@@ -440,6 +555,8 @@ def main() -> None:
     parser.add_argument("--publish", action="store_true", help="Publish wallet-rank-summary.json and rank-shards output after a completed full run.")
     parser.add_argument("--max-pages", type=int, default=0, help="Development-only page cap. Must not be used for final published rank data.")
     parser.add_argument("--page-size-hint", type=int, default=50, help="Explorer pagination items_count hint.")
+    parser.add_argument("--resume", action="store_true", help="Resume from the last checkpoint when available.")
+    parser.add_argument("--reset", action="store_true", help="Clear checkpoint and local work DB before running.")
     parser.add_argument("--work-dir", default=str(root / "data" / "indexer-work"), help="Local work/cache directory.")
     parser.add_argument("--out-dir", default=str(root / "data"), help="Output data directory.")
     args = parser.parse_args()
@@ -461,7 +578,15 @@ def main() -> None:
     stats = fetch_json(build_url("/stats"))
     conn = init_db(db_path)
 
-    fetch_result = fetch_all_addresses(conn, max_pages=args.max_pages, page_size_hint=args.page_size_hint)
+    checkpoint_path = work_dir / "full-address-indexer-checkpoint.json"
+    fetch_result = fetch_all_addresses(
+        conn,
+        max_pages=args.max_pages,
+        page_size_hint=args.page_size_hint,
+        checkpoint_path=checkpoint_path,
+        resume=args.resume,
+        reset=args.reset,
+    )
 
     work_summary = {
         "project": "Wallet Intelligence Layer v3.0.0",

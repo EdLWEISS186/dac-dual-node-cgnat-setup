@@ -426,11 +426,49 @@ No public rank data was written during the probe.
 
 ---
 
+## Full Indexer Resume and Pagination Safety
+
+The full Explorer address rank indexer now includes resume/checkpoint safety for long pagination runs.
+
+Checkpoint file:
+
+    data/indexer-work/full-address-indexer-checkpoint.json
+
+Work database:
+
+    data/indexer-work/explorer-address-rank.sqlite
+
+Safety behavior:
+
+- `--reset` clears the local work database and checkpoint.
+- `--resume` continues from the last saved `next_page_params`.
+- capped runs remain validation-only.
+- `--publish` is refused when `--max-pages` is used.
+- public rank data is only allowed after full Explorer pagination completes.
+- duplicate/stalled pagination is detected and stops the run.
+
+Latest validation result:
+
+    mode: --full --max-pages 3 --reset
+    pages fetched: 2
+    total unique rows: 50
+    stop reason: STALLED_PAGINATION_DUPLICATE_PAGE
+    public rank data written: no
+
+This means the indexer correctly refused to continue when the Explorer address pagination returned duplicate data. This protects Wallet Rank Intelligence from publishing incomplete or unreliable rank data.
+
+Next investigation:
+
+    confirm the correct Explorer API pagination parameters for /api/v2/addresses
+    then re-run full pagination only after pagination advances reliably
+
+---
+
 ## Current Status
 
     Status: final hybrid v3 architecture locked
     Network snapshot: live Explorer API
-    Rank index: pending full valid custom indexer
+    Rank index: pending full valid custom indexer with reliable Explorer pagination
     Manual/sample rank artifacts: removed
     UI model: single wallet input, single CHECK button, one integrated Wallet Rank Intelligence section
     Public dependency model: official DAC public sources only
@@ -444,7 +482,8 @@ No public rank data was written during the probe.
 Continue the full Explorer-visible address rank indexer.
 
 Next implementation steps:
-1. Add safe resume/checkpoint handling for long full pagination.
-2. Add sharded frontend lookup for rank-shards/{address_prefix}.json.
-3. Run full pagination only when ready to publish valid rank data.
-4. Keep limited runs as probe/validation only, never as final Wallet Rank Intelligence output.
+1. Confirm reliable Explorer API pagination for /api/v2/addresses.
+2. Continue full pagination only after duplicate/stalled page behavior is resolved.
+3. Add sharded frontend lookup for rank-shards/{address_prefix}.json.
+4. Run full pagination only when ready to publish valid rank data.
+5. Keep limited runs as probe/validation only, never as final Wallet Rank Intelligence output.
