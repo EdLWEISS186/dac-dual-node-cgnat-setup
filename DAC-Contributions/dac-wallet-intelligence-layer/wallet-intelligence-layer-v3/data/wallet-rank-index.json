@@ -1,5 +1,5 @@
 {
   "directory": "data/rank-shards",
-  "mode": "PENDING",
-  "summary": "Rank shards are pending until the variable-aware rank-data-engine backfill produces valid wallet metrics."
+  "mode": "SHARDED",
+  "summary": "Use rank-shards/{address_prefix}.json for wallet rank lookup."
 }
