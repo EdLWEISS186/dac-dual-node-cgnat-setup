@@ -3256,6 +3256,34 @@ function formatWalletRankTier(value) {
   return String(value).replaceAll("_", " ");
 }
 
+function renderRankSyncStatus(summary) {
+  const sync = summary?.sync_status || {};
+  const isFullySynced = sync.historical_backfill_complete === true;
+
+  const latestSnapshotTime = sync.latest_snapshot_time || sync.last_sync_at || summary?.engine_updated_at || "Unknown";
+  const latestSnapshot = sync.latest_snapshot || summary?.engine_latest_snapshot || "Unknown";
+  const processedTx = summary?.total_processed_transactions ?? "NaN";
+  const rankedWallets = summary?.total_ranked_wallets ?? "NaN";
+
+  const label = isFullySynced ? "Fully synced" : "Backfill in progress";
+  const tooltip = isFullySynced
+    ? `Rank data is valid and fully synced from genesis to the latest snapshot. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`
+    : `Rank data is still being backfilled from latest transactions toward genesis. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`;
+
+  return `
+    <div class="wallet-rank-sync-status ${isFullySynced ? "is-synced" : "is-backfilling"}">
+      <div>
+        <span>${escapeRankHtml(label)}</span>
+        <span class="wallet-rank-info" title="${escapeRankHtml(tooltip)}">ⓘ</span>
+      </div>
+      <small>Latest snapshot: ${escapeRankHtml(latestSnapshotTime)}</small>
+      <small>Processed tx: ${formatRankValue(processedTx)}</small>
+      <small>Ranked wallets: ${formatRankValue(rankedWallets)}</small>
+    </div>
+  `;
+}
+
+
 function renderWalletRankIntelligence(rankData) {
   if (!el.walletRankCard || !el.walletRankStatus || !el.walletRankGrid || !el.walletRankMeta) return;
 
@@ -3329,7 +3357,7 @@ function renderWalletRankIntelligence(rankData) {
       </article>
     `).join("");
 
-    el.walletRankGrid.innerHTML = nanRankCards;
+    el.walletRankGrid.innerHTML = syncStatusHtml + nanRankCards;
     return;
   }
 
@@ -3337,6 +3365,7 @@ function renderWalletRankIntelligence(rankData) {
     el.walletRankStatus.textContent = "Network snapshot live · Wallet not indexed";
     el.walletRankMeta.innerHTML = snapshotHtml;
     el.walletRankGrid.innerHTML = `
+      ${syncStatusHtml}
       <div class="wallet-rank-pending">
         <strong>Wallet not found in the current valid rank index</strong>
         <p>
@@ -3412,7 +3441,7 @@ function renderWalletRankIntelligence(rankData) {
     `
     : "";
 
-  el.walletRankGrid.innerHTML = availableMetricCards + pendingHtml;
+  el.walletRankGrid.innerHTML = syncStatusHtml + availableMetricCards + pendingHtml;
 }
 
 // Rendering
