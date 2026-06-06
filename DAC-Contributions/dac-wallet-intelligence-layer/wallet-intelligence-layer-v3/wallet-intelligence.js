@@ -3384,10 +3384,15 @@ function renderWalletRankIntelligence(rankData) {
 
     el.walletRankMeta.innerHTML = snapshotHtml + syncStatusBlock;
 
+    const isFullySyncedForRank = summary?.sync_status?.historical_backfill_complete === true;
     const rankDenominator =
-      summary.total_ranked_wallets ||
-      snapshot.total_addresses ||
-      "NaN";
+      isFullySyncedForRank
+        ? (snapshot.total_addresses || summary.total_ranked_wallets || "NaN")
+        : (summary.total_ranked_wallets || "NaN");
+
+    const denominatorLabel = isFullySyncedForRank
+      ? "fully synced wallet population"
+      : "current indexed snapshot";
 
     const placeholderCards = metrics.map((metric) => `
       <article class="wallet-rank-metric wallet-rank-metric-nan">
@@ -3395,14 +3400,15 @@ function renderWalletRankIntelligence(rankData) {
         <strong>NaN</strong>
         <div class="rank-line">Rank: NaN / ${rankDenominator === "NaN" ? "NaN" : formatRankValue(rankDenominator)}</div>
         <div class="percentile-line">Percentile: NaN%</div>
+        <div class="rank-scope-line">${escapeRankHtml(denominatorLabel)}</div>
       </article>
     `).join("");
 
     el.walletRankGrid.innerHTML = `
       ${placeholderCards}
       <div class="wallet-rank-pending wallet-rank-index-note">
-        <strong>Wallet not found in the current valid rank index</strong>
-        <p>This wallet has live wallet intelligence data, but rank values are not available in the current indexed snapshot yet.</p>
+        <strong>Wallet not found in the current indexed rank snapshot</strong>
+        <p>This wallet has live wallet intelligence data, but rank values are not available in the current synced snapshot yet. The rank-data-engine is still syncing historical data toward genesis.</p>
       </div>
     `;
     return;
