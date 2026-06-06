@@ -3267,46 +3267,92 @@ function renderWalletRankIntelligence(rankData) {
   el.walletRankCard.classList.remove("hidden");
 
   const summary = rankData.summary || {};
+  const snapshot = rankData.networkSnapshot || {};
   const profile = rankData.profile;
   const metrics = rankData.metrics || [];
-  const totalRanked = profile && (profile.total_ranked_wallets || summary.total_ranked_wallets)
-    ? Number(profile.total_ranked_wallets || summary.total_ranked_wallets)
-    : Number(summary.total_ranked_wallets || 0);
+  const explorerVisibleWallets = Number(snapshot.total_addresses || 0);
+  const validIndex = Boolean(rankData.hasValidIndex);
+
+  const snapshotCards = [
+    {
+      label: "Explorer-visible wallets",
+      value: snapshot.total_addresses ? formatRankValue(snapshot.total_addresses) : "Unavailable"
+    },
+    {
+      label: "Daily transactions",
+      value: snapshot.transactions_today ? formatRankValue(snapshot.transactions_today) : "Unavailable"
+    },
+    {
+      label: "Gas used today",
+      value: snapshot.gas_used_today ? formatRankValue(snapshot.gas_used_today) : "Unavailable"
+    },
+    {
+      label: "Total transactions",
+      value: snapshot.total_transactions ? formatRankValue(snapshot.total_transactions) : "Unavailable"
+    },
+    {
+      label: "Total blocks",
+      value: snapshot.total_blocks ? formatRankValue(snapshot.total_blocks) : "Unavailable"
+    },
+    {
+      label: "Network utilization",
+      value: snapshot.network_utilization_percentage !== null && snapshot.network_utilization_percentage !== undefined
+        ? `${formatRankValue(snapshot.network_utilization_percentage)}%`
+        : "Unavailable"
+    }
+  ];
+
+  const snapshotHtml = snapshotCards.map((item) => `
+    <div class="wallet-rank-meta-item">
+      <span>${escapeRankHtml(item.label)}</span>
+      <strong>${escapeRankHtml(item.value)}</strong>
+    </div>
+  `).join("");
 
   if (rankData.status === "ERROR") {
     el.walletRankStatus.textContent = "Rank lookup error";
-    el.walletRankMeta.innerHTML = "";
+    el.walletRankMeta.innerHTML = snapshotHtml;
     el.walletRankGrid.innerHTML = `<p class="wallet-rank-warning">${escapeRankHtml(rankData.message || "Rank lookup failed.")}</p>`;
     return;
   }
 
-  if (!profile) {
-    el.walletRankStatus.textContent = rankData.status === "EMPTY_INDEX"
-      ? "Rank index is empty"
-      : "Wallet not indexed";
-
-    el.walletRankMeta.innerHTML = `
-      <div class="wallet-rank-meta-item">
-        <span>Ranked wallets</span>
-        <strong>${formatRankValue(totalRanked)}</strong>
-      </div>
-      <div class="wallet-rank-meta-item">
-        <span>Rank model</span>
-        <strong>${escapeRankHtml(summary.rank_model || "wallet-rank-intelligence-v3.0.0")}</strong>
-      </div>
-      <div class="wallet-rank-meta-item">
-        <span>Status</span>
-        <strong>${escapeRankHtml(rankData.status)}</strong>
+  if (!validIndex || rankData.status === "PENDING_VALID_INDEX") {
+    el.walletRankStatus.textContent = "Network snapshot live · Rank index pending";
+    el.walletRankMeta.innerHTML = snapshotHtml;
+    el.walletRankGrid.innerHTML = `
+      <div class="wallet-rank-pending">
+        <strong>Rank index pending valid custom index</strong>
+        <p>
+          Explorer API network snapshot is displayed in real time. Per-variable rank and overall wallet rank
+          will appear here after a valid custom rank index is generated for metrics not directly exposed by the Explorer API.
+        </p>
+        <p>
+          Current model: live Explorer API snapshot + custom indexer for transaction rank, gas-used rank,
+          native-volume rank, asset/reputation/risk ranks, and overall rank.
+        </p>
       </div>
     `;
-
-    el.walletRankGrid.innerHTML = `<p class="wallet-rank-warning">This wallet is not available in the current generated rank index. Run a broader pipeline refresh to include more wallets.</p>`;
     return;
   }
 
+  if (!profile) {
+    el.walletRankStatus.textContent = "Network snapshot live · Wallet not indexed";
+    el.walletRankMeta.innerHTML = snapshotHtml;
+    el.walletRankGrid.innerHTML = `
+      <div class="wallet-rank-pending">
+        <strong>Wallet not found in the current valid rank index</strong>
+        <p>
+          This wallet has live wallet intelligence data, but it is not included in the current custom rank snapshot yet.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  const totalRanked = Number(profile.total_ranked_wallets || summary.total_ranked_wallets || 0);
   el.walletRankStatus.textContent = `${formatWalletRankTier(profile.rank_tier)} · ${formatRankValue(totalRanked)} ranked wallets`;
 
-  el.walletRankMeta.innerHTML = `
+  el.walletRankMeta.innerHTML = snapshotHtml + `
     <div class="wallet-rank-meta-item">
       <span>Rank tier</span>
       <strong>${escapeRankHtml(formatWalletRankTier(profile.rank_tier))}</strong>
@@ -3316,8 +3362,8 @@ function renderWalletRankIntelligence(rankData) {
       <strong>${escapeRankHtml(profile.strongest_metric || "—")}</strong>
     </div>
     <div class="wallet-rank-meta-item">
-      <span>Weakest signal</span>
-      <strong>${escapeRankHtml(profile.weakest_metric || "—")}</strong>
+      <span>Rank denominator</span>
+      <strong>${totalRanked ? formatRankValue(totalRanked) : formatRankValue(explorerVisibleWallets)} wallets</strong>
     </div>
   `;
 
@@ -3334,7 +3380,7 @@ function renderWalletRankIntelligence(rankData) {
       <article class="wallet-rank-metric">
         <span>${escapeRankHtml(metric.label)}</span>
         <strong>${formatRankValue(rawValue)} ${escapeRankHtml(metric.suffix)}</strong>
-        <div class="rank-line">${formatWalletRank(rank, totalRanked)}</div>
+        <div class="rank-line">${formatWalletRank(rank, totalRanked || explorerVisibleWallets)}</div>
         <div class="percentile-line">${formatWalletRankPercentile(percentile)}</div>
       </article>
     `;
@@ -3342,7 +3388,6 @@ function renderWalletRankIntelligence(rankData) {
 
   el.walletRankGrid.innerHTML = cards;
 }
-
 
 // Rendering
 // ======================================================

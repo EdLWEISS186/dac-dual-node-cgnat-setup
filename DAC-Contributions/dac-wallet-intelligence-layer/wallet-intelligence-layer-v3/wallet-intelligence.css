@@ -1596,3 +1596,25 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
     text-align: left;
   }
 }
+
+/* Wallet Rank Intelligence — hybrid pending-index state */
+.wallet-rank-pending {
+  grid-column: 1 / -1;
+  border: 1px solid rgba(252, 211, 77, 0.28);
+  border-radius: 16px;
+  padding: 16px;
+  background: rgba(113, 63, 18, 0.18);
+  color: #fde68a;
+}
+
+.wallet-rank-pending strong {
+  display: block;
+  color: #fef3c7;
+  margin-bottom: 8px;
+}
+
+.wallet-rank-pending p {
+  margin: 8px 0 0;
+  color: #fcd34d;
+  line-height: 1.55;
+}
