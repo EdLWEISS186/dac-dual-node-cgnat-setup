@@ -129,6 +129,62 @@ This aligns v3 with the intended product direction: ranking is not a separate ch
 
 ---
 
+## Final v3 Architecture Lock
+
+Wallet Intelligence Layer v3.0.0 is locked as a hybrid rank intelligence layer.
+
+The final model is:
+
+    single wallet address input
+            ↓
+    single CHECK button
+            ↓
+    live wallet intelligence from existing v2 logic
+            ↓
+    real-time Explorer API network snapshot
+            ↓
+    valid custom rank index for unavailable rank metrics
+            ↓
+    one integrated Wallet Rank Intelligence section
+
+This project must not introduce a second wallet input, a second rank button, or a standalone rank checker.
+
+Official public sources only:
+
+    RPC:          https://rpctest.dachain.tech/
+    Explorer:     https://exptest.dachain.tech/
+    Explorer API: https://exptest.dachain.tech/api
+    Explorer API v2: https://exptest.dachain.tech/api/v2
+
+Data taken directly from Explorer API should be used live. Data not directly exposed as rank endpoints should be calculated by custom indexer logic from Explorer/RPC/Explorer API data.
+
+Confirmed live Explorer API data:
+
+    total_addresses
+    total_transactions
+    transactions_today
+    gas_used_today
+    total_blocks
+    network_utilization_percentage
+    live address balance
+    address list with coin_balance and transactions_count
+    balance-sorted address list
+
+Rank data requiring custom indexer logic:
+
+    transaction-count rank
+    gas-used rank
+    native-volume rank
+    NFT holdings rank
+    collection diversity rank
+    reputation score rank
+    low-risk rank
+    overall wallet rank
+
+Manual or limited test index runs are validation-only and must not be presented as final Wallet Rank Intelligence data.
+
+---
+
 ## Hybrid Rank Intelligence Model
 
 Wallet Intelligence Layer v3 now uses a hybrid data model.
@@ -319,17 +375,19 @@ The rank layer is a community-built public testnet intelligence signal.
 
 ## Current Status
 
-    Status: v3 hybrid rank model being corrected
-    Network snapshot: real-time Explorer API
+    Status: final hybrid v3 architecture locked
+    Network snapshot: live Explorer API
     Rank index: pending valid custom indexer
-    Invalid manual rank artifacts: removed
-    Dashboard goal: single wallet check with one integrated Wallet Rank Intelligence section
+    Manual/sample rank artifacts: removed
+    UI model: single wallet input, single CHECK button, one integrated Wallet Rank Intelligence section
+    Public dependency model: official DAC public sources only
+
 
 
 ---
 
 ## Next Step
 
-Build the corrected hybrid Wallet Rank Intelligence section.
+Build the valid custom indexer logic for rank metrics not directly available from Explorer API.
 
-The next implementation should show real-time Explorer API network snapshot data and only display rank values from a valid custom rank index when the index is available.
+The indexer must calculate ranks from the correct Explorer/RPC/Explorer API data sources and must not present limited test runs as final rank data.
