@@ -1627,3 +1627,13 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
 .wallet-rank-pending-compact p {
   text-transform: capitalize;
 }
+
+/* Wallet Rank Intelligence — NaN placeholder cards */
+.wallet-rank-metric-nan {
+  opacity: 0.88;
+  border-style: dashed;
+}
+
+.wallet-rank-metric-nan strong {
+  color: #facc15;
+}

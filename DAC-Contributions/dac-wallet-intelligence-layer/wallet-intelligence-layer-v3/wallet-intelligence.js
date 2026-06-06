@@ -3317,21 +3317,19 @@ function renderWalletRankIntelligence(rankData) {
   }
 
   if (!validIndex || rankData.status === "PENDING_VALID_INDEX") {
-    el.walletRankStatus.textContent = "Network snapshot live · Rank index pending";
+    el.walletRankStatus.textContent = "Network snapshot live · Rank data NaN";
     el.walletRankMeta.innerHTML = snapshotHtml;
-    el.walletRankGrid.innerHTML = `
-      <div class="wallet-rank-pending">
-        <strong>Rank index pending valid custom index</strong>
-        <p>
-          Explorer API network snapshot is displayed in real time. Per-variable rank and overall wallet rank
-          will appear here after a valid custom rank index is generated for metrics not directly exposed by the Explorer API.
-        </p>
-        <p>
-          Current model: live Explorer API snapshot + custom indexer for transaction rank, gas-used rank,
-          native-volume rank, asset/reputation/risk ranks, and overall rank.
-        </p>
-      </div>
-    `;
+
+    const nanRankCards = metrics.map((metric) => `
+      <article class="wallet-rank-metric wallet-rank-metric-nan">
+        <span>${escapeRankHtml(metric.label)}</span>
+        <strong>NaN</strong>
+        <div class="rank-line">Rank: NaN / ${snapshot.total_addresses ? formatRankValue(snapshot.total_addresses) : "NaN"}</div>
+        <div class="percentile-line">Percentile: NaN%</div>
+      </article>
+    `).join("");
+
+    el.walletRankGrid.innerHTML = nanRankCards;
     return;
   }
 
