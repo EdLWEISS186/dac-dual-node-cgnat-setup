@@ -2,21 +2,26 @@
   "chain_id": 21894,
   "core_statement": "v3 turns every verified wallet variable into a comparative public rank signal.",
   "engine_checkpoint": {
-    "last_sync_at": "2026-06-06T20:46:48+00:00",
-    "last_synced_block": 14966901,
+    "backfill_status": "IN_PROGRESS",
+    "backfill_stop_reason": "MAX_PAGES_REACHED",
+    "historical_backfill_complete": false,
+    "incremental_anchor_hash": "0xd0891807f4d66606f9f3f18a6dbcd13373b9bae4f3157aca83c564af2c1ac1b3",
+    "last_sync_at": "2026-06-06T21:19:46+00:00",
+    "last_synced_block": 14966899,
     "last_transaction_cursor": {
-      "block_number": 14966901,
-      "index": 130,
-      "items_count": 850
+      "block_number": 14966899,
+      "index": 53,
+      "items_count": 1100
     },
-    "last_transaction_hash": "0xc817c03fe688241b3284f20b6986f9023c841c0a61dea947c829008666867774",
-    "sync_phase": "INCREMENTAL_SYNC"
+    "last_transaction_hash": "0xab259c08b4565c364187e162e58779d91e41f98ab0bc6070ac4356faa65b1fa2",
+    "latest_seen_transaction_hash": "0xd0891807f4d66606f9f3f18a6dbcd13373b9bae4f3157aca83c564af2c1ac1b3",
+    "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "engine_latest_snapshot": "data/snapshots/2026-06-06T20-46-48-114399+00-00-changed.json",
+  "engine_latest_snapshot": "data/snapshots/backfill-2026-06-06T21-19-46-517159+00-00-changed.json",
   "engine_status": "SYNCED",
-  "engine_updated_at": "2026-06-06T20:46:48+00:00",
+  "engine_updated_at": "2026-06-06T21:19:46+00:00",
   "feature": "Wallet Rank Intelligence",
-  "generated_at": "2026-06-06T21:04:04+00:00",
+  "generated_at": "2026-06-06T21:19:46+00:00",
   "index_scope": {
     "note": "Ranks are calculated from currently synced rank-data-engine wallet metrics.",
     "raw_transaction_dump": false,
@@ -37,7 +42,7 @@
   "rank_shards": {
     "directory": "data/rank-shards",
     "prefix_length": 2,
-    "shard_count": 243
+    "shard_count": 249
   },
   "ranking_variables": [
     "transactions",
@@ -47,13 +52,13 @@
   ],
   "status": "GENERATED_FROM_RANK_DATA_ENGINE",
   "sync_status": {
-    "backfill_status": null,
+    "backfill_status": "IN_PROGRESS",
     "historical_backfill_complete": false,
-    "last_sync_at": "2026-06-06T20:46:48+00:00",
-    "latest_snapshot": "data/snapshots/2026-06-06T20-46-48-114399+00-00-changed.json",
-    "latest_snapshot_time": "2026-06-06T20:46:48+00:00",
-    "sync_phase": "INCREMENTAL_SYNC"
+    "last_sync_at": "2026-06-06T21:19:46+00:00",
+    "latest_snapshot": "data/snapshots/backfill-2026-06-06T21-19-46-517159+00-00-changed.json",
+    "latest_snapshot_time": "2026-06-06T21:19:46+00:00",
+    "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "total_processed_transactions": 850,
-  "total_ranked_wallets": 785
+  "total_processed_transactions": 1100,
+  "total_ranked_wallets": 977
 }
