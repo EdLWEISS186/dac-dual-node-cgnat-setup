@@ -1750,3 +1750,9 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
     grid-template-columns: 1fr;
   }
 }
+
+/* Wallet Rank Intelligence — indexed snapshot note */
+.wallet-rank-index-note {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+}
