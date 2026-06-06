@@ -89,6 +89,10 @@ Current additions:
 - Frontend rank engine.
 - Address-based rank lookup UI.
 - Empty-index handling before the indexer is implemented.
+- Local wallet rank indexer skeleton.
+- Sample source wallet metrics file.
+- Generated sample rank summary and wallet rank index artifacts.
+- Local `.gitignore` allowlist for v3 JSON rank artifacts.
 - README documentation for the v3 rank-aware model.
 
 ---
@@ -123,6 +127,43 @@ Stores wallet-level rank data.
 The current rank index is intentionally empty because the chain-wide rank indexer has not been implemented yet.
 
 ---
+## Wallet Rank Indexer Skeleton
+
+The v3 project now includes a local rank generator:
+
+    scripts/generate_wallet_rank_index.py
+
+Current input:
+
+    data/source-wallet-metrics.sample.json
+
+Current outputs:
+
+    data/wallet-rank-summary.json
+    data/wallet-rank-index.json
+
+The generator reads wallet-level metric data, computes comparative ranks for supported variables, calculates percentiles, assigns rank tiers, and writes static JSON artifacts for the dashboard.
+
+Current skeleton behavior:
+
+    source wallet count: 4
+    status: GENERATED_FROM_LOCAL_SOURCE
+
+The sample wallet:
+
+    0x870ad63acc507cdfd878f170606d19ae78988afe
+
+currently produces:
+
+    TX Rank: 2
+    Gas Rank: 2
+    Volume Rank: 2
+    Tier: TOP_50_PERCENT
+
+This confirms that the ranking logic, JSON generation, and frontend-readable data format are working before connecting the indexer to Explorer API or RPC-derived data.
+
+---
+
 
 ## Frontend Rank Engine
 
@@ -222,15 +263,16 @@ The rank layer is a community-built public testnet intelligence signal.
 
 ## Current Status
 
-    Status: v3 foundation and frontend rank lookup layer added
-    Indexer: not yet implemented
-    Rank data: schema ready, real wallet ranking not generated yet
+    Status: v3 foundation, frontend rank lookup layer, and local indexer skeleton added
+    Indexer: local skeleton implemented
+    Rank data: generated from sample source wallet metrics
     Dashboard: ready to read generated rank JSON
+    Next indexer phase: Explorer API / RPC data integration
 
 ---
 
 ## Next Step
 
-Build the wallet rank indexer skeleton.
+Connect the wallet rank indexer to Explorer API and/or RPC-derived wallet variables.
 
-The indexer will prepare the pipeline for generating chain-wide rank data from Explorer API and/or RPC-derived wallet variables.
+The next phase will move from sample local wallet metrics into real DAC Testnet wallet activity data.

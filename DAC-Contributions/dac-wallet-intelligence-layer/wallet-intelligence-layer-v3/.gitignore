@@ -1,0 +1,11 @@
+# Wallet Intelligence Layer v3 local gitignore
+# Root repo ignores *.json globally, so v3 explicitly allows rank artifacts.
+
+!data/
+!data/wallet-rank-summary.json
+!data/wallet-rank-index.json
+!data/source-wallet-metrics.sample.json
+
+# Python cache
+__pycache__/
+*.pyc
