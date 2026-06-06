@@ -464,11 +464,66 @@ Next investigation:
 
 ---
 
+## Transaction Rank Indexer Foundation
+
+The v3 project now includes a transaction-stream rank indexer foundation:
+
+    scripts/build_transaction_rank_index.py
+
+This is the correct custom-indexer direction after `/api/v2/addresses` pagination was found to return duplicate/stalled pages.
+
+Official source:
+
+    https://exptest.dachain.tech/api/v2/transactions
+
+Confirmed transaction pagination result:
+
+    page 1 count: 50
+    page 2 count: 50
+    overlap: 0
+    new page 2 transactions: 50
+    result: OK_ADVANCES
+
+Confirmed transaction fields:
+
+    hash
+    block_number
+    position
+    from
+    to
+    gas_used
+    value
+    timestamp
+    status
+
+Current validation result:
+
+    validation pages: 3
+    processed transactions: 150
+    wallets seen: 167
+    stop reason: MAX_PAGES_VALIDATION_ONLY
+    public rank data written: false
+
+Indexer metrics foundation:
+
+    transactions
+    gas_used
+    native_volume
+
+Integrity rule:
+
+    Validation runs do not publish public rank data.
+    Public rank output must only be generated after full/integrity-safe indexing is implemented.
+
+This transaction indexer becomes the primary custom rank source for variables not directly exposed as rank endpoints by Explorer API.
+
+---
+
 ## Current Status
 
     Status: final hybrid v3 architecture locked
     Network snapshot: live Explorer API
-    Rank index: pending full valid custom indexer with reliable Explorer pagination
+    Rank index: pending full valid transaction-stream custom indexer
     Manual/sample rank artifacts: removed
     UI model: single wallet input, single CHECK button, one integrated Wallet Rank Intelligence section
     Public dependency model: official DAC public sources only
@@ -482,8 +537,8 @@ Next investigation:
 Continue the full Explorer-visible address rank indexer.
 
 Next implementation steps:
-1. Confirm reliable Explorer API pagination for /api/v2/addresses.
-2. Continue full pagination only after duplicate/stalled page behavior is resolved.
+1. Expand the transaction-stream indexer with full resume/checkpoint mode.
+2. Add rank generation for transactions, gas_used, native_volume, and overall rank.
 3. Add sharded frontend lookup for rank-shards/{address_prefix}.json.
-4. Run full pagination only when ready to publish valid rank data.
+4. Publish rank data only after full/integrity-safe indexing is completed.
 5. Keep limited runs as probe/validation only, never as final Wallet Rank Intelligence output.
