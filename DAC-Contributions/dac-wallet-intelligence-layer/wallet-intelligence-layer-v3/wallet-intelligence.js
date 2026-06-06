@@ -3367,26 +3367,54 @@ function renderWalletRankIntelligence(rankData) {
     </div>
   `;
 
-  const cards = metrics.map((metric) => {
-    const walletMetrics = profile.metrics || {};
-    const ranks = profile.ranks || {};
-    const percentiles = profile.percentiles || {};
+  const walletMetrics = profile.metrics || {};
+  const ranks = profile.ranks || {};
+  const percentiles = profile.percentiles || {};
+  const availableVariables = new Set(profile.available_rank_variables || []);
+  const pendingVariables = profile.pending_rank_variables || [];
 
-    const rawValue = walletMetrics[metric.key];
-    const rank = ranks[metric.rankKey] ?? ranks[metric.key];
-    const percentile = percentiles[metric.rankKey] ?? percentiles[metric.key];
+  const availableMetricCards = metrics
+    .filter((metric) => {
+      const key = metric.rankKey || metric.key;
+      const rank = ranks[key] ?? ranks[metric.key];
 
-    return `
-      <article class="wallet-rank-metric">
-        <span>${escapeRankHtml(metric.label)}</span>
-        <strong>${formatRankValue(rawValue)} ${escapeRankHtml(metric.suffix)}</strong>
-        <div class="rank-line">${formatWalletRank(rank, totalRanked || explorerVisibleWallets)}</div>
-        <div class="percentile-line">${formatWalletRankPercentile(percentile)}</div>
-      </article>
-    `;
-  }).join("");
+      if (availableVariables.size > 0) {
+        return availableVariables.has(key) || availableVariables.has(metric.key);
+      }
 
-  el.walletRankGrid.innerHTML = cards;
+      return rank !== null && rank !== undefined;
+    })
+    .map((metric) => {
+      const key = metric.rankKey || metric.key;
+      const rawValue = walletMetrics[metric.key];
+      const rank = ranks[key] ?? ranks[metric.key];
+      const percentile = percentiles[key] ?? percentiles[metric.key];
+
+      const valueText = metric.key === "overall_rank"
+        ? "Composite rank signal"
+        : `${formatRankValue(rawValue)} ${escapeRankHtml(metric.suffix)}`;
+
+      return `
+        <article class="wallet-rank-metric">
+          <span>${escapeRankHtml(metric.label)}</span>
+          <strong>${valueText}</strong>
+          <div class="rank-line">${formatWalletRank(rank, totalRanked || explorerVisibleWallets)}</div>
+          <div class="percentile-line">${formatWalletRankPercentile(percentile)}</div>
+        </article>
+      `;
+    })
+    .join("");
+
+  const pendingHtml = pendingVariables.length
+    ? `
+      <div class="wallet-rank-pending wallet-rank-pending-compact">
+        <strong>Pending rank variables</strong>
+        <p>${pendingVariables.map((item) => escapeRankHtml(String(item).replaceAll("_", " "))).join(" · ")}</p>
+      </div>
+    `
+    : "";
+
+  el.walletRankGrid.innerHTML = availableMetricCards + pendingHtml;
 }
 
 // Rendering

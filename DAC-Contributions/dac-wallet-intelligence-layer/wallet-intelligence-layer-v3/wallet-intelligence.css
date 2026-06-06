@@ -1618,3 +1618,12 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
   color: #fcd34d;
   line-height: 1.55;
 }
+
+/* Wallet Rank Intelligence — partial valid rank rendering */
+.wallet-rank-pending-compact {
+  margin-top: 4px;
+}
+
+.wallet-rank-pending-compact p {
+  text-transform: capitalize;
+}

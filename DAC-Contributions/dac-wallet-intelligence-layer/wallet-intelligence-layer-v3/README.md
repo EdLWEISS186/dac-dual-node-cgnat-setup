@@ -609,6 +609,25 @@ If no valid custom rank index exists yet, the dashboard continues to display the
 
 ---
 
+## Partial Rank Rendering
+
+The Wallet Rank Intelligence section now supports partial valid rank datasets.
+
+When a valid rank shard exists, the dashboard renders only the rank variables that are actually available in the current custom index.
+
+Example available variables from the transaction-stream indexer:
+
+    transactions
+    gas_used
+    native_volume
+    overall_rank
+
+Variables not yet available are displayed as pending rank variables instead of empty or misleading rank cards.
+
+This keeps the dashboard honest while allowing the rank model to expand progressively as more custom indexers are added.
+
+---
+
 ## Current Status
 
     Status: final hybrid v3 architecture locked
@@ -617,6 +636,7 @@ If no valid custom rank index exists yet, the dashboard continues to display the
     Manual/sample rank artifacts: removed
     UI model: single wallet input, single CHECK button, one integrated Wallet Rank Intelligence section
     Frontend rank lookup: sharded rank mode ready
+    Rank rendering: supports partial valid rank datasets
     Public dependency model: official DAC public sources only
 
 
