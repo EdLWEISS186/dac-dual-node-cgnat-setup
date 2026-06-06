@@ -1,30 +1,50 @@
 {
-  "project": "Wallet Intelligence Layer v3.0.0",
-  "feature": "Wallet Rank Intelligence",
-  "core_statement": "v3 turns every verified wallet variable into a comparative public rank signal.",
-  "network": "DAC Testnet",
   "chain_id": 21894,
-  "native_token": "DACC",
-  "rank_model": "wallet-rank-intelligence-v3.0.0-hybrid",
-  "status": "HYBRID_MODEL_PENDING_VALID_INDEX",
-  "public_sources": {
-    "rpc": "https://rpctest.dachain.tech/",
-    "explorer": "https://exptest.dachain.tech/",
-    "explorer_api": "https://exptest.dachain.tech/api"
+  "core_statement": "v3 turns every verified wallet variable into a comparative public rank signal.",
+  "engine_checkpoint": {
+    "last_sync_at": "2026-06-06T20:03:42+00:00",
+    "last_synced_block": 14966908,
+    "last_transaction_cursor": {
+      "block_number": 14966908,
+      "index": 34,
+      "items_count": 350
+    },
+    "last_transaction_hash": "0xb5973634ecf079a55ce6130b655a6ac74fcd6227c1ff6aeb23ff3d3ff15c310d",
+    "sync_phase": "INCREMENTAL_SYNC"
   },
-  "network_snapshot_source": "Explorer API /api/v2/stats",
-  "total_ranked_wallets": 0,
-  "latest_indexed_block": null,
-  "ranking_variables": [
+  "engine_status": "SYNCED",
+  "engine_updated_at": "2026-06-06T20:03:42+00:00",
+  "feature": "Wallet Rank Intelligence",
+  "generated_at": "2026-06-06T20:15:27+00:00",
+  "index_scope": {
+    "note": "Ranks are calculated from currently synced rank-data-engine wallet metrics.",
+    "raw_transaction_dump": false,
+    "source": "rank-data-engine normalized wallet_metrics"
+  },
+  "native_token": "DACC",
+  "network": "DAC Testnet",
+  "pending_ranking_variables": [
     "native_funds",
-    "transactions",
-    "gas_used",
-    "native_volume",
     "nft_holdings",
     "collection_diversity",
     "reputation_score",
-    "low_sybil_risk",
+    "low_sybil_risk"
+  ],
+  "project": "Wallet Intelligence Layer v3.0.0",
+  "rank_data_source": "rank-data-engine/data/latest.json",
+  "rank_model": "wallet-rank-intelligence-v3.0.0-from-rank-data-engine",
+  "rank_shards": {
+    "directory": "data/rank-shards",
+    "prefix_length": 2,
+    "shard_count": 190
+  },
+  "ranking_variables": [
+    "transactions",
+    "gas_used",
+    "native_volume",
     "overall_rank"
   ],
-  "note": "Previous manual 100-wallet test artifacts were removed because they were only pipeline validation data, not final valid rank data. Final v3 uses real-time Explorer API network snapshot plus a custom indexer for unavailable rank metrics."
+  "status": "GENERATED_FROM_RANK_DATA_ENGINE",
+  "total_processed_transactions": 350,
+  "total_ranked_wallets": 374
 }
