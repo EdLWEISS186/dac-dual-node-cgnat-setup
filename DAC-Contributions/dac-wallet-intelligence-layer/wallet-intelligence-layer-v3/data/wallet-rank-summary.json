@@ -1,64 +1,52 @@
 {
   "chain_id": 21894,
-  "core_statement": "v3 turns every verified wallet variable into a comparative public rank signal.",
-  "engine_checkpoint": {
-    "backfill_status": "IN_PROGRESS",
-    "backfill_stop_reason": "MAX_PAGES_REACHED",
-    "historical_backfill_complete": false,
-    "incremental_anchor_hash": "0xd0891807f4d66606f9f3f18a6dbcd13373b9bae4f3157aca83c564af2c1ac1b3",
-    "last_sync_at": "2026-06-06T22:46:56+00:00",
-    "last_synced_block": 14966894,
-    "last_transaction_cursor": {
-      "block_number": 14966894,
-      "index": 30,
-      "items_count": 1600
-    },
-    "last_transaction_hash": "0xb27342d95d89539c6d659bf259cf27e75fbfef22bd2ccda9cf8ef391527b8a21",
-    "latest_seen_transaction_hash": "0xd0891807f4d66606f9f3f18a6dbcd13373b9bae4f3157aca83c564af2c1ac1b3",
-    "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
-  },
-  "engine_latest_snapshot": "data/snapshots/backfill-2026-06-06T22-46-56-278515+00-00-changed.json",
-  "engine_status": "SYNCED",
-  "engine_updated_at": "2026-06-06T22:46:56+00:00",
   "feature": "Wallet Rank Intelligence",
-  "generated_at": "2026-06-06T22:46:56+00:00",
+  "generated_at": "2026-06-06T23:01:49+00:00",
   "index_scope": {
-    "note": "Ranks are calculated from currently synced rank-data-engine wallet metrics.",
+    "note": "Rank output reset. New backfill must collect all variable data required by WIL v3.",
     "raw_transaction_dump": false,
-    "source": "rank-data-engine normalized wallet_metrics"
+    "source": "rank-data-engine variable-aware wallet_metrics"
   },
-  "native_token": "DACC",
   "network": "DAC Testnet",
   "pending_ranking_variables": [
     "native_funds",
-    "nft_holdings",
-    "collection_diversity",
-    "reputation_score",
-    "low_sybil_risk"
-  ],
-  "project": "Wallet Intelligence Layer v3.0.0",
-  "rank_data_source": "rank-data-engine/data/latest.json",
-  "rank_model": "wallet-rank-intelligence-v3.0.0-from-rank-data-engine",
-  "rank_shards": {
-    "directory": "data/rank-shards",
-    "prefix_length": 2,
-    "shard_count": 251
-  },
-  "ranking_variables": [
     "transactions",
     "gas_used",
     "native_volume",
+    "nft_holdings",
+    "collection_diversity",
+    "reputation_score",
+    "low_sybil_risk",
     "overall_rank"
   ],
-  "status": "GENERATED_FROM_RANK_DATA_ENGINE",
-  "sync_status": {
-    "backfill_status": "IN_PROGRESS",
-    "historical_backfill_complete": false,
-    "last_sync_at": "2026-06-06T22:46:56+00:00",
-    "latest_snapshot": "data/snapshots/backfill-2026-06-06T22-46-56-278515+00-00-changed.json",
-    "latest_snapshot_time": "2026-06-06T22:46:56+00:00",
-    "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
+  "project": "Wallet Intelligence Layer v3.0.0",
+  "rank_data_source": "rank-data-engine/data/latest.json",
+  "rank_model": "wallet-rank-intelligence-v3.0.0-variable-aware-engine-reset",
+  "rank_shards": {
+    "directory": "data/rank-shards",
+    "prefix_length": 2,
+    "shard_count": 0
   },
-  "total_processed_transactions": 1600,
-  "total_ranked_wallets": 1359
+  "ranking_variables": [
+    "native_funds",
+    "transactions",
+    "gas_used",
+    "native_volume",
+    "nft_holdings",
+    "collection_diversity",
+    "reputation_score",
+    "low_sybil_risk",
+    "overall_rank"
+  ],
+  "status": "HYBRID_MODEL_PENDING_VALID_INDEX",
+  "sync_status": {
+    "backfill_status": "PENDING_RESET_BACKFILL",
+    "historical_backfill_complete": false,
+    "last_sync_at": null,
+    "latest_snapshot": "data/snapshots/backfill-from-latest-to-genesis.json",
+    "latest_snapshot_time": "2026-06-06T23:01:49+00:00",
+    "sync_phase": "NOT_STARTED"
+  },
+  "total_processed_transactions": 0,
+  "total_ranked_wallets": 0
 }
