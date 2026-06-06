@@ -10,7 +10,7 @@ Writes:
 - data/wallet-rank-index.json
 - data/rank-shards/{prefix}.json
 
-This script calculates rank from the current normalized wallet_metrics produced by rank-data-engine.
+This script calculates comparative rank signals from variable-aware wallet metrics.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ import shutil
 from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 
 CHAIN_ID = 21894
@@ -45,6 +45,20 @@ def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def to_int(value: Any) -> int:
+    if value is None:
+        return 0
+    raw = str(value).strip()
+    if raw.startswith("0x"):
+        return int(raw, 16)
+    if raw.isdigit():
+        return int(raw)
+    try:
+        return int(Decimal(raw))
+    except Exception:
+        return 0
+
+
 def wei_to_native_string(wei: Any) -> str:
     amount = Decimal(str(wei or "0")) / Decimal(10**18)
     normalized = amount.normalize()
@@ -57,7 +71,7 @@ def wei_to_native_string(wei: Any) -> str:
 
 def rank_percent(rank: int, total: int) -> str:
     if not rank or not total:
-        return "0"
+        return "NaN"
 
     value = Decimal(rank) / Decimal(total) * Decimal("100")
     return format(value.quantize(Decimal("0.000001")), "f")
@@ -88,7 +102,7 @@ def rank_tier(best_percent: Decimal) -> str:
     return "INDEXED"
 
 
-def dense_rank(records, key_func):
+def dense_rank(records: List[Dict[str, Any]], key_func):
     sorted_records = sorted(records, key=key_func)
     ranks = {}
     previous_value = None
@@ -108,6 +122,64 @@ def dense_rank(records, key_func):
     return ranks
 
 
+def calculate_reputation_score(record: Dict[str, Any]) -> int:
+    tx_count = record["transactions"]
+    gas_used = record["gas_used"]
+    native_balance = record["native_balance_wei"]
+    native_volume = record["native_volume_wei"]
+    nft_holdings = record["nft_holdings"]
+    collection_diversity = record["collection_diversity"]
+    successful_tx = record["successful_tx_count"]
+    failed_tx = record["failed_tx_count"]
+    unique_counterparties = record["unique_counterparty_count"]
+    contract_interactions = record["contract_interaction_count"]
+
+    score = 0
+
+    score += min(tx_count, 100)
+    score += min(gas_used // 21000, 100)
+    score += min(native_volume // 10**15, 100)
+    score += min(native_balance // 10**15, 100)
+    score += min(nft_holdings * 2, 100)
+    score += min(collection_diversity * 5, 100)
+    score += min(unique_counterparties * 3, 100)
+    score += min(contract_interactions * 2, 100)
+
+    if successful_tx + failed_tx > 0:
+        success_ratio = Decimal(successful_tx) / Decimal(successful_tx + failed_tx)
+        score += int(success_ratio * Decimal(100))
+
+    return int(score)
+
+
+def calculate_low_sybil_risk_score(record: Dict[str, Any]) -> int:
+    tx_count = record["transactions"]
+    native_balance = record["native_balance_wei"]
+    native_volume = record["native_volume_wei"]
+    nft_holdings = record["nft_holdings"]
+    collection_diversity = record["collection_diversity"]
+    successful_tx = record["successful_tx_count"]
+    failed_tx = record["failed_tx_count"]
+    unique_counterparties = record["unique_counterparty_count"]
+
+    score = 0
+
+    score += min(tx_count * 2, 120)
+    score += min(unique_counterparties * 5, 120)
+    score += min(native_balance // 10**15, 120)
+    score += min(native_volume // 10**15, 120)
+    score += min(nft_holdings * 2, 80)
+    score += min(collection_diversity * 8, 80)
+
+    if failed_tx > successful_tx and failed_tx > 0:
+        score -= min(failed_tx * 5, 80)
+
+    if tx_count <= 1 and native_balance == 0 and nft_holdings == 0:
+        score -= 80
+
+    return max(int(score), 0)
+
+
 def main() -> None:
     root = project_root()
     engine_latest = root / "rank-data-engine" / "data" / "latest.json"
@@ -123,35 +195,54 @@ def main() -> None:
     records = []
 
     for address, metrics in wallet_metrics.items():
-        records.append(
-            {
-                "address": address.lower(),
-                "tx_count": int(metrics.get("tx_count", 0)),
-                "gas_used": int(metrics.get("gas_used", 0)),
-                "native_volume_wei": str(metrics.get("native_volume_wei", "0")),
-                "first_seen_block": metrics.get("first_seen_block"),
-                "last_seen_block": metrics.get("last_seen_block"),
-                "updated_at": metrics.get("updated_at"),
-            }
-        )
+        address = address.lower()
+
+        nft_collection_contracts = metrics.get("nft_collection_contract_addresses") or []
+        asset_contracts = metrics.get("asset_contract_addresses") or []
+
+        record = {
+            "address": address,
+            "native_balance_wei": to_int(metrics.get("native_balance_wei")),
+            "transactions": to_int(metrics.get("tx_count")),
+            "gas_used": to_int(metrics.get("gas_used_total", metrics.get("gas_used"))),
+            "native_volume_wei": to_int(metrics.get("native_volume_wei")),
+            "nft_holdings": to_int(metrics.get("nft_holdings_count")),
+            "collection_diversity": len(set(nft_collection_contracts)),
+            "asset_contract_count": len(set(asset_contracts)),
+            "successful_tx_count": to_int(metrics.get("successful_tx_count")),
+            "failed_tx_count": to_int(metrics.get("failed_tx_count")),
+            "unique_counterparty_count": to_int(metrics.get("unique_counterparty_count")),
+            "contract_interaction_count": to_int(metrics.get("contract_interaction_count")),
+            "first_seen_block": metrics.get("first_seen_block"),
+            "last_seen_block": metrics.get("last_seen_block"),
+            "updated_at": metrics.get("updated_at"),
+        }
+
+        record["reputation_score"] = calculate_reputation_score(record)
+        record["low_sybil_risk"] = calculate_low_sybil_risk_score(record)
+
+        records.append(record)
 
     total_ranked = len(records)
 
-    tx_ranks = dense_rank(records, lambda r: (-r["tx_count"], r["address"]))
-    gas_ranks = dense_rank(records, lambda r: (-r["gas_used"], r["address"]))
-    volume_ranks = dense_rank(
-        records,
-        lambda r: (-len(r["native_volume_wei"]), -int(r["native_volume_wei"]), r["address"]),
-    )
+    rank_specs = {
+        "native_funds": lambda r: (-r["native_balance_wei"], r["address"]),
+        "transactions": lambda r: (-r["transactions"], r["address"]),
+        "gas_used": lambda r: (-r["gas_used"], r["address"]),
+        "native_volume": lambda r: (-r["native_volume_wei"], r["address"]),
+        "nft_holdings": lambda r: (-r["nft_holdings"], r["address"]),
+        "collection_diversity": lambda r: (-r["collection_diversity"], r["address"]),
+        "reputation_score": lambda r: (-r["reputation_score"], r["address"]),
+        "low_sybil_risk": lambda r: (-r["low_sybil_risk"], r["address"]),
+    }
+
+    ranks = {name: dense_rank(records, key_func) for name, key_func in rank_specs.items()}
 
     overall_seed = {}
     for record in records:
         address = record["address"]
-        overall_seed[address] = (
-            Decimal(tx_ranks[address]) / Decimal(total_ranked)
-            + Decimal(gas_ranks[address]) / Decimal(total_ranked)
-            + Decimal(volume_ranks[address]) / Decimal(total_ranked)
-        )
+        rank_values = [Decimal(ranks[name][address]) / Decimal(total_ranked) for name in rank_specs]
+        overall_seed[address] = sum(rank_values) / Decimal(len(rank_values))
 
     overall_ranks = dense_rank(records, lambda r: (overall_seed[r["address"]], r["address"]))
 
@@ -164,21 +255,41 @@ def main() -> None:
     for record in records:
         address = record["address"]
 
-        tx_rank = tx_ranks[address]
-        gas_rank = gas_ranks[address]
-        volume_rank = volume_ranks[address]
-        overall_rank = overall_ranks[address]
+        rank_values = {name: ranks[name][address] for name in rank_specs}
+        rank_values["overall_rank"] = overall_ranks[address]
 
-        tx_percent = safe_decimal(rank_percent(tx_rank, total_ranked))
-        gas_percent = safe_decimal(rank_percent(gas_rank, total_ranked))
-        volume_percent = safe_decimal(rank_percent(volume_rank, total_ranked))
-        best_percent = min(tx_percent, gas_percent, volume_percent)
+        percentiles = {
+            name: rank_percent(rank, total_ranked)
+            for name, rank in rank_values.items()
+        }
+
+        available_percents = [
+            safe_decimal(percentiles[name])
+            for name in [
+                "native_funds",
+                "transactions",
+                "gas_used",
+                "native_volume",
+                "nft_holdings",
+                "collection_diversity",
+                "reputation_score",
+                "low_sybil_risk",
+            ]
+            if percentiles.get(name) != "NaN"
+        ]
+
+        best_percent = min(available_percents) if available_percents else Decimal("100")
 
         strongest_metric = min(
             [
-                ("transactions", tx_percent),
-                ("gas_used", gas_percent),
-                ("native_volume", volume_percent),
+                ("native_funds", safe_decimal(percentiles["native_funds"])),
+                ("transactions", safe_decimal(percentiles["transactions"])),
+                ("gas_used", safe_decimal(percentiles["gas_used"])),
+                ("native_volume", safe_decimal(percentiles["native_volume"])),
+                ("nft_holdings", safe_decimal(percentiles["nft_holdings"])),
+                ("collection_diversity", safe_decimal(percentiles["collection_diversity"])),
+                ("reputation_score", safe_decimal(percentiles["reputation_score"])),
+                ("low_sybil_risk", safe_decimal(percentiles["low_sybil_risk"])),
             ],
             key=lambda item: item[1],
         )[0]
@@ -189,53 +300,32 @@ def main() -> None:
         shard_payload[address] = {
             "address": address,
             "metrics": {
-                "transactions": record["tx_count"],
+                "native_funds": wei_to_native_string(record["native_balance_wei"]),
+                "transactions": record["transactions"],
                 "gas_used": record["gas_used"],
                 "native_volume": wei_to_native_string(record["native_volume_wei"]),
-                "native_funds": None,
-                "nft_holdings": None,
-                "collection_diversity": None,
-                "reputation_score": None,
-                "low_sybil_risk": None,
+                "nft_holdings": record["nft_holdings"],
+                "collection_diversity": record["collection_diversity"],
+                "reputation_score": record["reputation_score"],
+                "low_sybil_risk": record["low_sybil_risk"],
             },
-            "ranks": {
-                "transactions": tx_rank,
-                "gas_used": gas_rank,
-                "native_volume": volume_rank,
-                "overall_rank": overall_rank,
-                "native_funds": None,
-                "nft_holdings": None,
-                "collection_diversity": None,
-                "reputation_score": None,
-                "low_sybil_risk": None,
-            },
-            "percentiles": {
-                "transactions": rank_percent(tx_rank, total_ranked),
-                "gas_used": rank_percent(gas_rank, total_ranked),
-                "native_volume": rank_percent(volume_rank, total_ranked),
-                "overall_rank": rank_percent(overall_rank, total_ranked),
-                "native_funds": None,
-                "nft_holdings": None,
-                "collection_diversity": None,
-                "reputation_score": None,
-                "low_sybil_risk": None,
-            },
+            "ranks": rank_values,
+            "percentiles": percentiles,
             "total_ranked_wallets": total_ranked,
             "rank_tier": rank_tier(best_percent),
             "strongest_metric": strongest_metric,
             "available_rank_variables": [
+                "native_funds",
                 "transactions",
                 "gas_used",
                 "native_volume",
-                "overall_rank",
-            ],
-            "pending_rank_variables": [
-                "native_funds",
                 "nft_holdings",
                 "collection_diversity",
                 "reputation_score",
                 "low_sybil_risk",
+                "overall_rank",
             ],
+            "pending_rank_variables": [],
             "first_seen_block": record["first_seen_block"],
             "last_seen_block": record["last_seen_block"],
             "updated_at": record["updated_at"],
@@ -244,6 +334,8 @@ def main() -> None:
     for shard, payload in shard_payloads.items():
         write_json(shards_dir / f"{shard}.json", payload)
 
+    checkpoint = latest.get("checkpoint") or {}
+
     summary = {
         "project": "Wallet Intelligence Layer v3.0.0",
         "feature": "Wallet Rank Intelligence",
@@ -251,46 +343,45 @@ def main() -> None:
         "network": "DAC Testnet",
         "chain_id": CHAIN_ID,
         "native_token": NATIVE_TOKEN,
-        "rank_model": "wallet-rank-intelligence-v3.0.0-from-rank-data-engine",
-        "status": "GENERATED_FROM_RANK_DATA_ENGINE",
+        "rank_model": "wallet-rank-intelligence-v3.0.0-variable-aware-rank-engine",
+        "status": "GENERATED_FROM_VARIABLE_AWARE_RANK_DATA_ENGINE",
         "generated_at": now_utc(),
         "rank_data_source": "rank-data-engine/data/latest.json",
         "engine_status": latest.get("status"),
         "engine_updated_at": latest.get("updated_at"),
         "engine_latest_snapshot": latest.get("latest_snapshot"),
-        "engine_checkpoint": latest.get("checkpoint"),
+        "engine_checkpoint": checkpoint,
         "sync_status": {
-            "historical_backfill_complete": bool((latest.get("checkpoint") or {}).get("historical_backfill_complete")),
-            "backfill_status": (latest.get("checkpoint") or {}).get("backfill_status"),
-            "sync_phase": (latest.get("checkpoint") or {}).get("sync_phase"),
-            "last_sync_at": (latest.get("checkpoint") or {}).get("last_sync_at"),
+            "historical_backfill_complete": bool(checkpoint.get("historical_backfill_complete")),
+            "backfill_status": checkpoint.get("backfill_status"),
+            "sync_phase": checkpoint.get("sync_phase"),
+            "last_sync_at": checkpoint.get("last_sync_at"),
             "latest_snapshot": latest.get("latest_snapshot"),
-            "latest_snapshot_time": latest.get("updated_at")
+            "latest_snapshot_time": latest.get("updated_at"),
         },
         "total_ranked_wallets": total_ranked,
         "total_processed_transactions": latest.get("counters", {}).get("total_processed_transactions"),
         "ranking_variables": [
+            "native_funds",
             "transactions",
             "gas_used",
             "native_volume",
-            "overall_rank",
-        ],
-        "pending_ranking_variables": [
-            "native_funds",
             "nft_holdings",
             "collection_diversity",
             "reputation_score",
             "low_sybil_risk",
+            "overall_rank",
         ],
+        "pending_ranking_variables": [],
         "rank_shards": {
             "directory": "data/rank-shards",
             "prefix_length": SHARD_PREFIX_LENGTH,
             "shard_count": len(shard_payloads),
         },
         "index_scope": {
-            "source": "rank-data-engine normalized wallet_metrics",
+            "source": "rank-data-engine variable-aware wallet_metrics",
             "raw_transaction_dump": False,
-            "note": "Ranks are calculated from currently synced rank-data-engine wallet metrics.",
+            "note": "Ranks are calculated from normalized blockchain-derived wallet metrics collected by rank-data-engine.",
         },
     }
 
@@ -304,7 +395,7 @@ def main() -> None:
         },
     )
 
-    print("[OK] Generated WIL v3 rank data from rank-data-engine")
+    print("[OK] Generated WIL v3 variable-aware rank data")
     print(f"[OK] Ranked wallets: {total_ranked}")
     print(f"[OK] Shards: {len(shard_payloads)}")
     print(f"[OK] Summary: {out_dir / 'wallet-rank-summary.json'}")
