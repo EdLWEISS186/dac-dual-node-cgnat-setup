@@ -519,11 +519,63 @@ This transaction indexer becomes the primary custom rank source for variables no
 
 ---
 
+## Transaction Indexer Full Mode and Publish Guard
+
+The transaction-stream indexer has been upgraded beyond validation-only mode.
+
+Updated script:
+
+    scripts/build_transaction_rank_index.py
+
+Added capabilities:
+
+    --full
+        Runs transaction pagination until the Explorer transaction stream ends.
+
+    --publish
+        Publishes rank summary and rank shards only after full stream completion.
+
+    --reset
+        Clears the local transaction indexer work state.
+
+    --validate-pages N
+        Runs capped validation only and never publishes public rank data.
+
+Rank generation foundation:
+
+    transactions rank
+    gas_used rank
+    native_volume rank
+    overall rank
+
+Publish safety:
+
+    --publish is refused unless --full is used.
+    --publish is refused when --validate-pages is used.
+    public rank data is written only if the full transaction stream completes.
+
+Latest validation result:
+
+    command: --validate-pages 2 --reset
+    processed transactions: 100
+    wallets seen: 134
+    stop reason: MAX_PAGES_VALIDATION_ONLY
+    public rank data written: false
+
+Publish guard validation:
+
+    command: --validate-pages 2 --publish
+    result: Refusing to publish without --full.
+
+This confirms that capped validation runs cannot accidentally publish final Wallet Rank Intelligence rank data.
+
+---
+
 ## Current Status
 
     Status: final hybrid v3 architecture locked
     Network snapshot: live Explorer API
-    Rank index: pending full valid transaction-stream custom indexer
+    Rank index: pending completed full transaction-stream custom indexer run
     Manual/sample rank artifacts: removed
     UI model: single wallet input, single CHECK button, one integrated Wallet Rank Intelligence section
     Public dependency model: official DAC public sources only
@@ -537,8 +589,8 @@ This transaction indexer becomes the primary custom rank source for variables no
 Continue the full Explorer-visible address rank indexer.
 
 Next implementation steps:
-1. Expand the transaction-stream indexer with full resume/checkpoint mode.
-2. Add rank generation for transactions, gas_used, native_volume, and overall rank.
+1. Add or confirm resume behavior for long transaction-stream full indexing.
+2. Run longer validation windows to check stability across more transaction pages.
 3. Add sharded frontend lookup for rank-shards/{address_prefix}.json.
 4. Publish rank data only after full/integrity-safe indexing is completed.
 5. Keep limited runs as probe/validation only, never as final Wallet Rank Intelligence output.
