@@ -3361,13 +3361,27 @@ function renderWalletRankIntelligence(rankData) {
   if (!profile) {
     el.walletRankStatus.textContent = "Network snapshot live · Wallet not indexed";
     el.walletRankMeta.innerHTML = snapshotHtml;
+
+    const rankDenominator =
+      summary.total_ranked_wallets ||
+      snapshot.total_addresses ||
+      "NaN";
+
+    const placeholderCards = metrics.map((metric) => `
+      <article class="wallet-rank-metric wallet-rank-metric-nan">
+        <span>${escapeRankHtml(metric.label)}</span>
+        <strong>NaN</strong>
+        <div class="rank-line">Rank: NaN / ${rankDenominator === "NaN" ? "NaN" : formatRankValue(rankDenominator)}</div>
+        <div class="percentile-line">Percentile: NaN%</div>
+      </article>
+    `).join("");
+
     el.walletRankGrid.innerHTML = `
       ${syncStatusHtml}
-      <div class="wallet-rank-pending">
+      ${placeholderCards}
+      <div class="wallet-rank-pending wallet-rank-index-note">
         <strong>Wallet not found in the current valid rank index</strong>
-        <p>
-          This wallet has live wallet intelligence data, but it is not included in the current custom rank snapshot yet.
-        </p>
+        <p>This wallet has live wallet intelligence data, but rank values are not available in the current indexed snapshot yet.</p>
       </div>
     `;
     return;
