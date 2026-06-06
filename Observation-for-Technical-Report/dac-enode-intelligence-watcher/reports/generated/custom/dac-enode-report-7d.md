@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom Last 7 Days Report
 
-Generated at UTC: `2026-06-06T03:35:04.683421+00:00`
+Generated at UTC: `2026-06-06T06:44:05.365242+00:00`
 
 Report range: **Last 7 Days**
 
@@ -16,10 +16,10 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Range | Last 7 Days |
 | Observation count | 17 |
-| First observed source time | May 29, 2026 (04:00 CEST) |
-| Last observed source time | Jun 4, 2026 (18:00 CEST) |
-| Latest watcher checked_at_utc | 2026-06-04T16:36:44.457755+00:00 |
-| Latest source generated time | Thu Jun  4 06:00:01 PM CEST 2026 |
+| First observed source time | May 30, 2026 (12:00 CEST) |
+| Last observed source time | Jun 6, 2026 (08:00 CEST) |
+| Latest watcher checked_at_utc | 2026-06-06T06:44:02.963253+00:00 |
+| Latest source generated time | Sat Jun  6 08:00:01 AM CEST 2026 |
 
 ## 2. Enode Movement Summary
 
@@ -27,8 +27,8 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Minimum enode count | 8 |
 | Maximum enode count | 15 |
-| Average enode count | 11.59 |
-| Total added observations | 26 |
+| Average enode count | 11.41 |
+| Total added observations | 27 |
 | Total removed observations | 15 |
 | Target ports observed | 28657 |
 
@@ -36,15 +36,15 @@ Important note: this report is observation-based. It does not make official DAC 
 
 | Phase | Observations |
 | --- | --- |
-| automated_watcher | 14 |
-| manual_backfill | 3 |
+| automated_watcher | 15 |
+| manual_backfill | 2 |
 
 ## 4. Anomaly Summary
 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 0 |
-| Global anomaly summary | 5 anomaly signals were detected across 28 observations. The highest observed anomaly severity is HIGH. |
+| Global anomaly summary | 5 anomaly signals were detected across 29 observations. The highest observed anomaly severity is HIGH. |
 | Global highest severity | HIGH |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
@@ -77,7 +77,6 @@ Important note: this report is observation-based. It does not make official DAC 
 
 | # | Phase | Status | Source Time | Current | Added | Removed | Unchanged | Port |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 12 | manual_backfill | manual_unchanged | May 29, 2026 (04:00 CEST) | 14 | 0 | 0 | 14 | 28657 |
 | 13 | manual_backfill | manual_changed | May 30, 2026 (12:00 CEST) | 14 | 1 | 1 | 13 | 28657 |
 | 14 | manual_backfill | manual_changed | May 31, 2026 (12:00 CEST) | 15 | 2 | 1 | 13 | 28657 |
 | 15 | automated_watcher | initial | Jun 1, 2026 (04:00 CEST) | 12 | 12 | 0 | 0 | 28657 |
@@ -94,6 +93,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | 26 | automated_watcher | changed | Jun 4, 2026 (02:00 CEST) | 12 | 1 | 0 | 11 | 28657 |
 | 27 | automated_watcher | changed | Jun 4, 2026 (12:00 CEST) | 11 | 0 | 1 | 11 | 28657 |
 | 28 | automated_watcher | changed | Jun 4, 2026 (18:00 CEST) | 10 | 0 | 1 | 10 | 28657 |
+| 29 | automated_watcher | changed | Jun 6, 2026 (08:00 CEST) | 11 | 1 | 0 | 10 | 28657 |
 
 ## 7. Report-Use Notes
 
