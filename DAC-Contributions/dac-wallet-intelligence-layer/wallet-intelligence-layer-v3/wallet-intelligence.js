@@ -315,6 +315,10 @@ const el = {
   collectionCountLabel: document.getElementById("collectionCountLabel"),
   collectionsList: document.getElementById("collectionsList"),
   rawJsonOutput: document.getElementById("rawJsonOutput"),
+  walletRankCard: document.getElementById("walletRankCard"),
+  walletRankStatus: document.getElementById("walletRankStatus"),
+  walletRankMeta: document.getElementById("walletRankMeta"),
+  walletRankGrid: document.getElementById("walletRankGrid"),
   scoreBreakdownGrid: document.getElementById("scoreBreakdownGrid"),
   scoringPolicyLabel: document.getElementById("scoringPolicyLabel"),
   scoreExplanation: document.getElementById("scoreExplanation"),
@@ -437,6 +441,7 @@ async function checkWallet(address) {
       output.sybilHeuristics = await getSybilHeuristicsSafely(address, output);
       output.dynamicIntelligenceBadge = buildDynamicIntelligenceBadge(output);
       output.dynamicIntelligenceBadge.onchain = await getWalletStatusBadgeStateSafely(address);
+      output.walletRankIntelligence = await getWalletRankIntelligenceSafely(address);
       renderFullOutput(output);
       setStatus(
         "success",
@@ -451,6 +456,7 @@ async function checkWallet(address) {
       const output = buildPartialExplorerOutput(address, explorerResult);
       output.historicalActivity = await getHistoricalActivitySafely(address);
       output.sybilHeuristics = await getSybilHeuristicsSafely(address, output);
+      output.walletRankIntelligence = await getWalletRankIntelligenceSafely(address);
       renderPartialOutput(output);
       setStatus(
         "partial",
@@ -474,6 +480,7 @@ async function checkWallet(address) {
 
     try {
       const rpcOutput = await buildRpcFallbackOutput(address, explorerError);
+      rpcOutput.walletRankIntelligence = await getWalletRankIntelligenceSafely(address);
       renderRpcFallbackOutput(rpcOutput);
       setStatus(
         "fallback",
@@ -3184,6 +3191,159 @@ function shortenHash(hash) {
 
 
 // ======================================================
+
+
+async function getWalletRankIntelligenceSafely(address) {
+  if (!window.WalletRankIntelligence || typeof window.WalletRankIntelligence.getProfile !== "function") {
+    return {
+      status: "UNAVAILABLE",
+      message: "Wallet Rank Intelligence module is not loaded."
+    };
+  }
+
+  try {
+    return await window.WalletRankIntelligence.getProfile(address);
+  } catch (error) {
+    console.warn("Wallet Rank Intelligence failed:", error);
+    return {
+      status: "ERROR",
+      message: error && error.message ? error.message : "Rank lookup failed."
+    };
+  }
+}
+
+function escapeRankHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatRankValue(value) {
+  if (value === null || value === undefined || value === "") return "—";
+
+  if (typeof value === "number") {
+    return value.toLocaleString(undefined, { maximumFractionDigits: 6 });
+  }
+
+  if (typeof value === "string" && /^-?\d+(\.\d+)?$/.test(value)) {
+    return Number(value).toLocaleString(undefined, { maximumFractionDigits: 6 });
+  }
+
+  return String(value);
+}
+
+function formatWalletRank(rank, total) {
+  if (!rank || Number(rank) <= 0) return "Not ranked";
+
+  const rankText = `#${Number(rank).toLocaleString()}`;
+  if (!total || Number(total) <= 0) return rankText;
+
+  return `${rankText} / ${Number(total).toLocaleString()}`;
+}
+
+function formatWalletRankPercentile(value) {
+  if (value === null || value === undefined || value === "") return "";
+  const numericValue = Number(value);
+  if (!Number.isFinite(numericValue)) return "";
+  return `Top ${numericValue.toFixed(2)}%`;
+}
+
+function formatWalletRankTier(value) {
+  if (!value) return "UNRANKED";
+  return String(value).replaceAll("_", " ");
+}
+
+function renderWalletRankIntelligence(rankData) {
+  if (!el.walletRankCard || !el.walletRankStatus || !el.walletRankGrid || !el.walletRankMeta) return;
+
+  if (!rankData || rankData.status === "UNAVAILABLE") {
+    el.walletRankCard.classList.add("hidden");
+    return;
+  }
+
+  el.walletRankCard.classList.remove("hidden");
+
+  const summary = rankData.summary || {};
+  const profile = rankData.profile;
+  const metrics = rankData.metrics || [];
+  const totalRanked = profile && (profile.total_ranked_wallets || summary.total_ranked_wallets)
+    ? Number(profile.total_ranked_wallets || summary.total_ranked_wallets)
+    : Number(summary.total_ranked_wallets || 0);
+
+  if (rankData.status === "ERROR") {
+    el.walletRankStatus.textContent = "Rank lookup error";
+    el.walletRankMeta.innerHTML = "";
+    el.walletRankGrid.innerHTML = `<p class="wallet-rank-warning">${escapeRankHtml(rankData.message || "Rank lookup failed.")}</p>`;
+    return;
+  }
+
+  if (!profile) {
+    el.walletRankStatus.textContent = rankData.status === "EMPTY_INDEX"
+      ? "Rank index is empty"
+      : "Wallet not indexed";
+
+    el.walletRankMeta.innerHTML = `
+      <div class="wallet-rank-meta-item">
+        <span>Ranked wallets</span>
+        <strong>${formatRankValue(totalRanked)}</strong>
+      </div>
+      <div class="wallet-rank-meta-item">
+        <span>Rank model</span>
+        <strong>${escapeRankHtml(summary.rank_model || "wallet-rank-intelligence-v3.0.0")}</strong>
+      </div>
+      <div class="wallet-rank-meta-item">
+        <span>Status</span>
+        <strong>${escapeRankHtml(rankData.status)}</strong>
+      </div>
+    `;
+
+    el.walletRankGrid.innerHTML = `<p class="wallet-rank-warning">This wallet is not available in the current generated rank index. Run a broader pipeline refresh to include more wallets.</p>`;
+    return;
+  }
+
+  el.walletRankStatus.textContent = `${formatWalletRankTier(profile.rank_tier)} · ${formatRankValue(totalRanked)} ranked wallets`;
+
+  el.walletRankMeta.innerHTML = `
+    <div class="wallet-rank-meta-item">
+      <span>Rank tier</span>
+      <strong>${escapeRankHtml(formatWalletRankTier(profile.rank_tier))}</strong>
+    </div>
+    <div class="wallet-rank-meta-item">
+      <span>Strongest signal</span>
+      <strong>${escapeRankHtml(profile.strongest_metric || "—")}</strong>
+    </div>
+    <div class="wallet-rank-meta-item">
+      <span>Weakest signal</span>
+      <strong>${escapeRankHtml(profile.weakest_metric || "—")}</strong>
+    </div>
+  `;
+
+  const cards = metrics.map((metric) => {
+    const walletMetrics = profile.metrics || {};
+    const ranks = profile.ranks || {};
+    const percentiles = profile.percentiles || {};
+
+    const rawValue = walletMetrics[metric.key];
+    const rank = ranks[metric.rankKey] ?? ranks[metric.key];
+    const percentile = percentiles[metric.rankKey] ?? percentiles[metric.key];
+
+    return `
+      <article class="wallet-rank-metric">
+        <span>${escapeRankHtml(metric.label)}</span>
+        <strong>${formatRankValue(rawValue)} ${escapeRankHtml(metric.suffix)}</strong>
+        <div class="rank-line">${formatWalletRank(rank, totalRanked)}</div>
+        <div class="percentile-line">${formatWalletRankPercentile(percentile)}</div>
+      </article>
+    `;
+  }).join("");
+
+  el.walletRankGrid.innerHTML = cards;
+}
+
+
 // Rendering
 // ======================================================
 
@@ -3262,6 +3422,7 @@ function renderFullOutput(output) {
   renderHistoricalActivity(output.historicalActivity);
   renderSybilHeuristics(output.sybilHeuristics);
   renderDynamicIntelligenceBadge(output.dynamicIntelligenceBadge);
+  renderWalletRankIntelligence(output.walletRankIntelligence);
   renderScoringBreakdown(output.reputationScoring);
   renderKnownCollectionRegistry(output.knownCollectionRegistry);
   renderCollections(output.nftCollections || []);

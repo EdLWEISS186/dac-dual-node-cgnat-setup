@@ -97,6 +97,38 @@ Current additions:
 
 ---
 
+## Single-Check Rank Integration
+
+Wallet Rank Intelligence is now integrated into the main wallet check flow.
+
+The dashboard no longer uses a separate rank lookup panel, separate wallet input, or separate rank button. Users only paste a wallet address once into the main checker and press the existing `CHECK` button.
+
+The output flow is now:
+
+    paste wallet address
+            ↓
+    click CHECK
+            ↓
+    generate Wallet Intelligence profile
+            ↓
+    append Wallet Rank Intelligence result
+            ↓
+    include walletRankIntelligence in raw JSON output
+
+The top module grid now continues from the previous v2 modules:
+
+    01 Proof of Native Funds
+    02 Proof of Assets Engine
+    03 Activity Analytics
+    04 Portfolio Intelligence
+    05 Reputation Scoring
+    06 Dynamic Badge
+    07 Wallet Rank Intelligence
+
+This aligns v3 with the intended product direction: ranking is not a separate checker, but an additional comparative intelligence layer inside the normal wallet analysis result.
+
+---
+
 ## Rank Data
 
 Current rank data files:
@@ -415,8 +447,9 @@ The rank layer is a community-built public testnet intelligence signal.
     Collector: official Explorer/RPC collector implemented
     Pipeline runner: discovery -> collection -> rank generation
     Rank data: generated from 100 collected wallets out of 250 discovered addresses
-    Dashboard: ready to read generated rank JSON
-    Next phase: larger indexed wallet set and optional scheduled automation
+    Dashboard: single-check wallet profile now includes integrated rank intelligence
+    Rank UX: no separate rank input or separate rank button
+    Next phase: live dashboard verification and optional scheduled automation
 
 ---
 
@@ -424,4 +457,4 @@ The rank layer is a community-built public testnet intelligence signal.
 
 Expand the wallet rank pipeline with a larger indexed wallet set and optional scheduled automation.
 
-The next phase should prepare optional scheduled automation while continuing to keep the public tool based on official DAC public sources only.
+The next phase should verify the live dashboard after GitHub Pages refresh, then prepare optional scheduled automation while continuing to keep the public tool based on official DAC public sources only.

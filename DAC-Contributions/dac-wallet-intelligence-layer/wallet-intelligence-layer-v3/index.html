@@ -66,6 +66,7 @@
           <div><span>04</span>Portfolio Intelligence</div>
           <div><span>05</span>Reputation Scoring</div>
           <div><span>06</span>Dynamic Badge</div>
+          <div><span>07</span>Wallet Rank Intelligence</div>
         </div>
 
         <a class="repo-link-button" href="https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v2" target="_blank" rel="noopener noreferrer">
@@ -478,6 +479,23 @@
         </div>
       </section>
 
+
+      <section class="wallet-rank-card hidden" id="walletRankCard">
+        <div class="wallet-rank-header">
+          <div>
+            <p class="eyebrow">Wallet Rank Intelligence</p>
+            <h2>Comparative Public Rank Signal</h2>
+            <p>
+              v3 turns every verified wallet variable into a comparative public rank signal.
+              The ranks below are added automatically after the main wallet check.
+            </p>
+          </div>
+          <div class="wallet-rank-status" id="walletRankStatus">Rank data not loaded</div>
+        </div>
+        <div class="wallet-rank-meta" id="walletRankMeta"></div>
+        <div class="wallet-rank-grid" id="walletRankGrid"></div>
+      </section>
+
       <section class="json-card">
         <div class="section-heading">
           <div>
@@ -490,43 +508,6 @@
       </section>
     </section>
   
-<section class="rank-intelligence-panel" id="wallet-rank-intelligence">
-  <div class="rank-panel-header">
-    <div>
-      <p class="rank-eyebrow">07 Wallet Rank Intelligence</p>
-      <h2>Comparative Public Rank Signal</h2>
-      <p>
-        v3 turns every verified wallet variable into a comparative public rank signal.
-        Paste a wallet address to compare its indexed DAC Testnet position across transactions,
-        gas usage, native volume, balance, assets, reputation, and low-risk profile.
-      </p>
-    </div>
-    <div class="rank-status-card" id="v3-rank-summary">
-      Loading rank index metadata...
-    </div>
-  </div>
-
-  <div class="rank-lookup-card">
-    <label for="v3-rank-address">Wallet address</label>
-    <div class="rank-lookup-row">
-      <input
-        id="v3-rank-address"
-        type="text"
-        placeholder="0x870ad63acc507cdfd878F170606d19ae78988AFE"
-        autocomplete="off"
-      />
-      <button id="v3-rank-check" type="button">Check Wallet Rank</button>
-    </div>
-    <p class="rank-helper">
-      Rank data is read from the generated public rank index. Empty index means the v3 UI is ready,
-      but the chain-wide rank indexer has not generated wallet rankings yet.
-    </p>
-  </div>
-
-  <div class="rank-result-card" id="v3-rank-result">
-    Enter a wallet address to view its comparative rank profile.
-  </div>
-</section>
 
 </main>
 
