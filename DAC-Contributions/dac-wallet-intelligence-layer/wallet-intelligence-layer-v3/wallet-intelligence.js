@@ -3360,7 +3360,29 @@ function renderWalletRankIntelligence(rankData) {
 
   if (!profile) {
     el.walletRankStatus.textContent = "Network snapshot live · Wallet not indexed";
-    el.walletRankMeta.innerHTML = snapshotHtml;
+
+    const sync = summary.sync_status || {};
+    const isFullySynced = sync.historical_backfill_complete === true;
+    const latestSnapshotTime = sync.latest_snapshot_time || sync.last_sync_at || summary.engine_updated_at || "Unknown";
+    const latestSnapshot = sync.latest_snapshot || summary.engine_latest_snapshot || "Unknown";
+    const rankedWallets = summary.total_ranked_wallets || 0;
+
+    const syncStatusBlock = `
+      <div class="wallet-rank-sync-status ${isFullySynced ? "is-synced" : "is-backfilling"}">
+        <div>
+          <span>${isFullySynced ? "Fully synced" : "Syncing"}</span>
+          <span class="wallet-rank-info" title="${isFullySynced
+            ? `Rank data is valid and fully synced from genesis to the latest snapshot. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`
+            : `Rank data is still syncing historical backfill from latest transactions toward genesis. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`
+          }">ⓘ</span>
+        </div>
+        <small>Latest snapshot: ${escapeRankHtml(latestSnapshotTime)}</small>
+        <small>Processed tx: ${formatRankValue(summary.total_processed_transactions || 0)}</small>
+        <small>Ranked wallets: ${formatRankValue(rankedWallets)}</small>
+      </div>
+    `;
+
+    el.walletRankMeta.innerHTML = snapshotHtml + syncStatusBlock;
 
     const rankDenominator =
       summary.total_ranked_wallets ||
@@ -3377,7 +3399,6 @@ function renderWalletRankIntelligence(rankData) {
     `).join("");
 
     el.walletRankGrid.innerHTML = `
-      ${syncStatusHtml}
       ${placeholderCards}
       <div class="wallet-rank-pending wallet-rank-index-note">
         <strong>Wallet not found in the current valid rank index</strong>
