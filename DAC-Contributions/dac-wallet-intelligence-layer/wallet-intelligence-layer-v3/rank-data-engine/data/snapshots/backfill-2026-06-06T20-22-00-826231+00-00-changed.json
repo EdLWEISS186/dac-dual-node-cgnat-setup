@@ -1,4 +1,5 @@
 {
+  "backfill_phase": "IN_PROGRESS",
   "chain_id": 21894,
   "checkpoint_after": {
     "last_sync_at": "2026-06-06T20:22:00+00:00",
@@ -35,7 +36,7 @@
   "processed_transactions_this_sync": 250,
   "project": "Wallet Intelligence Layer v3.0.0",
   "raw_transaction_dump": false,
-  "snapshot_type": "incremental_changed",
+  "snapshot_type": "historical_backfill_changed",
   "status": "SYNCED",
   "wallet_deltas": {
     "0x014319eefe0969ea25ed7d03ceb74643c3f2352e": {
