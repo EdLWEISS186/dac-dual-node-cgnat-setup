@@ -351,6 +351,25 @@ This confirms that Wallet Intelligence Layer v3 can refresh rank data through a 
 
 ---
 
+## Larger Indexed Wallet Set
+
+The v3 rank pipeline has been expanded beyond the initial 50-wallet validation run.
+
+Latest larger-set validation:
+
+    RPC: https://rpctest.dachain.tech/
+    blocks requested: 1500
+    unique discovered addresses: 250
+    collected wallets: 100
+    ranked wallets: 100
+    rank status: GENERATED_FROM_EXPLORER_RPC_COLLECTOR
+
+This improves the practical value of Wallet Rank Intelligence because rank outputs are now generated against a larger indexed wallet population.
+
+The current larger-set run is still intentionally moderate to avoid excessive public Explorer/API load. Future expansion can increase the discovery window and collected wallet count gradually.
+
+---
+
 ## Safety and Scope
 
 Wallet Intelligence Layer v3 remains:
@@ -395,7 +414,7 @@ The rank layer is a community-built public testnet intelligence signal.
     Indexer: local generator implemented
     Collector: official Explorer/RPC collector implemented
     Pipeline runner: discovery -> collection -> rank generation
-    Rank data: generated from 50 collected wallets out of 100 discovered addresses
+    Rank data: generated from 100 collected wallets out of 250 discovered addresses
     Dashboard: ready to read generated rank JSON
     Next phase: larger indexed wallet set and optional scheduled automation
 
@@ -405,4 +424,4 @@ The rank layer is a community-built public testnet intelligence signal.
 
 Expand the wallet rank pipeline with a larger indexed wallet set and optional scheduled automation.
 
-The next phase should make the generated rank output more meaningful by increasing the number of ranked DAC Testnet wallets while keeping the public tool based on official DAC public sources only.
+The next phase should prepare optional scheduled automation while continuing to keep the public tool based on official DAC public sources only.
