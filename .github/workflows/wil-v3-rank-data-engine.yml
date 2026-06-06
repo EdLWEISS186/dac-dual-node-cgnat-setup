@@ -23,7 +23,7 @@ jobs:
 
       - name: Sync rank data engine
         run: |
-          python3 DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/scripts/sync_rank_data_engine.py --max-pages 5
+          python3 DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/scripts/sync_rank_data_engine.py --max-pages 5 --enrich-limit 100
 
       - name: Generate WIL v3 rank output
         run: |

@@ -2,37 +2,41 @@
 """
 Wallet Intelligence Layer v3.0.0 — Rank Data Engine
 
-Purpose:
-- Fetch blockchain transaction data from official DAC Explorer API.
-- Store only normalized wallet metric deltas and accumulated wallet metrics.
-- Do not store raw transaction dumps.
-- Keep latest.json and timestamped snapshots updated for WIL v3 rank calculation scripts.
+Variable-aware blockchain data engine.
 
-Data model:
-- tx_count
-- gas_used
-- native_volume_wei
-- first_seen_block
-- last_seen_block
-- checkpoint/cursor metadata
+This engine stores normalized wallet metrics only.
+It does not store raw transaction dumps and does not calculate final ranks.
+
+Collected data:
+- wallet identity
+- tx activity
+- gas usage
+- native volume
+- native balance snapshot
+- token/NFT holdings snapshot
+- NFT collection contract set
+- counterparty / contract interaction signals
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import time
 import urllib.parse
 import urllib.request
 from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Set
 
 
 EXPLORER_API_V2 = "https://exptest.dachain.tech/api/v2"
 TRANSACTIONS_ENDPOINT = f"{EXPLORER_API_V2}/transactions"
 STATS_ENDPOINT = f"{EXPLORER_API_V2}/stats"
+
 REQUEST_TIMEOUT_SECONDS = 30
+REQUEST_DELAY_SECONDS = 0.12
 
 
 def engine_root() -> Path:
@@ -79,7 +83,7 @@ def fetch_json(url: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, A
     req = urllib.request.Request(
         url,
         headers={
-            "User-Agent": "WIL-v3-rank-data-engine/1.0",
+            "User-Agent": "WIL-v3-rank-data-engine/2.0",
             "Accept": "application/json",
         },
     )
@@ -95,7 +99,6 @@ def normalize_address(value: Any) -> str:
     address = str(value or "").strip().lower()
     if address.startswith("0x") and len(address) == 42:
         return address
-
     return ""
 
 
@@ -115,96 +118,149 @@ def to_int(value: Any) -> int:
     return 0
 
 
-def add_delta(
-    wallet_deltas: Dict[str, Dict[str, Any]],
-    address: str,
-    tx_count_delta: int,
-    gas_used_delta: int,
-    native_volume_delta_wei: int,
-    block_number: int,
-) -> None:
-    if not address:
-        return
+def tx_success(tx: Dict[str, Any]) -> bool:
+    status = str(tx.get("status") or tx.get("result") or "").lower()
+    return status in {"ok", "success", "1", "true"}
 
-    entry = wallet_deltas.setdefault(
+
+def ensure_metric(wallet_metrics: Dict[str, Any], address: str) -> Dict[str, Any]:
+    return wallet_metrics.setdefault(
         address,
         {
-            "tx_count_delta": 0,
-            "gas_used_delta": 0,
-            "native_volume_delta_wei": "0",
-            "first_seen_block": block_number,
-            "last_seen_block": block_number,
+            "address": address,
+            "is_contract": None,
+
+            "tx_count": 0,
+            "incoming_tx_count": 0,
+            "outgoing_tx_count": 0,
+            "successful_tx_count": 0,
+            "failed_tx_count": 0,
+
+            "gas_used_total": 0,
+            "gas_used_outgoing": 0,
+
+            "native_volume_wei": "0",
+            "incoming_native_volume_wei": "0",
+            "outgoing_native_volume_wei": "0",
+
+            "native_balance_wei": None,
+            "balance_snapshot_block": None,
+            "balance_snapshot_time": None,
+
+            "has_tokens": None,
+            "has_token_transfers": None,
+            "token_holdings_count": None,
+            "nft_holdings_count": None,
+            "asset_contract_addresses": [],
+            "nft_collection_contract_addresses": [],
+            "asset_snapshot_time": None,
+
+            "unique_counterparty_count": 0,
+            "counterparty_addresses": [],
+            "contract_interaction_count": 0,
+            "repeated_counterparty_count": 0,
+
+            "first_seen_block": None,
+            "last_seen_block": None,
+            "first_seen_tx": None,
+            "last_seen_tx": None,
+            "last_activity_time": None,
+            "updated_at": now_utc(),
         },
     )
 
-    entry["tx_count_delta"] += tx_count_delta
-    entry["gas_used_delta"] += gas_used_delta
-    entry["native_volume_delta_wei"] = str(int(entry["native_volume_delta_wei"]) + native_volume_delta_wei)
-    entry["first_seen_block"] = min(entry["first_seen_block"], block_number)
-    entry["last_seen_block"] = max(entry["last_seen_block"], block_number)
+
+def bump_block_range(metric: Dict[str, Any], block_number: int, tx_hash: str, timestamp: Optional[str]) -> None:
+    if block_number:
+        if metric.get("first_seen_block") is None or block_number < int(metric["first_seen_block"]):
+            metric["first_seen_block"] = block_number
+            metric["first_seen_tx"] = tx_hash
+
+        if metric.get("last_seen_block") is None or block_number > int(metric["last_seen_block"]):
+            metric["last_seen_block"] = block_number
+            metric["last_seen_tx"] = tx_hash
+
+    if timestamp:
+        metric["last_activity_time"] = timestamp
+
+    metric["updated_at"] = now_utc()
 
 
-def apply_deltas(latest: Dict[str, Any], wallet_deltas: Dict[str, Dict[str, Any]]) -> None:
-    wallet_metrics = latest.setdefault("wallet_metrics", {})
-    updated_at = now_utc()
+def add_counterparty(metric: Dict[str, Any], counterparty: str) -> None:
+    if not counterparty:
+        return
 
-    for address, delta in wallet_deltas.items():
-        existing = wallet_metrics.setdefault(
-            address,
-            {
-                "tx_count": 0,
-                "gas_used": 0,
-                "native_volume_wei": "0",
-                "first_seen_block": delta["first_seen_block"],
-                "last_seen_block": delta["last_seen_block"],
-                "updated_at": updated_at,
-            },
-        )
+    addresses: List[str] = metric.setdefault("counterparty_addresses", [])
+    if counterparty in addresses:
+        metric["repeated_counterparty_count"] = int(metric.get("repeated_counterparty_count") or 0) + 1
+    else:
+        addresses.append(counterparty)
+        addresses.sort()
 
-        existing["tx_count"] = int(existing.get("tx_count", 0)) + int(delta.get("tx_count_delta", 0))
-        existing["gas_used"] = int(existing.get("gas_used", 0)) + int(delta.get("gas_used_delta", 0))
-        existing["native_volume_wei"] = str(
-            int(existing.get("native_volume_wei", "0")) + int(delta.get("native_volume_delta_wei", "0"))
-        )
-        existing["first_seen_block"] = min(
-            existing.get("first_seen_block") or delta["first_seen_block"],
-            delta["first_seen_block"],
-        )
-        existing["last_seen_block"] = max(
-            existing.get("last_seen_block") or delta["last_seen_block"],
-            delta["last_seen_block"],
-        )
-        existing["updated_at"] = updated_at
+    metric["unique_counterparty_count"] = len(addresses)
 
 
-def process_transaction(tx: Dict[str, Any], wallet_deltas: Dict[str, Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+def process_transaction(
+    tx: Dict[str, Any],
+    wallet_metrics: Dict[str, Any],
+    wallet_deltas: Dict[str, Any],
+    enrichment_queue: Set[str],
+) -> Optional[Dict[str, Any]]:
     tx_hash = normalize_hash(tx.get("hash"))
     if not tx_hash:
         return None
 
     block_number = to_int(tx.get("block_number"))
+    timestamp = tx.get("timestamp")
+
     from_address = normalize_address(tx.get("from"))
     to_address = normalize_address(tx.get("to"))
+
     gas_used = to_int(tx.get("gas_used"))
     value_wei = to_int(tx.get("value"))
+    success = tx_success(tx)
 
-    add_delta(
-        wallet_deltas,
-        from_address,
-        tx_count_delta=1,
-        gas_used_delta=gas_used,
-        native_volume_delta_wei=value_wei,
-        block_number=block_number,
-    )
+    to_is_contract = bool((tx.get("to") or {}).get("is_contract")) if isinstance(tx.get("to"), dict) else False
+    from_is_contract = bool((tx.get("from") or {}).get("is_contract")) if isinstance(tx.get("from"), dict) else False
 
-    add_delta(
-        wallet_deltas,
-        to_address,
-        tx_count_delta=0,
-        gas_used_delta=0,
-        native_volume_delta_wei=value_wei,
-        block_number=block_number,
-    )
+    touched: Set[str] = set()
+
+    if from_address:
+        metric = ensure_metric(wallet_metrics, from_address)
+        metric["is_contract"] = from_is_contract
+        metric["tx_count"] += 1
+        metric["outgoing_tx_count"] += 1
+        metric["gas_used_total"] += gas_used
+        metric["gas_used_outgoing"] += gas_used
+        metric["outgoing_native_volume_wei"] = str(int(metric["outgoing_native_volume_wei"]) + value_wei)
+        metric["native_volume_wei"] = str(int(metric["native_volume_wei"]) + value_wei)
+
+        if success:
+            metric["successful_tx_count"] += 1
+        else:
+            metric["failed_tx_count"] += 1
+
+        if to_is_contract:
+            metric["contract_interaction_count"] += 1
+
+        add_counterparty(metric, to_address)
+        bump_block_range(metric, block_number, tx_hash, timestamp)
+        touched.add(from_address)
+
+    if to_address and to_address != from_address:
+        metric = ensure_metric(wallet_metrics, to_address)
+        metric["is_contract"] = to_is_contract
+        metric["tx_count"] += 1
+        metric["incoming_tx_count"] += 1
+        metric["incoming_native_volume_wei"] = str(int(metric["incoming_native_volume_wei"]) + value_wei)
+        metric["native_volume_wei"] = str(int(metric["native_volume_wei"]) + value_wei)
+        add_counterparty(metric, from_address)
+        bump_block_range(metric, block_number, tx_hash, timestamp)
+        touched.add(to_address)
+
+    for address in touched:
+        enrichment_queue.add(address)
+        wallet_deltas[address] = deepcopy(wallet_metrics[address])
 
     return {
         "hash": tx_hash,
@@ -212,51 +268,105 @@ def process_transaction(tx: Dict[str, Any], wallet_deltas: Dict[str, Dict[str, A
     }
 
 
+def fetch_address_detail(address: str) -> Dict[str, Any]:
+    return fetch_json(f"{EXPLORER_API_V2}/addresses/{address}")
 
-def load_initial_backfill_anchor() -> Optional[str]:
-    path = snapshots_dir() / "backfill-from-latest-to-genesis.json"
 
-    if not path.exists():
-        return None
+def fetch_address_tokens(address: str) -> Dict[str, Any]:
+    return fetch_json(f"{EXPLORER_API_V2}/addresses/{address}/tokens")
+
+
+def summarize_tokens(payload: Dict[str, Any]) -> Dict[str, Any]:
+    items = payload.get("items") or []
+
+    asset_contracts: Set[str] = set()
+    nft_contracts: Set[str] = set()
+    token_holdings_count = 0
+    nft_holdings_count = 0
+
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+
+        token = item.get("token") or {}
+        contract = normalize_address(token.get("address_hash"))
+        token_type = str(token.get("type") or "").upper()
+        value = to_int(item.get("value"))
+
+        if contract:
+            asset_contracts.add(contract)
+
+        if token_type in {"ERC-721", "ERC-1155"}:
+            if contract:
+                nft_contracts.add(contract)
+            nft_holdings_count += value
+        else:
+            token_holdings_count += 1
+
+    return {
+        "token_holdings_count": token_holdings_count,
+        "nft_holdings_count": nft_holdings_count,
+        "asset_contract_addresses": sorted(asset_contracts),
+        "nft_collection_contract_addresses": sorted(nft_contracts),
+    }
+
+
+def enrich_wallet(address: str, wallet_metrics: Dict[str, Any]) -> bool:
+    metric = ensure_metric(wallet_metrics, address)
+    updated = False
 
     try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return None
+        detail = fetch_address_detail(address)
+        metric["native_balance_wei"] = str(detail.get("coin_balance") or "0")
+        metric["balance_snapshot_block"] = detail.get("block_number_balance_updated_at")
+        metric["balance_snapshot_time"] = now_utc()
+        metric["has_tokens"] = bool(detail.get("has_tokens"))
+        metric["has_token_transfers"] = bool(detail.get("has_token_transfers"))
+        metric["is_contract"] = bool(detail.get("is_contract"))
+        updated = True
+    except Exception as error:
+        print(f"[WARN] address detail failed for {address}: {error}")
 
-    audit = payload.get("minimal_audit") or {}
-    tx_hash = normalize_hash(audit.get("first_transaction_hash"))
-    return tx_hash or None
+    time.sleep(REQUEST_DELAY_SECONDS)
+
+    try:
+        tokens = fetch_address_tokens(address)
+        token_summary = summarize_tokens(tokens)
+
+        metric["token_holdings_count"] = token_summary["token_holdings_count"]
+        metric["nft_holdings_count"] = token_summary["nft_holdings_count"]
+        metric["asset_contract_addresses"] = token_summary["asset_contract_addresses"]
+        metric["nft_collection_contract_addresses"] = token_summary["nft_collection_contract_addresses"]
+        metric["asset_snapshot_time"] = now_utc()
+        updated = True
+    except Exception as error:
+        print(f"[WARN] address tokens failed for {address}: {error}")
+
+    metric["updated_at"] = now_utc()
+    return updated
 
 
-def run_sync(max_pages: int) -> Dict[str, Any]:
+def run_sync(max_pages: int, enrich_limit: int) -> Dict[str, Any]:
     latest = read_json(latest_path())
     checkpoint_before = deepcopy(latest.get("checkpoint", {}))
 
-    historical_backfill_complete = bool(
-        checkpoint_before.get("historical_backfill_complete")
-    )
+    wallet_metrics = latest.setdefault("wallet_metrics", {})
+    enrichment_queue: Set[str] = set(latest.get("enrichment_queue", []))
 
+    historical_backfill_complete = bool(checkpoint_before.get("historical_backfill_complete"))
     mode = "INCREMENTAL_SYNC" if historical_backfill_complete else "HISTORICAL_BACKFILL"
 
     cursor = checkpoint_before.get("last_transaction_cursor")
-    if mode == "INCREMENTAL_SYNC" and checkpoint_before.get("sync_phase") != "INCREMENTAL_SYNC_IN_PROGRESS":
+    if mode == "INCREMENTAL_SYNC":
         cursor = None
 
-    incremental_anchor_hash = (
-        checkpoint_before.get("incremental_anchor_hash")
-        or checkpoint_before.get("latest_seen_transaction_hash")
-        or load_initial_backfill_anchor()
-    )
-
-    wallet_deltas: Dict[str, Dict[str, Any]] = {}
+    wallet_deltas: Dict[str, Any] = {}
     processed_transactions = 0
     first_tx_hash = None
     last_tx_hash = None
     first_block = None
     last_block = None
     next_cursor = cursor
-    reached_incremental_anchor = False
     stop_reason = None
 
     for _page_index in range(max_pages):
@@ -272,14 +382,7 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
             if not isinstance(tx, dict):
                 continue
 
-            tx_hash = normalize_hash(tx.get("hash"))
-
-            if mode == "INCREMENTAL_SYNC" and incremental_anchor_hash and tx_hash == incremental_anchor_hash:
-                reached_incremental_anchor = True
-                stop_reason = "REACHED_PREVIOUS_INCREMENTAL_ANCHOR"
-                break
-
-            audit = process_transaction(tx, wallet_deltas)
+            audit = process_transaction(tx, wallet_metrics, wallet_deltas, enrichment_queue)
             if not audit:
                 continue
 
@@ -289,49 +392,51 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
             first_block = audit["block_number"] if first_block is None else max(first_block, audit["block_number"])
             last_block = audit["block_number"] if last_block is None else min(last_block, audit["block_number"])
 
-        if reached_incremental_anchor:
-            next_cursor = None
-            break
-
         next_cursor = payload.get("next_page_params")
-
         if not next_cursor:
             stop_reason = "NO_NEXT_PAGE_PARAMS_REACHED_GENESIS" if mode == "HISTORICAL_BACKFILL" else "NO_NEXT_PAGE_PARAMS"
             break
 
+        time.sleep(REQUEST_DELAY_SECONDS)
+
     if stop_reason is None:
         stop_reason = "MAX_PAGES_REACHED"
 
-    apply_deltas(latest, wallet_deltas)
+    enriched_count = 0
+    for address in list(enrichment_queue)[:enrich_limit]:
+        if enrich_wallet(address, wallet_metrics):
+            wallet_deltas[address] = deepcopy(wallet_metrics[address])
+            enriched_count += 1
+        enrichment_queue.discard(address)
+        time.sleep(REQUEST_DELAY_SECONDS)
 
     if mode == "HISTORICAL_BACKFILL":
         historical_backfill_complete = next_cursor is None and stop_reason == "NO_NEXT_PAGE_PARAMS_REACHED_GENESIS"
-
         checkpoint_after = {
             "sync_phase": "BACKFILL_COMPLETE" if historical_backfill_complete else "HISTORICAL_BACKFILL_IN_PROGRESS",
             "historical_backfill_complete": historical_backfill_complete,
             "backfill_status": "COMPLETE" if historical_backfill_complete else "IN_PROGRESS",
+            "backfill_direction": "latest_to_genesis",
             "backfill_stop_reason": stop_reason,
             "last_synced_block": last_block if last_block is not None else checkpoint_before.get("last_synced_block"),
             "last_transaction_cursor": None if historical_backfill_complete else next_cursor,
             "last_transaction_hash": last_tx_hash or checkpoint_before.get("last_transaction_hash"),
-            "latest_seen_transaction_hash": checkpoint_before.get("latest_seen_transaction_hash") or load_initial_backfill_anchor() or first_tx_hash,
-            "incremental_anchor_hash": checkpoint_before.get("incremental_anchor_hash") or load_initial_backfill_anchor() or first_tx_hash,
+            "latest_seen_transaction_hash": checkpoint_before.get("latest_seen_transaction_hash") or first_tx_hash,
+            "incremental_anchor_hash": checkpoint_before.get("incremental_anchor_hash") or first_tx_hash,
             "last_sync_at": now_utc(),
         }
     else:
-        incremental_complete = reached_incremental_anchor or next_cursor is None
-
         checkpoint_after = {
-            "sync_phase": "INCREMENTAL_SYNC" if incremental_complete else "INCREMENTAL_SYNC_IN_PROGRESS",
+            "sync_phase": "INCREMENTAL_SYNC",
             "historical_backfill_complete": True,
             "backfill_status": "COMPLETE",
+            "backfill_direction": "latest_to_genesis",
             "backfill_stop_reason": checkpoint_before.get("backfill_stop_reason"),
             "last_synced_block": last_block if last_block is not None else checkpoint_before.get("last_synced_block"),
-            "last_transaction_cursor": None if incremental_complete else next_cursor,
+            "last_transaction_cursor": None,
             "last_transaction_hash": last_tx_hash or checkpoint_before.get("last_transaction_hash"),
             "latest_seen_transaction_hash": first_tx_hash or checkpoint_before.get("latest_seen_transaction_hash"),
-            "incremental_anchor_hash": first_tx_hash or incremental_anchor_hash,
+            "incremental_anchor_hash": first_tx_hash or checkpoint_before.get("incremental_anchor_hash"),
             "last_sync_at": now_utc(),
             "incremental_stop_reason": stop_reason,
         }
@@ -339,11 +444,17 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
     latest["status"] = "SYNCED"
     latest["updated_at"] = now_utc()
     latest["checkpoint"] = checkpoint_after
+    latest["enrichment_queue"] = sorted(enrichment_queue)
+
     latest["counters"] = {
         "total_processed_transactions": int(latest.get("counters", {}).get("total_processed_transactions", 0)) + processed_transactions,
-        "total_indexed_wallets": len(latest.get("wallet_metrics", {})),
+        "total_indexed_wallets": len(wallet_metrics),
         "last_sync_processed_transactions": processed_transactions,
         "last_sync_wallets_changed": len(wallet_deltas),
+        "native_balance_snapshots": sum(1 for m in wallet_metrics.values() if m.get("native_balance_wei") is not None),
+        "asset_holding_snapshots": sum(1 for m in wallet_metrics.values() if m.get("asset_snapshot_time")),
+        "enriched_wallets_this_sync": enriched_count,
+        "enrichment_queue_remaining": len(enrichment_queue),
     }
 
     if checkpoint_before.get("sync_phase") == "NOT_STARTED":
@@ -363,7 +474,8 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
         "engine": latest["engine"],
         "network": latest["network"],
         "chain_id": latest["chain_id"],
-        "data_model": latest["data_model"],
+        "schema_version": latest.get("schema_version", "2.0.0"),
+        "data_model": latest.get("data_model", "VARIABLE_AWARE_NORMALIZED_WALLET_METRICS"),
         "raw_transaction_dump": False,
         "snapshot_type": snapshot_type,
         "status": "SYNCED",
@@ -374,6 +486,8 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
         "checkpoint_after": checkpoint_after,
         "processed_transactions_this_sync": processed_transactions,
         "wallets_changed_this_sync": len(wallet_deltas),
+        "enriched_wallets_this_sync": enriched_count,
+        "enrichment_queue_remaining": len(enrichment_queue),
         "wallet_deltas": wallet_deltas,
         "minimal_audit": {
             "first_transaction_hash": first_tx_hash,
@@ -392,6 +506,8 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
         "mode": mode,
         "processed_transactions": processed_transactions,
         "wallets_changed": len(wallet_deltas),
+        "enriched_wallets": enriched_count,
+        "enrichment_queue_remaining": len(enrichment_queue),
         "latest_snapshot": snapshot_rel,
         "stop_reason": stop_reason,
         "historical_backfill_complete": checkpoint_after.get("historical_backfill_complete"),
@@ -400,14 +516,18 @@ def run_sync(max_pages: int) -> Dict[str, Any]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Sync WIL v3 rank-data-engine normalized wallet metrics.")
+    parser = argparse.ArgumentParser(description="Sync WIL v3 variable-aware rank data engine.")
     parser.add_argument("--max-pages", type=int, default=5, help="Maximum transaction pages to process in this run.")
+    parser.add_argument("--enrich-limit", type=int, default=100, help="Maximum wallets to enrich with address/token data in this run.")
     args = parser.parse_args()
 
     if args.max_pages <= 0:
         raise SystemExit("--max-pages must be greater than 0")
 
-    result = run_sync(args.max_pages)
+    if args.enrich_limit < 0:
+        raise SystemExit("--enrich-limit must be >= 0")
+
+    result = run_sync(args.max_pages, args.enrich_limit)
     print(json.dumps(result, indent=2, sort_keys=True))
 
 
