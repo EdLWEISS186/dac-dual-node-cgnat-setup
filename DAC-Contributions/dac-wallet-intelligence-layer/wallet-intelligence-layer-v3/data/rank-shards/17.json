@@ -28,29 +28,137 @@
     ],
     "percentiles": {
       "collection_diversity": null,
-      "gas_used": "74.598930",
+      "gas_used": "77.264957",
       "low_sybil_risk": null,
       "native_funds": null,
-      "native_volume": "33.689840",
+      "native_volume": "34.017094",
       "nft_holdings": null,
-      "overall_rank": "67.112299",
+      "overall_rank": "70.085470",
       "reputation_score": null,
-      "transactions": "74.598930"
+      "transactions": "77.264957"
     },
     "rank_tier": "TOP_50_PERCENT",
     "ranks": {
       "collection_diversity": null,
-      "gas_used": 279,
+      "gas_used": 452,
       "low_sybil_risk": null,
       "native_funds": null,
-      "native_volume": 126,
+      "native_volume": 199,
       "nft_holdings": null,
-      "overall_rank": 251,
+      "overall_rank": 410,
       "reputation_score": null,
-      "transactions": 279
+      "transactions": 452
     },
     "strongest_metric": "native_volume",
-    "total_ranked_wallets": 374,
+    "total_ranked_wallets": 585,
     "updated_at": "2026-06-06T19:42:21+00:00"
+  },
+  "0x177a102c87ca0540db8c8582e82f7cb66ff3defc": {
+    "address": "0x177a102c87ca0540db8c8582e82f7cb66ff3defc",
+    "available_rank_variables": [
+      "transactions",
+      "gas_used",
+      "native_volume",
+      "overall_rank"
+    ],
+    "first_seen_block": 14966906,
+    "last_seen_block": 14966906,
+    "metrics": {
+      "collection_diversity": null,
+      "gas_used": 0,
+      "low_sybil_risk": null,
+      "native_funds": null,
+      "native_volume": "0.8",
+      "nft_holdings": null,
+      "reputation_score": null,
+      "transactions": 0
+    },
+    "pending_rank_variables": [
+      "native_funds",
+      "nft_holdings",
+      "collection_diversity",
+      "reputation_score",
+      "low_sybil_risk"
+    ],
+    "percentiles": {
+      "collection_diversity": null,
+      "gas_used": "77.435897",
+      "low_sybil_risk": null,
+      "native_funds": null,
+      "native_volume": "9.572650",
+      "nft_holdings": null,
+      "overall_rank": "58.119658",
+      "reputation_score": null,
+      "transactions": "77.435897"
+    },
+    "rank_tier": "TOP_10_PERCENT",
+    "ranks": {
+      "collection_diversity": null,
+      "gas_used": 453,
+      "low_sybil_risk": null,
+      "native_funds": null,
+      "native_volume": 56,
+      "nft_holdings": null,
+      "overall_rank": 340,
+      "reputation_score": null,
+      "transactions": 453
+    },
+    "strongest_metric": "native_volume",
+    "total_ranked_wallets": 585,
+    "updated_at": "2026-06-06T20:22:00+00:00"
+  },
+  "0x17984643f59637baa543868dc12ffa76d41532b3": {
+    "address": "0x17984643f59637baa543868dc12ffa76d41532b3",
+    "available_rank_variables": [
+      "transactions",
+      "gas_used",
+      "native_volume",
+      "overall_rank"
+    ],
+    "first_seen_block": 14966905,
+    "last_seen_block": 14966905,
+    "metrics": {
+      "collection_diversity": null,
+      "gas_used": 50017,
+      "low_sybil_risk": null,
+      "native_funds": null,
+      "native_volume": "0.028",
+      "nft_holdings": null,
+      "reputation_score": null,
+      "transactions": 1
+    },
+    "pending_rank_variables": [
+      "native_funds",
+      "nft_holdings",
+      "collection_diversity",
+      "reputation_score",
+      "low_sybil_risk"
+    ],
+    "percentiles": {
+      "collection_diversity": null,
+      "gas_used": "21.880342",
+      "low_sybil_risk": null,
+      "native_funds": null,
+      "native_volume": "39.658120",
+      "nft_holdings": null,
+      "overall_rank": "15.897436",
+      "reputation_score": null,
+      "transactions": "20.512821"
+    },
+    "rank_tier": "TOP_25_PERCENT",
+    "ranks": {
+      "collection_diversity": null,
+      "gas_used": 128,
+      "low_sybil_risk": null,
+      "native_funds": null,
+      "native_volume": 232,
+      "nft_holdings": null,
+      "overall_rank": 93,
+      "reputation_score": null,
+      "transactions": 120
+    },
+    "strongest_metric": "transactions",
+    "total_ranked_wallets": 585,
+    "updated_at": "2026-06-06T20:22:00+00:00"
   }
 }

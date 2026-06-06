@@ -2,20 +2,20 @@
   "chain_id": 21894,
   "core_statement": "v3 turns every verified wallet variable into a comparative public rank signal.",
   "engine_checkpoint": {
-    "last_sync_at": "2026-06-06T20:03:42+00:00",
-    "last_synced_block": 14966908,
+    "last_sync_at": "2026-06-06T20:22:00+00:00",
+    "last_synced_block": 14966904,
     "last_transaction_cursor": {
-      "block_number": 14966908,
-      "index": 34,
-      "items_count": 350
+      "block_number": 14966904,
+      "index": 59,
+      "items_count": 600
     },
-    "last_transaction_hash": "0xb5973634ecf079a55ce6130b655a6ac74fcd6227c1ff6aeb23ff3d3ff15c310d",
+    "last_transaction_hash": "0x8559e9e56ac774ff14c9e349a3c0b7ccee2d633cdd455956c08037197eabc679",
     "sync_phase": "INCREMENTAL_SYNC"
   },
   "engine_status": "SYNCED",
-  "engine_updated_at": "2026-06-06T20:03:42+00:00",
+  "engine_updated_at": "2026-06-06T20:22:00+00:00",
   "feature": "Wallet Rank Intelligence",
-  "generated_at": "2026-06-06T20:15:27+00:00",
+  "generated_at": "2026-06-06T20:22:00+00:00",
   "index_scope": {
     "note": "Ranks are calculated from currently synced rank-data-engine wallet metrics.",
     "raw_transaction_dump": false,
@@ -36,7 +36,7 @@
   "rank_shards": {
     "directory": "data/rank-shards",
     "prefix_length": 2,
-    "shard_count": 190
+    "shard_count": 226
   },
   "ranking_variables": [
     "transactions",
@@ -45,6 +45,6 @@
     "overall_rank"
   ],
   "status": "GENERATED_FROM_RANK_DATA_ENGINE",
-  "total_processed_transactions": 350,
-  "total_ranked_wallets": 374
+  "total_processed_transactions": 600,
+  "total_ranked_wallets": 585
 }
