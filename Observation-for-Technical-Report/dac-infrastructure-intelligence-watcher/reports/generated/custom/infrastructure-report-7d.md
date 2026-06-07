@@ -13,28 +13,28 @@ This report is generated from infrastructure health snapshots and is intended fo
 | Field | Value |
 |---|---|
 | Project | DAC Infrastructure Intelligence Watcher |
-| Snapshot count | 18 |
+| Snapshot count | 19 |
 | First snapshot | 2026-06-04T09-54-55-772035+00-00-health.json |
-| Latest snapshot | 2026-06-07T10-41-05-109781+00-00-health.json |
+| Latest snapshot | 2026-06-07T12-12-00-907268+00-00-health.json |
 | First checked at UTC | 2026-06-04T09:54:55.772035+00:00 |
-| Latest checked at UTC | 2026-06-07T10:41:05.109781+00:00 |
-| Overall status counts | DEGRADED: 6, HEALTHY: 7, PARTIAL_OUTAGE: 5 |
+| Latest checked at UTC | 2026-06-07T12:12:00.907268+00:00 |
+| Overall status counts | DEGRADED: 7, HEALTHY: 7, PARTIAL_OUTAGE: 5 |
 
 ## 2. Endpoint Status Counts
 
 | Endpoint | Status counts |
 |---|---|
-| official_public_rpc | DEGRADED: 6, HEALTHY: 7, UNHEALTHY: 5 |
-| explorer_web | HEALTHY: 18 |
-| primary_explorer_api | HEALTHY: 18 |
+| official_public_rpc | DEGRADED: 7, HEALTHY: 7, UNHEALTHY: 5 |
+| explorer_web | HEALTHY: 19 |
+| primary_explorer_api | HEALTHY: 19 |
 
 ## 3. Response-Time Summary
 
 | Endpoint | Average response | Max response | Response class counts |
 |---|---:|---:|---|
-| official_public_rpc | 1977.25 ms | 5347.0 ms | MODERATE: 3, SLOW: 5, UNKNOWN: 10 |
-| explorer_web | 1030.22 ms | 2299.0 ms | MODERATE: 8, UNKNOWN: 10 |
-| primary_explorer_api | 498.12 ms | 620.0 ms | FAST: 5, MODERATE: 3, UNKNOWN: 10 |
+| official_public_rpc | 2506.22 ms | 15388.0 ms | MODERATE: 3, SLOW: 6, UNKNOWN: 10 |
+| explorer_web | 1009.05 ms | 2299.0 ms | MODERATE: 9, UNKNOWN: 10 |
+| primary_explorer_api | 499.56 ms | 620.0 ms | FAST: 5, MODERATE: 4, UNKNOWN: 10 |
 
 ## 4. Snapshot Timeline
 
@@ -58,6 +58,7 @@ This report is generated from infrastructure health snapshots and is intended fo
 | 16 | 2026-06-06T15:41:44.603473+00:00 | HEALTHY | HEALTHY | MODERATE | HEALTHY | MODERATE | HEALTHY | FAST |
 | 17 | 2026-06-07T08:29:35.513958+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | MODERATE | HEALTHY | FAST |
 | 18 | 2026-06-07T10:41:05.109781+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | FAST |
+| 19 | 2026-06-07T12:12:00.907268+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
 
 ## 5. Status & Response-Class Glossary
 
