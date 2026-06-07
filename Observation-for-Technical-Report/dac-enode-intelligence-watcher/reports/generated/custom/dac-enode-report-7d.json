@@ -1,7 +1,7 @@
 {
   "project": "DAC Enode Intelligence Watcher",
   "summary_type": "custom_json_report_summary",
-  "generated_at_utc": "2026-06-06T23:44:42.072360+00:00",
+  "generated_at_utc": "2026-06-07T01:59:20.050492+00:00",
   "range": "7d",
   "range_label": "Last 7 Days",
   "source_files": {
@@ -12,29 +12,29 @@
   },
   "important_note": "This custom JSON summary is observation-based. It does not make official DAC ownership claims and should not be treated as a definitive decentralization measurement.",
   "latest_observation": {
-    "checked_at_utc": "2026-06-06T20:09:22.057642+00:00",
-    "generated_at_source": "Sat Jun  6 10:00:01 PM CEST 2026",
+    "checked_at_utc": "2026-06-07T01:59:16.018237+00:00",
+    "generated_at_source": "Sun Jun  7 02:00:01 AM CEST 2026",
     "target_port": 28657,
-    "current_total": 14,
-    "previous_total": 15,
-    "added_count": 0,
-    "removed_count": 1,
+    "current_total": 15,
+    "previous_total": 14,
+    "added_count": 1,
+    "removed_count": 0,
     "unchanged_count": 14,
     "change_severity": "LOW",
-    "severity_reason": "Small enode rotation detected: 0 added and 1 removed."
+    "severity_reason": "Small enode rotation detected: 1 added and 0 removed."
   },
   "observation_scope": {
-    "selected_observation_count": 21,
+    "selected_observation_count": 22,
     "first_observed_source_time": "May 31, 2026 (12:00 CEST)",
-    "last_observed_source_time": "Jun 6, 2026 (22:00 CEST)",
+    "last_observed_source_time": "Jun 7, 2026 (02:00 CEST)",
     "phase_counts": {
       "manual_backfill": 1,
-      "automated_watcher": 20
+      "automated_watcher": 21
     },
     "status_counts": {
       "manual_changed": 1,
       "initial": 1,
-      "changed": 19
+      "changed": 20
     },
     "target_ports_observed": [
       28657
@@ -43,43 +43,43 @@
   "enode_movement_summary": {
     "min_enode_count": 8,
     "max_enode_count": 15,
-    "avg_enode_count": 11.81,
-    "total_added_events": 30,
+    "avg_enode_count": 11.95,
+    "total_added_events": 31,
     "total_removed_events": 15
   },
   "anomaly_summary": {
     "selected_anomaly_signal_count": 0,
     "selected_severity_counts": {},
     "selected_anomaly_type_counts": {},
-    "global_short_summary": "5 anomaly signals were detected across 34 observations. The highest observed anomaly severity is HIGH.",
+    "global_short_summary": "5 anomaly signals were detected across 35 observations. The highest observed anomaly severity is HIGH.",
     "global_highest_severity": "HIGH",
     "global_recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
   },
   "concentration_summary": {
     "overall_concentration_label": "ELEVATED",
     "headline": "Observed infrastructure shows elevated concentration under the current heuristic model.",
-    "key_observation": "Top live ASN is AS51167 with 15 unique IPs (50.0%).",
-    "country_observation": "Top live ASN country code is DE with 18 unique IPs (60.0%).",
-    "interpretation": "Top live ASN controls at least 50% of observed unique IPs. Observed IPs show notable concentration in one live ASN country code.",
+    "key_observation": "Top live ASN is AS51167 with 15 unique IPs (48.39%).",
+    "country_observation": "Top live ASN country code is DE with 18 unique IPs (58.06%).",
+    "interpretation": "Top live ASN controls at least 35% of observed unique IPs. Observed IPs show notable concentration in one live ASN country code.",
     "recommended_action": "Use this as an observation aid only. Compare it with registry history, DAC Infrastructure Signal, manual peer identity evidence, live ASN lookup updates, and future watcher snapshots before drawing conclusions.",
     "disclaimer": "Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement.",
     "top_dimensions": {
       "live_asn": {
         "top_name": "AS51167",
         "top_count": 15,
-        "top_percentage": 50.0,
-        "label": "ELEVATED"
+        "top_percentage": 48.39,
+        "label": "MODERATE"
       },
       "live_country": {
         "top_name": "DE",
         "top_count": 18,
-        "top_percentage": 60.0,
+        "top_percentage": 58.06,
         "label": "ELEVATED"
       },
       "dac_infrastructure_signal": {
         "top_name": "Unknown / No Signal",
-        "top_count": 9,
-        "top_percentage": 30.0,
+        "top_count": 10,
+        "top_percentage": 32.26,
         "label": "LOW"
       }
     }
@@ -441,6 +441,23 @@
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 0 added and 1 removed.",
       "snapshot_file": "data/snapshots/2026-06-06T20-09-22-057642+00-00-changed.json"
+    },
+    {
+      "observation_index": 35,
+      "phase": "automated_watcher",
+      "status": "changed",
+      "source_time_raw": "Sun Jun  7 02:00:01 AM CEST 2026",
+      "source_time_readable": "Jun 7, 2026 (02:00 CEST)",
+      "checked_at_utc": "2026-06-07T01:59:16.018237+00:00",
+      "current_total": 15,
+      "previous_total": 14,
+      "added_count": 1,
+      "removed_count": 0,
+      "unchanged_count": 14,
+      "target_port": 28657,
+      "change_severity": "LOW",
+      "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
+      "snapshot_file": "data/snapshots/2026-06-07T01-59-16-018237+00-00-changed.json"
     }
   ],
   "anomalies": [],

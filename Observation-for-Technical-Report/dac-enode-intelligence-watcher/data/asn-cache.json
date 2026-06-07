@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-06-06T23:44:41.932896+00:00",
+  "updated_at_utc": "2026-06-07T01:59:19.905834+00:00",
   "lookup_method": "team_cymru_whois_live_lookup",
   "entries": {
     "1.54.141.106": {
@@ -51,6 +51,23 @@
       "source": "team_cymru",
       "cached": false,
       "checked_at_utc": "2026-06-03T04:32:03.560246+00:00",
+      "error": null,
+      "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+    },
+    "139.162.1.250": {
+      "ip": "139.162.1.250",
+      "live_lookup_used": true,
+      "live_lookup_success": true,
+      "lookup_method": "team_cymru_whois_live_lookup",
+      "asn": "AS63949",
+      "asn_name": "AKAMAI-LINODE-AP - Akamai Connected Cloud, SG",
+      "bgp_prefix": "139.162.0.0/19",
+      "country_code": "NL",
+      "registry": "ripencc",
+      "allocated": "1990-03-24",
+      "source": "team_cymru",
+      "cached": false,
+      "checked_at_utc": "2026-06-07T01:59:19.905652+00:00",
       "error": null,
       "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
     },
