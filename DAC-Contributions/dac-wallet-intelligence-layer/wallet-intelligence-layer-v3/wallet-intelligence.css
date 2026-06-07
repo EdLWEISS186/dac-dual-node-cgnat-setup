@@ -1776,3 +1776,13 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
+
+/* Wallet Rank Intelligence — Rank Data Engine status */
+.wallet-rank-sync-status {
+  align-items: flex-start;
+}
+
+.wallet-rank-sync-status small {
+  display: block;
+  line-height: 1.45;
+}

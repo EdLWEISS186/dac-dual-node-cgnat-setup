@@ -3254,15 +3254,28 @@ function formatWalletRankTier(value) {
 }
 
 function renderRankSyncStatus(summary) {
-  const sync = summary?.sync_status || {};
+  const sync = summary?.sync_status || summary?.engine_checkpoint || {};
   const isFullySynced = sync.historical_backfill_complete === true;
 
-  const latestSnapshotTime = sync.latest_snapshot_time || sync.last_sync_at || summary?.engine_updated_at || "Unknown";
-  const latestSnapshot = sync.latest_snapshot || summary?.engine_latest_snapshot || "Unknown";
+  const latestSnapshotTime =
+    sync.latest_snapshot_time ||
+    sync.last_sync_at ||
+    summary?.engine_updated_at ||
+    "Unknown";
+
+  const latestSnapshot =
+    sync.latest_snapshot ||
+    summary?.engine_latest_snapshot ||
+    "Unknown";
+
   const processedTx = summary?.total_processed_transactions ?? "NaN";
   const rankedWallets = summary?.total_ranked_wallets ?? "NaN";
+  const lastSync = sync.last_sync_at || latestSnapshotTime || "Unknown";
+  const backfillStatus = sync.backfill_status || "UNKNOWN";
+  const historicalComplete = isFullySynced ? "true" : "false";
 
   const label = isFullySynced ? "Fully synced" : "Backfill in progress";
+
   const tooltip = isFullySynced
     ? `Rank data is valid and fully synced from genesis to the latest snapshot. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`
     : `Rank data is still being backfilled from latest transactions toward genesis. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`;
@@ -3270,55 +3283,19 @@ function renderRankSyncStatus(summary) {
   return `
     <div class="wallet-rank-sync-status ${isFullySynced ? "is-synced" : "is-backfilling"}">
       <div>
-        <span>${escapeRankHtml(label)}</span>
+        <span>Rank Data Engine Status</span>
         <span class="wallet-rank-info" title="${escapeRankHtml(tooltip)}">ⓘ</span>
       </div>
-      <small>Latest snapshot: ${escapeRankHtml(latestSnapshotTime)}</small>
-      <small>Processed tx: ${formatRankValue(processedTx)}</small>
-      <small>Ranked wallets: ${formatRankValue(rankedWallets)}</small>
+      <small>State: ${escapeRankHtml(label)}</small>
+      <small>Last Sync: ${escapeRankHtml(lastSync)}</small>
+      <small>Latest Snapshot: ${escapeRankHtml(latestSnapshotTime)}</small>
+      <small>Processed Transactions: ${formatRankValue(processedTx)}</small>
+      <small>Ranked Wallets: ${formatRankValue(rankedWallets)}</small>
+      <small>Backfill Status: ${escapeRankHtml(backfillStatus)}</small>
+      <small>Historical Complete: ${historicalComplete}</small>
     </div>
   `;
 }
-
-
-
-function formatWalletRankTierDisplay(value) {
-  const raw = String(value || "Indexed").trim();
-  const normalized = raw
-    .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, "_")
-    .replace(/^TOP_?([0-9]+)_?PERCENT$/, "TOP_$1_PERCENT");
-
-  const labels = {
-    TOP_1_PERCENT: "Top 1%",
-    TOP_5_PERCENT: "Top 5%",
-    TOP_10_PERCENT: "Top 10%",
-    TOP_25_PERCENT: "Top 25%",
-    TOP_50_PERCENT: "Top 50%",
-    INDEXED: "Indexed"
-  };
-
-  return labels[normalized] || raw.replace(/_/g, " ");
-}
-
-function formatWalletRankMetricLabelDisplay(value) {
-  const key = String(value || "").toLowerCase();
-
-  const labels = {
-    native_funds: "Native Funds",
-    transactions: "Transactions",
-    gas_used: "Gas Used",
-    native_volume: "Native Volume",
-    nft_holdings: "NFT Holdings",
-    collection_diversity: "Collection Diversity",
-    reputation_score: "Reputation Score",
-    low_sybil_risk: "Low-Risk Profile",
-    overall_rank: "Overall Wallet Rank"
-  };
-
-  return labels[key] || String(value || "—").replace(/_/g, " ");
-}
-
 
 function renderWalletRankIntelligence(rankData) {
   if (!el.walletRankCard || !el.walletRankStatus || !el.walletRankGrid || !el.walletRankMeta) return;
