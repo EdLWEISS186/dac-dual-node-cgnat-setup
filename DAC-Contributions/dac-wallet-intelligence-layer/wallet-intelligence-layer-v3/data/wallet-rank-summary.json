@@ -7,22 +7,22 @@
     "backfill_stop_reason": "MAX_PAGES_REACHED",
     "historical_backfill_complete": false,
     "incremental_anchor_hash": "0xa7f80d9a21a8c1ca584fee25d07537c586b62f87acb6f6a7c4a11fafc00dd333",
-    "last_sync_at": "2026-06-07T20:07:02+00:00",
-    "last_synced_block": 14967689,
+    "last_sync_at": "2026-06-07T21:24:26+00:00",
+    "last_synced_block": 14967685,
     "last_transaction_cursor": {
-      "block_number": 14967689,
-      "index": 29,
-      "items_count": 3300
+      "block_number": 14967685,
+      "index": 32,
+      "items_count": 3550
     },
-    "last_transaction_hash": "0x44a40610fb51e42227a20c6c3c1f21c0f49412679d6a4e6b4745219851e3f290",
+    "last_transaction_hash": "0xbcaa2ff9ebb34c6c6c0d90202a1473bb310b935906509787b641d99fee35eafe",
     "latest_seen_transaction_hash": "0xa7f80d9a21a8c1ca584fee25d07537c586b62f87acb6f6a7c4a11fafc00dd333",
     "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "engine_latest_snapshot": "data/snapshots/backfill-2026-06-07T20-07-02-916447+00-00-changed.json",
+  "engine_latest_snapshot": "data/snapshots/backfill-2026-06-07T21-24-26-976562+00-00-changed.json",
   "engine_status": "SYNCED",
-  "engine_updated_at": "2026-06-07T20:07:02+00:00",
+  "engine_updated_at": "2026-06-07T21:24:26+00:00",
   "feature": "Wallet Rank Intelligence",
-  "generated_at": "2026-06-07T20:07:03+00:00",
+  "generated_at": "2026-06-07T21:24:27+00:00",
   "index_scope": {
     "note": "Ranks are calculated from normalized blockchain-derived wallet metrics collected by rank-data-engine.",
     "raw_transaction_dump": false,
@@ -54,11 +54,11 @@
   "sync_status": {
     "backfill_status": "IN_PROGRESS",
     "historical_backfill_complete": false,
-    "last_sync_at": "2026-06-07T20:07:02+00:00",
-    "latest_snapshot": "data/snapshots/backfill-2026-06-07T20-07-02-916447+00-00-changed.json",
-    "latest_snapshot_time": "2026-06-07T20:07:02+00:00",
+    "last_sync_at": "2026-06-07T21:24:26+00:00",
+    "latest_snapshot": "data/snapshots/backfill-2026-06-07T21-24-26-976562+00-00-changed.json",
+    "latest_snapshot_time": "2026-06-07T21:24:26+00:00",
     "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "total_processed_transactions": 3300,
-  "total_ranked_wallets": 2324
+  "total_processed_transactions": 3550,
+  "total_ranked_wallets": 2478
 }
