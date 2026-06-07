@@ -3273,26 +3273,48 @@ function renderRankSyncStatus(summary) {
   const lastSync = sync.last_sync_at || latestSnapshotTime || "Unknown";
   const backfillStatus = sync.backfill_status || "UNKNOWN";
   const historicalComplete = isFullySynced ? "true" : "false";
-
-  const label = isFullySynced ? "Fully synced" : "Backfill in progress";
+  const stateLabel = isFullySynced ? "Fully synced" : "Backfill in progress";
 
   const tooltip = isFullySynced
     ? `Rank data is valid and fully synced from genesis to the latest snapshot. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`
     : `Rank data is still being backfilled from latest transactions toward genesis. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`;
 
   return `
-    <div class="wallet-rank-sync-status ${isFullySynced ? "is-synced" : "is-backfilling"}">
-      <div>
-        <span>Rank Data Engine Status</span>
-        <span class="wallet-rank-info" title="${escapeRankHtml(tooltip)}">ⓘ</span>
+    <div class="wallet-rank-engine-status ${isFullySynced ? "is-synced" : "is-backfilling"}">
+      <div class="wallet-rank-engine-status-head">
+        <div>
+          <span class="wallet-rank-engine-kicker">Rank Data Engine Status</span>
+          <span class="wallet-rank-info" title="${escapeRankHtml(tooltip)}">ⓘ</span>
+        </div>
+        <strong>${escapeRankHtml(stateLabel)}</strong>
       </div>
-      <small>State: ${escapeRankHtml(label)}</small>
-      <small>Last Sync: ${escapeRankHtml(lastSync)}</small>
-      <small>Latest Snapshot: ${escapeRankHtml(latestSnapshotTime)}</small>
-      <small>Processed Transactions: ${formatRankValue(processedTx)}</small>
-      <small>Ranked Wallets: ${formatRankValue(rankedWallets)}</small>
-      <small>Backfill Status: ${escapeRankHtml(backfillStatus)}</small>
-      <small>Historical Complete: ${historicalComplete}</small>
+
+      <div class="wallet-rank-engine-status-grid">
+        <div>
+          <span>Last Sync</span>
+          <strong>${escapeRankHtml(lastSync)}</strong>
+        </div>
+        <div>
+          <span>Latest Snapshot</span>
+          <strong>${escapeRankHtml(latestSnapshotTime)}</strong>
+        </div>
+        <div>
+          <span>Processed Transactions</span>
+          <strong>${formatRankValue(processedTx)}</strong>
+        </div>
+        <div>
+          <span>Ranked Wallets</span>
+          <strong>${formatRankValue(rankedWallets)}</strong>
+        </div>
+        <div>
+          <span>Backfill Status</span>
+          <strong>${escapeRankHtml(backfillStatus)}</strong>
+        </div>
+        <div>
+          <span>Historical Complete</span>
+          <strong>${historicalComplete}</strong>
+        </div>
+      </div>
     </div>
   `;
 }
