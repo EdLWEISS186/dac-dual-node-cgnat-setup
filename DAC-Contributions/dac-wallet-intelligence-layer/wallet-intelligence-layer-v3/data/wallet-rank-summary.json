@@ -13,26 +13,26 @@
     "last_run_direction": "latest_to_genesis",
     "last_run_mode": "LOCAL_RPC_HISTORICAL_BACKFILL",
     "last_run_stop_reason": "MAX_BLOCKS_REACHED",
-    "last_sync_at": "2026-06-08T18:32:40+00:00",
-    "last_synced_block": 14966855,
+    "last_sync_at": "2026-06-08T18:45:21+00:00",
+    "last_synced_block": 14966755,
     "last_transaction_cursor": {
       "block_number": 14967668,
       "index": 17,
       "items_count": 4550
     },
-    "last_transaction_hash": "0x7fbd10cf9f6c4974da5414f2a5d01b4195c02c7ce6be58b6004e93518799b71c",
+    "last_transaction_hash": "0x44da2ecfd93668b685114d882da56b4b46b89d4d4e3b3d9ebb12bb220f6fd8b2",
     "latest_seen_transaction_hash": "0xa7f80d9a21a8c1ca584fee25d07537c586b62f87acb6f6a7c4a11fafc00dd333",
-    "local_rpc_backfill_next_block": 14966854,
-    "local_rpc_latest_block_at_sync": 14978154,
+    "local_rpc_backfill_next_block": 14966754,
+    "local_rpc_latest_block_at_sync": 14978205,
     "post_backfill_catch_up_from_block": 14975372,
     "primary_rpc": "http://127.0.0.1:8546",
     "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
   "engine_latest_snapshot": "data/latest.json",
   "engine_status": "SYNCED",
-  "engine_updated_at": "2026-06-08T18:32:40+00:00",
+  "engine_updated_at": "2026-06-08T18:45:21+00:00",
   "feature": "Wallet Rank Intelligence",
-  "generated_at": "2026-06-08T18:33:57+00:00",
+  "generated_at": "2026-06-08T18:47:25+00:00",
   "index_scope": {
     "note": "Ranks are calculated from normalized blockchain-derived wallet metrics collected by rank-data-engine.",
     "raw_transaction_dump": false,
@@ -64,11 +64,11 @@
   "sync_status": {
     "backfill_status": "IN_PROGRESS",
     "historical_backfill_complete": false,
-    "last_sync_at": "2026-06-08T18:32:40+00:00",
+    "last_sync_at": "2026-06-08T18:45:21+00:00",
     "latest_snapshot": "data/latest.json",
-    "latest_snapshot_time": "2026-06-08T18:32:40+00:00",
+    "latest_snapshot_time": "2026-06-08T18:45:21+00:00",
     "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "total_processed_transactions": 60149,
-  "total_ranked_wallets": 27285
+  "total_processed_transactions": 68172,
+  "total_ranked_wallets": 30932
 }
