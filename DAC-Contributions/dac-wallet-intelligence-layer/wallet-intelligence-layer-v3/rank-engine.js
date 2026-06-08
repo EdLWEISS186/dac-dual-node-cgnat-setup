@@ -1,5 +1,5 @@
 /*
- * Wallet Intelligence Layer v3.0.0 — Wallet Rank Intelligence
+ * Wallet Intelligence Layer v3.2.0 — Wallet Rank Intelligence
  *
  * Hybrid helper:
  * - Fetches real-time Explorer API network snapshot.
@@ -101,7 +101,17 @@
 
   function hasValidCustomRankIndex(summary, index) {
     if (!summary || !index || typeof index !== "object") return false;
+
+    const summaryStatus = String(summary.status || "");
+    const indexStatus = String(index.status || "");
+    const indexMode = String(index.mode || "");
+
+    if (summary.has_valid_rank_index === false) return false;
+    if (index.has_valid_rank_index === false) return false;
     if (summary.status === "HYBRID_MODEL_PENDING_VALID_INDEX") return false;
+    if (summaryStatus.startsWith("EXTERNALIZED_STATE")) return false;
+    if (indexStatus.startsWith("EXTERNALIZED_STATE")) return false;
+    if (indexMode === "EXTERNALIZED_STATE") return false;
 
     if (isShardedIndex(index)) {
       return Boolean(summary.rank_shards && summary.rank_shards.directory);

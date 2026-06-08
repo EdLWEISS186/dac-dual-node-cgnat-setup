@@ -21,6 +21,18 @@ __pycache__/
 # Full Explorer address rank indexer work/cache
 data/indexer-work/
 
-# Published rank shards
-!data/rank-shards/
-!data/rank-shards/*.json
+# v3.2.0 externalized rank state:
+# rank shards are not tracked during historical backfill.
+data/rank-shards/
+
+# v3.2.0 public rank manifest:
+# GitHub stores only the small public manifest, not heavy state snapshots.
+!rank-data-engine/
+!rank-data-engine/data/
+!rank-data-engine/data/latest.json
+rank-data-engine/data/snapshots/
+rank-data-engine/data/*.state.json
+rank-data-engine/data/*.sqlite
+rank-data-engine/data/*.db
+rank-data-engine/data/*.zst
+

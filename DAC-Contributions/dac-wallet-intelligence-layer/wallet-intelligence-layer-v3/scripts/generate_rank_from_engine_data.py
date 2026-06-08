@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wallet Intelligence Layer v3.0.0 — Generate Rank From Rank Data Engine
+Wallet Intelligence Layer v3.2.0 — Generate Rank From Externalized Rank Data Engine
 
 Reads:
 - rank-data-engine/data/latest.json
@@ -188,6 +188,84 @@ def main() -> None:
 
     latest = read_json(engine_latest)
     wallet_metrics = latest.get("wallet_metrics", {})
+    checkpoint = latest.get("checkpoint", {})
+    counters = latest.get("counters", {})
+
+    sync_phase = checkpoint.get("sync_phase")
+    historical_complete = checkpoint.get("historical_backfill_complete") is True
+    catch_up_status = checkpoint.get("catch_up_status")
+    publish_ready = (
+        sync_phase == "INCREMENTAL"
+        and historical_complete
+        and catch_up_status in ("CAUGHT_UP", None)
+    )
+
+    if not publish_ready:
+        if shards_dir.exists():
+            shutil.rmtree(shards_dir)
+
+        summary = {
+            "schema": "WIL_V3_RANK_SUMMARY",
+            "version": "v3.2.0",
+            "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
+            "has_valid_rank_index": False,
+            "rank_lookup_enabled": False,
+            "generated_at": now_utc(),
+            "rank_data_source": "externalized-local-state",
+            "externalized_state": True,
+            "external_state_file": "~/wil-v3-rank-state/latest-state.json",
+            "total_ranked_wallets": int(counters.get("total_indexed_wallets") or len(wallet_metrics)),
+            "total_indexed_wallets": int(counters.get("total_indexed_wallets") or len(wallet_metrics)),
+            "total_processed_transactions": int(counters.get("total_processed_transactions") or 0),
+            "rank_shards": {
+                "status": "DISABLED_DURING_BACKFILL",
+                "directory": None,
+                "reason": "Rank shards are not published while historical backfill uses externalized state storage."
+            },
+            "sync_status": {
+                "phase": sync_phase,
+                "historical_backfill_complete": historical_complete,
+                "catch_up_status": catch_up_status,
+                "historical_backfill_anchor_block": checkpoint.get("historical_backfill_anchor_block"),
+                "last_synced_block": checkpoint.get("last_synced_block"),
+                "local_rpc_backfill_next_block": checkpoint.get("local_rpc_backfill_next_block"),
+                "catch_up_next_block": checkpoint.get("catch_up_next_block"),
+                "incremental_next_block": checkpoint.get("incremental_next_block"),
+                "local_rpc_latest_block_at_sync": checkpoint.get("local_rpc_latest_block_at_sync"),
+                "last_sync_at": checkpoint.get("last_sync_at"),
+            },
+            "metrics": [
+                "native_funds",
+                "transactions",
+                "gas_used",
+                "native_volume",
+                "nft_holdings",
+                "collection_diversity",
+                "reputation_score",
+                "low_sybil_risk",
+                "overall_rank"
+            ],
+            "note": "Rank lookup is temporarily disabled while the v3.2.0 externalized rank state architecture continues historical backfill."
+        }
+
+        index = {
+            "schema": "WIL_V3_RANK_INDEX",
+            "version": "v3.2.0",
+            "status": "EXTERNALIZED_STATE_PENDING_VALID_PUBLISH",
+            "mode": "EXTERNALIZED_STATE",
+            "has_valid_rank_index": False,
+            "directory": None,
+            "summary": "Rank shards are intentionally not published during externalized historical backfill.",
+            "externalized_state": True
+        }
+
+        write_json(out_dir / "wallet-rank-summary.json", summary)
+        write_json(out_dir / "wallet-rank-index.json", index)
+
+        print("[OK] WIL v3.2.0 externalized state summary generated")
+        print("[OK] Rank shard publishing disabled during backfill")
+        print(f"[OK] Summary: {out_dir / 'wallet-rank-summary.json'}")
+        return
 
     if not wallet_metrics:
         raise SystemExit("rank-data-engine latest.json has no wallet_metrics yet.")

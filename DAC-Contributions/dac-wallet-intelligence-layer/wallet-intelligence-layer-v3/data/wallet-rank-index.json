@@ -1,5 +1,10 @@
 {
-  "directory": "data/rank-shards",
-  "mode": "SHARDED",
-  "summary": "Use rank-shards/{address_prefix}.json for wallet rank lookup."
+  "directory": null,
+  "externalized_state": true,
+  "has_valid_rank_index": false,
+  "mode": "EXTERNALIZED_STATE",
+  "schema": "WIL_V3_RANK_INDEX",
+  "status": "EXTERNALIZED_STATE_PENDING_VALID_PUBLISH",
+  "summary": "Rank shards are intentionally not published during externalized historical backfill.",
+  "version": "v3.2.0"
 }

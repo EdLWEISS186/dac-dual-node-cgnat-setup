@@ -28,7 +28,7 @@ from typing import Any, Dict, Iterable, Optional, Set
 
 CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
-PROJECT = "Wallet Intelligence Layer v3.0.0"
+PROJECT = "Wallet Intelligence Layer v3.2.0"
 
 DEFAULT_PRIMARY_RPC = "http://127.0.0.1:8546"
 DEFAULT_FALLBACK_RPC = "http://192.168.100.7:8545"
