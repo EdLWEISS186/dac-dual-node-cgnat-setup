@@ -2657,7 +2657,7 @@ function buildDynamicIntelligenceBadge(output) {
     name: `${INTELLIGENCE_BADGE_NAME} - ${output.wallet}`,
     description: WALLET_STATUS_BADGE_DESCRIPTION,
     image: "dynamic-onchain-svg",
-    external_url: "https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v2",
+    external_url: "https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3",
     attributes: [
       { trait_type: "Main Badge Class", value: mainBadgeClass },
       { trait_type: "Pattern Health", value: patternHealth === null ? "Unavailable" : patternHealth },
