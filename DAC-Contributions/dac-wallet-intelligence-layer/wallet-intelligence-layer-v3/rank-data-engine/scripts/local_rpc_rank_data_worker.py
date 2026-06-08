@@ -338,6 +338,7 @@ def main() -> None:
     parser.add_argument("--max-blocks", type=int, default=20)
     parser.add_argument("--balance-enrich-limit", type=int, default=100)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--no-snapshot-archive", action="store_true")
     args = parser.parse_args()
 
     rpc_urls = [args.primary_rpc, args.fallback_rpc]
@@ -457,7 +458,15 @@ def main() -> None:
     })
 
     snapshot_name = f"backfill-{snapshot_timestamp()}-changed.json"
-    working["latest_snapshot"] = f"data/snapshots/{snapshot_name}"
+    snapshot_archive_written = not args.no_snapshot_archive
+
+    if snapshot_archive_written:
+        working["latest_snapshot"] = f"data/snapshots/{snapshot_name}"
+    else:
+        working["latest_snapshot"] = "data/latest.json"
+        working["latest_snapshot_name"] = snapshot_name
+
+    working["snapshot_archive_written"] = snapshot_archive_written
 
     result = {
         "mode": "LOCAL_RPC_HISTORICAL_BACKFILL",
@@ -474,11 +483,13 @@ def main() -> None:
         "total_processed_transactions_after": counters["total_processed_transactions"],
         "local_rpc_backfill_next_block": checkpoint["local_rpc_backfill_next_block"],
         "latest_snapshot": working["latest_snapshot"],
+        "snapshot_archive_written": snapshot_archive_written,
     }
 
     if not args.dry_run:
         write_json(latest_path(), working)
-        write_json(snapshots_dir() / snapshot_name, working)
+        if snapshot_archive_written:
+            write_json(snapshots_dir() / snapshot_name, working)
 
     print(json.dumps(result, indent=2, sort_keys=True))
 
