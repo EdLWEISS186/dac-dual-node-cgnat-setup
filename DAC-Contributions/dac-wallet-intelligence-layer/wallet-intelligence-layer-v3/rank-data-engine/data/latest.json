@@ -2,11 +2,11 @@
   "chain_id": 21894,
   "counters": {
     "last_sync_processed_blocks": 100,
-    "last_sync_processed_transactions": 7977,
-    "last_sync_wallets_changed": 5514,
-    "native_balance_snapshots": 10873,
-    "total_indexed_wallets": 46573,
-    "total_processed_transactions": 99538
+    "last_sync_processed_transactions": 7409,
+    "last_sync_wallets_changed": 5317,
+    "native_balance_snapshots": 11583,
+    "total_indexed_wallets": 50410,
+    "total_processed_transactions": 107053
   },
   "engine": "rank-data-engine",
   "externalized_state": true,
@@ -21,7 +21,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 46573
+    "total_ranked_wallets": 50410
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -34,12 +34,12 @@
     "historical_backfill_anchor_block": 14975371,
     "historical_backfill_complete": false,
     "incremental_next_block": null,
-    "last_sync_at": "2026-06-08T19:42:29+00:00",
-    "last_synced_block": 14966355,
-    "local_rpc_backfill_next_block": 14966354,
-    "local_rpc_latest_block_at_sync": 14978433,
+    "last_sync_at": "2026-06-08T20:50:32+00:00",
+    "last_synced_block": 14966253,
+    "local_rpc_backfill_next_block": 14966252,
+    "local_rpc_latest_block_at_sync": 14978704,
     "phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "updated_at": "2026-06-08T20:30:21+00:00",
+  "updated_at": "2026-06-08T20:52:00+00:00",
   "version": "v3.2.0"
 }
