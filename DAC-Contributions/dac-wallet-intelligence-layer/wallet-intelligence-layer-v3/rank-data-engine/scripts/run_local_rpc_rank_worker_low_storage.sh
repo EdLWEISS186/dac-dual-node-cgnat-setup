@@ -18,6 +18,7 @@ run_once() {
   workdir="$(mktemp -d "$TMP_PARENT/wil-v3-rank-run.XXXXXX")"
 
   cleanup() {
+    cd "$HOME" 2>/dev/null || true
     rm -rf "$workdir"
   }
   trap cleanup RETURN
