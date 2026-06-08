@@ -105,10 +105,10 @@ It does not replace earlier projects. It builds on the same testnet tooling path
 
 | Project | Version | Role in the Progression | Reference |
 |---|---:|---|---|
-| DAC Sender | `v1.4.3` | Activity-generation and testnet interaction tool. It helps create visible DAC Testnet wallet behavior. | [Open DAC Sender](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Sender-Web) |
-| Wallet Intelligence Layer | `v1.5.4` | First wallet intelligence layer focused on reading and interpreting public DAC wallet activity. | [Open Wallet Intelligence Layer v1](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1) |
-| Wallet Intelligence Layer | `v2.0.2` | Extended wallet intelligence into a dynamic wallet-bound status badge workflow. | [Open Wallet Intelligence Layer v2](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v2) |
-| Wallet Intelligence Layer | `v3.1.0` | Turns wallet intelligence variables into comparative public rank signals using a local RPC rank data engine. | [Open Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
+| DAC Sender | `v1.4.3` | Activity-generation and testnet interaction tool. It helps create visible DAC Testnet wallet behavior. | [DAC Sender](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Sender-Web) |
+| Wallet Intelligence Layer | `v1.5.4` | First wallet intelligence layer focused on reading and interpreting public DAC wallet activity. | [Wallet Intelligence Layer v1](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1) |
+| Wallet Intelligence Layer | `v2.0.2` | Extended wallet intelligence into a dynamic wallet-bound status badge workflow. | [Wallet Intelligence Layer v2](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v2) |
+| Wallet Intelligence Layer | `v3.1.0` | Turns wallet intelligence variables into comparative public rank signals using a local RPC rank data engine. | [Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
 
 In short:
 
