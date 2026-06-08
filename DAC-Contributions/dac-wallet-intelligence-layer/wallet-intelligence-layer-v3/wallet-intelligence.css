@@ -1565,6 +1565,43 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
   gap: 10px;
 }
 
+.wallet-rank-overall-card {
+  grid-column: 1 / -1;
+  position: relative;
+  border-color: rgba(250, 204, 21, 0.62);
+  background:
+    linear-gradient(135deg, rgba(250, 204, 21, 0.13), rgba(59, 130, 246, 0.09)),
+    rgba(2, 6, 23, 0.46);
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.08), 0 18px 48px rgba(0, 0, 0, 0.22);
+}
+
+.wallet-rank-overall-card::before {
+  content: "FINAL COMPOSITE RANK";
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(250, 204, 21, 0.14);
+  color: #fde68a;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.wallet-rank-overall-card strong {
+  font-size: 1.08rem;
+}
+
+.wallet-rank-overall-card .rank-scope-line {
+  margin-top: 7px;
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 .wallet-rank-metric .rank-line {
   color: #bfdbfe;
   font-weight: 800;
