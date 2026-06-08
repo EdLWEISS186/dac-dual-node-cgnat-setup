@@ -355,31 +355,48 @@ def main() -> None:
         raise SystemExit(f"Wrong chain_id: {chain_id}. Expected {CHAIN_ID}.")
 
     latest_block = hex_to_int(rpc_call(rpc_urls, "eth_blockNumber", []))
+    run_started_at = now_utc()
 
-    backfill_next_block = checkpoint.get("local_rpc_backfill_next_block")
+    sync_phase = checkpoint.get("sync_phase") or "HISTORICAL_BACKFILL_IN_PROGRESS"
+    historical_complete = checkpoint.get("historical_backfill_complete") is True
 
-    if backfill_next_block is None:
-        backfill_next_block = checkpoint.get("last_synced_block")
+    # Anchor = highest block that belongs to the historical backfill boundary.
+    # It must remain stable so that post-backfill catch-up can fill the gap:
+    # anchor + 1 -> latest chain head.
+    anchor_block = checkpoint.get("historical_backfill_anchor_block")
 
-    if backfill_next_block is None:
-        backfill_next_block = latest_block
+    if anchor_block is None:
+        anchor_block = checkpoint.get("last_synced_block")
 
-    start_block = int(backfill_next_block)
-    end_block = max(start_block - args.max_blocks + 1, 0)
+    if anchor_block is None:
+        anchor_block = latest_block
+
+    anchor_block = int(anchor_block)
+    checkpoint["historical_backfill_anchor_block"] = anchor_block
+    checkpoint.setdefault("historical_backfill_anchor_source", "INITIAL_LOCAL_RPC_BACKFILL_ANCHOR")
+    checkpoint.setdefault("post_backfill_catch_up_from_block", anchor_block + 1)
 
     processed_blocks = 0
     processed_transactions = 0
     changed_wallets: Set[str] = set()
     last_tx_hash = None
-    last_synced_block = start_block
+    last_synced_block = checkpoint.get("last_synced_block")
+    mode = "UNKNOWN"
+    direction = "none"
+    start_block = None
+    end_block = None
+    stop_reason = "NO_BLOCKS_TO_PROCESS"
 
-    run_started_at = now_utc()
+    def process_block(block_number: int) -> None:
+        nonlocal processed_blocks
+        nonlocal processed_transactions
+        nonlocal last_tx_hash
+        nonlocal last_synced_block
 
-    for block_number in range(start_block, end_block - 1, -1):
         block = rpc_call(rpc_urls, "eth_getBlockByNumber", [int_to_hex(block_number), True], timeout=45)
 
         if not block:
-            continue
+            return
 
         block_timestamp = now_utc()
         txs = block.get("transactions") or []
@@ -407,6 +424,150 @@ def main() -> None:
         processed_blocks += 1
         last_synced_block = block_number
 
+    if not historical_complete and sync_phase != "POST_BACKFILL_CATCH_UP":
+        mode = "LOCAL_RPC_HISTORICAL_BACKFILL"
+        direction = "latest_to_genesis"
+
+        backfill_next_block = checkpoint.get("local_rpc_backfill_next_block")
+
+        if backfill_next_block is None:
+            backfill_next_block = checkpoint.get("last_synced_block")
+
+        if backfill_next_block is None:
+            backfill_next_block = anchor_block
+
+        start_block = int(backfill_next_block)
+
+        if start_block <= 0:
+            end_block = 0
+            checkpoint.update({
+                "sync_phase": "POST_BACKFILL_CATCH_UP",
+                "backfill_status": "COMPLETE",
+                "backfill_stop_reason": "GENESIS_REACHED",
+                "historical_backfill_complete": True,
+                "post_backfill_catch_up_from_block": anchor_block + 1,
+                "catch_up_next_block": anchor_block + 1,
+            })
+            stop_reason = "GENESIS_ALREADY_REACHED"
+        else:
+            end_block = max(start_block - args.max_blocks + 1, 0)
+
+            for block_number in range(start_block, end_block - 1, -1):
+                process_block(block_number)
+
+            next_backfill_block = max(int(last_synced_block or end_block) - 1, 0)
+
+            if end_block == 0 or next_backfill_block == 0:
+                checkpoint.update({
+                    "sync_phase": "POST_BACKFILL_CATCH_UP",
+                    "backfill_status": "COMPLETE",
+                    "backfill_stop_reason": "GENESIS_REACHED",
+                    "historical_backfill_complete": True,
+                    "local_rpc_backfill_next_block": 0,
+                    "post_backfill_catch_up_from_block": anchor_block + 1,
+                    "catch_up_next_block": anchor_block + 1,
+                })
+                stop_reason = "GENESIS_REACHED"
+            else:
+                checkpoint.update({
+                    "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS",
+                    "backfill_status": "IN_PROGRESS",
+                    "backfill_stop_reason": "MAX_BLOCKS_REACHED",
+                    "historical_backfill_complete": False,
+                    "local_rpc_backfill_next_block": next_backfill_block,
+                })
+                stop_reason = "MAX_BLOCKS_REACHED"
+
+    elif sync_phase == "POST_BACKFILL_CATCH_UP":
+        mode = "LOCAL_RPC_POST_BACKFILL_CATCH_UP"
+        direction = "anchor_to_latest"
+
+        catch_up_next_block = checkpoint.get("catch_up_next_block")
+        if catch_up_next_block is None:
+            catch_up_next_block = checkpoint.get("post_backfill_catch_up_from_block")
+        if catch_up_next_block is None:
+            catch_up_next_block = anchor_block + 1
+
+        start_block = int(catch_up_next_block)
+
+        if start_block > latest_block:
+            end_block = latest_block
+            checkpoint.update({
+                "sync_phase": "INCREMENTAL",
+                "backfill_status": "COMPLETE",
+                "catch_up_status": "CAUGHT_UP",
+                "historical_backfill_complete": True,
+                "incremental_next_block": latest_block + 1,
+                "incremental_last_synced_block": latest_block,
+            })
+            stop_reason = "ALREADY_CAUGHT_UP"
+        else:
+            end_block = min(start_block + args.max_blocks - 1, latest_block)
+
+            for block_number in range(start_block, end_block + 1):
+                process_block(block_number)
+
+            next_catch_up_block = int(end_block) + 1
+
+            if next_catch_up_block > latest_block:
+                checkpoint.update({
+                    "sync_phase": "INCREMENTAL",
+                    "backfill_status": "COMPLETE",
+                    "catch_up_status": "CAUGHT_UP",
+                    "historical_backfill_complete": True,
+                    "catch_up_next_block": next_catch_up_block,
+                    "incremental_next_block": latest_block + 1,
+                    "incremental_last_synced_block": latest_block,
+                })
+                stop_reason = "CAUGHT_UP_TO_LATEST"
+            else:
+                checkpoint.update({
+                    "sync_phase": "POST_BACKFILL_CATCH_UP",
+                    "backfill_status": "COMPLETE",
+                    "catch_up_status": "IN_PROGRESS",
+                    "historical_backfill_complete": True,
+                    "catch_up_next_block": next_catch_up_block,
+                })
+                stop_reason = "MAX_BLOCKS_REACHED"
+
+    else:
+        mode = "LOCAL_RPC_INCREMENTAL"
+        direction = "new_blocks_forward"
+
+        incremental_next_block = checkpoint.get("incremental_next_block")
+        if incremental_next_block is None:
+            incremental_next_block = (checkpoint.get("incremental_last_synced_block") or latest_block) + 1
+
+        start_block = int(incremental_next_block)
+
+        if start_block > latest_block:
+            end_block = latest_block
+            checkpoint.update({
+                "sync_phase": "INCREMENTAL",
+                "backfill_status": "COMPLETE",
+                "historical_backfill_complete": True,
+                "incremental_next_block": start_block,
+                "incremental_last_synced_block": latest_block,
+            })
+            stop_reason = "NO_NEW_BLOCKS"
+        else:
+            end_block = min(start_block + args.max_blocks - 1, latest_block)
+
+            for block_number in range(start_block, end_block + 1):
+                process_block(block_number)
+
+            next_incremental_block = int(end_block) + 1
+
+            checkpoint.update({
+                "sync_phase": "INCREMENTAL",
+                "backfill_status": "COMPLETE",
+                "historical_backfill_complete": True,
+                "incremental_next_block": next_incremental_block,
+                "incremental_last_synced_block": end_block,
+            })
+
+            stop_reason = "CAUGHT_UP_TO_LATEST" if next_incremental_block > latest_block else "MAX_BLOCKS_REACHED"
+
     enriched_balances = enrich_balances(
         wallet_metrics=wallet_metrics,
         changed_wallets=changed_wallets,
@@ -427,18 +588,15 @@ def main() -> None:
     counters["asset_holding_snapshots"] = int(counters.get("asset_holding_snapshots") or 0)
 
     checkpoint.update({
-        "sync_phase": "HISTORICAL_BACKFILL_IN_PROGRESS",
-        "backfill_status": "IN_PROGRESS",
-        "historical_backfill_complete": False,
-        "backfill_direction": "latest_to_genesis",
-        "backfill_stop_reason": "MAX_BLOCKS_REACHED",
         "last_sync_at": run_started_at,
         "last_synced_block": last_synced_block,
-        "local_rpc_backfill_next_block": max(last_synced_block - 1, 0),
         "local_rpc_latest_block_at_sync": latest_block,
         "last_transaction_hash": last_tx_hash,
         "primary_rpc": args.primary_rpc,
         "fallback_rpc": args.fallback_rpc,
+        "last_run_mode": mode,
+        "last_run_direction": direction,
+        "last_run_stop_reason": stop_reason,
     })
 
     working.update({
@@ -469,19 +627,26 @@ def main() -> None:
     working["snapshot_archive_written"] = snapshot_archive_written
 
     result = {
-        "mode": "LOCAL_RPC_HISTORICAL_BACKFILL",
+        "mode": mode,
+        "direction": direction,
         "dry_run": args.dry_run,
         "primary_rpc": args.primary_rpc,
         "fallback_rpc": args.fallback_rpc,
         "start_block": start_block,
         "end_block": end_block,
+        "latest_block": latest_block,
+        "historical_backfill_anchor_block": checkpoint.get("historical_backfill_anchor_block"),
         "processed_blocks": processed_blocks,
         "processed_transactions": processed_transactions,
         "wallets_changed": len(changed_wallets),
         "enriched_balances": enriched_balances,
         "total_indexed_wallets": len(wallet_metrics),
         "total_processed_transactions_after": counters["total_processed_transactions"],
-        "local_rpc_backfill_next_block": checkpoint["local_rpc_backfill_next_block"],
+        "sync_phase_after": checkpoint.get("sync_phase"),
+        "local_rpc_backfill_next_block": checkpoint.get("local_rpc_backfill_next_block"),
+        "catch_up_next_block": checkpoint.get("catch_up_next_block"),
+        "incremental_next_block": checkpoint.get("incremental_next_block"),
+        "stop_reason": stop_reason,
         "latest_snapshot": working["latest_snapshot"],
         "snapshot_archive_written": snapshot_archive_written,
     }
