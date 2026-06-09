@@ -164,10 +164,15 @@ print("[STATUS] summary_status:", summary.get("status"))
 print("[STATUS] summary_ranked_wallets:", summary.get("total_ranked_wallets"))
 PY
 
-  git add -f "$base/rank-data-engine/data/latest.json"
-  git add -f "$base/data/wallet-rank-summary.json"
-  git add -f "$base/data/wallet-rank-index.json"
-  git rm -r --cached --ignore-unmatch --sparse "$base/data/rank-shards" >/dev/null 2>&1 || true
+  manifest_file="$base/rank-data-engine/data/latest.json"
+  summary_file="$base/data/wallet-rank-summary.json"
+  index_file="$base/data/wallet-rank-index.json"
+  shards_dir="$base/data/rank-shards"
+
+  git add -f "$manifest_file"
+  git add -f "$summary_file"
+  git add -f "$index_file"
+  git rm -r --cached --ignore-unmatch --sparse "$shards_dir" >/dev/null 2>&1 || true
 
   if git diff --cached --quiet; then
     echo "[INFO] No WIL v3 public manifest changes to commit."
@@ -175,11 +180,58 @@ PY
     git config user.name "JERUZZALEM Local Rank Worker"
     git config user.email "suryaawalaka@gmail.com"
 
-    git commit -m "chore: sync WIL v3 public rank manifest"
-
     if [ "$PUSH_TO_GITHUB" = "1" ]; then
-      git push origin "$BRANCH"
+      publish_tmp="$(mktemp -d)"
+
+      cp "$manifest_file" "$publish_tmp/latest.json"
+      cp "$summary_file" "$publish_tmp/wallet-rank-summary.json"
+      cp "$index_file" "$publish_tmp/wallet-rank-index.json"
+
+      publish_ok=0
+
+      for publish_attempt in 1 2 3; do
+        echo "[INFO] Publish attempt $publish_attempt/3: refreshing temp clone from origin/$BRANCH"
+
+        git fetch origin "$BRANCH"
+        git reset --hard "origin/$BRANCH"
+
+        mkdir -p "$(dirname "$manifest_file")"
+        mkdir -p "$(dirname "$summary_file")"
+        mkdir -p "$(dirname "$index_file")"
+
+        cp "$publish_tmp/latest.json" "$manifest_file"
+        cp "$publish_tmp/wallet-rank-summary.json" "$summary_file"
+        cp "$publish_tmp/wallet-rank-index.json" "$index_file"
+
+        git add -f "$manifest_file"
+        git add -f "$summary_file"
+        git add -f "$index_file"
+        git rm -r --cached --ignore-unmatch --sparse "$shards_dir" >/dev/null 2>&1 || true
+
+        if git diff --cached --quiet; then
+          echo "[INFO] No WIL v3 public manifest changes after refresh."
+          publish_ok=1
+          break
+        fi
+
+        git commit -m "chore: sync WIL v3 public rank manifest"
+
+        if git push origin "$BRANCH"; then
+          publish_ok=1
+          break
+        fi
+
+        echo "[WARN] GitHub push rejected or failed on attempt $publish_attempt. Retrying after refresh..."
+        sleep 5
+      done
+
+      rm -rf "$publish_tmp"
+
+      if [ "$publish_ok" != "1" ]; then
+        echo "[WARN] GitHub publish failed after retries. Heavy state was saved locally; worker will continue."
+      fi
     else
+      git commit -m "chore: sync WIL v3 public rank manifest"
       echo "[INFO] PUSH_TO_GITHUB=0, commit kept only inside temp folder."
     fi
   fi
