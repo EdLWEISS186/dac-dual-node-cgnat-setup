@@ -1,10 +1,10 @@
 {
   "project": "DAC Infrastructure Intelligence Watcher",
   "version": "v1.8.0",
-  "source_latest_checked_at_utc": "2026-06-09T15:36:15.483799+00:00",
+  "source_latest_checked_at_utc": "2026-06-09T17:35:46.336066+00:00",
   "freshness": {
     "status": "FRESH",
-    "age_minutes": 0.15,
+    "age_minutes": 0.18,
     "threshold_minutes": 30,
     "summary": "Latest watcher state is fresh."
   },
@@ -16,10 +16,10 @@
   },
   "latest": {
     "overall": {
-      "overall_status": "HEALTHY",
-      "summary": "All monitored DAC infrastructure endpoints are healthy.",
-      "healthy_count": 3,
-      "degraded_count": 0,
+      "overall_status": "DEGRADED",
+      "summary": "All monitored endpoints are reachable, but at least one endpoint is degraded.",
+      "healthy_count": 2,
+      "degraded_count": 1,
       "unhealthy_count": 0,
       "total_endpoints": 3
     },
@@ -34,15 +34,15 @@
         "key": "official_public_rpc",
         "name": "Official Public RPC",
         "url": "https://rpctest.dachain.tech/",
-        "status": "HEALTHY",
-        "ok": true,
-        "summary": "Public RPC responded to required and optional JSON-RPC checks.",
-        "chain_id_hex": "0x5586",
-        "chain_id_decimal": 21894,
-        "latest_block_hex": "0xe49ffc",
-        "latest_block_decimal": 14983164,
-        "latency_ms_avg": 2507,
-        "latency_ms_max": 2930,
+        "status": "DEGRADED",
+        "ok": false,
+        "summary": "Public RPC is reachable, but one or more JSON-RPC checks failed.",
+        "chain_id_hex": null,
+        "chain_id_decimal": null,
+        "latest_block_hex": "0xe4a059",
+        "latest_block_decimal": 14983257,
+        "latency_ms_avg": 3128,
+        "latency_ms_max": 6566,
         "latency_class": "SLOW"
       },
       {
@@ -53,7 +53,7 @@
         "ok": true,
         "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
         "http_status": 200,
-        "latency_ms": 661,
+        "latency_ms": 759,
         "latency_class": "MODERATE",
         "title": "DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats",
         "has_explorer_signal": true
@@ -67,9 +67,9 @@
         "summary": "Explorer API responded successfully to supported stats endpoint.",
         "root_expected_validation": true,
         "stats_ok": true,
-        "latency_ms_avg": 510,
-        "latency_ms_max": 544,
-        "latency_class": "MODERATE"
+        "latency_ms_avg": 416,
+        "latency_ms_max": 479,
+        "latency_class": "FAST"
       }
     ],
     "interpretation_notes": [
@@ -80,25 +80,25 @@
     ]
   },
   "history": {
-    "snapshot_count": 26,
+    "snapshot_count": 27,
     "first_snapshot": "2026-06-04T09-54-55-772035+00-00-health.json",
-    "latest_snapshot": "2026-06-09T15-36-15-483799+00-00-health.json",
+    "latest_snapshot": "2026-06-09T17-35-46-336066+00-00-health.json",
     "overall_status_counts": {
-      "DEGRADED": 10,
+      "DEGRADED": 11,
       "HEALTHY": 11,
       "PARTIAL_OUTAGE": 5
     },
     "endpoint_status_counts": {
       "official_public_rpc": {
-        "DEGRADED": 10,
+        "DEGRADED": 11,
         "HEALTHY": 11,
         "UNHEALTHY": 5
       },
       "explorer_web": {
-        "HEALTHY": 26
+        "HEALTHY": 27
       },
       "primary_explorer_api": {
-        "HEALTHY": 26
+        "HEALTHY": 27
       }
     },
     "timeline": [
@@ -465,6 +465,20 @@
         "primary_explorer_api_response_class": "MODERATE",
         "rpc_latest_block_decimal": 14983164,
         "rpc_latest_block_hex": "0xe49ffc"
+      },
+      {
+        "index": 27,
+        "snapshot_file": "2026-06-09T17-35-46-336066+00-00-health.json",
+        "checked_at_utc": "2026-06-09T17:35:46.336066+00:00",
+        "overall_status": "DEGRADED",
+        "official_public_rpc_status": "DEGRADED",
+        "official_public_rpc_response_class": "SLOW",
+        "explorer_web_status": "HEALTHY",
+        "explorer_web_response_class": "MODERATE",
+        "primary_explorer_api_status": "HEALTHY",
+        "primary_explorer_api_response_class": "FAST",
+        "rpc_latest_block_decimal": 14983257,
+        "rpc_latest_block_hex": "0xe4a059"
       }
     ]
   },
@@ -472,7 +486,7 @@
     "overall_status_distribution": [
       {
         "label": "DEGRADED",
-        "count": 10
+        "count": 11
       },
       {
         "label": "HEALTHY",
@@ -486,35 +500,35 @@
     "endpoint_status_distribution": [
       {
         "endpoint": "official_public_rpc",
-        "DEGRADED": 10,
+        "DEGRADED": 11,
         "HEALTHY": 11,
         "UNHEALTHY": 5
       },
       {
         "endpoint": "explorer_web",
-        "HEALTHY": 26
+        "HEALTHY": 27
       },
       {
         "endpoint": "primary_explorer_api",
-        "HEALTHY": 26
+        "HEALTHY": 27
       }
     ],
     "response_class_distribution": [
       {
         "endpoint": "official_public_rpc",
         "MODERATE": 3,
-        "SLOW": 13,
+        "SLOW": 14,
         "UNKNOWN": 10
       },
       {
         "endpoint": "explorer_web",
         "FAST": 3,
-        "MODERATE": 13,
+        "MODERATE": 14,
         "UNKNOWN": 10
       },
       {
         "endpoint": "primary_explorer_api",
-        "FAST": 10,
+        "FAST": 11,
         "MODERATE": 6,
         "UNKNOWN": 10
       }
@@ -675,6 +689,12 @@
         "checked_at_utc": "2026-06-09T15:36:15.483799+00:00",
         "overall_status": "HEALTHY",
         "score": 100
+      },
+      {
+        "index": 27,
+        "checked_at_utc": "2026-06-09T17:35:46.336066+00:00",
+        "overall_status": "DEGRADED",
+        "score": 55
       }
     ]
   }
