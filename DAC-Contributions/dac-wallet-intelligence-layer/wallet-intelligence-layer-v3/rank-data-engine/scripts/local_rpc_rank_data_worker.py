@@ -28,7 +28,7 @@ from typing import Any, Dict, Iterable, Optional, Set
 
 CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
-PROJECT = "Wallet Intelligence Layer v3.2.0"
+PROJECT = "Wallet Intelligence Layer v3.3.0"
 
 DEFAULT_PRIMARY_RPC = "http://127.0.0.1:8546"
 DEFAULT_FALLBACK_RPC = "http://192.168.100.7:8545"
@@ -58,6 +58,10 @@ def latest_path() -> Path:
 
 def snapshots_dir() -> Path:
     return engine_dir() / "data" / "snapshots"
+
+
+def public_run_status_path() -> Path:
+    return engine_dir() / "data" / "public-run-status.json"
 
 
 def read_json(path: Path) -> Dict[str, Any]:
@@ -651,8 +655,49 @@ def main() -> None:
         "snapshot_archive_written": snapshot_archive_written,
     }
 
+    public_status = {
+        "schema": "WIL_V3_PUBLIC_RUN_STATUS",
+        "version": "v3.3.0",
+        "project": PROJECT,
+        "engine": "rank-data-engine",
+        "network": NETWORK,
+        "chain_id": CHAIN_ID,
+        "updated_at": now_utc(),
+        "externalized_state": True,
+        "heavy_state_storage": "LOCAL_EXTERNAL_STATE_WITH_OPTIONAL_GOOGLE_DRIVE_BACKUP",
+        "heavy_state_local_path": "~/wil-v3-rank-state/latest-state.json",
+        "github_storage_role": "PUBLIC_MANIFEST_ONLY",
+        "rank_lookup_enabled": False,
+        "rank_shards_published": False,
+        "snapshot_archive_written": snapshot_archive_written,
+        "latest_snapshot": "externalized-local-state",
+        "sync_status": {
+            "phase": checkpoint.get("sync_phase"),
+            "historical_backfill_complete": checkpoint.get("historical_backfill_complete") is True,
+            "catch_up_status": checkpoint.get("catch_up_status"),
+            "historical_backfill_anchor_block": checkpoint.get("historical_backfill_anchor_block"),
+            "last_synced_block": checkpoint.get("last_synced_block"),
+            "local_rpc_backfill_next_block": checkpoint.get("local_rpc_backfill_next_block"),
+            "catch_up_next_block": checkpoint.get("catch_up_next_block"),
+            "incremental_next_block": checkpoint.get("incremental_next_block"),
+            "local_rpc_latest_block_at_sync": checkpoint.get("local_rpc_latest_block_at_sync"),
+            "last_sync_at": checkpoint.get("last_sync_at"),
+        },
+        "counters": {
+            "total_indexed_wallets": counters.get("total_indexed_wallets"),
+            "total_processed_transactions": counters.get("total_processed_transactions"),
+            "native_balance_snapshots": counters.get("native_balance_snapshots"),
+            "last_sync_processed_blocks": counters.get("last_sync_processed_blocks"),
+            "last_sync_processed_transactions": counters.get("last_sync_processed_transactions"),
+            "last_sync_wallets_changed": counters.get("last_sync_wallets_changed"),
+        },
+        "last_run": result,
+        "note": "v3.3.0 lightweight publish status. Heavy wallet metrics remain externalized and are not loaded again by the publish layer during backfill."
+    }
+
     if not args.dry_run:
         write_json(latest_path(), working)
+        write_json(public_run_status_path(), public_status)
         if snapshot_archive_written:
             write_json(snapshots_dir() / snapshot_name, working)
 

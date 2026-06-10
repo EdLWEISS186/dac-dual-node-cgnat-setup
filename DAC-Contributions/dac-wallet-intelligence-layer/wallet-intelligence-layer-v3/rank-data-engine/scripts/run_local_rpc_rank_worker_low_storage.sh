@@ -37,13 +37,15 @@ run_once() {
   local base="DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3"
   local worker="$base/rank-data-engine/scripts/local_rpc_rank_data_worker.py"
   local generator="$base/scripts/generate_rank_from_engine_data.py"
+  local lightweight_generator="$base/rank-data-engine/scripts/generate_lightweight_public_rank_status.py"
+  local public_status="$base/rank-data-engine/data/public-run-status.json"
   local repo_state="$base/rank-data-engine/data/latest.json"
 
   mkdir -p "$base/rank-data-engine/data" "$base/data" "$EXTERNAL_STATE_DIR" "$EXTERNAL_BACKUP_DIR"
 
   if [ ! -f "$EXTERNAL_STATE_FILE" ]; then
     echo "[ERROR] External state file not found: $EXTERNAL_STATE_FILE"
-    echo "[ERROR] Restore ~/wil-v3-rank-state/latest-state.json before running v3.2.0 worker."
+    echo "[ERROR] Restore ~/wil-v3-rank-state/latest-state.json before running v3.3.0 worker."
     exit 1
   fi
 
@@ -59,82 +61,33 @@ run_once() {
       --balance-enrich-limit "$BALANCE_ENRICH_LIMIT" \
       --no-snapshot-archive
 
-  python3 -m json.tool "$repo_state" >/dev/null
+  test -s "$repo_state" || {
+    echo "[ERROR] Worker state output is empty: $repo_state"
+    exit 1
+  }
 
-  echo "[INFO] Saving heavy state back to external local storage"
-  cp "$repo_state" "$EXTERNAL_STATE_FILE"
+  echo "[INFO] Saving heavy state back to external local storage atomically"
+  external_state_tmp="${EXTERNAL_STATE_FILE}.tmp.$$"
+  cp "$repo_state" "$external_state_tmp"
+  mv -f "$external_state_tmp" "$EXTERNAL_STATE_FILE"
 
   if [ "$BACKUP_EXTERNAL_STATE_EVERY_RUN" = "1" ]; then
     cp "$EXTERNAL_STATE_FILE" "$EXTERNAL_BACKUP_DIR/latest-state-$(date -u +"%Y-%m-%dT%H-%M-%SZ").json"
   fi
 
-  echo "[INFO] Generating public rank summary/index"
-  python3 "$generator"
+  python3 -m json.tool "$public_status" >/dev/null
 
-  echo "[INFO] Replacing GitHub latest.json with small public manifest"
-  python3 <<'PY'
-import json
-from pathlib import Path
-from datetime import datetime, timezone
+  publish_ready="$(
+    python3 -c 'import json,sys; s=json.load(open(sys.argv[1], encoding="utf-8")); x=s.get("sync_status", {}); print("1" if x.get("phase") == "INCREMENTAL" and x.get("historical_backfill_complete") is True and x.get("catch_up_status") in ("CAUGHT_UP", None) else "0")' "$public_status"
+  )"
 
-base = Path("DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3")
-state_path = base / "rank-data-engine/data/latest.json"
-summary_path = base / "data/wallet-rank-summary.json"
-manifest_path = state_path
-
-state = json.loads(state_path.read_text())
-checkpoint = state.get("checkpoint", {})
-counters = state.get("counters", {})
-summary = json.loads(summary_path.read_text()) if summary_path.exists() else {}
-
-manifest = {
-    "schema": "WIL_V3_PUBLIC_RANK_MANIFEST",
-    "version": "v3.2.0",
-    "project": "Wallet Intelligence Layer v3.2.0",
-    "engine": "rank-data-engine",
-    "network": state.get("network", "DAC Testnet"),
-    "chain_id": state.get("chain_id", 21894),
-    "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "updated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
-    "externalized_state": True,
-    "heavy_state_storage": "LOCAL_EXTERNAL_STATE_WITH_OPTIONAL_GOOGLE_DRIVE_BACKUP",
-    "heavy_state_local_path": "~/wil-v3-rank-state/latest-state.json",
-    "github_storage_role": "PUBLIC_MANIFEST_ONLY",
-    "rank_lookup_enabled": False,
-    "rank_shards_published": False,
-    "snapshot_archive_written": state.get("snapshot_archive_written", False),
-    "latest_snapshot": "externalized-local-state",
-    "sync_status": {
-        "phase": checkpoint.get("sync_phase"),
-        "historical_backfill_complete": checkpoint.get("historical_backfill_complete") is True,
-        "catch_up_status": checkpoint.get("catch_up_status"),
-        "historical_backfill_anchor_block": checkpoint.get("historical_backfill_anchor_block"),
-        "last_synced_block": checkpoint.get("last_synced_block"),
-        "local_rpc_backfill_next_block": checkpoint.get("local_rpc_backfill_next_block"),
-        "catch_up_next_block": checkpoint.get("catch_up_next_block"),
-        "incremental_next_block": checkpoint.get("incremental_next_block"),
-        "local_rpc_latest_block_at_sync": checkpoint.get("local_rpc_latest_block_at_sync"),
-        "last_sync_at": checkpoint.get("last_sync_at"),
-    },
-    "counters": {
-        "total_indexed_wallets": counters.get("total_indexed_wallets"),
-        "total_processed_transactions": counters.get("total_processed_transactions"),
-        "native_balance_snapshots": counters.get("native_balance_snapshots"),
-        "last_sync_processed_blocks": counters.get("last_sync_processed_blocks"),
-        "last_sync_processed_transactions": counters.get("last_sync_processed_transactions"),
-        "last_sync_wallets_changed": counters.get("last_sync_wallets_changed"),
-    },
-    "public_summary": {
-        "path": "data/wallet-rank-summary.json",
-        "status": summary.get("status"),
-        "has_valid_rank_index": summary.get("has_valid_rank_index"),
-        "total_ranked_wallets": summary.get("total_ranked_wallets"),
-    },
-    "note": "GitHub no longer stores monolithic rank state. Heavy rank state is externalized for v3.2.0."
-}
-
-manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
-PY
+  if [ "$publish_ready" = "1" ]; then
+    echo "[INFO] Publish-ready incremental state detected; generating full public rank artifacts"
+    python3 "$generator"
+  else
+    echo "[INFO] Backfill/catch-up not publish-ready; generating lightweight public artifacts"
+    python3 "$lightweight_generator" --status-file "$public_status"
+  fi
 
   python3 -m json.tool "$base/rank-data-engine/data/latest.json" >/dev/null
   python3 -m json.tool "$base/data/wallet-rank-summary.json" >/dev/null
@@ -239,7 +192,7 @@ PY
   echo "[INFO] Temporary workdir removed after this run."
 }
 
-echo "[INFO] WIL v3.2.0 Externalized Rank State Worker"
+echo "[INFO] WIL v3.3.0 Optimized Externalized Rank State Worker"
 echo "[INFO] primary=$PRIMARY_RPC"
 echo "[INFO] fallback=$FALLBACK_RPC"
 echo "[INFO] max_blocks=$MAX_BLOCKS"
