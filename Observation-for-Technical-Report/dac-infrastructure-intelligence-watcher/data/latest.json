@@ -2,7 +2,7 @@
   "project": "DAC Infrastructure Intelligence Watcher",
   "version": "v1.0.0",
   "summary_type": "infrastructure_health",
-  "checked_at_utc": "2026-06-10T12:00:49.579476+00:00",
+  "checked_at_utc": "2026-06-10T13:15:40.890281+00:00",
   "monitoring_scope": {
     "official_public_rpc": "https://rpctest.dachain.tech/",
     "explorer_web": "https://exptest.dachain.tech/",
@@ -28,33 +28,33 @@
       "chain_id_decimal": 21894,
       "latest_block_hex": null,
       "latest_block_decimal": null,
-      "latency_ms_avg": 6708,
-      "latency_ms_max": 15336,
+      "latency_ms_avg": 3571,
+      "latency_ms_max": 4876,
       "latency_class": "SLOW",
       "checks": {
         "eth_chainId": {
           "method": "eth_chainId",
           "ok": true,
           "http_status": 200,
-          "latency_ms": 3276,
+          "latency_ms": 3997,
           "result": "0x5586",
           "error": null
         },
         "eth_blockNumber": {
           "method": "eth_blockNumber",
           "ok": false,
-          "http_status": 502,
-          "latency_ms": 1512,
+          "http_status": null,
+          "latency_ms": 1839,
           "result": null,
-          "error": null
+          "error": "('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))"
         },
         "web3_clientVersion": {
           "method": "web3_clientVersion",
           "ok": false,
-          "http_status": null,
-          "latency_ms": 15336,
+          "http_status": 502,
+          "latency_ms": 4876,
           "result": null,
-          "error": "HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Read timed out. (read timeout=15)"
+          "error": null
         }
       }
     },
@@ -65,8 +65,8 @@
       "ok": true,
       "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
       "http_status": 200,
-      "latency_ms": 442,
-      "latency_class": "FAST",
+      "latency_ms": 906,
+      "latency_class": "MODERATE",
       "content_type": "text/html; charset=utf-8",
       "server": "Apache",
       "x_powered_by": "Next.js",
@@ -81,15 +81,15 @@
       "summary": "Explorer API responded successfully to supported stats endpoint.",
       "root_expected_validation": true,
       "stats_ok": true,
-      "latency_ms_avg": 346,
-      "latency_ms_max": 372,
+      "latency_ms_avg": 481,
+      "latency_ms_max": 486,
       "latency_class": "FAST",
       "checks": {
         "root": {
           "url": "https://exptest.dachain.tech/api",
           "request_ok": true,
           "http_status": 400,
-          "latency_ms": 321,
+          "latency_ms": 486,
           "latency_class": "FAST",
           "json": {
             "message": "Params 'module' and 'action' are required parameters",
@@ -102,11 +102,11 @@
           "url": "https://exptest.dachain.tech/api?module=stats&action=ethsupply",
           "request_ok": true,
           "http_status": 200,
-          "latency_ms": 372,
+          "latency_ms": 476,
           "latency_class": "FAST",
           "json": {
             "message": "OK",
-            "result": "115792089237316195423570985008687907853269984665740576885187466617089137602340",
+            "result": "115792089237316195423570985008687907853269984665740576885084539578358733470932",
             "status": "1"
           },
           "error": null
