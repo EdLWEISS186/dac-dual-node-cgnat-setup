@@ -14,7 +14,7 @@ PUSH_TO_GITHUB="${PUSH_TO_GITHUB:-1}"
 RUN_ONCE="${RUN_ONCE:-0}"
 
 EXTERNAL_STATE_DIR="${EXTERNAL_STATE_DIR:-$HOME/wil-v3-rank-state}"
-EXTERNAL_STATE_FILE="${EXTERNAL_STATE_FILE:-$EXTERNAL_STATE_DIR/latest-state.json}"
+EXTERNAL_SQLITE_FILE="${EXTERNAL_SQLITE_FILE:-$EXTERNAL_STATE_DIR/wil-v3-rank-state.sqlite}"
 EXTERNAL_BACKUP_DIR="${EXTERNAL_BACKUP_DIR:-$EXTERNAL_STATE_DIR/backups}"
 BACKUP_EXTERNAL_STATE_EVERY_RUN="${BACKUP_EXTERNAL_STATE_EVERY_RUN:-0}"
 
@@ -39,40 +39,39 @@ run_once() {
   local generator="$base/scripts/generate_rank_from_engine_data.py"
   local lightweight_generator="$base/rank-data-engine/scripts/generate_lightweight_public_rank_status.py"
   local public_status="$base/rank-data-engine/data/public-run-status.json"
-  local repo_state="$base/rank-data-engine/data/latest.json"
 
   mkdir -p "$base/rank-data-engine/data" "$base/data" "$EXTERNAL_STATE_DIR" "$EXTERNAL_BACKUP_DIR"
 
-  if [ ! -f "$EXTERNAL_STATE_FILE" ]; then
-    echo "[ERROR] External state file not found: $EXTERNAL_STATE_FILE"
-    echo "[ERROR] Restore ~/wil-v3-rank-state/latest-state.json before running v3.3.0 worker."
+  if [ ! -f "$EXTERNAL_SQLITE_FILE" ]; then
+    echo "[ERROR] SQLite rank state not found: $EXTERNAL_SQLITE_FILE"
+    echo "[ERROR] Restore or migrate wil-v3-rank-state.sqlite before running the worker."
     exit 1
   fi
 
-  echo "[INFO] Restoring heavy state from external local storage"
-  cp "$EXTERNAL_STATE_FILE" "$repo_state"
+  echo "[INFO] Checking external SQLite rank state"
+  python3 -c 'import sqlite3,sys; db=sqlite3.connect(f"file:{sys.argv[1]}?mode=ro", uri=True); result=db.execute("PRAGMA quick_check").fetchone()[0]; db.close(); raise SystemExit(0 if result == "ok" else f"SQLite quick_check failed: {result}")' "$EXTERNAL_SQLITE_FILE"
+
+  echo "[INFO] Using external SQLite rank state directly"
 
   echo "[INFO] Running local RPC worker"
   /usr/bin/time -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
     python3 "$worker" \
       --primary-rpc "$PRIMARY_RPC" \
       --fallback-rpc "$FALLBACK_RPC" \
+      --sqlite-state "$EXTERNAL_SQLITE_FILE" \
       --max-blocks "$MAX_BLOCKS" \
       --balance-enrich-limit "$BALANCE_ENRICH_LIMIT" \
       --no-snapshot-archive
 
-  test -s "$repo_state" || {
-    echo "[ERROR] Worker state output is empty: $repo_state"
-    exit 1
-  }
-
-  echo "[INFO] Saving heavy state back to external local storage atomically"
-  external_state_tmp="${EXTERNAL_STATE_FILE}.tmp.$$"
-  cp "$repo_state" "$external_state_tmp"
-  mv -f "$external_state_tmp" "$EXTERNAL_STATE_FILE"
-
   if [ "$BACKUP_EXTERNAL_STATE_EVERY_RUN" = "1" ]; then
-    cp "$EXTERNAL_STATE_FILE" "$EXTERNAL_BACKUP_DIR/latest-state-$(date -u +"%Y-%m-%dT%H-%M-%SZ").json"
+    backup_file="$EXTERNAL_BACKUP_DIR/wil-v3-rank-state-$(date -u +"%Y-%m-%dT%H-%M-%SZ").sqlite"
+
+    echo "[INFO] Creating consistent per-run SQLite backup"
+    rm -f "$backup_file"
+
+    python3 -c 'import sqlite3,sys; src=sqlite3.connect(sys.argv[1]); dst=sqlite3.connect(sys.argv[2]); src.backup(dst); dst.commit(); dst.close(); src.close()' "$EXTERNAL_SQLITE_FILE" "$backup_file"
+
+    python3 -c 'import sqlite3,sys; db=sqlite3.connect(sys.argv[1]); result=db.execute("PRAGMA integrity_check").fetchone()[0]; db.close(); raise SystemExit(0 if result == "ok" else f"SQLite backup integrity_check failed: {result}")' "$backup_file"
   fi
 
   python3 -m json.tool "$public_status" >/dev/null
@@ -192,7 +191,7 @@ PY
   echo "[INFO] Temporary workdir removed after this run."
 }
 
-echo "[INFO] WIL v3.3.0 Optimized Externalized Rank State Worker"
+echo "[INFO] WIL v3.3.0 SQLite Rank State Worker"
 echo "[INFO] primary=$PRIMARY_RPC"
 echo "[INFO] fallback=$FALLBACK_RPC"
 echo "[INFO] max_blocks=$MAX_BLOCKS"
@@ -200,7 +199,7 @@ echo "[INFO] balance_enrich_limit=$BALANCE_ENRICH_LIMIT"
 echo "[INFO] sleep_seconds=$SLEEP_SECONDS"
 echo "[INFO] push_to_github=$PUSH_TO_GITHUB"
 echo "[INFO] run_once=$RUN_ONCE"
-echo "[INFO] external_state_file=$EXTERNAL_STATE_FILE"
+echo "[INFO] sqlite_state_file=$EXTERNAL_SQLITE_FILE"
 
 while true; do
   echo
