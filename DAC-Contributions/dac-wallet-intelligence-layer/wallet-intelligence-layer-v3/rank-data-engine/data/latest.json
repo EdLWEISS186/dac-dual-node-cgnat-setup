@@ -2,11 +2,14 @@
   "chain_id": 21894,
   "counters": {
     "last_sync_processed_blocks": 1,
-    "last_sync_processed_transactions": 40,
-    "last_sync_wallets_changed": 61,
+    "last_sync_processed_transactions": 21,
+    "last_sync_staking_events": 0,
+    "last_sync_staking_wallets_changed": 0,
+    "last_sync_wallets_changed": 36,
     "native_balance_snapshots": 19383,
     "total_indexed_wallets": 411629,
-    "total_processed_transactions": 906690
+    "total_processed_transactions": 906711,
+    "total_staking_events": 0
   },
   "engine": "rank-data-engine",
   "externalized_state": true,
@@ -34,12 +37,12 @@
     "historical_backfill_anchor_block": 14975371,
     "historical_backfill_complete": false,
     "incremental_next_block": null,
-    "last_sync_at": "2026-06-11T03:58:26+00:00",
-    "last_synced_block": 14956152,
-    "local_rpc_backfill_next_block": 14956151,
-    "local_rpc_latest_block_at_sync": 14991935,
+    "last_sync_at": "2026-06-11T08:42:05+00:00",
+    "last_synced_block": 14956151,
+    "local_rpc_backfill_next_block": 14956150,
+    "local_rpc_latest_block_at_sync": 14993070,
     "phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "updated_at": "2026-06-11T03:58:28+00:00",
+  "updated_at": "2026-06-11T08:42:05+00:00",
   "version": "v3.3.0"
 }
