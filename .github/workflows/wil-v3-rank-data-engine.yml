@@ -1,53 +1,20 @@
-name: WIL v3 Rank Data Engine
+name: WIL v3 Legacy Rank Data Engine — Disabled
 
 on:
   workflow_dispatch:
 
-concurrency:
-  group: wil-v3-rank-data-engine
-  cancel-in-progress: false
-
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  sync-rank-data-engine:
+  legacy-workflow-disabled:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Sync rank data engine
+      - name: Explain disabled workflow
         run: |
-          python3 DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/scripts/sync_rank_data_engine.py --max-pages 5 --enrich-limit 100
-
-      - name: Generate WIL v3 rank output
-        run: |
-          python3 DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/scripts/generate_rank_from_engine_data.py
-
-      - name: Commit rank data engine outputs
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add -f DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/data/latest.json
-          git add -f DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/rank-data-engine/data/snapshots/*.json
-          git add -f DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/data/wallet-rank-summary.json
-          git add -f DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/data/wallet-rank-index.json
-          git add -f DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/data/rank-shards/*.json
-
-          if git diff --cached --quiet; then
-            echo "No rank data engine changes to commit."
-          else
-            git commit -m "chore: sync WIL v3 rank data engine"
-            git pull --rebase origin main
-            git push origin main
-          fi
+          echo "This legacy GitHub Actions rank engine is disabled."
+          echo "WIL v3.3.0 now uses the local SQLite worker architecture."
+          echo "Do not run sync_rank_data_engine.py or the legacy JSON rank generator."
+          echo "Heavy state source: local SQLite with Google Drive rollover backup."
+          echo "Public rank publishing will use the v3.3.0 compact snapshot architecture."
