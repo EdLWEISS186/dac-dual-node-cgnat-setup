@@ -1,8 +1,8 @@
-# DAC Wallet Intelligence Layer v3.1.0
+# DAC Wallet Intelligence Layer v3.3.0
 
-Client-side wallet intelligence interface and comparative public wallet rank signal for the **DAC Quantum Chain Testnet**.
+Client-side wallet intelligence interface and globally comparative public wallet rank system for the **DAC Quantum Chain Testnet**.
 
-Wallet Intelligence Layer v3.1.0 continues the Wallet Intelligence Layer series by moving v3 from a rank-intelligence interface into a more complete **data workflow**.
+Wallet Intelligence Layer v3.3.0 completes the v3 architecture transition from an experimental GitHub Actions prototype into a local-node, SQLite-backed, low-storage wallet intelligence pipeline with compact public rank delivery.
 
 The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
@@ -12,11 +12,13 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
 - [Wallet Intelligence Layer v3](https://edlweiss186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/)
 
-![Version](https://img.shields.io/badge/version-v3.1.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-v3.3.0-blue?style=flat-square)
+![Release](https://img.shields.io/badge/release-stable-brightgreen?style=flat-square)
 ![Network](https://img.shields.io/badge/network-DAC%20testnet-yellow?style=flat-square)
 ![Chain ID](https://img.shields.io/badge/chain%20ID-21894-blueviolet?style=flat-square)
 ![Wallet Check](https://img.shields.io/badge/wallet%20check-no%20connect%20required-brightgreen?style=flat-square)
-![Rank Engine](https://img.shields.io/badge/rank%20engine-local%20RPC%20worker-orange?style=flat-square)
+![State Backend](https://img.shields.io/badge/state-SQLite-orange?style=flat-square)
+![Rank Schema](https://img.shields.io/badge/rank%20schema-Compact%20V2-informational?style=flat-square)
 ![Public Output](https://img.shields.io/badge/public%20output-GitHub-lightgrey?style=flat-square)
 
 ---
@@ -24,20 +26,30 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 ## Table of Contents
 
 - [Overview](#overview)
-- [v3.1.0 Update Summary](#v310-update-summary)
+- [v3.3.0 Update Summary](#v330-update-summary)
+- [Release Notes](#release-notes)
 - [Relationship to Previous Projects](#relationship-to-previous-projects)
 - [Architecture Topology](#architecture-topology)
+- [Architecture Responsibilities](#architecture-responsibilities)
 - [Data Sources](#data-sources)
+- [Authoritative SQLite State](#authoritative-sqlite-state)
 - [Rank Data Workflow](#rank-data-workflow)
+- [Historical Repair Workflow](#historical-repair-workflow)
 - [Low-Storage Worker Model](#low-storage-worker-model)
+- [Global Rank Builder](#global-rank-builder)
+- [Compact Public Rank Schema V2](#compact-public-rank-schema-v2)
+- [Ranking Model](#ranking-model)
+- [Official Rank Signal](#official-rank-signal)
+- [Dedicated Rank Publisher](#dedicated-rank-publisher)
 - [Public Output Files](#public-output-files)
-- [UI Changes in v3.1.0](#ui-changes-in-v310)
+- [UI Architecture](#ui-architecture)
 - [Interface Preview](#interface-preview)
 - [Rank Data Status Model](#rank-data-status-model)
+- [Google Drive Backup Layer](#google-drive-backup-layer)
 - [Local Development Workspace](#local-development-workspace)
-- [Disclaimer](#disclaimer)
 - [Security and Trust Model](#security-and-trust-model)
 - [Repository Role](#repository-role)
+- [Validation Status](#validation-status)
 - [Changelog](#changelog)
 - [License](#license)
 - [Author](#author)
@@ -46,60 +58,142 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
 ## Overview
 
-Wallet Intelligence Layer v3.1.0 is a DAC Testnet wallet intelligence interface focused on public wallet behavior and comparative rank signals.
+Wallet Intelligence Layer v3.3.0 is a DAC Testnet wallet intelligence and comparative ranking system.
 
-The interface keeps the no-connect wallet check model from earlier Wallet Intelligence Layer versions, then adds a rank intelligence section that can compare a wallet against the currently indexed wallet population.
+The interface keeps the no-connect wallet check model from previous Wallet Intelligence Layer versions, then adds a rank intelligence layer that compares a wallet against the complete indexed wallet population.
 
-The core v3 direction remains:
+The core v3 principle remains:
 
 ```text
 Every verified wallet variable can become a comparative public rank signal.
 ```
 
-Version `v3.1.0` strengthens that direction by improving the data pipeline behind the rank layer.
+The browser does not calculate a wallet rank from isolated wallet data. The global rank is precomputed from the full indexed population, published as compact rank artifacts, and then retrieved by the UI through an address-prefix shard.
 
-Instead of relying on a GitHub Actions-centered rank sync bot, the project now uses a **local RPC rank worker** that reads from the user's DAC node setup, processes rank data locally, and publishes generated rank output back to GitHub for the static frontend.
+```text
+Full indexed population
+↓
+Global comparative rank calculation
+↓
+Compact public rank records
+↓
+Address-prefix shards
+↓
+Browser wallet lookup
+```
+
+The shard is only a delivery format. The comparison population remains global.
 
 ---
 
-## v3.1.0 Update Summary
+## v3.3.0 Update Summary
 
-Version `v3.1.0` is a major workflow and UI update.
+Version `v3.3.0` is the first stable and production-ready v3 architecture.
 
-The main workflow change:
+The main state architecture change:
 
 ```text
-GitHub Actions-centered sync
+External monolithic JSON state
 ↓
-Local RPC-powered rank data engine
+Authoritative local SQLite state
+```
+
+The main publishing change:
+
+```text
+Worker-generated rank output every cycle
+↓
+Dedicated global rank builder and snapshot publisher
+```
+
+The main data-model additions:
+
+```text
+Estimated Current Stake
+Official Testnet Inception NFT ownership
+Official Rank Signal
+```
+
+The main public schema change:
+
+```text
+WIL_V3_COMPACT_ARRAY_V1
+↓
+WIL_V3_COMPACT_ARRAY_V2
 ```
 
 The main UI change:
 
 ```text
-Overall Wallet Rank
+8 small rank cards + Final Composite Rank
 ↓
-Separated into a highlighted final composite rank card
+9 small rank cards + Official Rank Signal + Final Composite Rank
 ```
 
 Key updates:
 
-- Added local RPC worker-based rank data processing.
-- Added primary and fallback local RPC support.
-- Added historical backfill, post-backfill catch-up, and incremental sync phases.
-- Added low-storage temporary worker behavior.
-- Preserved GitHub as the public output layer for generated rank data.
-- Updated visible UI version labels from `v3.0.0` to `v3.1.0`.
-- Updated Dynamic Intelligence Badge label from `DIB-v3.0.0` to `DIB-v3.1.0`.
-- Improved unindexed wallet copy to reference the local RPC rank engine.
-- Separated `overall_rank` from normal rank metric cards.
-- Added a full-width highlighted final composite rank card.
+- Replaced the active monolithic JSON state with SQLite.
+- Preserved existing indexed wallet data and historical checkpoints.
+- Added transactional wallet, staking, checkpoint, and NFT ownership updates.
+- Added Estimated Current Stake as a separate comparative metric.
+- Added Official Testnet Inception NFT ownership tracking.
+- Added a resumable Official NFT historical repair worker.
+- Added Compact V2 public rank records.
+- Finalized a reader compatible with Compact V1 and Compact V2.
+- Separated the global rank builder from the main block worker.
+- Added a dedicated snapshot publisher for the public rank branch.
+- Preserved lightweight status behavior during historical backfill.
+- Preserved the original eight-variable Final Composite Rank formula.
+- Added nine small rank cards.
+- Added a full-width Official Rank Signal card.
+- Retained the full-width Final Composite Rank card.
+- Updated visible version labels to `v3.3.0`.
+- Updated Dynamic Intelligence Badge label to `DIB-v3.3.0`.
+- Added consistent compressed SQLite backups to Google Drive A/B.
+- Preserved temporary workspace cleanup as part of the low-storage design.
+
+---
+
+## Release Notes
+
+Versions `v3.0.0` through `v3.2.0` were experimental/beta releases.
+
+They document the architecture evolution that led to the mature v3 implementation:
+
+```text
+v3.0.0
+GitHub Actions prototype
+
+v3.1.0
+Local node processing
+
+v3.2.0
+Externalized state and Google Drive backup
+
+v3.3.0
+Stable SQLite-backed production architecture
+```
+
+The earlier releases remain important because they show why the architecture changed. They are not presented as failed releases; they are development stages that exposed runtime, storage, memory, and publication constraints.
+
+Version `v3.3.0` is the first stable v3 release because the complete pipeline is now separated into clear responsibilities:
+
+- local RPC indexing;
+- SQLite authoritative state;
+- bounded historical repairs;
+- external backup;
+- global rank calculation;
+- compact public publication;
+- browser-side shard lookup;
+- UI rank rendering.
+
+“Production-ready” refers to the completed and validated architecture. Rank completeness still follows the current synchronization phase. During historical backfill or catch-up, the UI must not imply that the full chain population is already finalized.
 
 ---
 
 ## Relationship to Previous Projects
 
-Wallet Intelligence Layer v3.1.0 is part of a broader DAC tooling progression.
+Wallet Intelligence Layer v3.3.0 is part of a broader DAC tooling progression.
 
 It does not replace earlier projects. It builds on the same testnet tooling path: activity generation, wallet reading, dynamic wallet status representation, and public comparative rank intelligence.
 
@@ -108,7 +202,7 @@ It does not replace earlier projects. It builds on the same testnet tooling path
 | DAC Sender | `v1.4.3` | Activity-generation and testnet interaction tool. It helps create visible DAC Testnet wallet behavior. | [DAC Sender](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Sender-Web) |
 | Wallet Intelligence Layer | `v1.5.4` | First wallet intelligence layer focused on reading and interpreting public DAC wallet activity. | [Wallet Intelligence Layer v1](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1) |
 | Wallet Intelligence Layer | `v2.0.2` | Extended wallet intelligence into a dynamic wallet-bound status badge workflow. | [Wallet Intelligence Layer v2](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v2) |
-| Wallet Intelligence Layer | `v3.1.0` | Turns wallet intelligence variables into comparative public rank signals using a local RPC rank data engine. | [Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
+| Wallet Intelligence Layer | `v3.3.0` | Global comparative wallet intelligence using local DAC nodes, SQLite state, Compact V2 rank artifacts, and public shard lookup. | [Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
 
 In short:
 
@@ -123,60 +217,85 @@ Wallet Intelligence Layer v2
 → represents wallet status through a dynamic badge layer
 
 Wallet Intelligence Layer v3
-→ compares wallet variables through public rank intelligence
+→ compares wallet variables across the indexed population
 ```
 
 ---
 
 ## Architecture Topology
 
-Wallet Intelligence Layer v3.1.0 uses a hybrid architecture.
-
-The frontend remains a static GitHub Pages interface. The rank dataset is produced by a local RPC worker and published to GitHub as generated public JSON output.
+Wallet Intelligence Layer v3.3.0 uses a hybrid local-processing and public-delivery architecture.
 
 ```text
-                           ┌─────────────────────────────┐
-                           │       DAC Testnet Chain     │
-                           └──────────────┬──────────────┘
+                           ┌──────────────────────────────┐
+                           │      DAC Testnet Chain       │
+                           └──────────────┬───────────────┘
                                           │
-                                          │ RPC / Explorer reads
-                                          │
-          ┌───────────────────────────────┴───────────────────────────────┐
-          │                                                               │
-          ▼                                                               ▼
-┌───────────────────────┐                                     ┌───────────────────────┐
-│ Official DAC Explorer │                                     │ Local DAC RPC Nodes   │
-│ Explorer API / Stats  │                                     │ Primary + Fallback    │
-└───────────┬───────────┘                                     └───────────┬───────────┘
-            │                                                             │
-            │ Live public wallet/network reads                            │ Local block + tx reads
-            │                                                             │
-            ▼                                                             ▼
-┌────────────────────────────────┐                           ┌────────────────────────────────┐
-│ Wallet Intelligence Layer UI   │                           │ Local RPC Rank Worker          │
-│ Static frontend / GitHub Pages │                           │ Backfill / Catch-up / Sync     │
-└───────────────┬────────────────┘                           └───────────────┬────────────────┘
-                │                                                            │
-                │ Reads generated rank JSON                                  │ Writes generated rank JSON
-                │                                                            │
-                ▼                                                            ▼
-        ┌────────────────────────────────────────────────────────────────────────┐
-        │ GitHub Repository Public Output Layer                                  │
-        │ latest.json / wallet-rank-summary.json / wallet-rank-index.json        │
-        │ rank-shards/*.json                                                     │
-        └────────────────────────────────────────────────────────────────────────┘
+                       ┌──────────────────┴──────────────────┐
+                       │                                     │
+                       ▼                                     ▼
+          ┌────────────────────────┐             ┌────────────────────────┐
+          │ Linux DAC Node in WSL  │             │ Windows DAC Node       │
+          │ Primary local RPC      │             │ Fallback local RPC     │
+          │ 127.0.0.1:8546         │             │ 192.168.100.7:8545     │
+          └────────────┬───────────┘             └────────────┬───────────┘
+                       │                                      │
+                       └──────────────────┬───────────────────┘
+                                          ▼
+                           ┌──────────────────────────────┐
+                           │ Local RPC Rank Worker        │
+                           │ Backfill / Catch-up / Sync   │
+                           └──────────────┬───────────────┘
+                                          ▼
+                           ┌──────────────────────────────┐
+                           │ Authoritative SQLite State   │
+                           │ wallet / stake / NFT / sync  │
+                           └───────────┬───────────┬──────┘
+                                       │           │
+                       ┌───────────────┘           └────────────────┐
+                       ▼                                            ▼
+          ┌──────────────────────────┐               ┌──────────────────────────┐
+          │ Consistent GDrive Backup │               │ Global Rank Builder      │
+          │ Drive A / Drive B        │               │ Full population compare  │
+          └──────────────────────────┘               └─────────────┬────────────┘
+                                                                   ▼
+                                                    ┌──────────────────────────┐
+                                                    │ Compact V2 Rank Artifacts│
+                                                    │ summary / index / shards │
+                                                    └─────────────┬────────────┘
+                                                                   ▼
+                                                    ┌──────────────────────────┐
+                                                    │ Snapshot Publisher       │
+                                                    │ wil-v3-rank-data branch  │
+                                                    └─────────────┬────────────┘
+                                                                   ▼
+                                                    ┌──────────────────────────┐
+                                                    │ Static UI / GitHub Pages │
+                                                    │ rank-engine.js lookup    │
+                                                    └──────────────────────────┘
 ```
 
-The architecture separates responsibilities:
+The normal live-wallet interface may also read official DAC Explorer/API data for current public wallet and network context. That live Explorer path is separate from the precomputed global rank path.
+
+---
+
+## Architecture Responsibilities
 
 | Layer | Responsibility |
 |---|---|
-| Static UI | User input, wallet profile display, live network context, rank rendering |
-| Official Explorer/API | Public indexed DAC Testnet data where available |
-| Local RPC Nodes | Local block, transaction, and balance reads for rank data processing |
-| Local RPC Worker | Historical backfill, catch-up, incremental processing, rank JSON generation |
-| GitHub Repository | Public generated output layer consumed by the static UI |
-| Sparse DEV workspace | Lightweight local development without pulling heavy generated data |
+| DAC Testnet | Canonical blockchain activity source |
+| Linux DAC Node | Primary local RPC source |
+| Windows DAC Node | Fallback local RPC source |
+| Local RPC Worker | Block processing, wallet metrics, stake flow, NFT ownership, checkpoints |
+| SQLite State | Authoritative heavy local rank state |
+| Historical Repair Workers | Fill feature-specific gaps without restarting the main backfill |
+| Google Drive A/B | Consistent compressed SQLite backup and rollover storage |
+| Global Rank Builder | Full-population comparative rank calculation |
+| Snapshot Publisher | Compact public artifact validation and publication |
+| GitHub `main` | Source code, scripts, UI, lightweight project files |
+| `wil-v3-rank-data` | Public summary, index, shards, and snapshot manifest |
+| `rank-engine.js` | Summary/index loading, shard lookup, Compact V1/V2 decoding |
+| Static UI | User input, rank card rendering, live public context |
 
 ---
 
@@ -206,72 +325,160 @@ Used as the public DAC Testnet explorer reference.
 https://exptest.dachain.tech/api
 ```
 
-Used where explorer-indexed public wallet, transaction, address, or network data is available.
+Used where explorer-indexed public wallet, transaction, address, staking-flow, or network data is available.
 
 ### Local DAC RPC Nodes
 
-The v3.1.0 rank workflow uses the user's local DAC node setup as the main worker input.
-
-Typical local RPC sources:
+The main rank workflow uses the local node setup.
 
 ```text
-Primary local RPC:
+Primary:
 http://127.0.0.1:8546
 
-Fallback local RPC:
+Fallback:
 http://192.168.100.7:8545
 ```
 
-The local RPC worker uses these sources to process historical and incremental chain data for rank generation.
-
-### Generated GitHub Rank Data
-
-The static frontend reads generated rank outputs from the repository.
+Expected chain ID:
 
 ```text
-rank-data-engine/data/latest.json
+0x5586
+```
+
+The local nodes provide block, transaction, receipt, log, balance, and chain-head data for the worker.
+
+### Generated Public Rank Data
+
+The frontend reads precomputed rank outputs rather than the SQLite database.
+
+```text
 data/wallet-rank-summary.json
 data/wallet-rank-index.json
 data/rank-shards/*.json
 ```
 
-These files are generated outputs, not manually authored source files.
+---
+
+## Authoritative SQLite State
+
+The active heavy state is stored outside GitHub:
+
+```text
+~/wil-v3-rank-state/wil-v3-rank-state.sqlite
+```
+
+SQLite is the source of truth for the v3.3.0 rank worker.
+
+Principal logical tables include:
+
+```text
+wallet_metrics
+staking_metrics
+official_inception_nft_tokens
+checkpoint
+counters
+state_meta
+enrichment_queue
+official_inception_nft_repair_state
+```
+
+### `wallet_metrics`
+
+Preserves wallet intelligence material such as:
+
+- native balance data;
+- transaction count;
+- gas usage;
+- native volume;
+- NFT holdings;
+- collection diversity;
+- success and failure counts;
+- unique counterparties;
+- contract interaction data;
+- first-seen and last-seen information;
+- additional rank material used by WIL.
+
+### `staking_metrics`
+
+Stores recognized stake/unstake flow and Estimated Current Stake.
+
+### `official_inception_nft_tokens`
+
+Stores the latest known ownership event for each Official Testnet Inception NFT token.
+
+### `checkpoint`
+
+Stores backfill, catch-up, incremental, and synchronization boundaries.
+
+### `counters`
+
+Stores cumulative worker counters.
+
+### `state_meta`
+
+Stores schema and state metadata.
+
+### `enrichment_queue`
+
+Stores deferred enrichment work.
+
+### `official_inception_nft_repair_state`
+
+Stores the independent, resumable repair checkpoint for the historical NFT feature gap.
+
+### Why SQLite replaced monolithic JSON
+
+The previous JSON architecture required loading and rewriting a large state file.
+
+SQLite allows the worker to:
+
+- retrieve only required records;
+- keep a limited active cache;
+- batch UPSERT changed rows;
+- update checkpoints transactionally;
+- avoid loading the full population into memory;
+- create consistent backups;
+- support indexed queries for the rank builder.
+
+No required wallet intelligence variable was intentionally removed during this change.
 
 ---
 
 ## Rank Data Workflow
 
-The v3.1.0 workflow is designed around three sync phases.
+The main worker uses three synchronization phases.
 
 ### 1. Historical Backfill
 
-The worker starts from a fixed historical anchor and processes blocks backward toward genesis.
+The worker processes historical blocks from the current checkpoint backward toward genesis.
 
 ```text
-historical_backfill_anchor_block
+current historical checkpoint
 ↓
 genesis
 ```
 
-During this phase, the UI can display the current indexed snapshot, but it should not imply that the rank dataset is fully complete.
+The scan direction is:
+
+```text
+higher block → lower block
+```
+
+During this phase, lightweight status can be published, but the UI must not imply that the global rank dataset is complete.
 
 ### 2. Post-Backfill Catch-Up
 
-While historical backfill is running, new blocks continue to appear on the chain.
-
-To avoid a data gap, v3.1.0 includes a catch-up phase:
+After genesis is reached, the worker fills the forward gap created while backfill was running.
 
 ```text
-historical_backfill_anchor_block + 1
+historical backfill anchor + 1
 ↓
-latest chain head
+current live chain head
 ```
-
-This fills the range created while the historical backfill was still running.
 
 ### 3. Incremental Sync
 
-After historical backfill and catch-up are complete, the worker enters incremental mode.
+After catch-up, the worker processes only new blocks.
 
 ```text
 last processed block + 1
@@ -279,137 +486,436 @@ last processed block + 1
 latest block
 ```
 
-At this stage, the rank engine only processes new blocks as they appear.
+### Worker responsibilities
+
+The worker processes:
+
+- block transactions;
+- senders and recipients;
+- native-value flow;
+- gas usage;
+- wallet activity counters;
+- NFT activity;
+- collection diversity;
+- stake and unstake flow;
+- Official Inception NFT `Transfer` logs;
+- checkpoint and phase transitions.
+
+### Lightweight status during backfill
+
+The worker does not need to rebuild the complete global rank dataset on every backfill cycle.
+
+Lightweight status may include:
+
+- sync phase;
+- last synced block;
+- next backfill block;
+- latest chain block at sync;
+- indexed wallet count;
+- total processed transactions;
+- state backend;
+- feature support flags;
+- public rank readiness.
+
+Global rank generation is handled separately.
+
+---
+
+## Historical Repair Workflow
+
+Feature-specific repair workers were used because Estimated Current Stake and Official NFT tracking were added after the main worker had already processed part of the historical range.
+
+A repair worker:
+
+- uses its own checkpoint;
+- processes only the missing feature range;
+- does not rewrite the main worker checkpoint;
+- can resume after interruption;
+- preserves newer events over older events;
+- stops when it reaches the main worker boundary.
+
+### Official NFT Repair Worker
+
+```text
+rank-data-engine/scripts/repair_official_inception_nft_gap.py
+```
+
+The Official NFT repair scans backward from the original anchor toward the current worker boundary.
+
+This direction is intentional: the newest token ownership event is encountered first, and older events cannot overwrite a newer stored event position.
+
+A completed repair remains recorded for audit and recovery, while the main worker continues from its own checkpoint.
 
 ---
 
 ## Low-Storage Worker Model
 
-The local worker is designed to avoid permanent local storage growth from temporary processing folders.
-
-The worker flow:
+The project follows an explicit low-storage lifecycle:
 
 ```text
-Create temporary workspace in /tmp
+input
 ↓
-Clone latest repository state
+temporary working area
 ↓
-Read local RPC data
+process and validate
 ↓
-Generate rank outputs
+publish or persist output
 ↓
-Commit and push generated outputs to GitHub
-↓
-Remove temporary workspace
+remove temporary work
 ```
 
-This keeps the user's local machine from storing every temporary worker clone permanently.
+Temporary work may include:
 
-For daily development, a separate sparse / partial clone can be used so heavy generated rank data is not pulled into the local development workspace.
+- a temporary repository clone;
+- a consistent source database snapshot;
+- a temporary rank-build database;
+- a temporary snapshot repository;
+- compressed backup work;
+- temporary manifests.
+
+This design has two goals:
+
+1. avoid unnecessary permanent storage growth;
+2. prevent generated operational data from becoming scattered or accidentally committed.
+
+### Daily worker execution
+
+The low-storage runner can create temporary work, process local RPC data, commit only intended lightweight output where configured, and remove the temporary workspace.
+
+### Rank publication
+
+The rank publisher creates isolated build and snapshot workspaces, validates the result, optionally pushes the public snapshot branch, and then cleans the temporary work.
+
+### Important source-control rule
+
+Only explicitly staged source files should enter `main`.
+
+Operational state, logs, temporary databases, and backup work remain outside the tracked source tree.
+
+---
+
+## Global Rank Builder
+
+The global rank builder is:
+
+```text
+scripts/generate_rank_from_sqlite.py
+```
+
+It reads a consistent snapshot of the complete SQLite population.
+
+The builder:
+
+1. creates a consistent source snapshot;
+2. streams wallet metrics into a temporary rank-build database;
+3. joins staking data;
+4. counts current Official NFT ownership;
+5. computes global metric ranks;
+6. computes the Final Composite Rank;
+7. creates compact records;
+8. splits records into prefix shards;
+9. writes summary and index metadata;
+10. validates the rank-build database;
+11. removes temporary builder work.
+
+### Public output
+
+```text
+data/wallet-rank-summary.json
+data/wallet-rank-index.json
+data/rank-shards/00.json
+data/rank-shards/01.json
+...
+data/rank-shards/ff.json
+```
+
+### Global comparison guarantee
+
+Rank calculation occurs before sharding.
+
+A wallet stored in `ab.json` is still ranked against the complete indexed population, not only against addresses beginning with `0xab`.
+
+---
+
+## Compact Public Rank Schema V2
+
+v3.3.0 uses:
+
+```text
+WIL_V3_COMPACT_ARRAY_V2
+SHARDED_COMPACT_V2
+```
+
+Each public wallet record contains 21 fields.
+
+### Metric value order
+
+1. `native_funds`
+2. `estimated_current_stake`
+3. `transactions`
+4. `native_volume`
+5. `gas_used`
+6. `nft_holdings`
+7. `collection_diversity`
+8. `reputation_score`
+9. `low_sybil_risk`
+10. `official_inception_nfts`
+
+### Comparative rank order
+
+The next ten fields contain ranks in the same metric order.
+
+### Final field
+
+```text
+overall_rank
+```
+
+### Backward compatibility
+
+The reader supports:
+
+```text
+WIL_V3_COMPACT_ARRAY_V1
+WIL_V3_COMPACT_ARRAY_V2
+```
+
+This allows a controlled transition between public snapshot generations.
+
+---
+
+## Ranking Model
+
+### Nine small comparative cards
+
+```text
+Native Funds              Estimated Current Stake   Transactions
+Native Volume             Gas Used                  NFT Holdings
+Collection Diversity      Reputation Score          Low-Risk Profile
+```
+
+### Final Composite Rank
+
+The Final Composite Rank preserves the original eight-variable formula:
+
+1. Native Funds
+2. Transactions
+3. Gas Used
+4. Native Volume
+5. NFT Holdings
+6. Collection Diversity
+7. Reputation Score
+8. Low-Risk Profile
+
+The following are separate signals and do not alter the composite formula:
+
+- Estimated Current Stake;
+- Official Testnet Inception NFT count.
+
+This preserves continuity with the original WIL v3 ranking model while exposing additional wallet intelligence.
+
+---
+
+## Official Rank Signal
+
+Official Testnet Inception NFT contract:
+
+```text
+0xB36ab4c2Bd6aCfC36e9D6c53F39F4301901Bd647
+```
+
+The worker tracks ERC-721 `Transfer` logs and stores the latest owner for each token.
+
+The Official Rank Signal is derived from the wallet's current token count.
+
+| NFT Count | Official Rank |
+|---:|---|
+| 0 | NONE |
+| 1 | CADET |
+| 2 | COMMANDO |
+| 3 | SEAL |
+| 4 | SHADOW UNIT |
+| 5 | VANGUARD |
+| 6 | SENTINEL |
+| 7 | SOVEREIGN |
+| 8 | WARRIOR |
+| 9 | ARCHITECT |
+| 10 | INTERCEPTOR |
+| 11 | PHANTOM |
+| 12 | CIPHER |
+| 13 or more | CROWN |
+
+The Official Rank Signal card displays:
+
+- current Official Testnet Inception NFT count;
+- Official Rank tier;
+- comparative rank;
+- percentile;
+- rank scope.
+
+The tier is rendered in white with a light-blue glow.
+
+This is an independent official ecosystem signal. It is not merged into the Final Composite Rank formula.
+
+---
+
+## Dedicated Rank Publisher
+
+The publisher is:
+
+```text
+scripts/publish_rank_snapshot_branch.sh
+```
+
+It:
+
+1. validates its configuration;
+2. creates isolated temporary work;
+3. runs the global rank builder;
+4. validates Compact V2 metadata;
+5. validates shard completeness;
+6. creates a clean snapshot repository;
+7. creates one snapshot commit;
+8. optionally pushes the public snapshot branch;
+9. removes temporary work.
+
+### Public rank branch
+
+```text
+wil-v3-rank-data
+```
+
+### Safety rules
+
+The publisher prevents:
+
+- incomplete snapshots from being pushed;
+- limited test snapshots from being pushed;
+- temporary fixture data from becoming production output.
+
+Local tests use settings such as:
+
+```text
+PUSH_TO_GITHUB=0
+ALLOW_INCOMPLETE=1
+LIMIT=<small test population>
+```
+
+Production publication requires a complete valid index.
 
 ---
 
 ## Public Output Files
 
-The following generated files are part of the public rank output layer:
+Public rank artifacts:
 
 ```text
 wallet-intelligence-layer-v3/
-├── data/
-│   ├── wallet-rank-summary.json
-│   ├── wallet-rank-index.json
-│   └── rank-shards/
-│       └── *.json
-└── rank-data-engine/
-    └── data/
-        └── latest.json
+└── data/
+    ├── wallet-rank-summary.json
+    ├── wallet-rank-index.json
+    └── rank-shards/
+        ├── 00.json
+        ├── 01.json
+        ├── ...
+        └── ff.json
 ```
 
-Output role:
+Operational lightweight worker status may also be represented under:
+
+```text
+rank-data-engine/data/
+```
 
 | Output | Purpose |
 |---|---|
-| `latest.json` | Latest local RPC worker snapshot and sync state |
-| `wallet-rank-summary.json` | Summary metadata for the current rank dataset |
-| `wallet-rank-index.json` | Rank index metadata / compatibility output |
-| `rank-shards/*.json` | Sharded rank lookup data for frontend wallet checks |
+| `wallet-rank-summary.json` | Dataset status, population, schema, and synchronization metadata |
+| `wallet-rank-index.json` | Shard directory, Compact schema, metric order, rank order, and Official Rank tiers |
+| `rank-shards/*.json` | Compact wallet rank lookup records |
+| snapshot manifest | Public snapshot branch metadata and publication state |
+| lightweight worker status | Current worker phase and synchronization progress |
+
+The authoritative SQLite database is not published to GitHub.
 
 ---
 
-## UI Changes in v3.1.0
+## UI Architecture
 
-The v3.1.0 UI update improves how Wallet Rank Intelligence is presented.
-
-### Version Labels
-
-Visible version labels were updated:
+The UI version is:
 
 ```text
-Wallet Intelligence Layer v3.0.0
+Wallet Intelligence Layer v3.3.0
+DIB-v3.3.0
+```
+
+### Browser lookup flow
+
+When a user enters:
+
+```text
+0xabcdef...
+```
+
+the reader:
+
+1. normalizes the address;
+2. loads the public rank summary;
+3. loads the rank index;
+4. derives prefix `ab`;
+5. fetches `data/rank-shards/ab.json`;
+6. extracts the compact wallet record;
+7. decodes metric values and ranks;
+8. renders the Wallet Rank Intelligence section.
+
+The browser does not read SQLite and does not download the complete wallet population.
+
+### Rank reader
+
+```text
+rank-engine.js
+```
+
+### UI renderer
+
+```text
+wallet-intelligence.js
+```
+
+### UI styles
+
+```text
+wallet-intelligence.css
+```
+
+### Final rank panel
+
+```text
+9 small metric cards
 ↓
-Wallet Intelligence Layer v3.1.0
-```
-
-Dynamic Intelligence Badge label:
-
-```text
-DIB-v3.0.0
+OFFICIAL RANK SIGNAL
+Official Testnet Inception NFTs
 ↓
-DIB-v3.1.0
-```
-
-### Rank Card Layout
-
-Before v3.1.0, `overall_rank` appeared as part of the normal metric card grid.
-
-In v3.1.0, `overall_rank` is separated into a full-width final composite card.
-
-```text
-Metric rank cards
-├── Transaction Rank
-├── Gas Used Rank
-├── Native Volume Rank
-└── Other available rank variables
-
-Final composite card
-└── Overall Wallet Rank
-```
-
-### Overall Wallet Rank
-
-The Overall Wallet Rank now has its own highlighted UI treatment.
-
-It is presented as the final composite signal derived from the available indexed rank variables.
-
-The UI uses a dedicated visual label:
-
-```text
 FINAL COMPOSITE RANK
-```
-
-This makes the hierarchy clearer:
-
-```text
-Individual variables
-↓
-Rank metric cards
-
-Composite result
-↓
 Overall Wallet Rank
 ```
 
-### Unindexed Wallet Copy
+The Official Rank Signal appears before the Final Composite Rank.
 
-The unindexed wallet state now better reflects the new data workflow.
+### Unindexed or incomplete state
 
-The UI explains that the wallet may already have live wallet intelligence data, while rank values may still be unavailable in the current indexed snapshot because the local RPC rank engine is still processing historical backfill.
+A wallet may have live wallet intelligence data while its rank record is unavailable in the currently published snapshot.
+
+The UI distinguishes:
+
+- live public wallet visibility;
+- indexed rank availability;
+- full rank dataset readiness.
 
 ---
 
 ## Interface Preview
 
-The Wallet Rank Intelligence section is expected to look similar to the current project.
+The Wallet Rank Intelligence section follows the current project interface.
 
 ![Wallet Rank Intelligence](assets/WalletRankIntelligence.png)
 
@@ -417,62 +923,125 @@ The Wallet Rank Intelligence section is expected to look similar to the current 
 
 ## Rank Data Status Model
 
-The UI should distinguish between live network visibility and rank dataset completeness.
-
 | State | Meaning |
 |---|---|
-| `HISTORICAL_BACKFILL_IN_PROGRESS` | The engine is still processing historical blocks toward genesis. |
-| `POST_BACKFILL_CATCH_UP` | Historical backfill has reached genesis and the engine is filling the gap from anchor + 1 to latest. |
-| `INCREMENTAL` | The engine has caught up and is processing new blocks incrementally. |
+| `HISTORICAL_BACKFILL_IN_PROGRESS` | The worker is processing historical blocks backward toward genesis. |
+| `POST_BACKFILL_CATCH_UP` | Historical backfill reached genesis and the worker is filling the forward gap. |
+| `INCREMENTAL` | The worker has caught up and is processing newly produced blocks. |
 
-The project should only imply a fully synced rank dataset after historical backfill and catch-up are complete.
+The UI should only imply a fully synchronized rank dataset after historical backfill and catch-up are complete.
+
+A stable architecture does not mean the historical dataset is already complete. Architecture status and synchronization status are separate.
+
+---
+
+## Google Drive Backup Layer
+
+The heavy SQLite state is backed up locally through `rclone`.
+
+Configured remotes:
+
+```text
+gdrive_wil_a:
+gdrive_wil_b:
+```
+
+### Rollover policy
+
+```text
+Drive A usage below 90%
+→ upload to Drive A
+
+Drive A usage at or above 90%
+→ upload to Drive B
+```
+
+### Backup workflow
+
+1. Check the active SQLite database.
+2. Read the current sync phase.
+3. Choose the phase-specific folder.
+4. Check Drive A quota.
+5. Select Drive A or Drive B.
+6. Create a consistent SQLite snapshot.
+7. Run an integrity check.
+8. Compress with Zstandard.
+9. Generate a SHA-256 checksum.
+10. Upload the timestamped snapshot.
+11. Update the selected remote's `latest` pointer.
+12. Write a local backup manifest.
+13. Remove expired local upload work.
+
+### Backup cadence
+
+Current scheduled cadence:
+
+```text
+0 */6 * * *
+```
+
+### Responsibility boundary
+
+GitHub does not upload the heavy state to Google Drive.
+
+The local environment performs backups. GitHub stores source and public rank artifacts; Google Drive stores external heavy-state recovery snapshots.
 
 ---
 
 ## Local Development Workspace
 
-Because generated rank output can become large, the recommended local development approach is to use a sparse / partial clone.
-
-The development workspace can exclude generated files such as:
+The canonical repository is:
 
 ```text
-data/rank-shards/
-data/wallet-rank-index.json
-data/wallet-rank-summary.json
-data/indexer-work/
-rank-data-engine/data/
+https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup
 ```
 
-This keeps daily UI, README, script, and workflow editing lightweight while allowing GitHub to remain the public output layer.
-
----
-
-## Disclaimer
-
-Wallet Intelligence Layer v3.1.0 is a **community-built engineering tool**.
-
-Although the project uses official DAC Testnet-facing sources where applicable, including official RPC and Explorer/API endpoints, some interpretation layers are custom developer logic.
-
-This includes, but is not limited to:
+The daily working clone is:
 
 ```text
-rank variable modeling
-wallet metric aggregation
-backfill and catch-up workflow design
-rank shard formatting
-UI status interpretation
-composite rank presentation
+~/dac-contribution/DEV-SPACE
 ```
 
-The output should be treated as a transparent community analytics layer, not as an official DAC score, reward system, eligibility checker, or final Sybil judgment.
+The WIL project source is:
 
-The project is built for testnet observation, public-data debugging, infrastructure testing, wallet behavior review, and community intelligence.
+```text
+DAC-Contributions/
+└── dac-wallet-intelligence-layer/
+    └── wallet-intelligence-layer-v3/
+```
+
+Heavy operational state is outside the repository:
+
+```text
+~/wil-v3-rank-state/
+```
+
+Worker and benchmark logs are outside the repository:
+
+```text
+~/wil-v3-worker-logs/
+```
+
+This separation keeps daily source work lightweight and reduces the chance of accidentally pushing:
+
+- SQLite databases;
+- temporary snapshots;
+- worker logs;
+- backup work;
+- temporary clones;
+- compressed heavy-state files.
+
+Explicit file staging is preferred over broad commands such as:
+
+```text
+git add .
+```
 
 ---
 
 ## Security and Trust Model
 
-Wallet Intelligence Layer v3.1.0 keeps the same safety principles as earlier versions:
+Wallet Intelligence Layer v3.3.0 keeps the same safety principles as earlier versions:
 
 ```text
 No private key handling
@@ -484,52 +1053,175 @@ No official reward claim
 No fabricated score output
 ```
 
-The interface reads public DAC Testnet data and generated public rank data.
+The wallet check flow uses public DAC Testnet information and public rank artifacts.
 
-The rank worker reads local/public chain data and writes generated JSON outputs. It does not require private keys for the wallet intelligence check flow.
+The local worker reads blockchain data and updates local intelligence state. It does not require private keys for wallet checking.
+
+### Community interpretation layer
+
+The following are community-defined engineering logic:
+
+- rank variable modeling;
+- wallet metric aggregation;
+- Estimated Current Stake estimation;
+- Official Rank tier presentation;
+- historical repair workflow;
+- composite rank presentation;
+- shard formatting;
+- UI status interpretation.
+
+The system should be treated as a transparent community analytics layer, not an official DAC scoring or eligibility system.
 
 ---
 
 ## Repository Role
 
-This project is part of the larger:
+This project is part of:
 
 ```text
 dac-dual-node-cgnat-setup
 ```
 
-repository.
+### `main` branch
 
-The v3.1.0 folder contains the frontend UI, rank engine integration, data worker scripts, and generated public rank outputs used by the Wallet Rank Intelligence section.
+Stores:
+
+- WIL source code;
+- worker scripts;
+- SQLite adapter;
+- repair scripts;
+- rank builder;
+- publisher;
+- reader;
+- UI;
+- lightweight project files.
+
+### Public rank snapshot branch
+
+Stores:
+
+- public summary;
+- public index;
+- compact rank shards;
+- snapshot manifest.
+
+### Local environment
+
+Stores:
+
+- authoritative SQLite state;
+- logs;
+- temporary worker and publisher work;
+- backup upload work.
+
+### Google Drive
+
+Stores:
+
+- compressed consistent SQLite snapshots;
+- checksums;
+- phase-based backup history;
+- latest pointers.
+
+---
+
+## Validation Status
+
+The v3.3.0 core source was validated before release.
+
+Validated areas include:
+
+- SQLite migration and integrity;
+- main worker state updates;
+- one-block local worker smoke test;
+- Estimated Current Stake support;
+- Official NFT receipt classification;
+- resumable Official NFT repair;
+- repair/main-worker checkpoint alignment;
+- global rank builder;
+- Compact V2 output;
+- publisher no-push test;
+- Compact V1/V2 reader compatibility;
+- nine small metric cards;
+- Official Rank Signal placement;
+- Official Rank tier mapping;
+- Final Composite Rank preservation;
+- CSS rank highlight;
+- temporary workspace cleanup;
+- Google Drive consistent snapshot backup;
+- clean source commit and remote verification.
+
+Implementation commit:
+
+```text
+344944b8ed4cc3f7eace3729d84c3c3dd4ca682a
+Complete WIL v3.3.0 stake and official NFT rank pipeline
+```
+
+At the final implementation validation point, the worker remained in:
+
+```text
+HISTORICAL_BACKFILL_IN_PROGRESS
+```
+
+The next operational path is:
+
+```text
+continue toward genesis
+↓
+Post-Backfill Catch-Up
+↓
+Incremental Sync
+```
+
+Point-in-time wallet counts, token counts, and block checkpoints are intentionally not presented as permanent README guarantees because they continue changing as the worker runs.
 
 ---
 
 ## Changelog
 
-### v3.1.0 — Local RPC Rank Workflow and UI Rank Layout
+### v3.3.0 — Stable
 
-- Added local RPC rank worker workflow.
-- Added primary/fallback local RPC source support.
-- Added historical backfill mode.
-- Added post-backfill catch-up mode.
-- Added incremental sync mode.
-- Added low-storage temporary worker execution model.
-- Preserved GitHub as the public generated-data output layer.
-- Updated visible UI version labels to `v3.1.0`.
-- Updated Dynamic Intelligence Badge label to `DIB-v3.1.0`.
-- Improved unindexed rank wording to reference the local RPC rank engine.
-- Separated `overall_rank` from standard metric cards.
-- Added highlighted full-width Overall Wallet Rank card.
-- Added final composite rank visual treatment.
+- Introduced the LiteSQLite architecture: SQLite-backed low-storage authoritative state.
+- Introduced compact public rank sharding for browser lookup.
+- Finalized the global rank builder.
+- Finalized the dedicated public snapshot publisher.
+- Finalized the Compact V1/V2 reader architecture.
+- Added Estimated Current Stake.
+- Added Official Testnet Inception NFT ownership tracking.
+- Added resumable historical feature repair.
+- Added the Official Rank Signal and tier mapping.
+- Added nine small comparative rank cards.
+- Added separate Official Rank Signal and Final Composite Rank cards.
+- Preserved the original eight-variable Final Composite Rank.
+- Added consistent compressed SQLite backup to Google Drive A/B.
+- Finalized temporary-work cleanup across worker, builder, publisher, and backup flows.
+- Updated UI and DIB labels to `v3.3.0`.
+- First production-ready v3 release.
 
-### v3.0.0 — Wallet Rank Intelligence Foundation
+### v3.2.0 — Beta
 
+- Introduced the Google Drive storage backend.
+- Externalized heavy rank state outside GitHub.
+- Added Google Drive A/B rollover behavior.
+- Preserved GitHub as source and lightweight public output.
+- Documented the limitations of monolithic JSON state.
+
+### v3.1.0 — Beta
+
+- Switched processing to Local Node.
+- Added Linux primary and Windows fallback RPC sources.
+- Added historical backfill, post-backfill catch-up, and incremental phases.
+- Added the low-storage temporary worker model.
+- Separated the Overall Wallet Rank into a full-width final composite card.
+
+### v3.0.0 — Beta
+
+- Initial rewrite using GitHub Actions.
 - Introduced Wallet Rank Intelligence as the v3 direction.
-- Added comparative public rank concept for verified wallet variables.
-- Added rank summary and rank index foundations.
-- Added sharded frontend rank lookup support.
-- Added partial rank rendering behavior.
-- Added placeholder rank states while valid rank data is pending.
+- Added the global comparative rank concept.
+- Added early summary, index, shard, and placeholder output foundations.
+- Established GitHub as the first automated processing and public artifact layer.
 
 ---
 
