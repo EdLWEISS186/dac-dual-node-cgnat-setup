@@ -36,7 +36,6 @@ run_once() {
 
   local base="DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3"
   local worker="$base/rank-data-engine/scripts/local_rpc_rank_data_worker.py"
-  local generator="$base/scripts/generate_rank_from_engine_data.py"
   local lightweight_generator="$base/rank-data-engine/scripts/generate_lightweight_public_rank_status.py"
   local public_status="$base/rank-data-engine/data/public-run-status.json"
 
@@ -76,16 +75,16 @@ run_once() {
 
   python3 -m json.tool "$public_status" >/dev/null
 
+  echo "[INFO] Generating lightweight public sync artifacts"
+  python3 "$lightweight_generator" --status-file "$public_status"
+
   publish_ready="$(
     python3 -c 'import json,sys; s=json.load(open(sys.argv[1], encoding="utf-8")); x=s.get("sync_status", {}); print("1" if x.get("phase") == "INCREMENTAL" and x.get("historical_backfill_complete") is True and x.get("catch_up_status") in ("CAUGHT_UP", None) else "0")' "$public_status"
   )"
 
   if [ "$publish_ready" = "1" ]; then
-    echo "[INFO] Publish-ready incremental state detected; generating full public rank artifacts"
-    python3 "$generator"
-  else
-    echo "[INFO] Backfill/catch-up not publish-ready; generating lightweight public artifacts"
-    python3 "$lightweight_generator" --status-file "$public_status"
+    echo "[INFO] Publish-ready incremental state detected."
+    echo "[INFO] Full global rank publishing is handled by the dedicated SQLite snapshot publisher."
   fi
 
   python3 -m json.tool "$base/rank-data-engine/data/latest.json" >/dev/null
