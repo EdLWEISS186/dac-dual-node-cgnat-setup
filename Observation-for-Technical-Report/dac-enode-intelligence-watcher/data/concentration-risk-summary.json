@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-11T06:28:17.543507+00:00",
+  "generated_at_utc": "2026-06-11T11:12:50.629592+00:00",
   "source_file": "data/rotation-intelligence-summary.json",
   "method": "heuristic_concentration_assessment",
   "official_classification": false,
@@ -290,20 +290,20 @@
   "dac_signal_concentration": {
     "dimension": "dac_infrastructure_signal",
     "total_unique_ips": 34,
-    "top_name": "Unknown / No Signal",
+    "top_name": "Retained Infrastructure Signal",
     "top_count": 10,
     "top_percentage": 29.41,
-    "unknown_count": 10,
-    "unknown_percentage": 29.41,
+    "unknown_count": 9,
+    "unknown_percentage": 26.47,
     "concentration_label": "LOW",
     "distribution": [
       {
-        "name": "Unknown / No Signal",
+        "name": "Retained Infrastructure Signal",
         "unique_ip_count": 10,
         "percentage": 29.41
       },
       {
-        "name": "Retained Infrastructure Signal",
+        "name": "Unknown / No Signal",
         "unique_ip_count": 9,
         "percentage": 26.47
       },
