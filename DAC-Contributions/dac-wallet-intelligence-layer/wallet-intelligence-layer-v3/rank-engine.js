@@ -1,5 +1,5 @@
 /*
- * Wallet Intelligence Layer v3.2.0 — Wallet Rank Intelligence
+ * Wallet Intelligence Layer v3.3.0 — Wallet Rank Intelligence
  *
  * Hybrid helper:
  * - Fetches real-time Explorer API network snapshot.
@@ -74,12 +74,149 @@
   }
 
   function isShardedIndex(index) {
-    return Boolean(index && typeof index === "object" && index.mode === "SHARDED" && index.directory);
+    if (!index || typeof index !== "object" || !index.directory) return false;
+
+    const mode = String(index.mode || "");
+
+    return mode === "SHARDED" || mode === "SHARDED_COMPACT_V1";
+  }
+
+  function isCompactShardedIndex(index) {
+    if (!index || typeof index !== "object") return false;
+
+    return (
+      String(index.mode || "") === "SHARDED_COMPACT_V1" &&
+      String(index.record_schema || "") === "WIL_V3_COMPACT_ARRAY_V1"
+    );
   }
 
   function getAddressShard(address) {
     const normalized = normalizeAddress(address);
     return normalized.slice(2, 4);
+  }
+
+  function rankPercentile(rank, total) {
+    const numericRank = Number(rank);
+    const numericTotal = Number(total);
+
+    if (
+      !Number.isFinite(numericRank) ||
+      !Number.isFinite(numericTotal) ||
+      numericRank <= 0 ||
+      numericTotal <= 0
+    ) {
+      return "NaN";
+    }
+
+    return ((numericRank / numericTotal) * 100).toFixed(6);
+  }
+
+  function compactRankTier(bestPercent) {
+    const numericPercent = Number(bestPercent);
+
+    if (!Number.isFinite(numericPercent)) return "INDEXED";
+    if (numericPercent <= 1) return "TOP_1_PERCENT";
+    if (numericPercent <= 5) return "TOP_5_PERCENT";
+    if (numericPercent <= 10) return "TOP_10_PERCENT";
+    if (numericPercent <= 25) return "TOP_25_PERCENT";
+    if (numericPercent <= 50) return "TOP_50_PERCENT";
+
+    return "INDEXED";
+  }
+
+  function decodeCompactProfile(address, compactRecord) {
+    if (!Array.isArray(compactRecord) || compactRecord.length !== 17) {
+      if (compactRecord !== null && compactRecord !== undefined) {
+        console.warn(
+          "[Wallet Rank Intelligence] Invalid compact rank record:",
+          address
+        );
+      }
+
+      return null;
+    }
+
+    const defaultMetricOrder = METRICS
+      .filter((metric) => metric.key !== "overall_rank")
+      .map((metric) => metric.key);
+
+    const metricOrder =
+      Array.isArray(rankIndex.metric_order) &&
+      rankIndex.metric_order.length === 8
+        ? rankIndex.metric_order
+        : defaultMetricOrder;
+
+    const defaultRankOrder = [
+      ...defaultMetricOrder,
+      "overall_rank"
+    ];
+
+    const rankOrder =
+      Array.isArray(rankIndex.rank_order) &&
+      rankIndex.rank_order.length === 9
+        ? rankIndex.rank_order
+        : defaultRankOrder;
+
+    const totalRanked = Number(
+      rankIndex.total_ranked_wallets ||
+      (rankSummary && rankSummary.total_ranked_wallets) ||
+      0
+    );
+
+    const metrics = {};
+    const ranks = {};
+    const percentiles = {};
+
+    metricOrder.forEach((key, index) => {
+      metrics[key] = compactRecord[index];
+    });
+
+    rankOrder.forEach((key, index) => {
+      const rawRank = Number(compactRecord[8 + index]);
+      const rank = Number.isFinite(rawRank) && rawRank > 0
+        ? rawRank
+        : null;
+
+      ranks[key] = rank;
+      percentiles[key] = rankPercentile(rank, totalRanked);
+    });
+
+    let strongestMetric = null;
+    let bestPercent = Number.POSITIVE_INFINITY;
+
+    metricOrder.forEach((key) => {
+      const percentile = Number(percentiles[key]);
+
+      if (
+        Number.isFinite(percentile) &&
+        percentile < bestPercent
+      ) {
+        bestPercent = percentile;
+        strongestMetric = key;
+      }
+    });
+
+    const availableVariables =
+      Array.isArray(rankIndex.available_rank_variables)
+        ? rankIndex.available_rank_variables
+        : rankOrder;
+
+    const pendingVariables =
+      Array.isArray(rankIndex.pending_rank_variables)
+        ? rankIndex.pending_rank_variables
+        : [];
+
+    return {
+      address,
+      metrics,
+      ranks,
+      percentiles,
+      total_ranked_wallets: totalRanked,
+      rank_tier: compactRankTier(bestPercent),
+      strongest_metric: strongestMetric,
+      available_rank_variables: availableVariables,
+      pending_rank_variables: pendingVariables
+    };
   }
 
   async function fetchRankShard(address) {
@@ -172,12 +309,18 @@
 
     let profile = null;
 
-    if (isShardedIndex(rankIndex)) {
-      const shardPayload = await fetchRankShard(normalized);
-      profile = shardPayload ? shardPayload[normalized] : null;
-    } else {
-      profile = rankIndex[normalized];
-    }
+      if (isShardedIndex(rankIndex)) {
+        const shardPayload = await fetchRankShard(normalized);
+        const shardRecord = shardPayload
+          ? shardPayload[normalized]
+          : null;
+
+        profile = isCompactShardedIndex(rankIndex)
+          ? decodeCompactProfile(normalized, shardRecord)
+          : shardRecord;
+      } else {
+        profile = rankIndex[normalized];
+      }
 
     if (!profile) {
       return {
