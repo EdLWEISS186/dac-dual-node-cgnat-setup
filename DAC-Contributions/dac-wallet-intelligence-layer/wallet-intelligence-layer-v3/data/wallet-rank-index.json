@@ -3,8 +3,21 @@
   "externalized_state": true,
   "has_valid_rank_index": false,
   "mode": "EXTERNALIZED_STATE",
+  "rank_lookup_enabled": false,
   "schema": "WIL_V3_RANK_INDEX",
   "status": "EXTERNALIZED_STATE_PENDING_VALID_PUBLISH",
-  "summary": "Rank shards are intentionally not published during externalized historical backfill.",
-  "version": "v3.2.0"
+  "summary": "Rank shards are intentionally not published during historical backfill or catch-up.",
+  "sync_status": {
+    "catch_up_next_block": null,
+    "catch_up_status": null,
+    "historical_backfill_anchor_block": 14975371,
+    "historical_backfill_complete": false,
+    "incremental_next_block": null,
+    "last_sync_at": "2026-06-11T03:58:26+00:00",
+    "last_synced_block": 14956152,
+    "local_rpc_backfill_next_block": 14956151,
+    "local_rpc_latest_block_at_sync": 14991935,
+    "phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
+  },
+  "version": "v3.3.0"
 }

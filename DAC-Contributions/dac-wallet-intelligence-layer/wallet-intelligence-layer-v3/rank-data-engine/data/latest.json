@@ -1,27 +1,27 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_processed_blocks": 100,
-    "last_sync_processed_transactions": 7820,
-    "last_sync_wallets_changed": 6777,
-    "native_balance_snapshots": 19283,
-    "total_indexed_wallets": 98528,
-    "total_processed_transactions": 191407
+    "last_sync_processed_blocks": 1,
+    "last_sync_processed_transactions": 40,
+    "last_sync_wallets_changed": 61,
+    "native_balance_snapshots": 19383,
+    "total_indexed_wallets": 411629,
+    "total_processed_transactions": 906690
   },
   "engine": "rank-data-engine",
   "externalized_state": true,
   "github_storage_role": "PUBLIC_MANIFEST_ONLY",
-  "heavy_state_local_path": "~/wil-v3-rank-state/latest-state.json",
-  "heavy_state_storage": "LOCAL_EXTERNAL_STATE_WITH_OPTIONAL_GOOGLE_DRIVE_BACKUP",
+  "heavy_state_local_path": "~/wil-v3-rank-state/wil-v3-rank-state.sqlite",
+  "heavy_state_storage": "LOCAL_SQLITE_STATE_WITH_OPTIONAL_GOOGLE_DRIVE_BACKUP",
   "latest_snapshot": "externalized-local-state",
   "network": "DAC Testnet",
-  "note": "GitHub no longer stores monolithic rank state. Heavy rank state is externalized for v3.2.0.",
-  "project": "Wallet Intelligence Layer v3.2.0",
+  "note": "v3.3.0 lightweight backfill publish mode. GitHub stores public manifest and summary only. Heavy wallet metrics remain local with optional Google Drive rollover backup.",
+  "project": "Wallet Intelligence Layer v3.3.0",
   "public_summary": {
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 98528
+    "total_ranked_wallets": 411629
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -34,12 +34,12 @@
     "historical_backfill_anchor_block": 14975371,
     "historical_backfill_complete": false,
     "incremental_next_block": null,
-    "last_sync_at": "2026-06-09T02:33:40+00:00",
-    "last_synced_block": 14965153,
-    "local_rpc_backfill_next_block": 14965152,
-    "local_rpc_latest_block_at_sync": 14980076,
+    "last_sync_at": "2026-06-11T03:58:26+00:00",
+    "last_synced_block": 14956152,
+    "local_rpc_backfill_next_block": 14956151,
+    "local_rpc_latest_block_at_sync": 14991935,
     "phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "updated_at": "2026-06-09T02:40:01+00:00",
-  "version": "v3.2.0"
+  "updated_at": "2026-06-11T03:58:28+00:00",
+  "version": "v3.3.0"
 }
