@@ -142,6 +142,244 @@ class SQLiteWalletMetrics:
         self.new_addresses.clear()
 
 
+class SQLiteStakingMetrics:
+    """
+    Lazy, rollback-safe current staking state.
+
+    Estimated Current Stake is derived from observed stake/unstake flow.
+    A direct balanceOf(address) result may be stored separately as a
+    cross-check without replacing the primary flow-derived estimate.
+    """
+
+    def __init__(self, connection: sqlite3.Connection) -> None:
+        self.connection = connection
+        self.cache: Dict[str, Dict[str, Any]] = {}
+        self.dirty_addresses: set[str] = set()
+
+    @staticmethod
+    def normalize(address: str) -> str:
+        return str(address).lower()
+
+    @staticmethod
+    def default_record(address: str) -> Dict[str, Any]:
+        return {
+            "address": str(address).lower(),
+            "estimated_current_stake_wei": "0",
+            "stake_in_wei": "0",
+            "unstake_out_wei": "0",
+            "direct_contract_balance_wei": None,
+            "stake_tx_count": 0,
+            "unstake_tx_count": 0,
+            "flow_tx_count": 0,
+            "source": "NO_STAKE_FLOW",
+            "confidence": "LOW",
+            "last_event_block": None,
+            "last_event_tx_hash": None,
+            "last_refreshed_block": None,
+            "updated_at": "",
+        }
+
+    def _load(self, address: str) -> Optional[Dict[str, Any]]:
+        address = self.normalize(address)
+
+        if address in self.cache:
+            return self.cache[address]
+
+        row = self.connection.execute(
+            """
+            SELECT
+                estimated_current_stake_wei,
+                stake_in_wei,
+                unstake_out_wei,
+                direct_contract_balance_wei,
+                stake_tx_count,
+                unstake_tx_count,
+                flow_tx_count,
+                source,
+                confidence,
+                last_event_block,
+                last_event_tx_hash,
+                last_refreshed_block,
+                updated_at
+            FROM staking_metrics
+            WHERE address = ?
+            """,
+            (address,),
+        ).fetchone()
+
+        if row is None:
+            return None
+
+        record = {
+            "address": address,
+            "estimated_current_stake_wei": str(row[0] or "0"),
+            "stake_in_wei": str(row[1] or "0"),
+            "unstake_out_wei": str(row[2] or "0"),
+            "direct_contract_balance_wei": (
+                None if row[3] is None else str(row[3])
+            ),
+            "stake_tx_count": int(row[4] or 0),
+            "unstake_tx_count": int(row[5] or 0),
+            "flow_tx_count": int(row[6] or 0),
+            "source": str(row[7] or "NO_STAKE_FLOW"),
+            "confidence": str(row[8] or "LOW"),
+            "last_event_block": row[9],
+            "last_event_tx_hash": row[10],
+            "last_refreshed_block": row[11],
+            "updated_at": str(row[12] or ""),
+        }
+
+        self.cache[address] = record
+        return record
+
+    def get(
+        self,
+        address: str,
+        default: Optional[Dict[str, Any]] = None,
+    ) -> Optional[Dict[str, Any]]:
+        record = self._load(address)
+
+        if record is None:
+            return default
+
+        self.dirty_addresses.add(self.normalize(address))
+        return record
+
+    def setdefault(
+        self,
+        address: str,
+        default: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        address = self.normalize(address)
+        record = self._load(address)
+
+        if record is None:
+            record = (
+                default
+                if default is not None
+                else self.default_record(address)
+            )
+            record["address"] = address
+            self.cache[address] = record
+
+        self.dirty_addresses.add(address)
+        return record
+
+    def count(self) -> int:
+        return int(
+            self.connection.execute(
+                "SELECT COUNT(*) FROM staking_metrics"
+            ).fetchone()[0]
+        )
+
+    def flush(self) -> int:
+        rows = []
+
+        for address in sorted(self.dirty_addresses):
+            record = self.cache.get(address)
+
+            if record is None:
+                continue
+
+            rows.append(
+                (
+                    address,
+                    str(
+                        record.get(
+                            "estimated_current_stake_wei",
+                            "0",
+                        )
+                        or "0"
+                    ),
+                    str(record.get("stake_in_wei", "0") or "0"),
+                    str(record.get("unstake_out_wei", "0") or "0"),
+                    (
+                        None
+                        if record.get(
+                            "direct_contract_balance_wei"
+                        )
+                        is None
+                        else str(
+                            record.get(
+                                "direct_contract_balance_wei"
+                            )
+                        )
+                    ),
+                    int(record.get("stake_tx_count") or 0),
+                    int(record.get("unstake_tx_count") or 0),
+                    int(record.get("flow_tx_count") or 0),
+                    str(
+                        record.get("source")
+                        or "NO_STAKE_FLOW"
+                    ),
+                    str(record.get("confidence") or "LOW"),
+                    record.get("last_event_block"),
+                    record.get("last_event_tx_hash"),
+                    record.get("last_refreshed_block"),
+                    str(record.get("updated_at") or ""),
+                )
+            )
+
+        if rows:
+            self.connection.executemany(
+                """
+                INSERT INTO staking_metrics (
+                    address,
+                    estimated_current_stake_wei,
+                    stake_in_wei,
+                    unstake_out_wei,
+                    direct_contract_balance_wei,
+                    stake_tx_count,
+                    unstake_tx_count,
+                    flow_tx_count,
+                    source,
+                    confidence,
+                    last_event_block,
+                    last_event_tx_hash,
+                    last_refreshed_block,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(address) DO UPDATE SET
+                    estimated_current_stake_wei =
+                        excluded.estimated_current_stake_wei,
+                    stake_in_wei =
+                        excluded.stake_in_wei,
+                    unstake_out_wei =
+                        excluded.unstake_out_wei,
+                    direct_contract_balance_wei =
+                        excluded.direct_contract_balance_wei,
+                    stake_tx_count =
+                        excluded.stake_tx_count,
+                    unstake_tx_count =
+                        excluded.unstake_tx_count,
+                    flow_tx_count =
+                        excluded.flow_tx_count,
+                    source =
+                        excluded.source,
+                    confidence =
+                        excluded.confidence,
+                    last_event_block =
+                        excluded.last_event_block,
+                    last_event_tx_hash =
+                        excluded.last_event_tx_hash,
+                    last_refreshed_block =
+                        excluded.last_refreshed_block,
+                    updated_at =
+                        excluded.updated_at
+                """,
+                rows,
+            )
+
+        written = len(rows)
+        self.dirty_addresses.clear()
+        return written
+
+    def clear_cache(self) -> None:
+        self.cache.clear()
+        self.dirty_addresses.clear()
+
+
 class SQLiteRankState:
     def __init__(self, database: Path | str) -> None:
         self.database = Path(database).expanduser().resolve()
@@ -162,7 +400,63 @@ class SQLiteRankState:
         self.connection.execute("PRAGMA busy_timeout=60000")
         self.connection.execute("PRAGMA temp_store=MEMORY")
 
+        self._ensure_schema()
+
         self.wallet_metrics = SQLiteWalletMetrics(self.connection)
+        self.staking_metrics = SQLiteStakingMetrics(self.connection)
+        self.last_staking_rows_written = 0
+
+    def _ensure_schema(self) -> None:
+        self.connection.executescript(
+            """
+            CREATE TABLE IF NOT EXISTS staking_metrics (
+                address TEXT PRIMARY KEY COLLATE NOCASE,
+
+                estimated_current_stake_wei TEXT
+                    NOT NULL DEFAULT '0',
+
+                stake_in_wei TEXT
+                    NOT NULL DEFAULT '0',
+
+                unstake_out_wei TEXT
+                    NOT NULL DEFAULT '0',
+
+                direct_contract_balance_wei TEXT,
+
+                stake_tx_count INTEGER
+                    NOT NULL DEFAULT 0,
+
+                unstake_tx_count INTEGER
+                    NOT NULL DEFAULT 0,
+
+                flow_tx_count INTEGER
+                    NOT NULL DEFAULT 0,
+
+                source TEXT
+                    NOT NULL DEFAULT 'NO_STAKE_FLOW',
+
+                confidence TEXT
+                    NOT NULL DEFAULT 'LOW',
+
+                last_event_block INTEGER,
+                last_event_tx_hash TEXT,
+                last_refreshed_block INTEGER,
+
+                updated_at TEXT
+                    NOT NULL DEFAULT ''
+            );
+
+            CREATE INDEX IF NOT EXISTS
+                staking_metrics_last_event_block
+            ON staking_metrics(last_event_block);
+
+            CREATE INDEX IF NOT EXISTS
+                staking_metrics_last_refreshed_block
+            ON staking_metrics(last_refreshed_block);
+            """
+        )
+
+        self.connection.commit()
 
     def read_key_value_table(self, table: str) -> Dict[str, Any]:
         allowed = {"checkpoint", "counters", "state_meta"}
@@ -235,10 +529,19 @@ class SQLiteRankState:
         )
         count_before = self.wallet_metrics._database_count
 
+        staking_dirty_before = set(
+            self.staking_metrics.dirty_addresses
+        )
+
+        last_staking_rows_written_before = (
+            self.last_staking_rows_written
+        )
+
         try:
             self.connection.execute("BEGIN IMMEDIATE")
 
             wallets_written = self.wallet_metrics.flush()
+            staking_rows_written = self.staking_metrics.flush()
 
             self._upsert_key_value_table(
                 "checkpoint",
@@ -254,6 +557,11 @@ class SQLiteRankState:
             )
 
             self.connection.commit()
+
+            self.last_staking_rows_written = (
+                staking_rows_written
+            )
+
             return wallets_written
 
         except Exception:
@@ -262,6 +570,14 @@ class SQLiteRankState:
             self.wallet_metrics.dirty_addresses = dirty_before
             self.wallet_metrics.new_addresses = new_before
             self.wallet_metrics._database_count = count_before
+
+            self.staking_metrics.dirty_addresses = (
+                staking_dirty_before
+            )
+
+            self.last_staking_rows_written = (
+                last_staking_rows_written_before
+            )
 
             raise
 

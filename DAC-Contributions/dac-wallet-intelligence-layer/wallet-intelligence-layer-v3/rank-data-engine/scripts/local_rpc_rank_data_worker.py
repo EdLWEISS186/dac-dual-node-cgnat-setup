@@ -37,6 +37,13 @@ DEFAULT_FALLBACK_RPC = "http://192.168.100.7:8545"
 
 TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 
+DACC_STAKING_CONTRACT = (
+    "0x3691a78be270db1f3b1a86177a8f23f89a8cef24"
+)
+
+STAKE_FUNCTION_SELECTOR = "0x3a4b66f1"
+UNSTAKE_FUNCTION_SELECTOR = "0x2e17de78"
+
 
 def now_utc() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -138,6 +145,32 @@ def normalize_address(address: Any) -> Optional[str]:
         return None
 
     return raw
+
+
+def normalize_input(value: Any) -> str:
+    raw = str(value or "").strip().lower()
+
+    if not raw:
+        return "0x"
+
+    return raw if raw.startswith("0x") else f"0x{raw}"
+
+
+def decode_first_uint256_from_input(
+    input_data: Any,
+) -> Optional[int]:
+    normalized = normalize_input(input_data)
+    raw = normalized.removeprefix("0x")
+
+    if len(raw) < 8 + 64:
+        return None
+
+    first_argument = raw[8:8 + 64]
+
+    try:
+        return int(first_argument, 16)
+    except ValueError:
+        return None
 
 
 def empty_latest() -> Dict[str, Any]:
@@ -313,6 +346,136 @@ def process_transaction(
     return changed
 
 
+def process_staking_transaction(
+    staking_metrics: Any,
+    tx: Dict[str, Any],
+    receipt: Dict[str, Any],
+    block_number: int,
+    timestamp: str,
+) -> Optional[str]:
+    """Accumulate flow-derived Estimated Current Stake."""
+
+    if staking_metrics is None:
+        return None
+
+    try:
+        succeeded = hex_to_int(receipt.get("status")) == 1
+    except Exception:
+        succeeded = False
+
+    if not succeeded:
+        return None
+
+    from_address = normalize_address(tx.get("from"))
+    to_address = normalize_address(tx.get("to"))
+
+    if (
+        not from_address
+        or to_address != DACC_STAKING_CONTRACT
+    ):
+        return None
+
+    input_data = normalize_input(
+        tx.get("input") or tx.get("data") or "0x"
+    )
+
+    tx_hash = str(
+        tx.get("hash")
+        or tx.get("transactionHash")
+        or ""
+    )
+
+    value_wei = hex_to_int(tx.get("value"))
+
+    event_type: Optional[str] = None
+    event_amount = 0
+
+    if (
+        input_data.startswith(STAKE_FUNCTION_SELECTOR)
+        and value_wei > 0
+    ):
+        event_type = "STAKE"
+        event_amount = value_wei
+
+    elif input_data.startswith(
+        UNSTAKE_FUNCTION_SELECTOR
+    ):
+        decoded_amount = (
+            decode_first_uint256_from_input(input_data)
+        )
+
+        if decoded_amount is None:
+            return None
+
+        event_type = "UNSTAKE"
+        event_amount = decoded_amount
+
+    else:
+        return None
+
+    record = staking_metrics.setdefault(from_address)
+
+    if event_type == "STAKE":
+        record["stake_in_wei"] = add_int_string(
+            record.get("stake_in_wei"),
+            event_amount,
+        )
+
+        record["stake_tx_count"] = (
+            int(record.get("stake_tx_count") or 0)
+            + 1
+        )
+
+    else:
+        record["unstake_out_wei"] = add_int_string(
+            record.get("unstake_out_wei"),
+            event_amount,
+        )
+
+        record["unstake_tx_count"] = (
+            int(record.get("unstake_tx_count") or 0)
+            + 1
+        )
+
+    stake_in_wei = int(
+        str(record.get("stake_in_wei") or "0")
+    )
+
+    unstake_out_wei = int(
+        str(record.get("unstake_out_wei") or "0")
+    )
+
+    record["estimated_current_stake_wei"] = str(
+        max(stake_in_wei - unstake_out_wei, 0)
+    )
+
+    record["flow_tx_count"] = (
+        int(record.get("stake_tx_count") or 0)
+        + int(record.get("unstake_tx_count") or 0)
+    )
+
+    record["source"] = (
+        "DAC_STAKE_UNSTAKE_TRANSACTION_FLOW"
+    )
+
+    record["confidence"] = "MEDIUM_HIGH"
+
+    previous_last_block = record.get(
+        "last_event_block"
+    )
+
+    if (
+        previous_last_block is None
+        or block_number > int(previous_last_block)
+    ):
+        record["last_event_block"] = block_number
+        record["last_event_tx_hash"] = tx_hash
+
+    record["updated_at"] = timestamp
+
+    return from_address
+
+
 def enrich_balances(wallet_metrics: Dict[str, Any], changed_wallets: Iterable[str], rpc_urls: list[str], limit: int) -> int:
     count = 0
 
@@ -362,6 +525,7 @@ def main() -> None:
     rpc_urls = [args.primary_rpc, args.fallback_rpc]
 
     sqlite_state = None
+    staking_metrics = None
 
     if args.sqlite_state:
         sqlite_state = SQLiteRankState(
@@ -376,6 +540,7 @@ def main() -> None:
         working["counters"] = counters
 
         wallet_metrics = sqlite_state.wallet_metrics
+        staking_metrics = sqlite_state.staking_metrics
         state_backend = "SQLITE"
 
         try:
@@ -427,7 +592,11 @@ def main() -> None:
 
     processed_blocks = 0
     processed_transactions = 0
+    processed_staking_events = 0
+
     changed_wallets: Set[str] = set()
+    changed_staking_wallets: Set[str] = set()
+
     last_tx_hash = None
     last_synced_block = checkpoint.get("last_synced_block")
     mode = "UNKNOWN"
@@ -439,6 +608,7 @@ def main() -> None:
     def process_block(block_number: int) -> None:
         nonlocal processed_blocks
         nonlocal processed_transactions
+        nonlocal processed_staking_events
         nonlocal last_tx_hash
         nonlocal last_synced_block
 
@@ -456,7 +626,26 @@ def main() -> None:
             if not tx_hash:
                 continue
 
-            receipt = rpc_call(rpc_urls, "eth_getTransactionReceipt", [tx_hash], timeout=45) or {}
+            receipt = rpc_call(
+                rpc_urls,
+                "eth_getTransactionReceipt",
+                [tx_hash],
+                timeout=45,
+            ) or {}
+
+            staking_address = process_staking_transaction(
+                staking_metrics=staking_metrics,
+                tx=tx,
+                receipt=receipt,
+                block_number=block_number,
+                timestamp=block_timestamp,
+            )
+
+            if staking_address:
+                changed_staking_wallets.add(
+                    staking_address
+                )
+                processed_staking_events += 1
 
             changed = process_transaction(
                 wallet_metrics=wallet_metrics,
@@ -627,15 +816,45 @@ def main() -> None:
     previous_processed = int(
         counters.get("total_processed_transactions") or 0
     )
-    previous_balance_snapshots = int(counters.get("native_balance_snapshots") or 0)
+
+    previous_staking_events = int(
+        counters.get("total_staking_events") or 0
+    )
+
+    previous_balance_snapshots = int(
+        counters.get("native_balance_snapshots") or 0
+    )
 
     counters["last_sync_processed_blocks"] = processed_blocks
     counters["last_sync_processed_transactions"] = processed_transactions
     counters["last_sync_wallets_changed"] = len(changed_wallets)
-    counters["total_processed_transactions"] = previous_processed + processed_transactions
+
+    counters["last_sync_staking_events"] = (
+        processed_staking_events
+    )
+
+    counters["last_sync_staking_wallets_changed"] = (
+        len(changed_staking_wallets)
+    )
+
+    counters["total_processed_transactions"] = (
+        previous_processed + processed_transactions
+    )
+
+    counters["total_staking_events"] = (
+        previous_staking_events
+        + processed_staking_events
+    )
+
     counters["total_indexed_wallets"] = len(wallet_metrics)
-    counters["native_balance_snapshots"] = previous_balance_snapshots + enriched_balances
-    counters["asset_holding_snapshots"] = int(counters.get("asset_holding_snapshots") or 0)
+
+    counters["native_balance_snapshots"] = (
+        previous_balance_snapshots + enriched_balances
+    )
+
+    counters["asset_holding_snapshots"] = int(
+        counters.get("asset_holding_snapshots") or 0
+    )
 
     checkpoint.update({
         "last_sync_at": run_started_at,
@@ -662,6 +881,13 @@ def main() -> None:
             "primary_rpc": args.primary_rpc,
             "fallback_rpc": args.fallback_rpc,
             "mode": "LOCAL_RPC_PRIMARY_WITH_FALLBACK",
+            "staking_contract": DACC_STAKING_CONTRACT,
+            "staking_metric": "ESTIMATED_CURRENT_STAKE",
+            "staking_source": (
+                "DAC_STAKE_UNSTAKE_TRANSACTION_FLOW"
+            ),
+            "stake_selector": STAKE_FUNCTION_SELECTOR,
+            "unstake_selector": UNSTAKE_FUNCTION_SELECTOR,
         },
     })
 
@@ -690,6 +916,19 @@ def main() -> None:
         "processed_blocks": processed_blocks,
         "processed_transactions": processed_transactions,
         "wallets_changed": len(changed_wallets),
+
+        "processed_staking_events": (
+            processed_staking_events
+        ),
+
+        "staking_wallets_changed": (
+            len(changed_staking_wallets)
+        ),
+
+        "estimated_current_stake_enabled": (
+            staking_metrics is not None
+        ),
+
         "enriched_balances": enriched_balances,
         "total_indexed_wallets": len(wallet_metrics),
         "total_processed_transactions_after": counters["total_processed_transactions"],
@@ -721,6 +960,22 @@ def main() -> None:
         "github_storage_role": "PUBLIC_MANIFEST_ONLY",
         "rank_lookup_enabled": False,
         "rank_shards_published": False,
+
+        "estimated_current_stake_enabled": (
+            staking_metrics is not None
+        ),
+
+        "estimated_current_stake": {
+            "label": "Estimated Current Stake",
+            "contract": DACC_STAKING_CONTRACT,
+            "source": (
+                "DAC_STAKE_UNSTAKE_TRANSACTION_FLOW"
+            ),
+            "stake_selector": STAKE_FUNCTION_SELECTOR,
+            "unstake_selector": UNSTAKE_FUNCTION_SELECTOR,
+            "direct_contract_read_role": "CROSS_CHECK",
+        },
+
         "snapshot_archive_written": snapshot_archive_written,
         "latest_snapshot": "externalized-local-state",
         "sync_status": {
@@ -736,12 +991,33 @@ def main() -> None:
             "last_sync_at": checkpoint.get("last_sync_at"),
         },
         "counters": {
-            "total_indexed_wallets": counters.get("total_indexed_wallets"),
-            "total_processed_transactions": counters.get("total_processed_transactions"),
-            "native_balance_snapshots": counters.get("native_balance_snapshots"),
-            "last_sync_processed_blocks": counters.get("last_sync_processed_blocks"),
-            "last_sync_processed_transactions": counters.get("last_sync_processed_transactions"),
-            "last_sync_wallets_changed": counters.get("last_sync_wallets_changed"),
+            "total_indexed_wallets": counters.get(
+                "total_indexed_wallets"
+            ),
+            "total_processed_transactions": counters.get(
+                "total_processed_transactions"
+            ),
+            "native_balance_snapshots": counters.get(
+                "native_balance_snapshots"
+            ),
+            "last_sync_processed_blocks": counters.get(
+                "last_sync_processed_blocks"
+            ),
+            "last_sync_processed_transactions": counters.get(
+                "last_sync_processed_transactions"
+            ),
+            "last_sync_wallets_changed": counters.get(
+                "last_sync_wallets_changed"
+            ),
+            "total_staking_events": counters.get(
+                "total_staking_events"
+            ),
+            "last_sync_staking_events": counters.get(
+                "last_sync_staking_events"
+            ),
+            "last_sync_staking_wallets_changed": counters.get(
+                "last_sync_staking_wallets_changed"
+            ),
         },
         "last_run": result,
         "note": "v3.3.0 lightweight publish status. Heavy wallet metrics remain externalized and are not loaded again by the publish layer during backfill."
@@ -767,6 +1043,11 @@ def main() -> None:
             )
 
             result["wallet_rows_written"] = wallets_written
+
+            result["staking_rows_written"] = (
+                sqlite_state.last_staking_rows_written
+            )
+
             public_status["last_run"] = result
         else:
             write_json(latest_path(), working)
