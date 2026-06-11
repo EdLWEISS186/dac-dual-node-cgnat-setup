@@ -25,6 +25,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, Set
 
+from sqlite_rank_state import SQLiteRankState
+
 
 CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
@@ -343,15 +345,58 @@ def main() -> None:
     parser.add_argument("--balance-enrich-limit", type=int, default=100)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--no-snapshot-archive", action="store_true")
+    parser.add_argument(
+        "--sqlite-state",
+        help=(
+            "Use a SQLite rank-state database instead of the legacy "
+            "monolithic JSON state."
+        ),
+    )
     args = parser.parse_args()
+
+    if args.sqlite_state and not args.no_snapshot_archive:
+        raise SystemExit(
+            "--sqlite-state currently requires --no-snapshot-archive"
+        )
 
     rpc_urls = [args.primary_rpc, args.fallback_rpc]
 
-    latest = load_latest()
-    working = deepcopy(latest)
+    sqlite_state = None
 
-    checkpoint = working.setdefault("checkpoint", {})
-    wallet_metrics = working.setdefault("wallet_metrics", {})
+    if args.sqlite_state:
+        sqlite_state = SQLiteRankState(
+            Path(args.sqlite_state).expanduser().resolve()
+        )
+
+        checkpoint = sqlite_state.checkpoint()
+        counters = sqlite_state.counters()
+        working = sqlite_state.state_meta()
+
+        working["checkpoint"] = checkpoint
+        working["counters"] = counters
+
+        wallet_metrics = sqlite_state.wallet_metrics
+        state_backend = "SQLITE"
+
+        try:
+            relative_state_path = sqlite_state.database.relative_to(
+                Path.home()
+            )
+            heavy_state_local_path = (
+                f"~/{relative_state_path.as_posix()}"
+            )
+        except ValueError:
+            heavy_state_local_path = str(sqlite_state.database)
+    else:
+        latest = load_latest()
+        working = deepcopy(latest)
+
+        checkpoint = working.setdefault("checkpoint", {})
+        counters = working.setdefault("counters", {})
+        wallet_metrics = working.setdefault("wallet_metrics", {})
+
+        state_backend = "LEGACY_JSON"
+        heavy_state_local_path = str(latest_path())
 
     chain_id = hex_to_int(rpc_call(rpc_urls, "eth_chainId", []))
 
@@ -579,8 +624,9 @@ def main() -> None:
         limit=args.balance_enrich_limit,
     )
 
-    counters = working.setdefault("counters", {})
-    previous_processed = int(counters.get("total_processed_transactions") or 0)
+    previous_processed = int(
+        counters.get("total_processed_transactions") or 0
+    )
     previous_balance_snapshots = int(counters.get("native_balance_snapshots") or 0)
 
     counters["last_sync_processed_blocks"] = processed_blocks
@@ -634,6 +680,7 @@ def main() -> None:
         "mode": mode,
         "direction": direction,
         "dry_run": args.dry_run,
+        "state_backend": state_backend,
         "primary_rpc": args.primary_rpc,
         "fallback_rpc": args.fallback_rpc,
         "start_block": start_block,
@@ -664,8 +711,13 @@ def main() -> None:
         "chain_id": CHAIN_ID,
         "updated_at": now_utc(),
         "externalized_state": True,
-        "heavy_state_storage": "LOCAL_EXTERNAL_STATE_WITH_OPTIONAL_GOOGLE_DRIVE_BACKUP",
-        "heavy_state_local_path": "~/wil-v3-rank-state/latest-state.json",
+        "heavy_state_storage": (
+            "LOCAL_SQLITE_STATE_WITH_OPTIONAL_GOOGLE_DRIVE_BACKUP"
+            if sqlite_state is not None
+            else "LOCAL_EXTERNAL_STATE_WITH_OPTIONAL_GOOGLE_DRIVE_BACKUP"
+        ),
+        "heavy_state_local_path": heavy_state_local_path,
+        "state_backend": state_backend,
         "github_storage_role": "PUBLIC_MANIFEST_ONLY",
         "rank_lookup_enabled": False,
         "rank_shards_published": False,
@@ -696,10 +748,36 @@ def main() -> None:
     }
 
     if not args.dry_run:
-        write_json(latest_path(), working)
+        if sqlite_state is not None:
+            state_meta = {
+                key: value
+                for key, value in working.items()
+                if key not in {
+                    "checkpoint",
+                    "counters",
+                    "wallet_metrics",
+                    "enrichment_queue",
+                }
+            }
+
+            wallets_written = sqlite_state.commit_state(
+                checkpoint=checkpoint,
+                counters=counters,
+                state_meta=state_meta,
+            )
+
+            result["wallet_rows_written"] = wallets_written
+            public_status["last_run"] = result
+        else:
+            write_json(latest_path(), working)
+
         write_json(public_run_status_path(), public_status)
+
         if snapshot_archive_written:
             write_json(snapshots_dir() / snapshot_name, working)
+
+    if sqlite_state is not None:
+        sqlite_state.close()
 
     print(json.dumps(result, indent=2, sort_keys=True))
 
