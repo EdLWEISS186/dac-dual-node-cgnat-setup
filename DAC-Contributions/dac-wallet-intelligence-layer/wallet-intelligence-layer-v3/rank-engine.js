@@ -14,15 +14,17 @@
   const INDEX_URL = "./data/wallet-rank-index.json";
 
   const METRICS = [
-    { key: "native_funds", rankKey: "native_funds", label: "Native Funds", suffix: "DACC" },
-    { key: "transactions", rankKey: "transactions", label: "Transactions", suffix: "tx" },
-    { key: "gas_used", rankKey: "gas_used", label: "Gas Used", suffix: "gas" },
-    { key: "native_volume", rankKey: "native_volume", label: "Native Volume", suffix: "DACC" },
-    { key: "nft_holdings", rankKey: "nft_holdings", label: "NFT Holdings", suffix: "NFTs" },
-    { key: "collection_diversity", rankKey: "collection_diversity", label: "Collection Diversity", suffix: "collections" },
-    { key: "reputation_score", rankKey: "reputation_score", label: "Reputation Score", suffix: "/100" },
-    { key: "low_sybil_risk", rankKey: "low_sybil_risk", label: "Low-Risk Profile", suffix: "risk score" },
-    { key: "overall_rank", rankKey: "overall_rank", label: "Overall Wallet Rank", suffix: "score" }
+    { key: "native_funds", rankKey: "native_funds", label: "Native Funds", suffix: "DACC", layout: "metric" },
+    { key: "estimated_current_stake", rankKey: "estimated_current_stake", label: "Estimated Current Stake", suffix: "DACC", layout: "metric" },
+    { key: "transactions", rankKey: "transactions", label: "Transactions", suffix: "tx", layout: "metric" },
+    { key: "native_volume", rankKey: "native_volume", label: "Native Volume", suffix: "DACC", layout: "metric" },
+    { key: "gas_used", rankKey: "gas_used", label: "Gas Used", suffix: "gas", layout: "metric" },
+    { key: "nft_holdings", rankKey: "nft_holdings", label: "NFT Holdings", suffix: "NFTs", layout: "metric" },
+    { key: "collection_diversity", rankKey: "collection_diversity", label: "Collection Diversity", suffix: "collections", layout: "metric" },
+    { key: "reputation_score", rankKey: "reputation_score", label: "Reputation Score", suffix: "/100", layout: "metric" },
+    { key: "low_sybil_risk", rankKey: "low_sybil_risk", label: "Low-Risk Profile", suffix: "risk score", layout: "metric" },
+    { key: "official_inception_nfts", rankKey: "official_inception_nfts", label: "Official Testnet Inception NFTs", suffix: "NFTs", layout: "official_signal" },
+    { key: "overall_rank", rankKey: "overall_rank", label: "Overall Wallet Rank", suffix: "score", layout: "overall" }
   ];
 
   let loadPromise = null;
@@ -78,15 +80,28 @@
 
     const mode = String(index.mode || "");
 
-    return mode === "SHARDED" || mode === "SHARDED_COMPACT_V1";
+    return (
+      mode === "SHARDED" ||
+      mode === "SHARDED_COMPACT_V1" ||
+      mode === "SHARDED_COMPACT_V2"
+    );
   }
 
   function isCompactShardedIndex(index) {
     if (!index || typeof index !== "object") return false;
 
+    const mode = String(index.mode || "");
+    const schema = String(index.record_schema || "");
+
     return (
-      String(index.mode || "") === "SHARDED_COMPACT_V1" &&
-      String(index.record_schema || "") === "WIL_V3_COMPACT_ARRAY_V1"
+      (
+        mode === "SHARDED_COMPACT_V1" &&
+        schema === "WIL_V3_COMPACT_ARRAY_V1"
+      ) ||
+      (
+        mode === "SHARDED_COMPACT_V2" &&
+        schema === "WIL_V3_COMPACT_ARRAY_V2"
+      )
     );
   }
 
@@ -125,37 +140,78 @@
   }
 
   function decodeCompactProfile(address, compactRecord) {
-    if (!Array.isArray(compactRecord) || compactRecord.length !== 17) {
-      if (compactRecord !== null && compactRecord !== undefined) {
-        console.warn(
-          "[Wallet Rank Intelligence] Invalid compact rank record:",
-          address
-        );
-      }
+    const schema = String(rankIndex.record_schema || "");
+    const isV2 = schema === "WIL_V3_COMPACT_ARRAY_V2";
 
-      return null;
-    }
-
-    const defaultMetricOrder = METRICS
-      .filter((metric) => metric.key !== "overall_rank")
-      .map((metric) => metric.key);
-
-    const metricOrder =
-      Array.isArray(rankIndex.metric_order) &&
-      rankIndex.metric_order.length === 8
-        ? rankIndex.metric_order
-        : defaultMetricOrder;
+    const defaultMetricOrder = isV2
+      ? [
+          "native_funds",
+          "estimated_current_stake",
+          "transactions",
+          "native_volume",
+          "gas_used",
+          "nft_holdings",
+          "collection_diversity",
+          "reputation_score",
+          "low_sybil_risk",
+          "official_inception_nfts"
+        ]
+      : [
+          "native_funds",
+          "transactions",
+          "gas_used",
+          "native_volume",
+          "nft_holdings",
+          "collection_diversity",
+          "reputation_score",
+          "low_sybil_risk"
+        ];
 
     const defaultRankOrder = [
       ...defaultMetricOrder,
       "overall_rank"
     ];
 
+    const metricOrder =
+      Array.isArray(rankIndex.metric_order) &&
+      rankIndex.metric_order.length === defaultMetricOrder.length
+        ? rankIndex.metric_order
+        : defaultMetricOrder;
+
     const rankOrder =
       Array.isArray(rankIndex.rank_order) &&
-      rankIndex.rank_order.length === 9
+      rankIndex.rank_order.length === defaultRankOrder.length
         ? rankIndex.rank_order
         : defaultRankOrder;
+
+    const expectedLength = (
+      metricOrder.length
+      + rankOrder.length
+    );
+
+    if (
+      !Array.isArray(compactRecord) ||
+      compactRecord.length !== expectedLength
+    ) {
+      if (
+        compactRecord !== null &&
+        compactRecord !== undefined
+      ) {
+        console.warn(
+          "[Wallet Rank Intelligence] Invalid compact rank record:",
+          address,
+          {
+            schema,
+            expectedLength,
+            actualLength: Array.isArray(compactRecord)
+              ? compactRecord.length
+              : null
+          }
+        );
+      }
+
+      return null;
+    }
 
     const totalRanked = Number(
       rankIndex.total_ranked_wallets ||
@@ -172,20 +228,47 @@
     });
 
     rankOrder.forEach((key, index) => {
-      const rawRank = Number(compactRecord[8 + index]);
-      const rank = Number.isFinite(rawRank) && rawRank > 0
+      const rawRank = Number(
+        compactRecord[
+          metricOrder.length + index
+        ]
+      );
+
+      const rank = (
+        Number.isFinite(rawRank) &&
+        rawRank > 0
+      )
         ? rawRank
         : null;
 
       ranks[key] = rank;
-      percentiles[key] = rankPercentile(rank, totalRanked);
+      percentiles[key] = rankPercentile(
+        rank,
+        totalRanked
+      );
     });
+
+    const strongestMetricOrder = (
+      isV2 &&
+      Array.isArray(
+        rankIndex.small_metric_order
+      ) &&
+      rankIndex.small_metric_order.length === 9
+    )
+      ? rankIndex.small_metric_order
+      : metricOrder.filter(
+          (key) => (
+            key !== "official_inception_nfts"
+          )
+        );
 
     let strongestMetric = null;
     let bestPercent = Number.POSITIVE_INFINITY;
 
-    metricOrder.forEach((key) => {
-      const percentile = Number(percentiles[key]);
+    strongestMetricOrder.forEach((key) => {
+      const percentile = Number(
+        percentiles[key]
+      );
 
       if (
         Number.isFinite(percentile) &&
@@ -197,12 +280,16 @@
     });
 
     const availableVariables =
-      Array.isArray(rankIndex.available_rank_variables)
+      Array.isArray(
+        rankIndex.available_rank_variables
+      )
         ? rankIndex.available_rank_variables
         : rankOrder;
 
     const pendingVariables =
-      Array.isArray(rankIndex.pending_rank_variables)
+      Array.isArray(
+        rankIndex.pending_rank_variables
+      )
         ? rankIndex.pending_rank_variables
         : [];
 
@@ -212,10 +299,16 @@
       ranks,
       percentiles,
       total_ranked_wallets: totalRanked,
-      rank_tier: compactRankTier(bestPercent),
+      rank_tier: compactRankTier(
+        bestPercent
+      ),
       strongest_metric: strongestMetric,
-      available_rank_variables: availableVariables,
-      pending_rank_variables: pendingVariables
+      available_rank_variables: (
+        availableVariables
+      ),
+      pending_rank_variables: (
+        pendingVariables
+      )
     };
   }
 

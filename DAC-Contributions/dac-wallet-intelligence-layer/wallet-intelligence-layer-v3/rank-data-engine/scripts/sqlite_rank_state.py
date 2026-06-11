@@ -380,6 +380,226 @@ class SQLiteStakingMetrics:
         self.dirty_addresses.clear()
 
 
+class SQLiteOfficialInceptionNFTTokens:
+    """
+    Latest-owner state for the official DAC Testnet Inception NFT.
+
+    Token IDs are tracked individually so historical backfill can run
+    from latest blocks toward genesis without allowing an older Transfer
+    event to overwrite a newer owner.
+
+    Incremental forward sync still updates a token when a strictly newer
+    event position is observed.
+    """
+
+    ZERO_ADDRESS = (
+        "0x0000000000000000000000000000000000000000"
+    )
+
+    def __init__(self, connection: sqlite3.Connection) -> None:
+        self.connection = connection
+        self.cache: Dict[str, Dict[str, Any]] = {}
+        self.dirty_token_ids: set[str] = set()
+
+    @staticmethod
+    def normalize_token_id(token_id: Any) -> str:
+        raw = str(token_id)
+
+        if raw.startswith("0x"):
+            return str(int(raw, 16))
+
+        return str(int(raw))
+
+    @classmethod
+    def normalize_address(
+        cls,
+        address: Any,
+    ) -> Optional[str]:
+        if address is None:
+            return None
+
+        normalized = str(address).lower()
+
+        if normalized == cls.ZERO_ADDRESS:
+            return None
+
+        return normalized
+
+    def _load(
+        self,
+        token_id: Any,
+    ) -> Optional[Dict[str, Any]]:
+        token_id = self.normalize_token_id(token_id)
+
+        if token_id in self.cache:
+            return self.cache[token_id]
+
+        row = self.connection.execute(
+            """
+            SELECT
+                owner_address,
+                from_address,
+                event_block,
+                event_transaction_index,
+                event_log_index,
+                event_tx_hash,
+                event_type,
+                updated_at
+            FROM official_inception_nft_tokens
+            WHERE token_id = ?
+            """,
+            (token_id,),
+        ).fetchone()
+
+        if row is None:
+            return None
+
+        record = {
+            "token_id": token_id,
+            "owner_address": row[0],
+            "from_address": row[1],
+            "event_block": int(row[2]),
+            "event_transaction_index": int(row[3]),
+            "event_log_index": int(row[4]),
+            "event_tx_hash": str(row[5]),
+            "event_type": str(row[6]),
+            "updated_at": str(row[7] or ""),
+        }
+
+        self.cache[token_id] = record
+        return record
+
+    def observe_transfer(
+        self,
+        token_id: Any,
+        from_address: Any,
+        to_address: Any,
+        block_number: int,
+        transaction_index: int,
+        log_index: int,
+        tx_hash: str,
+        timestamp: str,
+    ) -> bool:
+        token_id = self.normalize_token_id(token_id)
+        from_address = self.normalize_address(from_address)
+        owner_address = self.normalize_address(to_address)
+
+        event_position = (
+            int(block_number),
+            int(transaction_index),
+            int(log_index),
+        )
+
+        existing = self._load(token_id)
+
+        if existing is not None:
+            existing_position = (
+                int(existing["event_block"]),
+                int(existing["event_transaction_index"]),
+                int(existing["event_log_index"]),
+            )
+
+            # Backfill berjalan latest -> genesis. Event yang lebih lama
+            # tidak boleh menimpa pemilik dari event yang lebih baru.
+            if event_position <= existing_position:
+                return False
+
+        if from_address is None:
+            event_type = "MINT"
+        elif owner_address is None:
+            event_type = "BURN"
+        else:
+            event_type = "TRANSFER"
+
+        self.cache[token_id] = {
+            "token_id": token_id,
+            "owner_address": owner_address,
+            "from_address": from_address,
+            "event_block": event_position[0],
+            "event_transaction_index": event_position[1],
+            "event_log_index": event_position[2],
+            "event_tx_hash": str(tx_hash),
+            "event_type": event_type,
+            "updated_at": str(timestamp),
+        }
+
+        self.dirty_token_ids.add(token_id)
+        return True
+
+    def count(self) -> int:
+        return int(
+            self.connection.execute(
+                """
+                SELECT COUNT(*)
+                FROM official_inception_nft_tokens
+                """
+            ).fetchone()[0]
+        )
+
+    def flush(self) -> int:
+        rows = []
+
+        for token_id in sorted(
+            self.dirty_token_ids,
+            key=int,
+        ):
+            record = self.cache.get(token_id)
+
+            if record is None:
+                continue
+
+            rows.append(
+                (
+                    token_id,
+                    record.get("owner_address"),
+                    record.get("from_address"),
+                    int(record["event_block"]),
+                    int(record["event_transaction_index"]),
+                    int(record["event_log_index"]),
+                    str(record["event_tx_hash"]),
+                    str(record["event_type"]),
+                    str(record.get("updated_at") or ""),
+                )
+            )
+
+        if rows:
+            self.connection.executemany(
+                """
+                INSERT INTO official_inception_nft_tokens (
+                    token_id,
+                    owner_address,
+                    from_address,
+                    event_block,
+                    event_transaction_index,
+                    event_log_index,
+                    event_tx_hash,
+                    event_type,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(token_id) DO UPDATE SET
+                    owner_address = excluded.owner_address,
+                    from_address = excluded.from_address,
+                    event_block = excluded.event_block,
+                    event_transaction_index =
+                        excluded.event_transaction_index,
+                    event_log_index = excluded.event_log_index,
+                    event_tx_hash = excluded.event_tx_hash,
+                    event_type = excluded.event_type,
+                    updated_at = excluded.updated_at
+                """,
+                rows,
+            )
+
+        written = len(rows)
+        self.dirty_token_ids.clear()
+        return written
+
+    def clear_cache(self) -> None:
+        self.cache.clear()
+        self.dirty_token_ids.clear()
+
+
 class SQLiteRankState:
     def __init__(self, database: Path | str) -> None:
         self.database = Path(database).expanduser().resolve()
@@ -404,7 +624,12 @@ class SQLiteRankState:
 
         self.wallet_metrics = SQLiteWalletMetrics(self.connection)
         self.staking_metrics = SQLiteStakingMetrics(self.connection)
+        self.official_inception_nft_tokens = (
+            SQLiteOfficialInceptionNFTTokens(self.connection)
+        )
+
         self.last_staking_rows_written = 0
+        self.last_official_inception_nft_rows_written = 0
 
     def _ensure_schema(self) -> None:
         self.connection.executescript(
@@ -453,6 +678,47 @@ class SQLiteRankState:
             CREATE INDEX IF NOT EXISTS
                 staking_metrics_last_refreshed_block
             ON staking_metrics(last_refreshed_block);
+
+            CREATE TABLE IF NOT EXISTS
+                official_inception_nft_tokens (
+                    token_id TEXT PRIMARY KEY,
+
+                    owner_address TEXT
+                        COLLATE NOCASE,
+
+                    from_address TEXT
+                        COLLATE NOCASE,
+
+                    event_block INTEGER
+                        NOT NULL,
+
+                    event_transaction_index INTEGER
+                        NOT NULL,
+
+                    event_log_index INTEGER
+                        NOT NULL,
+
+                    event_tx_hash TEXT
+                        NOT NULL,
+
+                    event_type TEXT
+                        NOT NULL,
+
+                    updated_at TEXT
+                        NOT NULL DEFAULT ''
+                );
+
+            CREATE INDEX IF NOT EXISTS
+                official_inception_nft_owner_address
+            ON official_inception_nft_tokens(owner_address);
+
+            CREATE INDEX IF NOT EXISTS
+                official_inception_nft_event_position
+            ON official_inception_nft_tokens(
+                event_block,
+                event_transaction_index,
+                event_log_index
+            );
             """
         )
 
@@ -537,11 +803,23 @@ class SQLiteRankState:
             self.last_staking_rows_written
         )
 
+        official_inception_dirty_before = set(
+            self.official_inception_nft_tokens.dirty_token_ids
+        )
+
+        last_official_inception_nft_rows_written_before = (
+            self.last_official_inception_nft_rows_written
+        )
+
         try:
             self.connection.execute("BEGIN IMMEDIATE")
 
             wallets_written = self.wallet_metrics.flush()
             staking_rows_written = self.staking_metrics.flush()
+
+            official_inception_nft_rows_written = (
+                self.official_inception_nft_tokens.flush()
+            )
 
             self._upsert_key_value_table(
                 "checkpoint",
@@ -562,6 +840,10 @@ class SQLiteRankState:
                 staking_rows_written
             )
 
+            self.last_official_inception_nft_rows_written = (
+                official_inception_nft_rows_written
+            )
+
             return wallets_written
 
         except Exception:
@@ -577,6 +859,14 @@ class SQLiteRankState:
 
             self.last_staking_rows_written = (
                 last_staking_rows_written_before
+            )
+
+            self.official_inception_nft_tokens.dirty_token_ids = (
+                official_inception_dirty_before
+            )
+
+            self.last_official_inception_nft_rows_written = (
+                last_official_inception_nft_rows_written_before
             )
 
             raise

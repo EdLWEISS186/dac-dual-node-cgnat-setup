@@ -1565,6 +1565,65 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
   gap: 10px;
 }
 
+.wallet-rank-official-card {
+  grid-column: 1 / -1;
+  position: relative;
+  border-color: rgba(125, 211, 252, 0.64);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(14, 165, 233, 0.14),
+      rgba(59, 130, 246, 0.08)
+    ),
+    rgba(2, 6, 23, 0.46);
+  box-shadow:
+    0 0 0 1px rgba(125, 211, 252, 0.08),
+    0 18px 48px rgba(0, 0, 0, 0.22);
+}
+
+.wallet-rank-official-card::before {
+  content: "OFFICIAL RANK SIGNAL";
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(14, 165, 233, 0.16);
+  color: #bae6fd;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.wallet-rank-official-card .wallet-rank-official-tier {
+  display: block;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 5px rgba(186, 230, 253, 0.98),
+    0 0 12px rgba(125, 211, 252, 0.92),
+    0 0 24px rgba(56, 189, 248, 0.72);
+}
+
+.wallet-rank-official-card .wallet-rank-official-count {
+  margin-top: 7px;
+  color: #e0f2fe;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.wallet-rank-official-card .rank-scope-line {
+  margin-top: 7px;
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 .wallet-rank-overall-card {
   grid-column: 1 / -1;
   position: relative;

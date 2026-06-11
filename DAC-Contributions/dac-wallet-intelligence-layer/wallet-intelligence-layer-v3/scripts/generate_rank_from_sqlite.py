@@ -28,11 +28,33 @@ CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
 NATIVE_TOKEN = "DACC"
 
-COMPACT_SCHEMA = "WIL_V3_COMPACT_ARRAY_V1"
-INDEX_MODE = "SHARDED_COMPACT_V1"
+COMPACT_SCHEMA = "WIL_V3_COMPACT_ARRAY_V2"
+INDEX_MODE = "SHARDED_COMPACT_V2"
 SHARD_PREFIX_LENGTH = 2
 
-METRIC_ORDER = [
+SMALL_METRIC_ORDER = [
+    "native_funds",
+    "estimated_current_stake",
+    "transactions",
+    "native_volume",
+    "gas_used",
+    "nft_holdings",
+    "collection_diversity",
+    "reputation_score",
+    "low_sybil_risk",
+]
+
+OFFICIAL_SIGNAL_KEY = "official_inception_nfts"
+
+METRIC_ORDER = (
+    SMALL_METRIC_ORDER
+    + [OFFICIAL_SIGNAL_KEY]
+)
+
+# Final Composite Rank tetap menggunakan delapan
+# variabel lama. Estimated Stake dan Official NFT
+# tidak memengaruhi Overall Wallet Rank.
+COMPOSITE_METRIC_ORDER = [
     "native_funds",
     "transactions",
     "gas_used",
@@ -44,6 +66,27 @@ METRIC_ORDER = [
 ]
 
 RANK_ORDER = METRIC_ORDER + ["overall_rank"]
+
+OFFICIAL_INCEPTION_NFT_CONTRACT = (
+    "0xb36ab4c2bd6acfc36e9d6c53f39f4301901bd647"
+)
+
+OFFICIAL_RANK_TIERS = [
+    [13, "CROWN"],
+    [12, "CIPHER"],
+    [11, "PHANTOM"],
+    [10, "INTERCEPTOR"],
+    [9, "ARCHITECT"],
+    [8, "WARRIOR"],
+    [7, "SOVEREIGN"],
+    [6, "SENTINEL"],
+    [5, "VANGUARD"],
+    [4, "SHADOW UNIT"],
+    [3, "SEAL"],
+    [2, "COMMANDO"],
+    [1, "CADET"],
+    [0, "NONE"],
+]
 
 
 def now_utc() -> str:
@@ -247,13 +290,15 @@ def create_build_schema(
             prefix TEXT NOT NULL,
 
             native_balance_wei TEXT NOT NULL,
+            estimated_current_stake_wei TEXT NOT NULL,
             transactions INTEGER NOT NULL,
-            gas_used TEXT NOT NULL,
             native_volume_wei TEXT NOT NULL,
+            gas_used TEXT NOT NULL,
             nft_holdings INTEGER NOT NULL,
             collection_diversity INTEGER NOT NULL,
             reputation_score INTEGER NOT NULL,
-            low_sybil_risk INTEGER NOT NULL
+            low_sybil_risk INTEGER NOT NULL,
+            official_inception_nfts INTEGER NOT NULL
         );
 
         CREATE INDEX rank_records_prefix_address
@@ -265,11 +310,33 @@ def create_build_schema(
 def iter_source_wallets(
     connection: sqlite3.Connection,
     limit: int | None,
-) -> Iterable[tuple[str, str]]:
+) -> Iterable[tuple[str, str, str, int]]:
     query = """
-        SELECT address, payload_json
-        FROM wallet_metrics
-        ORDER BY address
+        WITH official_owner_counts AS (
+            SELECT
+                owner_address AS address,
+                COUNT(*) AS official_inception_nfts
+            FROM official_inception_nft_tokens
+            WHERE owner_address IS NOT NULL
+            GROUP BY owner_address
+        )
+        SELECT
+            wallet.address,
+            wallet.payload_json,
+            COALESCE(
+                staking.estimated_current_stake_wei,
+                '0'
+            ) AS estimated_current_stake_wei,
+            COALESCE(
+                official.official_inception_nfts,
+                0
+            ) AS official_inception_nfts
+        FROM wallet_metrics AS wallet
+        LEFT JOIN staking_metrics AS staking
+            ON staking.address = wallet.address
+        LEFT JOIN official_owner_counts AS official
+            ON official.address = wallet.address
+        ORDER BY wallet.address
     """
 
     parameters: tuple[Any, ...] = ()
@@ -295,20 +362,27 @@ def insert_rank_records(
             address,
             prefix,
             native_balance_wei,
+            estimated_current_stake_wei,
             transactions,
-            gas_used,
             native_volume_wei,
+            gas_used,
             nft_holdings,
             collection_diversity,
             reputation_score,
-            low_sybil_risk
+            low_sybil_risk,
+            official_inception_nfts
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
 
     build.execute("BEGIN")
 
-    for address, payload_json in iter_source_wallets(
+    for (
+        address,
+        payload_json,
+        estimated_current_stake_wei,
+        official_inception_nfts,
+    ) in iter_source_wallets(
         source,
         limit,
     ):
@@ -328,17 +402,20 @@ def insert_rank_records(
             "native_balance_wei": to_int(
                 metrics.get("native_balance_wei")
             ),
+            "estimated_current_stake_wei": to_int(
+                estimated_current_stake_wei
+            ),
             "transactions": to_int(
                 metrics.get("tx_count")
+            ),
+            "native_volume_wei": to_int(
+                metrics.get("native_volume_wei")
             ),
             "gas_used": to_int(
                 metrics.get(
                     "gas_used_total",
                     metrics.get("gas_used"),
                 )
-            ),
-            "native_volume_wei": to_int(
-                metrics.get("native_volume_wei")
             ),
             "nft_holdings": to_int(
                 metrics.get("nft_holdings_count")
@@ -362,6 +439,9 @@ def insert_rank_records(
                     "contract_interaction_count"
                 )
             ),
+            "official_inception_nfts": to_int(
+                official_inception_nfts
+            ),
         }
 
         reputation_score = (
@@ -379,15 +459,21 @@ def insert_rank_records(
                 integer_string(
                     record["native_balance_wei"]
                 ),
+                integer_string(
+                    record[
+                        "estimated_current_stake_wei"
+                    ]
+                ),
                 record["transactions"],
-                integer_string(record["gas_used"]),
                 integer_string(
                     record["native_volume_wei"]
                 ),
+                integer_string(record["gas_used"]),
                 record["nft_holdings"],
                 record["collection_diversity"],
                 reputation_score,
                 low_sybil_risk,
+                record["official_inception_nfts"],
             )
         )
 
@@ -417,7 +503,10 @@ def insert_rank_records(
 def calculate_global_ranks(
     connection: sqlite3.Connection,
 ) -> None:
-    print("[INFO] Calculating eight global metric ranks")
+    print(
+        "[INFO] Calculating nine small-card ranks "
+        "and Official Rank Signal"
+    )
 
     connection.executescript(
         """
@@ -428,13 +517,15 @@ def calculate_global_ranks(
             address,
             prefix,
             native_balance_wei,
+            estimated_current_stake_wei,
             transactions,
-            gas_used,
             native_volume_wei,
+            gas_used,
             nft_holdings,
             collection_diversity,
             reputation_score,
             low_sybil_risk,
+            official_inception_nfts,
 
             ROW_NUMBER() OVER (
                 ORDER BY
@@ -445,16 +536,18 @@ def calculate_global_ranks(
 
             ROW_NUMBER() OVER (
                 ORDER BY
-                    transactions DESC,
+                    length(
+                        estimated_current_stake_wei
+                    ) DESC,
+                    estimated_current_stake_wei DESC,
                     address ASC
-            ) AS rank_transactions,
+            ) AS rank_estimated_current_stake,
 
             ROW_NUMBER() OVER (
                 ORDER BY
-                    length(gas_used) DESC,
-                    gas_used DESC,
+                    transactions DESC,
                     address ASC
-            ) AS rank_gas_used,
+            ) AS rank_transactions,
 
             ROW_NUMBER() OVER (
                 ORDER BY
@@ -462,6 +555,13 @@ def calculate_global_ranks(
                     native_volume_wei DESC,
                     address ASC
             ) AS rank_native_volume,
+
+            ROW_NUMBER() OVER (
+                ORDER BY
+                    length(gas_used) DESC,
+                    gas_used DESC,
+                    address ASC
+            ) AS rank_gas_used,
 
             ROW_NUMBER() OVER (
                 ORDER BY
@@ -485,7 +585,13 @@ def calculate_global_ranks(
                 ORDER BY
                     low_sybil_risk DESC,
                     address ASC
-            ) AS rank_low_sybil_risk
+            ) AS rank_low_sybil_risk,
+
+            ROW_NUMBER() OVER (
+                ORDER BY
+                    official_inception_nfts DESC,
+                    address ASC
+            ) AS rank_official_inception_nfts
 
         FROM rank_records;
 
@@ -563,21 +669,25 @@ def write_compact_shards(
         SELECT
             address,
             native_balance_wei,
+            estimated_current_stake_wei,
             transactions,
-            gas_used,
             native_volume_wei,
+            gas_used,
             nft_holdings,
             collection_diversity,
             reputation_score,
             low_sybil_risk,
+            official_inception_nfts,
             rank_native_funds,
+            rank_estimated_current_stake,
             rank_transactions,
-            rank_gas_used,
             rank_native_volume,
+            rank_gas_used,
             rank_nft_holdings,
             rank_collection_diversity,
             rank_reputation_score,
             rank_low_sybil_risk,
+            rank_official_inception_nfts,
             rank_overall
         FROM final_ranked
         WHERE prefix = ?
@@ -594,21 +704,25 @@ def write_compact_shards(
             (
                 address,
                 native_balance_wei,
+                estimated_current_stake_wei,
                 transactions,
-                gas_used,
                 native_volume_wei,
+                gas_used,
                 nft_holdings,
                 collection_diversity,
                 reputation_score,
                 low_sybil_risk,
+                official_inception_nfts,
                 rank_native_funds,
+                rank_estimated_current_stake,
                 rank_transactions,
-                rank_gas_used,
                 rank_native_volume,
+                rank_gas_used,
                 rank_nft_holdings,
                 rank_collection_diversity,
                 rank_reputation_score,
                 rank_low_sybil_risk,
+                rank_official_inception_nfts,
                 rank_overall,
             ) = row
 
@@ -616,24 +730,30 @@ def write_compact_shards(
                 wei_to_native_string(
                     native_balance_wei
                 ),
+                wei_to_native_string(
+                    estimated_current_stake_wei
+                ),
                 int(transactions),
-                int(gas_used),
                 wei_to_native_string(
                     native_volume_wei
                 ),
+                int(gas_used),
                 int(nft_holdings),
                 int(collection_diversity),
                 int(reputation_score),
                 int(low_sybil_risk),
+                int(official_inception_nfts),
 
                 int(rank_native_funds),
+                int(rank_estimated_current_stake),
                 int(rank_transactions),
-                int(rank_gas_used),
                 int(rank_native_volume),
+                int(rank_gas_used),
                 int(rank_nft_holdings),
                 int(rank_collection_diversity),
                 int(rank_reputation_score),
                 int(rank_low_sybil_risk),
+                int(rank_official_inception_nfts),
                 int(rank_overall),
             ]
 
@@ -999,6 +1119,20 @@ def main() -> None:
                 )
             ),
             "ranking_variables": RANK_ORDER,
+            "small_metric_order": SMALL_METRIC_ORDER,
+            "composite_ranking_variables": (
+                COMPOSITE_METRIC_ORDER
+            ),
+            "official_rank_signal": {
+                "key": OFFICIAL_SIGNAL_KEY,
+                "label": (
+                    "Official Testnet Inception NFTs"
+                ),
+                "contract": (
+                    OFFICIAL_INCEPTION_NFT_CONTRACT
+                ),
+                "rank_tiers": OFFICIAL_RANK_TIERS,
+            },
             "pending_ranking_variables": [],
             "compact_record_schema": (
                 COMPACT_SCHEMA
@@ -1061,7 +1195,17 @@ def main() -> None:
             ),
             "record_schema": COMPACT_SCHEMA,
             "metric_order": METRIC_ORDER,
+            "small_metric_order": SMALL_METRIC_ORDER,
             "rank_order": RANK_ORDER,
+            "composite_metric_order": (
+                COMPOSITE_METRIC_ORDER
+            ),
+            "official_signal_key": (
+                OFFICIAL_SIGNAL_KEY
+            ),
+            "official_rank_tiers": (
+                OFFICIAL_RANK_TIERS
+            ),
             "available_rank_variables": (
                 RANK_ORDER
             ),

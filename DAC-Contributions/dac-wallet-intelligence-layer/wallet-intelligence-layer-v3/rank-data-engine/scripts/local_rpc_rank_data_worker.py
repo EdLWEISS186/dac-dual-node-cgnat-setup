@@ -37,6 +37,10 @@ DEFAULT_FALLBACK_RPC = "http://192.168.100.7:8545"
 
 TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 
+OFFICIAL_INCEPTION_NFT_CONTRACT = (
+    "0xb36ab4c2bd6acfc36e9d6c53f39f4301901bd647"
+)
+
 DACC_STAKING_CONTRACT = (
     "0x3691a78be270db1f3b1a86177a8f23f89a8cef24"
 )
@@ -274,6 +278,94 @@ def add_asset_contract(wallet: Dict[str, Any], contract: Optional[str]) -> None:
 
 def add_int_string(value: Any, delta: int) -> str:
     return str(int(str(value or "0")) + int(delta))
+
+
+def decode_address_topic(value: Any) -> Optional[str]:
+    raw = str(value or "").lower()
+
+    if raw.startswith("0x"):
+        raw = raw[2:]
+
+    if len(raw) != 64:
+        return None
+
+    return normalize_address(f"0x{raw[-40:]}")
+
+
+def process_official_inception_nft_receipt(
+    official_inception_nft_tokens: Any,
+    tx: Dict[str, Any],
+    receipt: Dict[str, Any],
+    block_number: int,
+    timestamp: str,
+) -> tuple[Set[str], int]:
+    """Track latest owners from official ERC-721 Transfer logs."""
+
+    changed_token_ids: Set[str] = set()
+    matched_events = 0
+
+    if official_inception_nft_tokens is None:
+        return changed_token_ids, matched_events
+
+    try:
+        succeeded = (
+            hex_to_int(receipt.get("status")) == 1
+        )
+    except Exception:
+        succeeded = False
+
+    if not succeeded:
+        return changed_token_ids, matched_events
+
+    tx_hash = str(
+        tx.get("hash")
+        or receipt.get("transactionHash")
+        or ""
+    )
+
+    transaction_index = hex_to_int(
+        receipt.get("transactionIndex")
+        if receipt.get("transactionIndex") is not None
+        else tx.get("transactionIndex")
+    )
+
+    for log in receipt.get("logs") or []:
+        contract = normalize_address(log.get("address"))
+        topics = log.get("topics") or []
+
+        if contract != OFFICIAL_INCEPTION_NFT_CONTRACT:
+            continue
+
+        if len(topics) < 4:
+            continue
+
+        if str(topics[0]).lower() != TRANSFER_TOPIC:
+            continue
+
+        from_address = decode_address_topic(topics[1])
+        to_address = decode_address_topic(topics[2])
+
+        try:
+            token_id = str(hex_to_int(topics[3]))
+            log_index = hex_to_int(log.get("logIndex"))
+        except (TypeError, ValueError):
+            continue
+
+        matched_events += 1
+
+        if official_inception_nft_tokens.observe_transfer(
+            token_id=token_id,
+            from_address=from_address,
+            to_address=to_address,
+            block_number=block_number,
+            transaction_index=transaction_index,
+            log_index=log_index,
+            tx_hash=tx_hash,
+            timestamp=timestamp,
+        ):
+            changed_token_ids.add(token_id)
+
+    return changed_token_ids, matched_events
 
 
 def process_transaction(
@@ -526,6 +618,7 @@ def main() -> None:
 
     sqlite_state = None
     staking_metrics = None
+    official_inception_nft_tokens = None
 
     if args.sqlite_state:
         sqlite_state = SQLiteRankState(
@@ -541,6 +634,9 @@ def main() -> None:
 
         wallet_metrics = sqlite_state.wallet_metrics
         staking_metrics = sqlite_state.staking_metrics
+        official_inception_nft_tokens = (
+            sqlite_state.official_inception_nft_tokens
+        )
         state_backend = "SQLITE"
 
         try:
@@ -593,9 +689,11 @@ def main() -> None:
     processed_blocks = 0
     processed_transactions = 0
     processed_staking_events = 0
+    processed_official_inception_nft_events = 0
 
     changed_wallets: Set[str] = set()
     changed_staking_wallets: Set[str] = set()
+    changed_official_inception_token_ids: Set[str] = set()
 
     last_tx_hash = None
     last_synced_block = checkpoint.get("last_synced_block")
@@ -609,6 +707,7 @@ def main() -> None:
         nonlocal processed_blocks
         nonlocal processed_transactions
         nonlocal processed_staking_events
+        nonlocal processed_official_inception_nft_events
         nonlocal last_tx_hash
         nonlocal last_synced_block
 
@@ -646,6 +745,28 @@ def main() -> None:
                     staking_address
                 )
                 processed_staking_events += 1
+
+            (
+                changed_token_ids,
+                official_inception_event_count,
+            ) = process_official_inception_nft_receipt(
+                official_inception_nft_tokens=(
+                    official_inception_nft_tokens
+                ),
+                tx=tx,
+                receipt=receipt,
+                block_number=block_number,
+                timestamp=block_timestamp,
+            )
+
+            processed_official_inception_nft_events += (
+                official_inception_event_count
+            )
+
+            if changed_token_ids:
+                changed_official_inception_token_ids.update(
+                    changed_token_ids
+                )
 
             changed = process_transaction(
                 wallet_metrics=wallet_metrics,
@@ -825,6 +946,13 @@ def main() -> None:
         counters.get("native_balance_snapshots") or 0
     )
 
+    previous_official_inception_nft_events = int(
+        counters.get(
+            "total_official_inception_nft_events"
+        )
+        or 0
+    )
+
     counters["last_sync_processed_blocks"] = processed_blocks
     counters["last_sync_processed_transactions"] = processed_transactions
     counters["last_sync_wallets_changed"] = len(changed_wallets)
@@ -837,6 +965,14 @@ def main() -> None:
         len(changed_staking_wallets)
     )
 
+    counters[
+        "last_sync_official_inception_nft_events"
+    ] = processed_official_inception_nft_events
+
+    counters[
+        "last_sync_official_inception_nft_tokens_changed"
+    ] = len(changed_official_inception_token_ids)
+
     counters["total_processed_transactions"] = (
         previous_processed + processed_transactions
     )
@@ -844,6 +980,11 @@ def main() -> None:
     counters["total_staking_events"] = (
         previous_staking_events
         + processed_staking_events
+    )
+
+    counters["total_official_inception_nft_events"] = (
+        previous_official_inception_nft_events
+        + processed_official_inception_nft_events
     )
 
     counters["total_indexed_wallets"] = len(wallet_metrics)
@@ -888,6 +1029,12 @@ def main() -> None:
             ),
             "stake_selector": STAKE_FUNCTION_SELECTOR,
             "unstake_selector": UNSTAKE_FUNCTION_SELECTOR,
+            "official_inception_nft_contract": (
+                OFFICIAL_INCEPTION_NFT_CONTRACT
+            ),
+            "official_inception_nft_source": (
+                "ERC721_TRANSFER_EVENT_LATEST_OWNER"
+            ),
         },
     })
 
@@ -927,6 +1074,18 @@ def main() -> None:
 
         "estimated_current_stake_enabled": (
             staking_metrics is not None
+        ),
+
+        "official_inception_nft_enabled": (
+            official_inception_nft_tokens is not None
+        ),
+
+        "processed_official_inception_nft_events": (
+            processed_official_inception_nft_events
+        ),
+
+        "official_inception_nft_tokens_changed": (
+            len(changed_official_inception_token_ids)
         ),
 
         "enriched_balances": enriched_balances,
@@ -976,6 +1135,19 @@ def main() -> None:
             "direct_contract_read_role": "CROSS_CHECK",
         },
 
+        "official_inception_nft_enabled": (
+            official_inception_nft_tokens is not None
+        ),
+
+        "official_inception_nft": {
+            "label": "Official Testnet Inception NFTs",
+            "contract": OFFICIAL_INCEPTION_NFT_CONTRACT,
+            "standard": "ERC-721",
+            "source": (
+                "ERC721_TRANSFER_EVENT_LATEST_OWNER"
+            ),
+        },
+
         "snapshot_archive_written": snapshot_archive_written,
         "latest_snapshot": "externalized-local-state",
         "sync_status": {
@@ -1018,6 +1190,21 @@ def main() -> None:
             "last_sync_staking_wallets_changed": counters.get(
                 "last_sync_staking_wallets_changed"
             ),
+            "total_official_inception_nft_events": (
+                counters.get(
+                    "total_official_inception_nft_events"
+                )
+            ),
+            "last_sync_official_inception_nft_events": (
+                counters.get(
+                    "last_sync_official_inception_nft_events"
+                )
+            ),
+            "last_sync_official_inception_nft_tokens_changed": (
+                counters.get(
+                    "last_sync_official_inception_nft_tokens_changed"
+                )
+            ),
         },
         "last_run": result,
         "note": "v3.3.0 lightweight publish status. Heavy wallet metrics remain externalized and are not loaded again by the publish layer during backfill."
@@ -1046,6 +1233,13 @@ def main() -> None:
 
             result["staking_rows_written"] = (
                 sqlite_state.last_staking_rows_written
+            )
+
+            result[
+                "official_inception_nft_rows_written"
+            ] = (
+                sqlite_state
+                .last_official_inception_nft_rows_written
             )
 
             public_status["last_run"] = result

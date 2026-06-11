@@ -3253,6 +3253,106 @@ function formatWalletRankTier(value) {
   return String(value).replaceAll("_", " ");
 }
 
+function formatWalletRankTierDisplay(value) {
+  return formatWalletRankTier(value);
+}
+
+function formatWalletRankMetricLabelDisplay(value) {
+  return String(value || "—").replaceAll("_", " ");
+}
+
+function getOfficialInceptionRankByCount(value) {
+  return getRankScoreByBadgeCount(
+    Number(value || 0)
+  ).inferredRank;
+}
+
+function renderOfficialRankSignalCard({
+  metric,
+  walletMetrics,
+  ranks,
+  percentiles,
+  totalRanked,
+  explorerVisibleWallets,
+  availableVariables,
+  placeholder = false,
+  denominatorLabel = "official DAC inception rank signal",
+}) {
+  if (!metric) return "";
+
+  const key = metric.rankKey || metric.key;
+
+  const rank = ranks
+    ? (ranks[key] ?? ranks[metric.key])
+    : null;
+
+  const percentile = percentiles
+    ? (
+        percentiles[key]
+        ?? percentiles[metric.key]
+      )
+    : null;
+
+  const denominator = Number(
+    totalRanked
+    || explorerVisibleWallets
+    || 0
+  );
+
+  const isAvailable = !placeholder && (
+    availableVariables
+    && availableVariables.size > 0
+      ? (
+          availableVariables.has(key)
+          || availableVariables.has(
+            metric.key
+          )
+        )
+      : (
+          rank !== null
+          && rank !== undefined
+        )
+  );
+
+  if (!isAvailable) {
+    return `
+      <article class="wallet-rank-metric wallet-rank-metric-nan wallet-rank-official-card">
+        <span>${escapeRankHtml(metric.label)}</span>
+        <strong class="wallet-rank-official-tier">NaN</strong>
+        <div class="wallet-rank-official-count">NFT count unavailable</div>
+        <div class="rank-line">Rank: NaN / ${denominator ? formatRankValue(denominator) : "NaN"}</div>
+        <div class="percentile-line">Percentile: NaN%</div>
+        <div class="rank-scope-line">${escapeRankHtml(denominatorLabel)}</div>
+      </article>
+    `;
+  }
+
+  const nftCount = Math.max(
+    Number(
+      walletMetrics
+      && walletMetrics[metric.key]
+      || 0
+    ),
+    0
+  );
+
+  const officialRank =
+    getOfficialInceptionRankByCount(
+      nftCount
+    );
+
+  return `
+    <article class="wallet-rank-metric wallet-rank-official-card">
+      <span>${escapeRankHtml(metric.label)}</span>
+      <strong class="wallet-rank-official-tier">${escapeRankHtml(officialRank)}</strong>
+      <div class="wallet-rank-official-count">${formatRankValue(nftCount)} Official Testnet Inception NFT${nftCount === 1 ? "" : "s"}</div>
+      <div class="rank-line">${formatWalletRank(rank, denominator)}</div>
+      <div class="percentile-line">${formatWalletRankPercentile(percentile)}</div>
+      <div class="rank-scope-line">official DAC inception rank signal</div>
+    </article>
+  `;
+}
+
 function renderRankSyncStatus(summary) {
   const sync = summary?.sync_status || summary?.engine_checkpoint || {};
   const isFullySynced = sync.historical_backfill_complete === true;
@@ -3372,8 +3472,23 @@ function renderWalletRankIntelligence(rankData) {
     </div>
   `).join("");
 
-    const metricRankCards = metrics.filter((metric) => metric.key !== "overall_rank");
-    const overallRankMetric = metrics.find((metric) => metric.key === "overall_rank");
+    const metricRankCards = metrics.filter((metric) => (
+      metric.layout === "metric" || (
+        !metric.layout &&
+        metric.key !== "official_inception_nfts" &&
+        metric.key !== "overall_rank"
+      )
+    ));
+
+    const officialRankMetric = metrics.find((metric) => (
+      metric.layout === "official_signal" ||
+      metric.key === "official_inception_nfts"
+    ));
+
+    const overallRankMetric = metrics.find((metric) => (
+      metric.layout === "overall" ||
+      metric.key === "overall_rank"
+    ));
 
   if (rankData.status === "ERROR") {
     el.walletRankStatus.textContent = "Rank lookup error";
@@ -3395,6 +3510,22 @@ function renderWalletRankIntelligence(rankData) {
       </article>
     `).join("");
 
+      const officialNanCard =
+        renderOfficialRankSignalCard({
+          metric: officialRankMetric,
+          walletMetrics: {},
+          ranks: {},
+          percentiles: {},
+          totalRanked: 0,
+          explorerVisibleWallets: Number(
+            snapshot.total_addresses || 0
+          ),
+          availableVariables: new Set(),
+          placeholder: true,
+          denominatorLabel:
+            "official rank signal pending valid index",
+        });
+
       const overallNanCard = overallRankMetric ? `
         <article class="wallet-rank-metric wallet-rank-metric-nan wallet-rank-overall-card">
           <span>${escapeRankHtml(overallRankMetric.label)}</span>
@@ -3405,7 +3536,11 @@ function renderWalletRankIntelligence(rankData) {
         </article>
       ` : "";
 
-      el.walletRankGrid.innerHTML = renderRankSyncStatus(summary) + nanRankCards + overallNanCard;
+      el.walletRankGrid.innerHTML =
+        renderRankSyncStatus(summary)
+        + nanRankCards
+        + officialNanCard
+        + overallNanCard;
     return;
   }
 
@@ -3436,6 +3571,22 @@ function renderWalletRankIntelligence(rankData) {
       </article>
     `).join("");
 
+      const officialPlaceholderCard =
+        renderOfficialRankSignalCard({
+          metric: officialRankMetric,
+          walletMetrics: {},
+          ranks: {},
+          percentiles: {},
+          totalRanked:
+            rankDenominator === "NaN"
+              ? 0
+              : Number(rankDenominator),
+          explorerVisibleWallets: 0,
+          availableVariables: new Set(),
+          placeholder: true,
+          denominatorLabel,
+        });
+
       const overallPlaceholderCard = overallRankMetric ? `
         <article class="wallet-rank-metric wallet-rank-metric-nan wallet-rank-overall-card">
           <span>${escapeRankHtml(overallRankMetric.label)}</span>
@@ -3448,6 +3599,7 @@ function renderWalletRankIntelligence(rankData) {
 
     el.walletRankGrid.innerHTML = `
       ${placeholderCards}
+        ${officialPlaceholderCard}
         ${overallPlaceholderCard}
       <div class="wallet-rank-pending wallet-rank-index-note">
         <strong>Wallet not found in the current indexed rank snapshot</strong>
@@ -3482,25 +3634,42 @@ function renderWalletRankIntelligence(rankData) {
   const pendingVariables = profile.pending_rank_variables || [];
 
   const availableMetricCards = metricRankCards
-    .filter((metric) => {
-      const key = metric.rankKey || metric.key;
-      const rank = ranks[key] ?? ranks[metric.key];
-
-      if (availableVariables.size > 0) {
-        return availableVariables.has(key) || availableVariables.has(metric.key);
-      }
-
-      return rank !== null && rank !== undefined;
-    })
     .map((metric) => {
       const key = metric.rankKey || metric.key;
       const rawValue = walletMetrics[metric.key];
       const rank = ranks[key] ?? ranks[metric.key];
-      const percentile = percentiles[key] ?? percentiles[metric.key];
+      const percentile =
+        percentiles[key]
+        ?? percentiles[metric.key];
 
-      const valueText = metric.key === "overall_rank"
-        ? "Composite rank signal"
-        : `${formatRankValue(rawValue)} ${escapeRankHtml(metric.suffix)}`;
+      const isAvailable =
+        availableVariables.size > 0
+          ? (
+              availableVariables.has(key)
+              || availableVariables.has(
+                metric.key
+              )
+            )
+          : (
+              rank !== null
+              && rank !== undefined
+            );
+
+      if (!isAvailable) {
+        return `
+          <article class="wallet-rank-metric wallet-rank-metric-nan">
+            <span>${escapeRankHtml(metric.label)}</span>
+            <strong>NaN</strong>
+            <div class="rank-line">Rank: NaN / ${totalRanked || explorerVisibleWallets ? formatRankValue(totalRanked || explorerVisibleWallets) : "NaN"}</div>
+            <div class="percentile-line">Percentile: NaN%</div>
+            <div class="rank-scope-line">rank variable pending</div>
+          </article>
+        `;
+      }
+
+      const valueText =
+        `${formatRankValue(rawValue)} `
+        + `${escapeRankHtml(metric.suffix)}`;
 
       return `
         <article class="wallet-rank-metric">
@@ -3512,6 +3681,17 @@ function renderWalletRankIntelligence(rankData) {
       `;
     })
     .join("");
+
+    const officialRankSpotlight =
+      renderOfficialRankSignalCard({
+        metric: officialRankMetric,
+        walletMetrics,
+        ranks,
+        percentiles,
+        totalRanked,
+        explorerVisibleWallets,
+        availableVariables,
+      });
 
     const overallRankSpotlight = overallRankMetric ? (() => {
       const key = overallRankMetric.rankKey || overallRankMetric.key;
@@ -3556,7 +3736,11 @@ function renderWalletRankIntelligence(rankData) {
     `
     : "";
 
-    el.walletRankGrid.innerHTML = availableMetricCards + overallRankSpotlight + pendingHtml;
+    el.walletRankGrid.innerHTML =
+      availableMetricCards
+      + officialRankSpotlight
+      + overallRankSpotlight
+      + pendingHtml;
 }
 
 // Rendering
