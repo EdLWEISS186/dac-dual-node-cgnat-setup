@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-06-12T15:56:27.157627+00:00",
+  "updated_at_utc": "2026-06-12T18:10:18.453858+00:00",
   "lookup_method": "team_cymru_whois_live_lookup",
   "entries": {
     "1.54.141.106": {
@@ -442,6 +442,23 @@
       "source": "team_cymru",
       "cached": false,
       "checked_at_utc": "2026-06-03T04:32:19.548453+00:00",
+      "error": null,
+      "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+    },
+    "41.39.22.179": {
+      "ip": "41.39.22.179",
+      "live_lookup_used": true,
+      "live_lookup_success": true,
+      "lookup_method": "team_cymru_whois_live_lookup",
+      "asn": "AS8452",
+      "asn_name": "TE-AS - IDDQD-AS, EG",
+      "bgp_prefix": "41.39.0.0/18",
+      "country_code": "EG",
+      "registry": "afrinic",
+      "allocated": "2009-11-05",
+      "source": "team_cymru",
+      "cached": false,
+      "checked_at_utc": "2026-06-12T18:10:18.453687+00:00",
       "error": null,
       "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
     },
