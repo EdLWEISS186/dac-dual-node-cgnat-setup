@@ -2,7 +2,7 @@
   "project": "DAC Infrastructure Intelligence Watcher",
   "version": "v1.0.0",
   "summary_type": "infrastructure_health",
-  "checked_at_utc": "2026-06-12T13:58:59.729012+00:00",
+  "checked_at_utc": "2026-06-12T16:45:41.253700+00:00",
   "monitoring_scope": {
     "official_public_rpc": "https://rpctest.dachain.tech/",
     "explorer_web": "https://exptest.dachain.tech/",
@@ -26,17 +26,17 @@
       "summary": "Public RPC responded to required and optional JSON-RPC checks.",
       "chain_id_hex": "0x5586",
       "chain_id_decimal": 21894,
-      "latest_block_hex": "0xe4e1f0",
-      "latest_block_decimal": 15000048,
-      "latency_ms_avg": 1447,
-      "latency_ms_max": 2554,
+      "latest_block_hex": "0xe4e2ae",
+      "latest_block_decimal": 15000238,
+      "latency_ms_avg": 1218,
+      "latency_ms_max": 1515,
       "latency_class": "SLOW",
       "checks": {
         "eth_chainId": {
           "method": "eth_chainId",
           "ok": true,
           "http_status": 200,
-          "latency_ms": 927,
+          "latency_ms": 998,
           "result": "0x5586",
           "error": null
         },
@@ -44,16 +44,16 @@
           "method": "eth_blockNumber",
           "ok": true,
           "http_status": 200,
-          "latency_ms": 2554,
-          "result": "0xe4e1f0",
+          "latency_ms": 1515,
+          "result": "0xe4e2ae",
           "error": null
         },
         "web3_clientVersion": {
           "method": "web3_clientVersion",
           "ok": true,
           "http_status": 200,
-          "latency_ms": 860,
-          "result": "gdacnode/DAC Testnet RPC 02/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
+          "latency_ms": 1142,
+          "result": "gdacnode/DAC Testnet RPC 03/v1.10.5-stable-e4023222/linux-amd64/go1.25.1",
           "error": null
         }
       }
@@ -65,8 +65,8 @@
       "ok": true,
       "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
       "http_status": 200,
-      "latency_ms": 470,
-      "latency_class": "FAST",
+      "latency_ms": 553,
+      "latency_class": "MODERATE",
       "content_type": "text/html; charset=utf-8",
       "server": "Apache",
       "x_powered_by": "Next.js",
@@ -81,15 +81,15 @@
       "summary": "Explorer API responded successfully to supported stats endpoint.",
       "root_expected_validation": true,
       "stats_ok": true,
-      "latency_ms_avg": 366,
-      "latency_ms_max": 377,
+      "latency_ms_avg": 380,
+      "latency_ms_max": 387,
       "latency_class": "FAST",
       "checks": {
         "root": {
           "url": "https://exptest.dachain.tech/api",
           "request_ok": true,
           "http_status": 400,
-          "latency_ms": 356,
+          "latency_ms": 372,
           "latency_class": "FAST",
           "json": {
             "message": "Params 'module' and 'action' are required parameters",
@@ -102,11 +102,11 @@
           "url": "https://exptest.dachain.tech/api?module=stats&action=ethsupply",
           "request_ok": true,
           "http_status": 200,
-          "latency_ms": 377,
+          "latency_ms": 387,
           "latency_class": "FAST",
           "json": {
             "message": "OK",
-            "result": "115792089237316195423570985008687907853269984665740576877098454318511711096901",
+            "result": "115792089237316195423570985008687907853269984665740576876683756748668392709575",
             "status": "1"
           },
           "error": null
