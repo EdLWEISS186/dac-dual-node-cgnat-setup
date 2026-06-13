@@ -1,7 +1,7 @@
 {
   "project": "DAC Enode Intelligence Watcher",
   "summary_type": "custom_json_report_summary",
-  "generated_at_utc": "2026-06-13T03:51:42.154292+00:00",
+  "generated_at_utc": "2026-06-13T07:49:27.253332+00:00",
   "range": "7d",
   "range_label": "Last 7 Days",
   "source_files": {
@@ -12,21 +12,21 @@
   },
   "important_note": "This custom JSON summary is observation-based. It does not make official DAC ownership claims and should not be treated as a definitive decentralization measurement.",
   "latest_observation": {
-    "checked_at_utc": "2026-06-13T03:51:39.549939+00:00",
-    "generated_at_source": "Sat Jun 13 04:00:01 AM CEST 2026",
+    "checked_at_utc": "2026-06-13T07:49:23.844358+00:00",
+    "generated_at_source": "Sat Jun 13 08:00:02 AM CEST 2026",
     "target_port": 28657,
-    "current_total": 16,
-    "previous_total": 15,
-    "added_count": 1,
-    "removed_count": 0,
+    "current_total": 15,
+    "previous_total": 16,
+    "added_count": 0,
+    "removed_count": 1,
     "unchanged_count": 15,
     "change_severity": "LOW",
-    "severity_reason": "Small enode rotation detected: 1 added and 0 removed."
+    "severity_reason": "Small enode rotation detected: 0 added and 1 removed."
   },
   "observation_scope": {
     "selected_observation_count": 37,
-    "first_observed_source_time": "Jun 6, 2026 (08:00 CEST)",
-    "last_observed_source_time": "Jun 13, 2026 (04:00 CEST)",
+    "first_observed_source_time": "Jun 6, 2026 (10:00 CEST)",
+    "last_observed_source_time": "Jun 13, 2026 (08:00 CEST)",
     "phase_counts": {
       "automated_watcher": 37
     },
@@ -40,15 +40,15 @@
   "enode_movement_summary": {
     "min_enode_count": 10,
     "max_enode_count": 16,
-    "avg_enode_count": 13.51,
-    "total_added_events": 23,
-    "total_removed_events": 17
+    "avg_enode_count": 13.62,
+    "total_added_events": 22,
+    "total_removed_events": 18
   },
   "anomaly_summary": {
     "selected_anomaly_signal_count": 0,
     "selected_severity_counts": {},
     "selected_anomaly_type_counts": {},
-    "global_short_summary": "5 anomaly signals were detected across 65 observations. The highest observed anomaly severity is HIGH.",
+    "global_short_summary": "5 anomaly signals were detected across 66 observations. The highest observed anomaly severity is HIGH.",
     "global_highest_severity": "HIGH",
     "global_recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
   },
@@ -82,23 +82,6 @@
     }
   },
   "timeline": [
-    {
-      "observation_index": 29,
-      "phase": "automated_watcher",
-      "status": "changed",
-      "source_time_raw": "Sat Jun  6 08:00:01 AM CEST 2026",
-      "source_time_readable": "Jun 6, 2026 (08:00 CEST)",
-      "checked_at_utc": "2026-06-06T06:44:02.963253+00:00",
-      "current_total": 11,
-      "previous_total": 10,
-      "added_count": 1,
-      "removed_count": 0,
-      "unchanged_count": 10,
-      "target_port": 28657,
-      "change_severity": "LOW",
-      "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
-      "snapshot_file": "data/snapshots/2026-06-06T06-44-02-963253+00-00-changed.json"
-    },
     {
       "observation_index": 30,
       "phase": "automated_watcher",
@@ -710,6 +693,23 @@
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
       "snapshot_file": "data/snapshots/2026-06-13T03-51-39-549939+00-00-changed.json"
+    },
+    {
+      "observation_index": 66,
+      "phase": "automated_watcher",
+      "status": "changed",
+      "source_time_raw": "Sat Jun 13 08:00:02 AM CEST 2026",
+      "source_time_readable": "Jun 13, 2026 (08:00 CEST)",
+      "checked_at_utc": "2026-06-13T07:49:23.844358+00:00",
+      "current_total": 15,
+      "previous_total": 16,
+      "added_count": 0,
+      "removed_count": 1,
+      "unchanged_count": 15,
+      "target_port": 28657,
+      "change_severity": "LOW",
+      "severity_reason": "Small enode rotation detected: 0 added and 1 removed.",
+      "snapshot_file": "data/snapshots/2026-06-13T07-49-23-844358+00-00-changed.json"
     }
   ],
   "anomalies": [],
