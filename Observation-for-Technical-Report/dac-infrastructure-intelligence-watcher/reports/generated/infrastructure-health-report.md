@@ -1,6 +1,6 @@
 # DAC Infrastructure Intelligence Watcher — Health Report
 
-Generated from latest watcher state UTC: **2026-06-13T22:45:05.448184+00:00**
+Generated from latest watcher state UTC: **2026-06-13T23:49:01.399400+00:00**
 
 This report is generated from DAC Infrastructure Intelligence Watcher JSON outputs.
 
@@ -15,7 +15,7 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Project | DAC Infrastructure Intelligence Watcher |
 | Watcher version | v1.0.0 |
 | Report layer version | v1.1.0 |
-| Checked at UTC | 2026-06-13T22:45:05.448184+00:00 |
+| Checked at UTC | 2026-06-13T23:49:01.399400+00:00 |
 | Overall status | HEALTHY |
 | Overall summary | All monitored DAC infrastructure endpoints are healthy. |
 | Healthy endpoints | 3 |
@@ -49,8 +49,8 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Chain ID hex | 0x5586 |
 | Latest block hex | 0xe4ffdb |
 | Latest block decimal | 15007707 |
-| Average response time | 2713 ms |
-| Maximum response time | 2909 ms |
+| Average response time | 2741 ms |
+| Maximum response time | 3533 ms |
 | Response class | SLOW |
 
 | Method | OK | HTTP Status | Result | Error |
@@ -66,8 +66,8 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Status | HEALTHY | HEALTHY |
 | OK | True | True |
 | HTTP / validation | 200 | root_validation=True, stats_ok=True |
-| Response time | 842 ms | avg=592 ms, max=610 ms |
-| Response class | MODERATE | MODERATE |
+| Response time | 625 ms | avg=436 ms, max=452 ms |
+| Response class | MODERATE | FAST |
 | Title / API URL | DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats | https://exptest.dachain.tech/api |
 
 ## 6. Snapshot History Summary
