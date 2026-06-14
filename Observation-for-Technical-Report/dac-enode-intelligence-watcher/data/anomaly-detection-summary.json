@@ -8,7 +8,7 @@
   "machine_learning_used": false,
   "coverage_note": "Manual backfill is a partial archive. Missing dates represent missed observation windows, not confirmed absence of changes.",
   "observation_scope": {
-    "total_observations": 71,
+    "total_observations": 72,
     "first_observation": {
       "observation_index": 1,
       "phase": "manual_backfill",
@@ -26,20 +26,20 @@
       "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
     },
     "latest_observation": {
-      "observation_index": 71,
+      "observation_index": 72,
       "phase": "automated_watcher",
       "status": "changed",
-      "generated_at_source": "Sun Jun 14 06:00:01 PM CEST 2026",
-      "checked_at_utc": "2026-06-14T16:12:42.135913+00:00",
+      "generated_at_source": "Sun Jun 14 08:00:01 PM CEST 2026",
+      "checked_at_utc": "2026-06-14T19:27:48.779828+00:00",
       "target_port": 28657,
       "current_total": 14,
-      "previous_total": 16,
-      "added_count": 0,
-      "removed_count": 2,
-      "unchanged_count": 14,
+      "previous_total": 14,
+      "added_count": 1,
+      "removed_count": 1,
+      "unchanged_count": 13,
       "change_severity": "LOW",
-      "severity_reason": "Small enode rotation detected: 0 added and 2 removed.",
-      "snapshot_file": "data/snapshots/2026-06-14T16-12-42-135913+00-00-changed.json"
+      "severity_reason": "Small enode rotation detected: 1 added and 1 removed.",
+      "snapshot_file": "data/snapshots/2026-06-14T19-27-48-779828+00-00-changed.json"
     }
   },
   "rules": [
@@ -90,7 +90,7 @@
     }
   ],
   "report_summary": {
-    "short_summary": "5 anomaly signals were detected across 71 observations. The highest observed anomaly severity is HIGH.",
+    "short_summary": "5 anomaly signals were detected across 72 observations. The highest observed anomaly severity is HIGH.",
     "highest_severity": "HIGH",
     "anomaly_count": 5,
     "severity_counts": {
