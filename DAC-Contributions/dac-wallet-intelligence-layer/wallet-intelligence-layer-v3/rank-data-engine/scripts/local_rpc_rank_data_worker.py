@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from bisect import bisect_left
 import time
 import urllib.request
 from copy import deepcopy
@@ -254,16 +255,19 @@ def add_counterparty(wallet: Dict[str, Any], counterparty: Optional[str]) -> Non
 
     existing = wallet.get("counterparty_addresses") or []
 
-    if counterparty in existing:
+    if not isinstance(existing, list):
+        existing = list(existing)
+
+    insert_at = bisect_left(existing, counterparty)
+
+    if insert_at < len(existing) and existing[insert_at] == counterparty:
         wallet["repeated_counterparty_count"] = (
             int(wallet.get("repeated_counterparty_count") or 0) + 1
         )
         wallet["unique_counterparty_count"] = len(existing)
         return
 
-    existing = list(existing)
-    existing.append(counterparty)
-    existing.sort()
+    existing.insert(insert_at, counterparty)
 
     wallet["counterparty_addresses"] = existing
     wallet["unique_counterparty_count"] = len(existing)
