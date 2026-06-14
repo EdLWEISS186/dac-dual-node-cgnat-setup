@@ -252,15 +252,21 @@ def add_counterparty(wallet: Dict[str, Any], counterparty: Optional[str]) -> Non
     if not counterparty:
         return
 
-    existing = set(wallet.get("counterparty_addresses") or [])
-    before = len(existing)
-    existing.add(counterparty)
+    existing = wallet.get("counterparty_addresses") or []
 
-    wallet["counterparty_addresses"] = sorted(existing)
+    if counterparty in existing:
+        wallet["repeated_counterparty_count"] = (
+            int(wallet.get("repeated_counterparty_count") or 0) + 1
+        )
+        wallet["unique_counterparty_count"] = len(existing)
+        return
+
+    existing = list(existing)
+    existing.append(counterparty)
+    existing.sort()
+
+    wallet["counterparty_addresses"] = existing
     wallet["unique_counterparty_count"] = len(existing)
-
-    if len(existing) == before:
-        wallet["repeated_counterparty_count"] = int(wallet.get("repeated_counterparty_count") or 0) + 1
 
 
 def add_asset_contract(wallet: Dict[str, Any], contract: Optional[str]) -> None:
