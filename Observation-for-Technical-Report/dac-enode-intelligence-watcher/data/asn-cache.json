@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-06-16T17:49:41.658853+00:00",
+  "updated_at_utc": "2026-06-16T20:52:15.331004+00:00",
   "lookup_method": "team_cymru_whois_live_lookup",
   "entries": {
     "1.54.141.106": {
@@ -612,6 +612,23 @@
       "source": "team_cymru",
       "cached": false,
       "checked_at_utc": "2026-06-03T04:26:31.147014+00:00",
+      "error": null,
+      "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+    },
+    "95.249.175.94": {
+      "ip": "95.249.175.94",
+      "live_lookup_used": true,
+      "live_lookup_success": true,
+      "lookup_method": "team_cymru_whois_live_lookup",
+      "asn": "AS3269",
+      "asn_name": "ASN-IBSNAZ - Telecom Italia S.p.A., IT",
+      "bgp_prefix": "95.248.0.0/15",
+      "country_code": "IT",
+      "registry": "ripencc",
+      "allocated": "2009-01-15",
+      "source": "team_cymru",
+      "cached": false,
+      "checked_at_utc": "2026-06-16T20:52:15.330840+00:00",
       "error": null,
       "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
     }
