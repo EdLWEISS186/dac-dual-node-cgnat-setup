@@ -19,13 +19,15 @@ A client-side web interface for submitting native DACC token transactions on the
 
 ## Latest Version
 
-### v1.4.3 — Real-time Stats & NFT Launchpad Polish
+### v1.4.3 — Real-time Stats, NFT Launchpad Polish & Grid Collections
 
-This patch release completes the NFT Launchpad infrastructure and adds live network monitoring across both `index.html` and `mint.html`.
+This release completes the NFT Launchpad infrastructure, adds live network monitoring across both `index.html` and `mint.html`, and redesigns the Collections view into a paginated grid layout with filtering and search.
 
 **Real-time Stats Bar** — Block height, TPS (averaged from last 5 blocks), block time, RPC latency with color-coded health indicators (green/yellow/red), and live gas price in Gwei. Pre-loads 5 blocks on init for immediate data without waiting for the next polling cycle.
 
 **NFT Launchpad** (`mint.html`) — Rebuilt with a proper two-tab interface: Collections (reads from on-chain `DACNFTRegistry`) and My Collections (reads `mintedPerWallet` for the connected address across all registered collections). Includes a connect wallet overlay consistent with `index.html`, improved error handling for RPC failures with retry, and a contextual empty state for wallets with no mints.
+
+**Collections Grid View** — The Collections tab now renders NFTs in a 3×3 paginated grid (9 per page). Each card displays the collection artwork, name, ticker, live supply bar, and mint price. Includes a search bar for filtering by name or symbol, and a sort dropdown with four options: Date (Newest), Date (Oldest), Price (Highest), Price (Lowest).
 
 **Connect Overlay** — Both `index.html` and `mint.html` now open with a consistent blur overlay showing `DAC•SENDER`, version, and connect prompt. `mint.html` adds an NFT Launchpad subtitle and a "Browse without connecting" option.
 
@@ -46,6 +48,7 @@ Major additions:
 - **IPFS integration** — artwork and metadata upload through Pinata.
 - **DACNFTRegistry** — shared on-chain registry for deployed NFT collections.
 - **NFT Launchpad** (`mint.html`) — public mint portal for collections deployed through DAC•SENDER.
+- **Collections Grid** — 3×3 paginated grid with search, and sort by price or date.
 - **My Collections tab** — reads `mintedPerWallet` across registered collections.
 - **Connect Wallet overlay** — consistent entry flow across `index.html` and `mint.html`.
 - **Protocol fee safety fix** — 1 DACC absolute cap replacing percentage-only cap behavior.
@@ -174,7 +177,7 @@ The DAC Testnet is not just a staging environment — it is an active stress-tes
 
 ### DAC•SENDER NFT Launchpad — mint.html
 
-**Collections — all NFT collections deployed through DAC•SENDER, read from on-chain registry with live supply data:**
+**Collections — all NFT collections deployed through DAC•SENDER, displayed in a 3×3 paginated grid with search and sort controls:**
 
 ![Collections Tab](assets/mint-collection.png)
 
@@ -512,6 +515,7 @@ The wallet is automatically prompted to switch to or register the DAC Testnet ne
 - **Metrics Export** — Download session transaction history as CSV (hash, recipients, amount, status, timestamp, gas used)
 - **Deploy NFT** — Full ERC-721 collection deployment with IPFS artwork and metadata upload via Pinata
 - **NFT Launchpad** (`mint.html`) — Shared public page for browsing and minting all NFT collections deployed through DAC•Sender, powered by an on-chain registry contract
+- **Collections Grid** — 3×3 paginated grid layout (9 per page) with real-time search by name or symbol, and sort controls (date newest/oldest, price highest/lowest)
 - **Real-time Network Stats** — Live TPS, block time, RPC latency, gas price, and block height displayed in the stats bar
 
 ---
@@ -597,6 +601,7 @@ This feature is planned for implementation once the DAC team publishes their off
 ### v1.4.3
 - Added **Real-time Stats Bar** to both `index.html` and `mint.html` — TPS, block time, RPC latency, gas price
 - **NFT Launchpad** (`mint.html`) rebuilt with two-tab layout: Collections + My Collections
+- **Collections Grid** — redesigned from list view to 3×3 paginated grid (9 per page) with search bar and sort controls (date newest/oldest, price highest/lowest)
 - Added **Connect Wallet overlay** to `mint.html` matching `index.html` style
 - Improved error handling for RPC failures with Retry button
 - Fixed transaction log panel height — fixed pixel height (560px), consistent across all zoom levels, scrollable inside panel
