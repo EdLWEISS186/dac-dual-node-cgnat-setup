@@ -380,6 +380,317 @@ class SQLiteStakingMetrics:
         self.dirty_addresses.clear()
 
 
+
+class SQLiteConvictionMetrics:
+    """
+    Lazy, rollback-safe Conviction Locked state.
+
+    Conviction Locked is derived from successful lock transactions to the
+    Conviction contract after the WIL v3.5.0 cutover block.
+    """
+
+    def __init__(self, connection: sqlite3.Connection) -> None:
+        self.connection = connection
+        self.cache: Dict[str, Dict[str, Any]] = {}
+        self.dirty_addresses: set[str] = set()
+        self.pending_events: Dict[str, Dict[str, Any]] = {}
+
+    @staticmethod
+    def normalize(address: str) -> str:
+        return str(address).lower()
+
+    @staticmethod
+    def normalize_tx_hash(tx_hash: str) -> str:
+        return str(tx_hash).lower()
+
+    @staticmethod
+    def default_record(address: str) -> Dict[str, Any]:
+        return {
+            "address": str(address).lower(),
+            "conviction_locked_wei": "0",
+            "conviction_lock_tx_count": 0,
+            "first_conviction_lock_block": None,
+            "first_conviction_lock_tx_hash": None,
+            "first_conviction_lock_time": None,
+            "last_conviction_lock_block": None,
+            "last_conviction_lock_tx_hash": None,
+            "last_conviction_lock_time": None,
+            "source": "NO_CONVICTION_LOCK_FLOW",
+            "confidence": "LOW",
+            "updated_at": "",
+        }
+
+    def _load(self, address: str) -> Optional[Dict[str, Any]]:
+        address = self.normalize(address)
+
+        if address in self.cache:
+            return self.cache[address]
+
+        row = self.connection.execute(
+            """
+            SELECT
+                conviction_locked_wei,
+                conviction_lock_tx_count,
+                first_conviction_lock_block,
+                first_conviction_lock_tx_hash,
+                first_conviction_lock_time,
+                last_conviction_lock_block,
+                last_conviction_lock_tx_hash,
+                last_conviction_lock_time,
+                source,
+                confidence,
+                updated_at
+            FROM conviction_metrics
+            WHERE address = ?
+            """,
+            (address,),
+        ).fetchone()
+
+        if row is None:
+            return None
+
+        record = {
+            "address": address,
+            "conviction_locked_wei": str(row[0] or "0"),
+            "conviction_lock_tx_count": int(row[1] or 0),
+            "first_conviction_lock_block": row[2],
+            "first_conviction_lock_tx_hash": row[3],
+            "first_conviction_lock_time": row[4],
+            "last_conviction_lock_block": row[5],
+            "last_conviction_lock_tx_hash": row[6],
+            "last_conviction_lock_time": row[7],
+            "source": str(row[8] or "NO_CONVICTION_LOCK_FLOW"),
+            "confidence": str(row[9] or "LOW"),
+            "updated_at": str(row[10] or ""),
+        }
+
+        self.cache[address] = record
+        return record
+
+    def setdefault(
+        self,
+        address: str,
+        default: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        address = self.normalize(address)
+        record = self._load(address)
+
+        if record is None:
+            record = (
+                default
+                if default is not None
+                else self.default_record(address)
+            )
+            record["address"] = address
+            self.cache[address] = record
+
+        self.dirty_addresses.add(address)
+        return record
+
+    def has_event(self, tx_hash: str) -> bool:
+        tx_hash = self.normalize_tx_hash(tx_hash)
+
+        if tx_hash in self.pending_events:
+            return True
+
+        row = self.connection.execute(
+            """
+            SELECT 1
+            FROM conviction_lock_events
+            WHERE tx_hash = ?
+            LIMIT 1
+            """,
+            (tx_hash,),
+        ).fetchone()
+
+        return row is not None
+
+    def record_lock_event(
+        self,
+        *,
+        address: str,
+        value_wei: int,
+        block_number: int,
+        transaction_index: int,
+        tx_hash: str,
+        timestamp: str,
+    ) -> bool:
+        address = self.normalize(address)
+        tx_hash = self.normalize_tx_hash(tx_hash)
+        value_wei = int(value_wei)
+
+        if value_wei <= 0:
+            return False
+
+        if self.has_event(tx_hash):
+            return False
+
+        self.pending_events[tx_hash] = {
+            "tx_hash": tx_hash,
+            "address": address,
+            "block_number": int(block_number),
+            "transaction_index": int(transaction_index),
+            "value_wei": str(value_wei),
+            "timestamp": str(timestamp),
+        }
+
+        record = self.setdefault(address)
+
+        current_locked = int(
+            str(record.get("conviction_locked_wei") or "0")
+        )
+
+        record["conviction_locked_wei"] = str(
+            current_locked + value_wei
+        )
+
+        record["conviction_lock_tx_count"] = (
+            int(record.get("conviction_lock_tx_count") or 0)
+            + 1
+        )
+
+        first_block = record.get("first_conviction_lock_block")
+        if first_block is None or int(block_number) < int(first_block):
+            record["first_conviction_lock_block"] = int(block_number)
+            record["first_conviction_lock_tx_hash"] = tx_hash
+            record["first_conviction_lock_time"] = str(timestamp)
+
+        last_block = record.get("last_conviction_lock_block")
+        if last_block is None or int(block_number) >= int(last_block):
+            record["last_conviction_lock_block"] = int(block_number)
+            record["last_conviction_lock_tx_hash"] = tx_hash
+            record["last_conviction_lock_time"] = str(timestamp)
+
+        record["source"] = "CONVICTION_LOCK_TRANSACTION_FLOW"
+        record["confidence"] = "HIGH"
+        record["updated_at"] = str(timestamp)
+
+        self.dirty_addresses.add(address)
+        return True
+
+    def count(self) -> int:
+        return int(
+            self.connection.execute(
+                "SELECT COUNT(*) FROM conviction_metrics"
+            ).fetchone()[0]
+        )
+
+    def flush(self) -> int:
+        event_rows = []
+
+        for tx_hash in sorted(self.pending_events):
+            event = self.pending_events[tx_hash]
+            event_rows.append(
+                (
+                    event["tx_hash"],
+                    event["address"],
+                    event["block_number"],
+                    event["transaction_index"],
+                    event["value_wei"],
+                    event["timestamp"],
+                )
+            )
+
+        if event_rows:
+            self.connection.executemany(
+                """
+                INSERT OR IGNORE INTO conviction_lock_events (
+                    tx_hash,
+                    address,
+                    block_number,
+                    transaction_index,
+                    value_wei,
+                    timestamp
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                event_rows,
+            )
+
+        rows = []
+
+        for address in sorted(self.dirty_addresses):
+            record = self.cache.get(address)
+
+            if record is None:
+                continue
+
+            rows.append(
+                (
+                    address,
+                    str(
+                        record.get("conviction_locked_wei", "0")
+                        or "0"
+                    ),
+                    int(record.get("conviction_lock_tx_count") or 0),
+                    record.get("first_conviction_lock_block"),
+                    record.get("first_conviction_lock_tx_hash"),
+                    record.get("first_conviction_lock_time"),
+                    record.get("last_conviction_lock_block"),
+                    record.get("last_conviction_lock_tx_hash"),
+                    record.get("last_conviction_lock_time"),
+                    str(
+                        record.get("source")
+                        or "NO_CONVICTION_LOCK_FLOW"
+                    ),
+                    str(record.get("confidence") or "LOW"),
+                    str(record.get("updated_at") or ""),
+                )
+            )
+
+        if rows:
+            self.connection.executemany(
+                """
+                INSERT INTO conviction_metrics (
+                    address,
+                    conviction_locked_wei,
+                    conviction_lock_tx_count,
+                    first_conviction_lock_block,
+                    first_conviction_lock_tx_hash,
+                    first_conviction_lock_time,
+                    last_conviction_lock_block,
+                    last_conviction_lock_tx_hash,
+                    last_conviction_lock_time,
+                    source,
+                    confidence,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(address) DO UPDATE SET
+                    conviction_locked_wei =
+                        excluded.conviction_locked_wei,
+                    conviction_lock_tx_count =
+                        excluded.conviction_lock_tx_count,
+                    first_conviction_lock_block =
+                        excluded.first_conviction_lock_block,
+                    first_conviction_lock_tx_hash =
+                        excluded.first_conviction_lock_tx_hash,
+                    first_conviction_lock_time =
+                        excluded.first_conviction_lock_time,
+                    last_conviction_lock_block =
+                        excluded.last_conviction_lock_block,
+                    last_conviction_lock_tx_hash =
+                        excluded.last_conviction_lock_tx_hash,
+                    last_conviction_lock_time =
+                        excluded.last_conviction_lock_time,
+                    source =
+                        excluded.source,
+                    confidence =
+                        excluded.confidence,
+                    updated_at =
+                        excluded.updated_at
+                """,
+                rows,
+            )
+
+        written = len(rows)
+
+        self.pending_events.clear()
+        self.dirty_addresses.clear()
+
+        return written
+
+
 class SQLiteOfficialInceptionNFTTokens:
     """
     Latest-owner state for the official DAC Testnet Inception NFT.
@@ -624,11 +935,15 @@ class SQLiteRankState:
 
         self.wallet_metrics = SQLiteWalletMetrics(self.connection)
         self.staking_metrics = SQLiteStakingMetrics(self.connection)
+        self.conviction_metrics = SQLiteConvictionMetrics(
+            self.connection
+        )
         self.official_inception_nft_tokens = (
             SQLiteOfficialInceptionNFTTokens(self.connection)
         )
 
         self.last_staking_rows_written = 0
+        self.last_conviction_rows_written = 0
         self.last_official_inception_nft_rows_written = 0
 
     def _ensure_schema(self) -> None:
@@ -678,6 +993,55 @@ class SQLiteRankState:
             CREATE INDEX IF NOT EXISTS
                 staking_metrics_last_refreshed_block
             ON staking_metrics(last_refreshed_block);
+
+            CREATE TABLE IF NOT EXISTS conviction_lock_events (
+                tx_hash TEXT PRIMARY KEY,
+                address TEXT NOT NULL COLLATE NOCASE,
+                block_number INTEGER NOT NULL,
+                transaction_index INTEGER NOT NULL DEFAULT 0,
+                value_wei TEXT NOT NULL,
+                timestamp TEXT NOT NULL
+            );
+
+            CREATE INDEX IF NOT EXISTS
+                conviction_lock_events_address
+            ON conviction_lock_events(address);
+
+            CREATE INDEX IF NOT EXISTS
+                conviction_lock_events_block
+            ON conviction_lock_events(block_number);
+
+            CREATE TABLE IF NOT EXISTS conviction_metrics (
+                address TEXT PRIMARY KEY COLLATE NOCASE,
+
+                conviction_locked_wei TEXT
+                    NOT NULL DEFAULT '0',
+
+                conviction_lock_tx_count INTEGER
+                    NOT NULL DEFAULT 0,
+
+                first_conviction_lock_block INTEGER,
+                first_conviction_lock_tx_hash TEXT,
+                first_conviction_lock_time TEXT,
+
+                last_conviction_lock_block INTEGER,
+                last_conviction_lock_tx_hash TEXT,
+                last_conviction_lock_time TEXT,
+
+                source TEXT
+                    NOT NULL DEFAULT 'NO_CONVICTION_LOCK_FLOW',
+
+                confidence TEXT
+                    NOT NULL DEFAULT 'LOW',
+
+                updated_at TEXT
+                    NOT NULL DEFAULT ''
+            );
+
+            CREATE INDEX IF NOT EXISTS
+                conviction_metrics_last_lock_block
+            ON conviction_metrics(last_conviction_lock_block);
+
 
             CREATE TABLE IF NOT EXISTS
                 official_inception_nft_tokens (
@@ -799,8 +1163,20 @@ class SQLiteRankState:
             self.staking_metrics.dirty_addresses
         )
 
+        conviction_dirty_before = set(
+            self.conviction_metrics.dirty_addresses
+        )
+
+        conviction_pending_events_before = dict(
+            self.conviction_metrics.pending_events
+        )
+
         last_staking_rows_written_before = (
             self.last_staking_rows_written
+        )
+
+        last_conviction_rows_written_before = (
+            self.last_conviction_rows_written
         )
 
         official_inception_dirty_before = set(
@@ -816,6 +1192,7 @@ class SQLiteRankState:
 
             wallets_written = self.wallet_metrics.flush()
             staking_rows_written = self.staking_metrics.flush()
+            conviction_rows_written = self.conviction_metrics.flush()
 
             official_inception_nft_rows_written = (
                 self.official_inception_nft_tokens.flush()
@@ -840,6 +1217,10 @@ class SQLiteRankState:
                 staking_rows_written
             )
 
+            self.last_conviction_rows_written = (
+                conviction_rows_written
+            )
+
             self.last_official_inception_nft_rows_written = (
                 official_inception_nft_rows_written
             )
@@ -859,6 +1240,18 @@ class SQLiteRankState:
 
             self.last_staking_rows_written = (
                 last_staking_rows_written_before
+            )
+
+            self.conviction_metrics.dirty_addresses = (
+                conviction_dirty_before
+            )
+
+            self.conviction_metrics.pending_events = (
+                conviction_pending_events_before
+            )
+
+            self.last_conviction_rows_written = (
+                last_conviction_rows_written_before
             )
 
             self.official_inception_nft_tokens.dirty_token_ids = (
