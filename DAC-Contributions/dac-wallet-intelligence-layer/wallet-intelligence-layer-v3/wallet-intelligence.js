@@ -138,19 +138,23 @@ function getConvictionTimeliness(firstLockTimestamp) {
 
   const deltaSeconds = Math.max(0, firstLockTimestamp - CONVICTION_CUTOFF_UNIX);
 
-  if (deltaSeconds <= 3600) {
-    return { multiplier: 1.25, label: "Elite early conviction", deltaSeconds, rule: "first lock <= 1 hour" };
+  if (deltaSeconds <= 24 * 60 * 60) {
+    return { multiplier: 1.25, label: "Elite early conviction", deltaSeconds, rule: "first lock <= 24 hours" };
   }
-  if (deltaSeconds <= 21600) {
-    return { multiplier: 1.2, label: "Very early conviction", deltaSeconds, rule: "first lock <= 6 hours" };
+
+  if (deltaSeconds <= 2 * 24 * 60 * 60) {
+    return { multiplier: 1.2, label: "Very early conviction", deltaSeconds, rule: "first lock <= 2 days" };
   }
-  if (deltaSeconds <= 86400) {
-    return { multiplier: 1.15, label: "Early conviction", deltaSeconds, rule: "first lock <= 24 hours" };
+
+  if (deltaSeconds <= 3 * 24 * 60 * 60) {
+    return { multiplier: 1.15, label: "Early conviction", deltaSeconds, rule: "first lock <= 3 days" };
   }
-  if (deltaSeconds <= 259200) {
-    return { multiplier: 1.1, label: "Timely conviction", deltaSeconds, rule: "first lock <= 3 days" };
+
+  if (deltaSeconds <= 6 * 24 * 60 * 60) {
+    return { multiplier: 1.1, label: "Timely conviction", deltaSeconds, rule: "first lock <= 6 days" };
   }
-  if (deltaSeconds <= 604800) {
+
+  if (deltaSeconds <= 7 * 24 * 60 * 60) {
     return { multiplier: 1.05, label: "Conviction week participant", deltaSeconds, rule: "first lock <= 7 days" };
   }
 
@@ -415,6 +419,8 @@ const el = {
   nativeBalanceSource: document.getElementById("nativeBalanceSource"),
   stakedDaccValue: document.getElementById("stakedDaccValue"),
   stakedDaccSource: document.getElementById("stakedDaccSource"),
+  convictionLockedValue: document.getElementById("convictionLockedValue"),
+  convictionLockedSource: document.getElementById("convictionLockedSource"),
   transactionsValue: document.getElementById("transactionsValue"),
   transactionsSource: document.getElementById("transactionsSource"),
   collectionsValue: document.getElementById("collectionsValue"),
@@ -1304,6 +1310,11 @@ function buildFullWalletIntelligence(address, data) {
       totalStakeIn: stakedDacc ? stakedDacc.totalStakeIn : undefined,
       totalUnstakeOut: stakedDacc ? stakedDacc.totalUnstakeOut : undefined,
       estimatedCurrentStake: stakedDacc ? stakedDacc.estimatedCurrentStake : undefined,
+      estimatedStakeBeforeConviction: stakedDacc ? stakedDacc.estimatedStakeBeforeConviction : undefined,
+      postCutoverStakeIn: stakedDacc ? stakedDacc.postCutoverStakeIn : undefined,
+      postCutoverUnstakeOut: stakedDacc ? stakedDacc.postCutoverUnstakeOut : undefined,
+      postCutoverUnstakeTxCount: stakedDacc ? stakedDacc.postCutoverUnstakeTxCount : undefined,
+      convictionLocked: stakedDacc ? stakedDacc.convictionLocked : undefined,
       rewardReceived: stakedDacc ? stakedDacc.rewardReceived : undefined,
       contractOutTotal: stakedDacc ? stakedDacc.contractOutTotal : undefined,
       rewardTraceAvailable: stakedDacc ? stakedDacc.rewardTraceAvailable : undefined,
@@ -4158,16 +4169,23 @@ function renderFullOutput(output) {
   setMetric(
     el.nativeBalanceValue,
     el.nativeBalanceSource,
-    `${formatNumber(output.nativeBalance.balance, 8)} ${output.nativeBalance.token}`,
+    `${formatNumber(output.nativeBalance.balance, 4)} ${output.nativeBalance.token}`,
     "DAC Explorer"
   );
+  const stakeBeforeConvictionSignal = getStakeBeforeConvictionCardSignal(output);
   setMetric(
     el.stakedDaccValue,
     el.stakedDaccSource,
-    output.stakedDacc ? `${formatNumber(output.stakedDacc.amount, 8)} DACC` : "Unavailable",
-    output.stakedDacc
-      ? `${output.stakedDacc.mode || "STAKE_BEFORE_CONVICTION"} · ${output.stakedDacc.confidence || "UNKNOWN"}`
-      : "Unavailable"
+    stakeBeforeConvictionSignal.value,
+    stakeBeforeConvictionSignal.source
+  );
+
+  const convictionLockedSignal = getConvictionLockedCardSignal(output);
+  setMetric(
+    el.convictionLockedValue,
+    el.convictionLockedSource,
+    convictionLockedSignal.value,
+    convictionLockedSignal.source
   );
   setMetric(
     el.transactionsValue,
@@ -4250,19 +4268,24 @@ function renderPartialOutput(output) {
     el.nativeBalanceValue,
     el.nativeBalanceSource,
     output.nativeBalance
-      ? `${formatNumber(output.nativeBalance.balance, 8)} ${output.nativeBalance.token}`
+      ? `${formatNumber(output.nativeBalance.balance, 4)} ${output.nativeBalance.token}`
       : "Unavailable",
     output.availableData.nativeBalance ? "DAC Explorer" : "Module failed"
   );
+  const stakeBeforeConvictionSignal = getStakeBeforeConvictionCardSignal(output);
   setMetric(
     el.stakedDaccValue,
     el.stakedDaccSource,
-    output.stakedDacc
-      ? `${formatNumber(output.stakedDacc.amount, 8)} DACC`
-      : "Unavailable",
-    output.availableData.stakedDacc
-      ? `${output.stakedDacc.mode || "STAKE_BEFORE_CONVICTION"} · ${output.stakedDacc.confidence || "UNKNOWN"}`
-      : "Module failed"
+    stakeBeforeConvictionSignal.value,
+    stakeBeforeConvictionSignal.source
+  );
+
+  const convictionLockedSignal = getConvictionLockedCardSignal(output);
+  setMetric(
+    el.convictionLockedValue,
+    el.convictionLockedSource,
+    convictionLockedSignal.value,
+    convictionLockedSignal.source
   );
   setMetric(
     el.transactionsValue,
@@ -4313,7 +4336,7 @@ function renderRpcFallbackOutput(output) {
   setMetric(
     el.nativeBalanceValue,
     el.nativeBalanceSource,
-    `${formatNumber(output.nativeBalance.balance, 8)} ${output.nativeBalance.token}`,
+    `${formatNumber(output.nativeBalance.balance, 4)} ${output.nativeBalance.token}`,
     "DAC RPC eth_getBalance"
   );
   setMetric(
@@ -4323,6 +4346,7 @@ function renderRpcFallbackOutput(output) {
     "RPC nonce / outgoing tx count"
   );
   setMetric(el.stakedDaccValue, el.stakedDaccSource, "Unavailable", "Explorer/contract read required");
+  setMetric(el.convictionLockedValue, el.convictionLockedSource, "Unavailable", "Explorer/contract read required");
   setMetric(el.collectionsValue, el.collectionsSource, "Unavailable", "Explorer required");
   setMetric(el.nftHoldingsValue, el.nftHoldingsSource, "Unavailable", "Explorer required");
 
@@ -4349,6 +4373,7 @@ function renderFailureOutput(output) {
 
   setMetric(el.nativeBalanceValue, el.nativeBalanceSource, "Unavailable", "Explorer / RPC down");
   setMetric(el.stakedDaccValue, el.stakedDaccSource, "Unavailable", "Explorer / RPC down");
+  setMetric(el.convictionLockedValue, el.convictionLockedSource, "Unavailable", "Explorer / RPC down");
   setMetric(el.transactionsValue, el.transactionsSource, "Unavailable", "Explorer / RPC down");
   setMetric(el.collectionsValue, el.collectionsSource, "Unavailable", "Explorer down");
   setMetric(el.nftHoldingsValue, el.nftHoldingsSource, "Unavailable", "Explorer down");
@@ -5155,6 +5180,45 @@ function setStatus(type, label, message, icon = "◈") {
   el.statusLabel.textContent = label;
   el.statusMessage.textContent = message;
   el.statusIcon.textContent = icon;
+}
+
+function getStakeBeforeConvictionCardSignal(output) {
+  const stake = output && output.stakedDacc ? output.stakedDacc : null;
+
+  if (!stake) {
+    return {
+      value: "Unavailable",
+      source: "STAKE BEFORE CONVICTION · UNKNOWN",
+    };
+  }
+
+  return {
+    value: `${formatNumber(Number(stake.amount || 0), 6)} DACC`,
+    source: "STAKE BEFORE CONVICTION · HIGH",
+  };
+}
+
+function getConvictionTimingCardLabel(convictionLocked) {
+  if (!convictionLocked || Number(convictionLocked.amount || 0) <= 0) return "LATE";
+
+  const multiplier = Number(convictionLocked.timelinessMultiplier || 1);
+
+  if (multiplier >= 1.15) return "EARLY";
+  if (multiplier > 1) return "MID";
+  return "LATE";
+}
+
+function getConvictionLockedCardSignal(output) {
+  const stake = output && output.stakedDacc ? output.stakedDacc : null;
+  const conviction = stake && stake.convictionLocked ? stake.convictionLocked : null;
+  const amount = conviction ? Number(conviction.amount || 0) : 0;
+  const timing = getConvictionTimingCardLabel(conviction);
+  const confidence = stake ? "HIGH" : "UNKNOWN";
+
+  return {
+    value: `${formatNumber(amount, 6)} DACC`,
+    source: `CONVICTION LOCKED · ${timing} · ${confidence}`,
+  };
 }
 
 function setMetric(valueElement, sourceElement, value, source) {

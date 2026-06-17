@@ -1408,3 +1408,22 @@ Key updates:
 - Preserves DAC Inception Rank as `known-collection-registry-v1.3.3`.
 - Updates Dynamic Intelligence Badge behavior to monotonic progression: badge updates are only offered when the newly calculated tier is higher than the highest known tier already achieved.
 
+
+## v3.5.0 Scoreboard Conviction Card Polish
+
+This polish pass updates the live Wallet Output scoreboard for the Conviction-era WIL v3.5.0 interface.
+
+Key changes:
+- Added a dedicated `Conviction Locked` card between `Stake Before Conviction` and `Transactions`.
+- Balanced the first-row scoreboard into six compact cards.
+- Reduced Native Balance display precision to 4 decimals for cleaner one-line rendering.
+- Exposed `stakedDacc.convictionLocked` in the full wallet output object so the live card can show post-cutover locked DACC.
+- Updated Conviction timeliness scoring to use day-based windows:
+  - `<= 24 hours -> 1.25x`
+  - `<= 2 days -> 1.20x`
+  - `<= 3 days -> 1.15x`
+  - `<= 6 days -> 1.10x`
+  - `<= 7 days -> 1.05x`
+  - `> 7 days -> 1.00x`
+
+This keeps the stake-era and Conviction-era commitment signals visible side by side while preserving the WIL v3.5.0 separation between historical pre-cutover stake and active post-cutover Conviction locks.

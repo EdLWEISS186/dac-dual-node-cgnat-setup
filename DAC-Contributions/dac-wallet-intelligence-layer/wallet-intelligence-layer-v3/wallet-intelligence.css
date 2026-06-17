@@ -101,14 +101,14 @@ button:disabled{opacity:.45;cursor:not-allowed;transform:none}
 .result-topline{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-top:8px}
 .result-subtitle{color:var(--text-muted);font-family:var(--mono);font-size:11px;margin-top:6px}
 .mode-pill{white-space:nowrap;background:var(--surface);border:1px solid var(--border-bright);border-radius:999px;padding:8px 12px;color:var(--accent);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
-.scoreboard{display:grid;grid-template-columns:1.25fr repeat(4,1fr);gap:10px}
-.score-card{padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;min-height:104px}
+.scoreboard{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:stretch}
+.score-card{padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;min-height:108px;min-width:0}
 .score-card:hover,.history-card:hover,.sybil-card:hover,.module-card:hover,.scoring-card:hover,.stress-card:hover,.registry-card:hover,.assets-card:hover,.json-card:hover,.check-card:hover{border-color:var(--border-bright)}
-.score-card .score-label{display:block;font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1.4px;text-transform:uppercase}
-.score-card strong{display:block;font-family:var(--mono);font-size:24px;line-height:1.15;margin:13px 0 5px;color:var(--text);word-break:break-word}
-.score-card small{display:block;color:var(--text-muted);font-family:var(--mono);font-size:10px}
+.score-card .score-label{display:block;font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1.15px;text-transform:uppercase;min-height:24px;line-height:1.2}
+.score-card strong{display:block;font-family:var(--mono);font-size:20px;line-height:1.15;margin:12px 0 6px;color:var(--text);word-break:normal;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.score-card small{display:block;color:var(--text-muted);font-family:var(--mono);font-size:9.5px;line-height:1.35;overflow-wrap:anywhere}
 .hero-score{background:linear-gradient(135deg,rgba(31,78,216,0.18),rgba(20,20,20,0.95));border-color:rgba(31,78,216,0.28)}
-.hero-score strong{font-size:32px;color:var(--accent)}
+.hero-score strong{font-size:28px;color:var(--accent)}
 
 .module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .history-card,.sybil-card,.module-card,.scoring-card,.stress-card,.registry-card,.assets-card,.json-card{padding:16px}
