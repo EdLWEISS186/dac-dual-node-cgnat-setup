@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WIL v3.3.0 — SQLite Global Rank Publisher
+WIL v3.5.0 — SQLite Global Rank Publisher
 
 Reads the complete SQLite wallet population, calculates all comparative
 ranks globally with SQLite window functions, and emits compact browser
@@ -23,18 +23,19 @@ from pathlib import Path
 from typing import Any, Dict, Iterable
 
 
-VERSION = "v3.3.0"
+VERSION = "v3.5.0"
 CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
 NATIVE_TOKEN = "DACC"
 
-COMPACT_SCHEMA = "WIL_V3_COMPACT_ARRAY_V2"
-INDEX_MODE = "SHARDED_COMPACT_V2"
+COMPACT_SCHEMA = "WIL_V3_COMPACT_ARRAY_V3"
+INDEX_MODE = "SHARDED_COMPACT_V3"
 SHARD_PREFIX_LENGTH = 2
 
 SMALL_METRIC_ORDER = [
     "native_funds",
-    "estimated_current_stake",
+    "estimated_stake_before_conviction",
+    "conviction_locked",
     "transactions",
     "native_volume",
     "gas_used",
@@ -45,6 +46,11 @@ SMALL_METRIC_ORDER = [
 ]
 
 OFFICIAL_SIGNAL_KEY = "official_inception_nfts"
+CONVICTION_SIGNAL_KEY = "conviction_locked"
+CONVICTION_CONTRACT = "0xfc416635e3b7330404766bd8ea9e5227800937c1"
+CONVICTION_CUTOVER_BLOCK = 15021664
+CONVICTION_CUTOVER_UTC = "2026-06-16T07:50:29Z"
+CONVICTION_CUTOVER_LOCAL = "2026-06-16 14:50:29 +07:00"
 
 METRIC_ORDER = (
     SMALL_METRIC_ORDER
@@ -290,7 +296,8 @@ def create_build_schema(
             prefix TEXT NOT NULL,
 
             native_balance_wei TEXT NOT NULL,
-            estimated_current_stake_wei TEXT NOT NULL,
+            estimated_stake_before_conviction_wei TEXT NOT NULL,
+            conviction_locked_wei TEXT NOT NULL,
             transactions INTEGER NOT NULL,
             native_volume_wei TEXT NOT NULL,
             gas_used TEXT NOT NULL,
@@ -326,7 +333,11 @@ def iter_source_wallets(
             COALESCE(
                 staking.estimated_current_stake_wei,
                 '0'
-            ) AS estimated_current_stake_wei,
+            ) AS estimated_stake_before_conviction_wei,
+            COALESCE(
+                conviction.conviction_locked_wei,
+                '0'
+            ) AS conviction_locked_wei,
             COALESCE(
                 official.official_inception_nfts,
                 0
@@ -334,6 +345,8 @@ def iter_source_wallets(
         FROM wallet_metrics AS wallet
         LEFT JOIN staking_metrics AS staking
             ON staking.address = wallet.address
+        LEFT JOIN conviction_metrics AS conviction
+            ON conviction.address = wallet.address
         LEFT JOIN official_owner_counts AS official
             ON official.address = wallet.address
         ORDER BY wallet.address
@@ -362,7 +375,8 @@ def insert_rank_records(
             address,
             prefix,
             native_balance_wei,
-            estimated_current_stake_wei,
+            estimated_stake_before_conviction_wei,
+            conviction_locked_wei,
             transactions,
             native_volume_wei,
             gas_used,
@@ -372,7 +386,7 @@ def insert_rank_records(
             low_sybil_risk,
             official_inception_nfts
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
 
     build.execute("BEGIN")
@@ -380,7 +394,8 @@ def insert_rank_records(
     for (
         address,
         payload_json,
-        estimated_current_stake_wei,
+        estimated_stake_before_conviction_wei,
+        conviction_locked_wei,
         official_inception_nfts,
     ) in iter_source_wallets(
         source,
@@ -402,8 +417,11 @@ def insert_rank_records(
             "native_balance_wei": to_int(
                 metrics.get("native_balance_wei")
             ),
-            "estimated_current_stake_wei": to_int(
-                estimated_current_stake_wei
+            "estimated_stake_before_conviction_wei": to_int(
+                estimated_stake_before_conviction_wei
+            ),
+            "conviction_locked_wei": to_int(
+                conviction_locked_wei
             ),
             "transactions": to_int(
                 metrics.get("tx_count")
@@ -461,7 +479,12 @@ def insert_rank_records(
                 ),
                 integer_string(
                     record[
-                        "estimated_current_stake_wei"
+                        "estimated_stake_before_conviction_wei"
+                    ]
+                ),
+                integer_string(
+                    record[
+                        "conviction_locked_wei"
                     ]
                 ),
                 record["transactions"],
@@ -504,7 +527,7 @@ def calculate_global_ranks(
     connection: sqlite3.Connection,
 ) -> None:
     print(
-        "[INFO] Calculating nine small-card ranks "
+        "[INFO] Calculating ten small-card ranks "
         "and Official Rank Signal"
     )
 
@@ -517,7 +540,8 @@ def calculate_global_ranks(
             address,
             prefix,
             native_balance_wei,
-            estimated_current_stake_wei,
+            estimated_stake_before_conviction_wei,
+            conviction_locked_wei,
             transactions,
             native_volume_wei,
             gas_used,
@@ -537,11 +561,20 @@ def calculate_global_ranks(
             ROW_NUMBER() OVER (
                 ORDER BY
                     length(
-                        estimated_current_stake_wei
+                        estimated_stake_before_conviction_wei
                     ) DESC,
-                    estimated_current_stake_wei DESC,
+                    estimated_stake_before_conviction_wei DESC,
                     address ASC
-            ) AS rank_estimated_current_stake,
+            ) AS rank_estimated_stake_before_conviction,
+
+            ROW_NUMBER() OVER (
+                ORDER BY
+                    length(
+                        conviction_locked_wei
+                    ) DESC,
+                    conviction_locked_wei DESC,
+                    address ASC
+            ) AS rank_conviction_locked,
 
             ROW_NUMBER() OVER (
                 ORDER BY
@@ -669,7 +702,8 @@ def write_compact_shards(
         SELECT
             address,
             native_balance_wei,
-            estimated_current_stake_wei,
+            estimated_stake_before_conviction_wei,
+            conviction_locked_wei,
             transactions,
             native_volume_wei,
             gas_used,
@@ -679,7 +713,8 @@ def write_compact_shards(
             low_sybil_risk,
             official_inception_nfts,
             rank_native_funds,
-            rank_estimated_current_stake,
+            rank_estimated_stake_before_conviction,
+            rank_conviction_locked,
             rank_transactions,
             rank_native_volume,
             rank_gas_used,
@@ -704,7 +739,8 @@ def write_compact_shards(
             (
                 address,
                 native_balance_wei,
-                estimated_current_stake_wei,
+                estimated_stake_before_conviction_wei,
+                conviction_locked_wei,
                 transactions,
                 native_volume_wei,
                 gas_used,
@@ -714,7 +750,8 @@ def write_compact_shards(
                 low_sybil_risk,
                 official_inception_nfts,
                 rank_native_funds,
-                rank_estimated_current_stake,
+                rank_estimated_stake_before_conviction,
+                rank_conviction_locked,
                 rank_transactions,
                 rank_native_volume,
                 rank_gas_used,
@@ -731,7 +768,10 @@ def write_compact_shards(
                     native_balance_wei
                 ),
                 wei_to_native_string(
-                    estimated_current_stake_wei
+                    estimated_stake_before_conviction_wei
+                ),
+                wei_to_native_string(
+                    conviction_locked_wei
                 ),
                 int(transactions),
                 wei_to_native_string(
@@ -745,7 +785,8 @@ def write_compact_shards(
                 int(official_inception_nfts),
 
                 int(rank_native_funds),
-                int(rank_estimated_current_stake),
+                int(rank_estimated_stake_before_conviction),
+                int(rank_conviction_locked),
                 int(rank_transactions),
                 int(rank_native_volume),
                 int(rank_gas_used),
@@ -894,7 +935,7 @@ def main() -> None:
     )
 
     print(
-        "[INFO] WIL v3.3.0 SQLite global rank "
+        "[INFO] WIL v3.5.0 SQLite global rank "
         "publisher"
     )
     print(f"[INFO] state_db={source_database}")
@@ -1074,7 +1115,7 @@ def main() -> None:
             "version": VERSION,
             "project": (
                 "Wallet Intelligence Layer "
-                "v3.3.0"
+                "v3.5.0"
             ),
             "feature": (
                 "Wallet Rank Intelligence"
@@ -1101,7 +1142,7 @@ def main() -> None:
             ),
             "rank_model": (
                 "wallet-rank-intelligence-"
-                "v3.3.0-sqlite-global"
+                "v3.5.0-sqlite-global"
             ),
             "total_ranked_wallets": (
                 ranked_wallets
@@ -1123,6 +1164,15 @@ def main() -> None:
             "composite_ranking_variables": (
                 COMPOSITE_METRIC_ORDER
             ),
+            "conviction_locked_signal": {
+                "key": CONVICTION_SIGNAL_KEY,
+                "label": "Conviction Locked",
+                "contract": CONVICTION_CONTRACT,
+                "start_block": CONVICTION_CUTOVER_BLOCK,
+                "start_utc": CONVICTION_CUTOVER_UTC,
+                "start_local": CONVICTION_CUTOVER_LOCAL,
+                "source": "CONVICTION_LOCK_TRANSACTION_FLOW",
+            },
             "official_rank_signal": {
                 "key": OFFICIAL_SIGNAL_KEY,
                 "label": (

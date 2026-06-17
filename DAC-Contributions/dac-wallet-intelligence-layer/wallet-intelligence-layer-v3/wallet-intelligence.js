@@ -658,7 +658,7 @@ async function getStakedDaccFromExplorer(address) {
 
   // Prefer the stake-flow classifier when it has observed stake/unstake flow,
   // because the staking contract is not verified and balanceOf(address) may not
-  // be the correct getter for current stake.
+  // be the correct getter for live stake-era state.
   if (classifier && classifier.flowTxCount > 0) {
     return {
       ...classifier,
@@ -679,7 +679,7 @@ async function getStakedDaccFromExplorer(address) {
       ...direct,
       confidence: "VERY_HIGH",
       note:
-        "Direct contract read returned a positive value. This is treated as current stake, but exact semantics depend on the staking contract getter.",
+        "Direct contract read returned a positive value. This is treated as stake-era state, but exact semantics depend on the staking contract getter.",
     };
   }
 
@@ -773,7 +773,7 @@ async function getStakedDaccFromStakeFlowClassifier(address) {
     }
 
     // Safety bucket: value sent to the staking contract without recognized selector.
-    // This is not used for current stake scoring, but is kept in raw output.
+    // This is not used for stake-before-Conviction scoring, but is kept in raw output.
     if (value > 0n) {
       unclassifiedContractInWei += value;
     }
@@ -806,7 +806,7 @@ async function getStakedDaccFromStakeFlowClassifier(address) {
     flowTxCount: stakeTxCount + unstakeTxCount,
     unclassifiedContractIn: weiBigIntToNumber(unclassifiedContractInWei),
     note:
-      "Estimated current stake is calculated as total recognized stake-in minus decoded unstake-out. Contract-to-wallet internal transfers are separated as reward/return flow and are not subtracted from stake unless decoded from the unstake calldata.",
+      "Estimated stake before Conviction is calculated as total recognized stake-in minus decoded unstake-out before the Conviction cutover. Contract-to-wallet internal transfers are separated as reward/return flow and are not subtracted from stake unless decoded from the unstake calldata.",
   };
 }
 
@@ -1355,7 +1355,7 @@ function buildReputationScore({
       points: daccStakeScore,
       maxPoints: 20,
       metric: stakedDacc,
-      metricLabel: "staked DACC",
+      metricLabel: "stake-era DACC",
       condition: stakeScore.rule,
       tier: stakeScore.tier,
     },
@@ -2520,7 +2520,7 @@ function buildSybilExplanationFlags(metrics, archetype) {
   }
 
   if (metrics.stakedDacc > 0) {
-    flags.push(`${formatNumber(metrics.stakedDacc, 4)} DACC estimated current stake detected.`);
+    flags.push(`${formatNumber(metrics.stakedDacc, 4)} DACC estimated stake-before-Conviction detected.`);
   }
 
   if (metrics.topCounterpartyShare > 0.6) {
@@ -4264,12 +4264,12 @@ function renderHistoricalActivity(historicalActivity) {
           ${
             window.label === "All Time"
               ? `<div class="history-current-stake">
-                  Estimated Current Stake: <strong>${formatNullableNumber(window.netStakeFlow, 4)} DACC</strong>
+                  Estimated Stake Before Conviction: <strong>${formatNullableNumber(window.netStakeFlow, 4)} DACC</strong>
                 </div>`
               : ""
           }
           <div class="history-stake-line">
-            Net Staked: <strong>${formatNullableNumber(window.netStakeFlow, 4)} DACC</strong><br>
+            Net Stake Flow Before Conviction: <strong>${formatNullableNumber(window.netStakeFlow, 4)} DACC</strong><br>
             Stake In: ${formatNullableNumber(window.stakeIn, 4)} DACC · Stake Out: ${formatNullableNumber(window.unstakeOut, 4)} DACC
           </div>
         </article>

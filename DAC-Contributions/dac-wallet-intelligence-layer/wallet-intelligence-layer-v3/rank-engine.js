@@ -1,5 +1,5 @@
 /*
- * Wallet Intelligence Layer v3.3.0 — Wallet Rank Intelligence
+ * Wallet Intelligence Layer v3.5.0 — Wallet Rank Intelligence
  *
  * Hybrid helper:
  * - Fetches real-time Explorer API network snapshot.
@@ -15,7 +15,8 @@
 
   const METRICS = [
     { key: "native_funds", rankKey: "native_funds", label: "Native Funds", suffix: "DACC", layout: "metric" },
-    { key: "estimated_current_stake", rankKey: "estimated_current_stake", label: "Estimated Current Stake", suffix: "DACC", layout: "metric" },
+    { key: "estimated_stake_before_conviction", rankKey: "estimated_stake_before_conviction", label: "Estimated Stake Before Conviction", suffix: "DACC", layout: "metric" },
+    { key: "conviction_locked", rankKey: "conviction_locked", label: "Conviction Locked", suffix: "DACC", layout: "metric" },
     { key: "transactions", rankKey: "transactions", label: "Transactions", suffix: "tx", layout: "metric" },
     { key: "native_volume", rankKey: "native_volume", label: "Native Volume", suffix: "DACC", layout: "metric" },
     { key: "gas_used", rankKey: "gas_used", label: "Gas Used", suffix: "gas", layout: "metric" },
@@ -83,7 +84,8 @@
     return (
       mode === "SHARDED" ||
       mode === "SHARDED_COMPACT_V1" ||
-      mode === "SHARDED_COMPACT_V2"
+      mode === "SHARDED_COMPACT_V2" ||
+      mode === "SHARDED_COMPACT_V3"
     );
   }
 
@@ -101,6 +103,10 @@
       (
         mode === "SHARDED_COMPACT_V2" &&
         schema === "WIL_V3_COMPACT_ARRAY_V2"
+      ) ||
+      (
+        mode === "SHARDED_COMPACT_V3" &&
+        schema === "WIL_V3_COMPACT_ARRAY_V3"
       )
     );
   }
@@ -142,11 +148,13 @@
   function decodeCompactProfile(address, compactRecord) {
     const schema = String(rankIndex.record_schema || "");
     const isV2 = schema === "WIL_V3_COMPACT_ARRAY_V2";
+    const isV3 = schema === "WIL_V3_COMPACT_ARRAY_V3";
 
-    const defaultMetricOrder = isV2
+    const defaultMetricOrder = isV3
       ? [
           "native_funds",
-          "estimated_current_stake",
+          "estimated_stake_before_conviction",
+          "conviction_locked",
           "transactions",
           "native_volume",
           "gas_used",
@@ -156,16 +164,29 @@
           "low_sybil_risk",
           "official_inception_nfts"
         ]
-      : [
-          "native_funds",
-          "transactions",
-          "gas_used",
-          "native_volume",
-          "nft_holdings",
-          "collection_diversity",
-          "reputation_score",
-          "low_sybil_risk"
-        ];
+      : isV2
+        ? [
+            "native_funds",
+            "estimated_current_stake",
+            "transactions",
+            "native_volume",
+            "gas_used",
+            "nft_holdings",
+            "collection_diversity",
+            "reputation_score",
+            "low_sybil_risk",
+            "official_inception_nfts"
+          ]
+        : [
+            "native_funds",
+            "transactions",
+            "gas_used",
+            "native_volume",
+            "nft_holdings",
+            "collection_diversity",
+            "reputation_score",
+            "low_sybil_risk"
+          ];
 
     const defaultRankOrder = [
       ...defaultMetricOrder,
@@ -248,12 +269,26 @@
       );
     });
 
-    const strongestMetricOrder = (
+    if (
       isV2 &&
+      metrics.estimated_current_stake !== undefined
+    ) {
+      metrics.estimated_stake_before_conviction =
+        metrics.estimated_current_stake;
+
+      ranks.estimated_stake_before_conviction =
+        ranks.estimated_current_stake;
+
+      percentiles.estimated_stake_before_conviction =
+        percentiles.estimated_current_stake;
+    }
+
+    const strongestMetricOrder = (
+      (isV2 || isV3) &&
       Array.isArray(
         rankIndex.small_metric_order
       ) &&
-      rankIndex.small_metric_order.length === 9
+      rankIndex.small_metric_order.length >= 9
     )
       ? rankIndex.small_metric_order
       : metricOrder.filter(
@@ -275,7 +310,9 @@
         percentile < bestPercent
       ) {
         bestPercent = percentile;
-        strongestMetric = key;
+        strongestMetric = key === "estimated_current_stake"
+          ? "estimated_stake_before_conviction"
+          : key;
       }
     });
 
@@ -283,8 +320,16 @@
       Array.isArray(
         rankIndex.available_rank_variables
       )
-        ? rankIndex.available_rank_variables
-        : rankOrder;
+        ? [...rankIndex.available_rank_variables]
+        : [...rankOrder];
+
+    if (
+      isV2 &&
+      availableVariables.includes("estimated_current_stake") &&
+      !availableVariables.includes("estimated_stake_before_conviction")
+    ) {
+      availableVariables.push("estimated_stake_before_conviction");
+    }
 
     const pendingVariables =
       Array.isArray(
