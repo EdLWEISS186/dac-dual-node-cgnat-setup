@@ -1523,6 +1523,19 @@ Point-in-time wallet counts, token counts, and block checkpoints are intentional
 - Updated Native Funds scoring to use cutoff-aware Native Funds Before Conviction instead of current post-cutover liquid balance.
 - Updated Dynamic Intelligence Badge behavior to monotonic tier progression.
 
+### v3.4.0 — Worker Acceleration & Operational Hardening
+
+- Optimized Local RPC worker counterparty tracking.
+- Improved historical backfill throughput through sorted counterparty lookup.
+- Benchmarked production worker presets from 3000 to 7000 blocks per cycle.
+- Selected 5000 blocks, balance enrichment 1000, and 180 seconds sleep as the stable 24/7 default.
+- Added backup wrapper cleanup after successful Google Drive upload.
+- Preserved cron-based SQLite backup every 6 hours.
+- Disabled per-cycle backup to reduce CPU, disk I/O, upload, and calendar overhead.
+- Added a terminal worker dashboard for prepare, indexing, push, sleep, and next-cycle visibility.
+- Reduced local GDrive upload-work storage growth.
+- Documented operational ETA ranges for reaching incremental sync.
+
 ### v3.3.0 — Stable
 
 - Introduced the LiteSQLite architecture: SQLite-backed low-storage authoritative state.
