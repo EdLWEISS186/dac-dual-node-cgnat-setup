@@ -14,12 +14,12 @@ This report compares two infrastructure observation windows derived from tracked
 
 | Field | Value |
 |---|---|
-| Snapshot count | 7 |
-| Observation index range | 31 -> 37 |
-| First checked at UTC | 2026-06-10T18:40:39.968153+00:00 |
+| Snapshot count | 6 |
+| Observation index range | 32 -> 37 |
+| First checked at UTC | 2026-06-10T21:13:30.728841+00:00 |
 | Latest checked at UTC | 2026-06-13T17:43:45.241764+00:00 |
-| Overall status counts | DEGRADED: 3, HEALTHY: 3, PARTIAL_OUTAGE: 1 |
-| Availability score | 0.6929 |
+| Overall status counts | DEGRADED: 2, HEALTHY: 3, PARTIAL_OUTAGE: 1 |
+| Availability score | 0.7167 |
 
 ### Window B
 
@@ -36,24 +36,24 @@ This report compares two infrastructure observation windows derived from tracked
 
 | Endpoint | Window A status counts | Window B status counts | Window A avg response | Window B avg response | Direction |
 |---|---|---|---:|---:|---|
-| official_public_rpc | DEGRADED: 3, HEALTHY: 3, UNHEALTHY: 1 | DEGRADED: 2, HEALTHY: 4, UNHEALTHY: 1 | 2043.57 ms | 1531.29 ms | IMPROVED |
-| explorer_web | HEALTHY: 7 | HEALTHY: 7 | 589.57 ms | 734.86 ms | WORSENED |
-| primary_explorer_api | HEALTHY: 7 | HEALTHY: 7 | 433.29 ms | 561.14 ms | WORSENED |
+| official_public_rpc | DEGRADED: 2, HEALTHY: 3, UNHEALTHY: 1 | DEGRADED: 2, HEALTHY: 4, UNHEALTHY: 1 | 2027.0 ms | 1531.29 ms | IMPROVED |
+| explorer_web | HEALTHY: 6 | HEALTHY: 7 | 602.0 ms | 734.86 ms | WORSENED |
+| primary_explorer_api | HEALTHY: 6 | HEALTHY: 7 | 437.17 ms | 561.14 ms | WORSENED |
 
 ## 3. Response Class Comparison
 
 | Endpoint | Window A response classes | Window B response classes | Window A max response | Window B max response |
 |---|---|---|---:|---:|
-| official_public_rpc | FAST: 1, MODERATE: 1, SLOW: 5 | FAST: 1, MODERATE: 2, SLOW: 4 | 4780.0 ms | 4632.0 ms |
-| explorer_web | FAST: 2, MODERATE: 5 | FAST: 1, MODERATE: 6 | 825.0 ms | 1246.0 ms |
-| primary_explorer_api | FAST: 6, MODERATE: 1 | FAST: 2, MODERATE: 5 | 623.0 ms | 1157.0 ms |
+| official_public_rpc | FAST: 1, MODERATE: 1, SLOW: 4 | FAST: 1, MODERATE: 2, SLOW: 4 | 4780.0 ms | 4632.0 ms |
+| explorer_web | FAST: 2, MODERATE: 4 | FAST: 1, MODERATE: 6 | 825.0 ms | 1246.0 ms |
+| primary_explorer_api | FAST: 5, MODERATE: 1 | FAST: 2, MODERATE: 5 | 623.0 ms | 1157.0 ms |
 
 ## 4. Interpretation
 
-- Overall availability score changed from 0.6929 to 0.7571: IMPROVED.
-- Official Public RPC average response changed from 2043.57 ms to 1531.29 ms: IMPROVED.
-- Explorer Web average response changed from 589.57 ms to 734.86 ms: WORSENED.
-- Primary Explorer API average response changed from 433.29 ms to 561.14 ms: WORSENED.
+- Overall availability score changed from 0.7167 to 0.7571: IMPROVED.
+- Official Public RPC average response changed from 2027.0 ms to 1531.29 ms: IMPROVED.
+- Explorer Web average response changed from 602.0 ms to 734.86 ms: WORSENED.
+- Primary Explorer API average response changed from 437.17 ms to 561.14 ms: WORSENED.
 - The later observation window shows stronger overall infrastructure availability.
 
 ## 5. Window Timelines
@@ -62,7 +62,6 @@ This report compares two infrastructure observation windows derived from tracked
 
 | # | Checked at UTC | Overall | RPC | RPC class | Explorer Web | Web class | Explorer API | API class |
 |---:|---|---|---|---|---|---|---|---|
-| 31 | 2026-06-10T18:40:39.968153+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | MODERATE | HEALTHY | FAST |
 | 32 | 2026-06-10T21:13:30.728841+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | FAST | HEALTHY | FAST |
 | 33 | 2026-06-10T22:57:26.492242+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | FAST | HEALTHY | FAST |
 | 34 | 2026-06-11T00:13:29.727818+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | FAST |
