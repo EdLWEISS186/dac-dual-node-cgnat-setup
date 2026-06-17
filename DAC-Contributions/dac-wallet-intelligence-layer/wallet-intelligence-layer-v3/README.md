@@ -1,8 +1,8 @@
-# DAC Wallet Intelligence Layer v3.3.0
+# DAC Wallet Intelligence Layer v3.5.0
 
 Client-side wallet intelligence interface and globally comparative public wallet rank system for the **DAC Quantum Chain Testnet**.
 
-Wallet Intelligence Layer v3.3.0 completes the v3 architecture transition from an experimental GitHub Actions prototype into a local-node, SQLite-backed, low-storage wallet intelligence pipeline with compact public rank delivery.
+Wallet Intelligence Layer v3.5.0 extends the stable v3 architecture into the Inception Evolved phase with Conviction-aware indexing, Compact V3 public rank delivery, and a new Conviction Locked comparative signal.
 
 The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
@@ -12,13 +12,13 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
 - [Wallet Intelligence Layer v3](https://edlweiss186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/)
 
-![Version](https://img.shields.io/badge/version-v3.3.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-v3.5.0-blue?style=flat-square)
 ![Release](https://img.shields.io/badge/release-stable-brightgreen?style=flat-square)
 ![Network](https://img.shields.io/badge/network-DAC%20testnet-yellow?style=flat-square)
 ![Chain ID](https://img.shields.io/badge/chain%20ID-21894-blueviolet?style=flat-square)
 ![Wallet Check](https://img.shields.io/badge/wallet%20check-no%20connect%20required-brightgreen?style=flat-square)
 ![State Backend](https://img.shields.io/badge/state-SQLite-orange?style=flat-square)
-![Rank Schema](https://img.shields.io/badge/rank%20schema-Compact%20V2-informational?style=flat-square)
+![Rank Schema](https://img.shields.io/badge/rank%20schema-Compact%20V3-informational?style=flat-square)
 ![Public Output](https://img.shields.io/badge/public%20output-GitHub-lightgrey?style=flat-square)
 
 ---
@@ -26,7 +26,7 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 ## Table of Contents
 
 - [Overview](#overview)
-- [v3.3.0 Update Summary](#v330-update-summary)
+- [v3.5.0 Update Summary](#v350-update-summary)
 - [Release Notes](#release-notes)
 - [Relationship to Previous Projects](#relationship-to-previous-projects)
 - [Architecture Topology](#architecture-topology)
@@ -37,7 +37,8 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 - [Historical Repair Workflow](#historical-repair-workflow)
 - [Low-Storage Worker Model](#low-storage-worker-model)
 - [Global Rank Builder](#global-rank-builder)
-- [Compact Public Rank Schema V2](#compact-public-rank-schema-v2)
+- [Compact Public Rank Schema V3](#compact-public-rank-schema-v3)
+- [Conviction Locked Signal](#conviction-locked-signal)
 - [Ranking Model](#ranking-model)
 - [Official Rank Signal](#official-rank-signal)
 - [Dedicated Rank Publisher](#dedicated-rank-publisher)
@@ -58,7 +59,7 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
 ## Overview
 
-Wallet Intelligence Layer v3.3.0 is a DAC Testnet wallet intelligence and comparative ranking system.
+Wallet Intelligence Layer v3.5.0 is a DAC Testnet wallet intelligence and comparative ranking system with post-cutover Conviction awareness.
 
 The interface keeps the no-connect wallet check model from previous Wallet Intelligence Layer versions, then adds a rank intelligence layer that compares a wallet against the complete indexed wallet population.
 
@@ -86,71 +87,86 @@ The shard is only a delivery format. The comparison population remains global.
 
 ---
 
-## v3.3.0 Update Summary
+## v3.5.0 Update Summary
 
-Version `v3.3.0` is the first stable and production-ready v3 architecture.
+Version `v3.5.0` is the Conviction-aware web, worker, and public rank schema release for the Inception Evolved phase.
 
-The main state architecture change:
+The v3.3.0 architecture remains the stable base:
 
 ```text
-External monolithic JSON state
+Local RPC nodes
 ↓
-Authoritative local SQLite state
+Low-storage worker
+↓
+Authoritative SQLite state
+↓
+Global rank builder
+↓
+Compact public rank artifacts
+↓
+Static browser lookup
 ```
 
-The main publishing change:
+The main protocol-context change:
 
 ```text
-Worker-generated rank output every cycle
+Stake-era active signal
 ↓
-Dedicated global rank builder and snapshot publisher
+Frozen as Estimated Stake Before Conviction
 ```
 
-The main data-model additions:
+The main new commitment signal:
 
 ```text
-Estimated Current Stake
-Official Testnet Inception NFT ownership
-Official Rank Signal
+Conviction Sprint lock transaction
+↓
+Conviction Locked
 ```
 
 The main public schema change:
 
 ```text
-WIL_V3_COMPACT_ARRAY_V1
-↓
 WIL_V3_COMPACT_ARRAY_V2
+↓
+WIL_V3_COMPACT_ARRAY_V3
 ```
 
 The main UI change:
 
 ```text
-8 small rank cards + Final Composite Rank
+Estimated Current Stake
 ↓
-9 small rank cards + Official Rank Signal + Final Composite Rank
+Estimated Stake Before Conviction + Conviction Locked
 ```
 
 Key updates:
 
-- Replaced the active monolithic JSON state with SQLite.
-- Preserved existing indexed wallet data and historical checkpoints.
-- Added transactional wallet, staking, checkpoint, and NFT ownership updates.
-- Added Estimated Current Stake as a separate comparative metric.
-- Added Official Testnet Inception NFT ownership tracking.
-- Added a resumable Official NFT historical repair worker.
-- Added Compact V2 public rank records.
-- Finalized a reader compatible with Compact V1 and Compact V2.
-- Separated the global rank builder from the main block worker.
-- Added a dedicated snapshot publisher for the public rank branch.
-- Preserved lightweight status behavior during historical backfill.
+- Added Conviction cutover awareness at block `15021664`.
+- Added `conviction_locked` as a public comparative rank metric.
+- Renamed the old stake-era rank metric to `estimated_stake_before_conviction`.
+- Added `conviction_lock_events` and `conviction_metrics` SQLite state support in the worker layer.
+- Updated the compact public shard schema to `WIL_V3_COMPACT_ARRAY_V3`.
+- Updated public shard mode to `SHARDED_COMPACT_V3`.
+- Updated the public rank publisher validator for Compact V3.
+- Kept `rank-engine.js` backward-compatible with Compact V2 snapshots.
 - Preserved the original eight-variable Final Composite Rank formula.
-- Added nine small rank cards.
-- Added a full-width Official Rank Signal card.
-- Retained the full-width Final Composite Rank card.
-- Updated visible version labels to `v3.3.0`.
-- Updated Dynamic Intelligence Badge label to `DIB-v3.3.0`.
-- Added consistent compressed SQLite backups to Google Drive A/B.
-- Preserved temporary workspace cleanup as part of the low-storage design.
+- Kept Estimated Stake Before Conviction, Conviction Locked, and Official Testnet Inception NFTs outside the Final Composite Rank formula.
+- Updated visible UI labels to `Wallet Intelligence Layer v3.5.0`.
+- Updated Dynamic Intelligence Badge label to `DIB-v3.5.0`.
+
+Conviction cutover metadata:
+
+```text
+cutover_block  = 15021664
+cutover_utc    = 2026-06-16T07:50:29Z
+cutover_local  = 2026-06-16 14:50:29 +07:00
+contract       = 0xfc416635E3b7330404766bd8ea9E5227800937C1
+selector       = 0x3a4b66f1
+```
+
+Operational note:
+
+The backend worker may still be in historical backfill or post-backfill catch-up. During that period, the UI and public rank artifacts must continue to show rank-data readiness status clearly. Conviction rows become available after the worker reaches the post-cutover catch-up range.
 
 ---
 
@@ -172,11 +188,14 @@ Externalized state and Google Drive backup
 
 v3.3.0
 Stable SQLite-backed production architecture
+
+v3.5.0
+Conviction-aware web, worker, and Compact V3 public rank schema
 ```
 
 The earlier releases remain important because they show why the architecture changed. They are not presented as failed releases; they are development stages that exposed runtime, storage, memory, and publication constraints.
 
-Version `v3.3.0` is the first stable v3 release because the complete pipeline is now separated into clear responsibilities:
+Version `v3.3.0` is the first stable v3 release because the complete pipeline was separated into clear responsibilities:
 
 - local RPC indexing;
 - SQLite authoritative state;
@@ -187,13 +206,15 @@ Version `v3.3.0` is the first stable v3 release because the complete pipeline is
 - browser-side shard lookup;
 - UI rank rendering.
 
+Version `v3.5.0` keeps that architecture and adapts it to the post-stake, Conviction-era Inception Evolved phase.
+
 “Production-ready” refers to the completed and validated architecture. Rank completeness still follows the current synchronization phase. During historical backfill or catch-up, the UI must not imply that the full chain population is already finalized.
 
 ---
 
 ## Relationship to Previous Projects
 
-Wallet Intelligence Layer v3.3.0 is part of a broader DAC tooling progression.
+Wallet Intelligence Layer v3.5.0 is part of a broader DAC tooling progression.
 
 It does not replace earlier projects. It builds on the same testnet tooling path: activity generation, wallet reading, dynamic wallet status representation, and public comparative rank intelligence.
 
@@ -202,7 +223,7 @@ It does not replace earlier projects. It builds on the same testnet tooling path
 | DAC Sender | `v1.4.3` | Activity-generation and testnet interaction tool. It helps create visible DAC Testnet wallet behavior. | [DAC Sender](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Sender-Web) |
 | Wallet Intelligence Layer | `v1.5.4` | First wallet intelligence layer focused on reading and interpreting public DAC wallet activity. | [Wallet Intelligence Layer v1](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1) |
 | Wallet Intelligence Layer | `v2.0.2` | Extended wallet intelligence into a dynamic wallet-bound status badge workflow. | [Wallet Intelligence Layer v2](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v2) |
-| Wallet Intelligence Layer | `v3.3.0` | Global comparative wallet intelligence using local DAC nodes, SQLite state, Compact V2 rank artifacts, and public shard lookup. | [Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
+| Wallet Intelligence Layer | `v3.5.0` | Global comparative wallet intelligence using local DAC nodes, SQLite state, Compact V3 rank artifacts, Conviction-aware metrics, and public shard lookup. | [Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
 
 In short:
 
@@ -224,7 +245,7 @@ Wallet Intelligence Layer v3
 
 ## Architecture Topology
 
-Wallet Intelligence Layer v3.3.0 uses a hybrid local-processing and public-delivery architecture.
+Wallet Intelligence Layer v3.5.0 uses the same hybrid local-processing and public-delivery architecture from v3.3.0, with the public artifact layer upgraded to Compact V3 and the state layer expanded for Conviction tracking.
 
 ```text
                            ┌──────────────────────────────┐
@@ -245,11 +266,13 @@ Wallet Intelligence Layer v3.3.0 uses a hybrid local-processing and public-deliv
                            ┌──────────────────────────────┐
                            │ Local RPC Rank Worker        │
                            │ Backfill / Catch-up / Sync   │
+                           │ Conviction-aware v3.5.0      │
                            └──────────────┬───────────────┘
                                           ▼
                            ┌──────────────────────────────┐
                            │ Authoritative SQLite State   │
                            │ wallet / stake / NFT / sync  │
+                           │ conviction lock state        │
                            └───────────┬───────────┬──────┘
                                        │           │
                        ┌───────────────┘           └────────────────┐
@@ -260,8 +283,9 @@ Wallet Intelligence Layer v3.3.0 uses a hybrid local-processing and public-deliv
           └──────────────────────────┘               └─────────────┬────────────┘
                                                                    ▼
                                                     ┌──────────────────────────┐
-                                                    │ Compact V2 Rank Artifacts│
+                                                    │ Compact V3 Rank Artifacts│
                                                     │ summary / index / shards │
+                                                    │ Conviction Locked signal │
                                                     └─────────────┬────────────┘
                                                                    ▼
                                                     ┌──────────────────────────┐
@@ -272,6 +296,7 @@ Wallet Intelligence Layer v3.3.0 uses a hybrid local-processing and public-deliv
                                                     ┌──────────────────────────┐
                                                     │ Static UI / GitHub Pages │
                                                     │ rank-engine.js lookup    │
+                                                    │ Compact V2/V3 decoder    │
                                                     └──────────────────────────┘
 ```
 
@@ -286,15 +311,15 @@ The normal live-wallet interface may also read official DAC Explorer/API data fo
 | DAC Testnet | Canonical blockchain activity source |
 | Linux DAC Node | Primary local RPC source |
 | Windows DAC Node | Fallback local RPC source |
-| Local RPC Worker | Block processing, wallet metrics, stake flow, NFT ownership, checkpoints |
+| Local RPC Worker | Block processing, wallet metrics, stake-era flow, Conviction lock flow, NFT ownership, checkpoints |
 | SQLite State | Authoritative heavy local rank state |
-| Historical Repair Workers | Fill feature-specific gaps without restarting the main backfill |
+| Historical Repair Workers | Fill feature-specific historical gaps without restarting the main backfill |
 | Google Drive A/B | Consistent compressed SQLite backup and rollover storage |
 | Global Rank Builder | Full-population comparative rank calculation |
 | Snapshot Publisher | Compact public artifact validation and publication |
 | GitHub `main` | Source code, scripts, UI, lightweight project files |
 | `wil-v3-rank-data` | Public summary, index, shards, and snapshot manifest |
-| `rank-engine.js` | Summary/index loading, shard lookup, Compact V1/V2 decoding |
+| `rank-engine.js` | Summary/index loading, shard lookup, Compact V2/V3 decoding |
 | Static UI | User input, rank card rendering, live public context |
 
 ---
@@ -347,6 +372,22 @@ Expected chain ID:
 
 The local nodes provide block, transaction, receipt, log, balance, and chain-head data for the worker.
 
+### Conviction Lock Flow
+
+After the cutover block, the worker recognizes Conviction lock transactions sent to:
+
+```text
+0xfc416635E3b7330404766bd8ea9E5227800937C1
+```
+
+The active lock function selector is:
+
+```text
+0x3a4b66f1
+```
+
+Successful value-bearing calls to this contract are aggregated as Conviction Locked.
+
 ### Generated Public Rank Data
 
 The frontend reads precomputed rank outputs rather than the SQLite database.
@@ -367,13 +408,15 @@ The active heavy state is stored outside GitHub:
 ~/wil-v3-rank-state/wil-v3-rank-state.sqlite
 ```
 
-SQLite is the source of truth for the v3.3.0 rank worker.
+SQLite is the source of truth for the v3.5.0 rank worker.
 
 Principal logical tables include:
 
 ```text
 wallet_metrics
 staking_metrics
+conviction_lock_events
+conviction_metrics
 official_inception_nft_tokens
 checkpoint
 counters
@@ -400,7 +443,33 @@ Preserves wallet intelligence material such as:
 
 ### `staking_metrics`
 
-Stores recognized stake/unstake flow and Estimated Current Stake.
+Stores recognized stake/unstake flow preserved as Estimated Stake Before Conviction.
+
+The stake-era signal is not deleted in v3.5.0. It is retained as historical wallet-quality context before the Conviction cutover.
+
+### `conviction_lock_events`
+
+Stores deduplicated Conviction lock transactions.
+
+Each event is keyed by transaction hash and captures:
+
+- wallet address;
+- block number;
+- transaction index;
+- locked value in wei;
+- event timestamp.
+
+### `conviction_metrics`
+
+Stores wallet-level Conviction Locked aggregates.
+
+The table tracks:
+
+- total Conviction Locked value;
+- Conviction lock transaction count;
+- first Conviction lock block/transaction/time;
+- last Conviction lock block/transaction/time;
+- source and confidence metadata.
 
 ### `official_inception_nft_tokens`
 
@@ -497,7 +566,8 @@ The worker processes:
 - wallet activity counters;
 - NFT activity;
 - collection diversity;
-- stake and unstake flow;
+- stake and unstake flow before the Conviction cutover;
+- Conviction lock transaction flow after the cutover;
 - Official Inception NFT `Transfer` logs;
 - checkpoint and phase transitions.
 
@@ -515,6 +585,7 @@ Lightweight status may include:
 - total processed transactions;
 - state backend;
 - feature support flags;
+- Conviction support flags;
 - public rank readiness.
 
 Global rank generation is handled separately.
@@ -545,6 +616,12 @@ The Official NFT repair scans backward from the original anchor toward the curre
 This direction is intentional: the newest token ownership event is encountered first, and older events cannot overwrite a newer stored event position.
 
 A completed repair remains recorded for audit and recovery, while the main worker continues from its own checkpoint.
+
+### Conviction Cutover Note
+
+Conviction indexing was added directly to the main v3.5.0 worker path.
+
+No temporary Conviction repair worker is required while the worker is still in historical backfill. Conviction lock rows are expected to appear after the worker completes historical backfill and reaches the post-cutover range during post-backfill catch-up.
 
 ---
 
@@ -608,15 +685,16 @@ The builder:
 
 1. creates a consistent source snapshot;
 2. streams wallet metrics into a temporary rank-build database;
-3. joins staking data;
-4. counts current Official NFT ownership;
-5. computes global metric ranks;
-6. computes the Final Composite Rank;
-7. creates compact records;
-8. splits records into prefix shards;
-9. writes summary and index metadata;
-10. validates the rank-build database;
-11. removes temporary builder work.
+3. joins stake-era metrics as Estimated Stake Before Conviction;
+4. joins Conviction Locked aggregates;
+5. counts current Official NFT ownership;
+6. computes global metric ranks;
+7. computes the Final Composite Rank;
+8. creates compact records;
+9. splits records into prefix shards;
+10. writes summary and index metadata;
+11. validates the rank-build database;
+12. removes temporary builder work.
 
 ### Public output
 
@@ -637,37 +715,53 @@ A wallet stored in `ab.json` is still ranked against the complete indexed popula
 
 ---
 
-## Compact Public Rank Schema V2
+## Compact Public Rank Schema V3
 
-v3.3.0 uses:
+v3.5.0 uses:
 
 ```text
-WIL_V3_COMPACT_ARRAY_V2
-SHARDED_COMPACT_V2
+WIL_V3_COMPACT_ARRAY_V3
+SHARDED_COMPACT_V3
 ```
 
-Each public wallet record contains 21 fields.
+Each public wallet record contains **23 fields**.
+
+```text
+11 metric values
++
+12 comparative rank values
+```
 
 ### Metric value order
 
 1. `native_funds`
-2. `estimated_current_stake`
-3. `transactions`
-4. `native_volume`
-5. `gas_used`
-6. `nft_holdings`
-7. `collection_diversity`
-8. `reputation_score`
-9. `low_sybil_risk`
-10. `official_inception_nfts`
+2. `estimated_stake_before_conviction`
+3. `conviction_locked`
+4. `transactions`
+5. `native_volume`
+6. `gas_used`
+7. `nft_holdings`
+8. `collection_diversity`
+9. `reputation_score`
+10. `low_sybil_risk`
+11. `official_inception_nfts`
 
 ### Comparative rank order
 
-The next ten fields contain ranks in the same metric order.
-
-### Final field
+The next twelve fields contain ranks in the same metric order, followed by the final composite rank.
 
 ```text
+native_funds
+estimated_stake_before_conviction
+conviction_locked
+transactions
+native_volume
+gas_used
+nft_holdings
+collection_diversity
+reputation_score
+low_sybil_risk
+official_inception_nfts
 overall_rank
 ```
 
@@ -676,22 +770,43 @@ overall_rank
 The reader supports:
 
 ```text
-WIL_V3_COMPACT_ARRAY_V1
 WIL_V3_COMPACT_ARRAY_V2
+WIL_V3_COMPACT_ARRAY_V3
 ```
 
-This allows a controlled transition between public snapshot generations.
+This allows a controlled transition between public snapshot generations. Older Compact V2 snapshots remain readable, while new Compact V3 snapshots expose Conviction Locked.
+
+---
+
+## Conviction Locked Signal
+
+`Conviction Locked` is the post-cutover active commitment signal introduced for the Inception Evolved phase.
+
+Detection rule:
+
+```text
+tx.to == 0xfc416635e3b7330404766bd8ea9e5227800937c1
+tx.input starts with 0x3a4b66f1
+tx.value > 0
+receipt.status == success
+block_number >= 15021664
+```
+
+The metric value is derived from `tx.value`, converted from wei to DACC.
+
+Conviction Locked is published as a comparative rank metric, but it is not merged into the Final Composite Rank formula in v3.5.0.
 
 ---
 
 ## Ranking Model
 
-### Nine small comparative cards
+### Ten small comparative cards
 
 ```text
-Native Funds              Estimated Current Stake   Transactions
-Native Volume             Gas Used                  NFT Holdings
-Collection Diversity      Reputation Score          Low-Risk Profile
+Native Funds              Estimated Stake Before Conviction   Conviction Locked
+Transactions              Native Volume                       Gas Used
+NFT Holdings              Collection Diversity                Reputation Score
+Low-Risk Profile
 ```
 
 ### Final Composite Rank
@@ -709,7 +824,8 @@ The Final Composite Rank preserves the original eight-variable formula:
 
 The following are separate signals and do not alter the composite formula:
 
-- Estimated Current Stake;
+- Estimated Stake Before Conviction;
+- Conviction Locked;
 - Official Testnet Inception NFT count.
 
 This preserves continuity with the original WIL v3 ranking model while exposing additional wallet intelligence.
@@ -772,7 +888,7 @@ It:
 1. validates its configuration;
 2. creates isolated temporary work;
 3. runs the global rank builder;
-4. validates Compact V2 metadata;
+4. validates Compact V3 metadata;
 5. validates shard completeness;
 6. creates a clean snapshot repository;
 7. creates one snapshot commit;
@@ -844,8 +960,8 @@ The authoritative SQLite database is not published to GitHub.
 The UI version is:
 
 ```text
-Wallet Intelligence Layer v3.3.0
-DIB-v3.3.0
+Wallet Intelligence Layer v3.5.0
+DIB-v3.5.0
 ```
 
 ### Browser lookup flow
@@ -890,7 +1006,7 @@ wallet-intelligence.css
 ### Final rank panel
 
 ```text
-9 small metric cards
+10 small metric cards
 ↓
 OFFICIAL RANK SIGNAL
 Official Testnet Inception NFTs
@@ -909,7 +1025,10 @@ The UI distinguishes:
 
 - live public wallet visibility;
 - indexed rank availability;
-- full rank dataset readiness.
+- full rank dataset readiness;
+- historical backfill state;
+- post-backfill catch-up state;
+- incremental sync readiness.
 
 ---
 
@@ -1041,7 +1160,7 @@ git add .
 
 ## Security and Trust Model
 
-Wallet Intelligence Layer v3.3.0 keeps the same safety principles as earlier versions:
+Wallet Intelligence Layer v3.5.0 keeps the same safety principles as earlier versions:
 
 ```text
 No private key handling
@@ -1063,7 +1182,8 @@ The following are community-defined engineering logic:
 
 - rank variable modeling;
 - wallet metric aggregation;
-- Estimated Current Stake estimation;
+- Estimated Stake Before Conviction estimation;
+- Conviction Locked interpretation;
 - Official Rank tier presentation;
 - historical repair workflow;
 - composite rank presentation;
@@ -1127,9 +1247,42 @@ Stores:
 
 ## Validation Status
 
+The v3.5.0 web and public-rank schema layer was validated with a synthetic SQLite source database and static syntax checks.
+
+Validated v3.5.0 results:
+
+```text
+generator_exit_code=0
+summary_version=v3.5.0
+summary_compact_schema=WIL_V3_COMPACT_ARRAY_V3
+index_mode=SHARDED_COMPACT_V3
+index_record_schema=WIL_V3_COMPACT_ARRAY_V3
+conviction_signal_key=conviction_locked
+sample_record_length=23
+```
+
+Syntax checks:
+
+```text
+generate_rank_from_sqlite.py compile: OK
+publish_rank_snapshot_branch.sh syntax: OK
+rank-engine.js syntax: OK
+wallet-intelligence.js syntax: OK
+```
+
+The v3.5.0 backend worker path was also validated with:
+
+- Conviction cutover constants;
+- legacy stake guard after block `15021664`;
+- Conviction transaction detector;
+- SQLite Conviction tables;
+- idempotent Conviction event insertion;
+- one real main-DB worker cycle during historical backfill;
+- low-storage runner status output with Conviction fields.
+
 The v3.3.0 core source was validated before release.
 
-Validated areas include:
+Validated v3.3.0 areas include:
 
 - SQLite migration and integrity;
 - main worker state updates;
@@ -1151,14 +1304,7 @@ Validated areas include:
 - Google Drive consistent snapshot backup;
 - clean source commit and remote verification.
 
-Implementation commit:
-
-```text
-344944b8ed4cc3f7eace3729d84c3c3dd4ca682a
-Complete WIL v3.3.0 stake and official NFT rank pipeline
-```
-
-At the final implementation validation point, the worker remained in:
+At the v3.5.0 implementation validation point, the worker remained in:
 
 ```text
 HISTORICAL_BACKFILL_IN_PROGRESS
@@ -1179,6 +1325,17 @@ Point-in-time wallet counts, token counts, and block checkpoints are intentional
 ---
 
 ## Changelog
+
+### v3.5.0 — Conviction-aware Web Schema
+
+- Added Compact V3 public rank records.
+- Added Conviction Locked as a comparative public rank metric.
+- Renamed the stake-era metric to Estimated Stake Before Conviction.
+- Added Conviction cutover metadata to public rank summary output.
+- Added Conviction SQLite event and aggregate state.
+- Preserved backward-compatible Compact V2 browser decoding.
+- Updated UI and DIB labels to `v3.5.0`.
+- Preserved the original eight-variable Final Composite Rank formula.
 
 ### v3.3.0 — Stable
 
