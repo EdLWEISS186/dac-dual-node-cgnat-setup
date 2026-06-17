@@ -2,7 +2,7 @@
 
 Client-side wallet intelligence interface and globally comparative public wallet rank system for the **DAC Quantum Chain Testnet**.
 
-Wallet Intelligence Layer v3.5.0 extends the stable v3 architecture into the Inception Evolved phase with Conviction-aware indexing, Compact V3 public rank delivery, and a new Conviction Locked comparative signal.
+Wallet Intelligence Layer v3.5.0 extends the stable v3 architecture into the Inception Evolved phase with Conviction-aware indexing, Compact V3 public rank delivery, a new Conviction Locked comparative signal, and cutoff-aware live reputation scoring.
 
 The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
@@ -153,6 +153,11 @@ Key updates:
 - Kept Estimated Stake Before Conviction, Conviction Locked, and Official Testnet Inception NFTs outside the Final Composite Rank formula.
 - Updated visible UI labels to `Wallet Intelligence Layer v3.5.0`.
 - Updated Dynamic Intelligence Badge label to `DIB-v3.5.0`.
+- Completed the Conviction-aware live 100-point reputation model.
+- Split live `Native Balance` telemetry from cutoff-aware `Native Funds Before Conviction` scoring.
+- Updated DACC Commitment scoring to combine `Estimated Stake Before Conviction` and `Conviction Locked`.
+- Added non-blocking Native Funds cutoff source modes for historical RPC, explorer-estimated cutoff balance, and unavailable cutoff state.
+- Added monotonic Dynamic Intelligence Badge behavior so update prompts only move to a higher tier.
 
 Conviction cutover metadata:
 
@@ -800,7 +805,21 @@ Conviction Locked is published as a comparative rank metric, but it is not merge
 
 ## Ranking Model
 
+WIL v3.5.0 separates two related but different concepts:
+
+```text
+Global comparative public rank
+→ precomputed from the full indexed wallet population
+
+Live wallet reputation score
+→ computed in the browser from the checked wallet's verified data
+```
+
+The public rank model compares wallets globally through Compact V3 rank artifacts. The live reputation model explains the checked wallet's wallet-quality score in the UI.
+
 ### Ten small comparative cards
+
+Compact V3 exposes ten small comparative rank cards plus the full-width final rank panel:
 
 ```text
 Native Funds              Estimated Stake Before Conviction   Conviction Locked
@@ -809,9 +828,13 @@ NFT Holdings              Collection Diversity                Reputation Score
 Low-Risk Profile
 ```
 
+`Estimated Stake Before Conviction` and `Conviction Locked` are visible comparative cards, but they are not merged into the preserved Final Composite Rank formula in v3.5.0.
+
 ### Final Composite Rank
 
-The Final Composite Rank preserves the original eight-variable formula:
+The Final Composite Rank remains the preserved eight-variable global rank formula from the stable v3 architecture.
+
+Final Composite Rank inputs:
 
 1. Native Funds
 2. Transactions
@@ -822,13 +845,157 @@ The Final Composite Rank preserves the original eight-variable formula:
 7. Reputation Score
 8. Low-Risk Profile
 
-The following are separate signals and do not alter the composite formula:
+The following signals are displayed separately and are not merged into the Final Composite Rank formula:
 
 - Estimated Stake Before Conviction;
 - Conviction Locked;
-- Official Testnet Inception NFT count.
+- Official Testnet Inception NFTs.
 
-This preserves continuity with the original WIL v3 ranking model while exposing additional wallet intelligence.
+This preserves backward continuity for global ranking while still exposing new Conviction-era comparative signals.
+
+### Live Reputation Scoring Layer
+
+The live browser reputation layer remains a 100-point wallet-quality score.
+
+| Component | Max Points | v3.5.0 interpretation |
+|---|---:|---|
+| Transaction Score | 20 | Wallet activity volume |
+| NFT Diversity Score | 10 | Number of distinct NFT collections |
+| NFT Holdings Score | 10 | Total NFT holdings |
+| Native Funds Before Conviction | 15 | Native DACC balance at the Conviction cutoff |
+| DACC Commitment Score | 20 | Estimated Stake Before Conviction + Conviction Locked |
+| DAC Inception Rank Score | 25 | DAC Inception Rank NFT signal |
+| **Total** | **100** | Community-defined wallet-quality score |
+
+### Native Balance vs Native Funds Before Conviction
+
+The top scoreboard `Native Balance` card remains live telemetry. It shows the wallet's current native DACC balance.
+
+The reputation component is different:
+
+```text
+Native Balance card
+→ live/current wallet telemetry
+
+Native Funds Before Conviction score
+→ cutoff-aware reputation input
+```
+
+`Native Funds Before Conviction` uses the wallet's native DACC balance at the Conviction cutover block:
+
+```text
+cutover_block = 15021664
+cutover_utc   = 2026-06-16T07:50:29Z
+cutover_local = 2026-06-16 14:50:29 +07:00
+```
+
+Source modes:
+
+| Mode | Meaning |
+|---|---|
+| `HISTORICAL_RPC_CUTOFF_BALANCE` | Historical `eth_getBalance` at the cutoff block succeeded |
+| `EXPLORER_CUTOFF_BALANCE_ESTIMATE` | Cutoff balance was reconstructed from current balance and post-cutover external transaction flow |
+| `CUTOFF_BALANCE_UNAVAILABLE_NON_BLOCKING` | Cutoff balance could not be verified; the wallet check remains usable |
+
+The conservative rule is:
+
+```text
+Current post-cutover Native Balance must not increase Native Funds score.
+```
+
+If the cutoff balance cannot be verified, the Native Funds component becomes unavailable/conservative instead of falling back to current liquid balance.
+
+Native Funds Before Conviction tiers:
+
+| Cutoff balance | Points |
+|---:|---:|
+| `>= 100 DACC` | 15 |
+| `>= 75 DACC` | 14 |
+| `>= 50 DACC` | 12 |
+| `>= 25 DACC` | 9 |
+| `>= 10 DACC` | 6 |
+| `>= 5 DACC` | 4 |
+| `< 5 DACC` | 2 |
+| unavailable | 0 |
+
+### DACC Commitment Score
+
+DACC Commitment is capped at 20 points and combines the frozen stake-era signal with the new Conviction-era signal:
+
+```text
+DACC Commitment Score
+=
+Estimated Stake Before Conviction score
++
+Conviction Locked score
+
+cap = 20
+```
+
+The two sub-signals are:
+
+| Signal | Max Points | Meaning |
+|---|---:|---|
+| Estimated Stake Before Conviction | 12 | Stake-era commitment frozen before the Conviction cutoff |
+| Conviction Locked | 8 | Post-cutover active Conviction Sprint commitment |
+
+`Estimated Stake Before Conviction` is historical. It is calculated from recognized pre-cutoff stake-in minus pre-cutoff decoded unstake-out. Post-cutover unstake does not reduce the frozen stake-era signal.
+
+`Conviction Locked` is active. It is calculated from successful post-cutover value-bearing lock transactions sent to the Conviction contract.
+
+Conviction amount scoring:
+
+| Conviction Locked | Raw Points |
+|---:|---:|
+| `>= 200 DACC` | 8 |
+| `>= 100 DACC` | 7 |
+| `>= 50 DACC` | 5 |
+| `>= 20 DACC` | 3 |
+| `>= 10 DACC` | 2 |
+| `> 0 DACC` | 1 |
+| `0 DACC` | 0 |
+
+Conviction timeliness multiplier:
+
+| First Conviction lock timing | Multiplier |
+|---|---:|
+| `<= 24 hours` | `1.25x` |
+| `<= 2 days` | `1.20x` |
+| `<= 3 days` | `1.15x` |
+| `<= 6 days` | `1.10x` |
+| `<= 7 days` | `1.05x` |
+| `> 7 days` | `1.00x` |
+
+The final Conviction score is capped at 8 points:
+
+```text
+conviction_score = min(8, amount_score * timeliness_multiplier)
+```
+
+### Reputation Level
+
+| Score | Label |
+|---:|---|
+| `90–100` | `ELITE` |
+| `75–89` | `HIGH` |
+| `50–74` | `MEDIUM` |
+| `< 50` | `LOW` |
+
+### Reputation Sybil Risk Label
+
+| Score | Label |
+|---:|---|
+| `>= 90` | `LOW` |
+| `>= 70` | `MEDIUM` |
+| `< 70` | `HIGH` |
+
+This label is not definitive. The deeper behavior analysis is handled by the explorer-only Sybil Heuristics layer.
+
+### Dynamic Intelligence Badge behavior
+
+The Dynamic Intelligence Badge follows monotonic progression behavior in v3.5.0.
+
+A badge update is offered only when the newly calculated tier is higher than the highest known tier already achieved. If the current calculated wallet tier drops, the badge should preserve the highest tier already earned instead of encouraging a downgrade.
 
 ---
 
@@ -1270,6 +1437,15 @@ rank-engine.js syntax: OK
 wallet-intelligence.js syntax: OK
 ```
 
+The live v3.5.0 browser scoring path was additionally validated after the Conviction Sprint cutover:
+
+- `Conviction Locked` renders as a dedicated scoreboard card;
+- `Native Balance` remains live/current telemetry;
+- `Native Funds Before Conviction` is used for the 15-point Native Funds reputation component;
+- current post-cutover native balance no longer increases Native Funds score;
+- Native Funds cutoff balance resolves through historical RPC or a non-blocking explorer-based cutoff estimate;
+- wallet output remains `Full Intelligence Ready` when core explorer modules are available.
+
 The v3.5.0 backend worker path was also validated with:
 
 - Conviction cutover constants;
@@ -1336,6 +1512,16 @@ Point-in-time wallet counts, token counts, and block checkpoints are intentional
 - Preserved backward-compatible Compact V2 browser decoding.
 - Updated UI and DIB labels to `v3.5.0`.
 - Preserved the original eight-variable Final Composite Rank formula.
+- Completed Conviction-aware live reputation scoring.
+- Froze stake-era commitment as Estimated Stake Before Conviction.
+- Added Conviction Locked as the post-cutover active commitment signal.
+- Added first-lock timeliness multiplier for Conviction scoring.
+- Added a dedicated Conviction Locked scoreboard card.
+- Reduced Native Balance display precision to 4 decimals.
+- Split live Native Balance telemetry from Native Funds Before Conviction scoring.
+- Added non-blocking Native Funds cutoff balance resolution using historical RPC or explorer-estimated cutoff reconstruction.
+- Updated Native Funds scoring to use cutoff-aware Native Funds Before Conviction instead of current post-cutover liquid balance.
+- Updated Dynamic Intelligence Badge behavior to monotonic tier progression.
 
 ### v3.3.0 — Stable
 
@@ -1394,47 +1580,3 @@ This project is part of the [`dac-dual-node-cgnat-setup`](https://github.com/EdL
 DAC Infra Tester
 
 Built by Communities for Communities.
-
-## v3.5.0 Live Scoring Completion
-
-This completion patch finalizes the live Wallet Intelligence Layer v3.5.0 browser logic after the Conviction Sprint cutover.
-
-Key updates:
-
-- Freezes stake-era commitment as **Estimated Stake Before Conviction** using the Conviction cutover boundary.
-- Tracks **Conviction Locked** as the new post-cutover active commitment signal.
-- Adds first-lock timeliness into Conviction scoring while keeping the reputation layer capped at 100 points.
-- Updates live policy labels to **WIL-v3.5.0**, **EOH-v3.5.0**, and **DIB-v3.5.0**.
-- Preserves DAC Inception Rank as `known-collection-registry-v1.3.3`.
-- Updates Dynamic Intelligence Badge behavior to monotonic progression: badge updates are only offered when the newly calculated tier is higher than the highest known tier already achieved.
-
-
-## v3.5.0 Scoreboard Conviction Card Polish
-
-This polish pass updates the live Wallet Output scoreboard for the Conviction-era WIL v3.5.0 interface.
-
-Key changes:
-- Added a dedicated `Conviction Locked` card between `Stake Before Conviction` and `Transactions`.
-- Balanced the first-row scoreboard into six compact cards.
-- Reduced Native Balance display precision to 4 decimals for cleaner one-line rendering.
-- Exposed `stakedDacc.convictionLocked` in the full wallet output object so the live card can show post-cutover locked DACC.
-- Updated Conviction timeliness scoring to use day-based windows:
-  - `<= 24 hours -> 1.25x`
-  - `<= 2 days -> 1.20x`
-  - `<= 3 days -> 1.15x`
-  - `<= 6 days -> 1.10x`
-  - `<= 7 days -> 1.05x`
-  - `> 7 days -> 1.00x`
-
-This keeps the stake-era and Conviction-era commitment signals visible side by side while preserving the WIL v3.5.0 separation between historical pre-cutover stake and active post-cutover Conviction locks.
-
-## v3.5.0 Native Funds Cutoff Scoring Guard
-
-This patch makes the Native Funds reputation component cutoff-aware without adding a blocking explorer module.
-
-Key changes:
-- The top scoreboard `Native Balance` card remains live/current telemetry.
-- The 15-point Native Funds reputation component is renamed to `Native Funds Before Conviction`.
-- Current post-cutover native balance is no longer used to increase Native Funds score.
-- If a cutoff balance is not loaded, the Native Funds component becomes conservative/unavailable instead of falling back to current liquid balance.
-- This preserves consistency with Conviction-era logic, where locked Conviction commitment is a stronger signal than simply holding liquid DACC after the cutoff.
