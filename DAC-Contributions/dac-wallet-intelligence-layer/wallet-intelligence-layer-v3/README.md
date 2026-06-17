@@ -194,6 +194,9 @@ Externalized state and Google Drive backup
 v3.3.0
 Stable SQLite-backed production architecture
 
+v3.4.0
+Worker Acceleration & Operational Hardening
+
 v3.5.0
 Conviction-aware web, worker, and Compact V3 public rank schema
 ```
@@ -210,6 +213,8 @@ Version `v3.3.0` is the first stable v3 release because the complete pipeline wa
 - compact public publication;
 - browser-side shard lookup;
 - UI rank rendering.
+
+Version `v3.4.0` hardened the production worker path with counterparty lookup optimization, benchmarked backfill presets, a stable 24/7 worker configuration, Google Drive backup auto-cleanup, and terminal phase monitoring.
 
 Version `v3.5.0` keeps that architecture and adapts it to the post-stake, Conviction-era Inception Evolved phase.
 
