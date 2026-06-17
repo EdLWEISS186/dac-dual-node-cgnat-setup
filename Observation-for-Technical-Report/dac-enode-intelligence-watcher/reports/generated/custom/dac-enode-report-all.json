@@ -1,7 +1,7 @@
 {
   "project": "DAC Enode Intelligence Watcher",
   "summary_type": "custom_json_report_summary",
-  "generated_at_utc": "2026-06-17T10:14:45.468927+00:00",
+  "generated_at_utc": "2026-06-17T14:04:53.250463+00:00",
   "range": "all",
   "range_label": "All Time",
   "source_files": {
@@ -12,31 +12,31 @@
   },
   "important_note": "This custom JSON summary is observation-based. It does not make official DAC ownership claims and should not be treated as a definitive decentralization measurement.",
   "latest_observation": {
-    "checked_at_utc": "2026-06-17T10:14:43.037124+00:00",
-    "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
+    "checked_at_utc": "2026-06-17T14:04:47.933213+00:00",
+    "generated_at_source": "Wed Jun 17 04:00:02 PM CEST 2026",
     "target_port": 28657,
-    "current_total": 2,
-    "previous_total": 10,
-    "added_count": 0,
-    "removed_count": 8,
-    "unchanged_count": 2,
-    "change_severity": "CRITICAL",
-    "severity_reason": "Official enode count dropped sharply from 10 to 2."
+    "current_total": 6,
+    "previous_total": 2,
+    "added_count": 5,
+    "removed_count": 1,
+    "unchanged_count": 1,
+    "change_severity": "MEDIUM",
+    "severity_reason": "Moderate enode rotation detected: 5 added and 1 removed."
   },
   "observation_scope": {
-    "selected_observation_count": 80,
+    "selected_observation_count": 81,
     "first_observed_source_time": "May 15, 2026 (00:00 CEST)",
-    "last_observed_source_time": "Jun 17, 2026 (12:00 CEST)",
+    "last_observed_source_time": "Jun 17, 2026 (16:00 CEST)",
     "phase_counts": {
       "manual_backfill": 14,
-      "automated_watcher": 66
+      "automated_watcher": 67
     },
     "status_counts": {
       "manual_initial": 1,
       "manual_changed": 12,
       "manual_unchanged": 1,
       "initial": 1,
-      "changed": 65
+      "changed": 66
     },
     "target_ports_observed": [
       28657
@@ -45,34 +45,35 @@
   "enode_movement_summary": {
     "min_enode_count": 2,
     "max_enode_count": 16,
-    "avg_enode_count": 12.53,
-    "total_added_events": 93,
-    "total_removed_events": 76
+    "avg_enode_count": 12.44,
+    "total_added_events": 98,
+    "total_removed_events": 77
   },
   "anomaly_summary": {
-    "selected_anomaly_signal_count": 10,
+    "selected_anomaly_signal_count": 12,
     "selected_severity_counts": {
-      "HIGH": 7,
+      "HIGH": 8,
       "CRITICAL": 2,
-      "MEDIUM": 1
+      "MEDIUM": 2
     },
     "selected_anomaly_type_counts": {
       "LARGE_ENODE_COUNT_DROP": 1,
-      "HIGH_REMOVAL_EVENT": 2,
+      "HIGH_REMOVAL_EVENT": 3,
       "AGGRESSIVE_ROTATION": 4,
       "SHARP_ENODE_COUNT_DROP": 1,
       "LOW_CONTINUITY_RATIO": 1,
-      "WATCHER_HIGH_SEVERITY_SIGNAL": 1
+      "WATCHER_HIGH_SEVERITY_SIGNAL": 1,
+      "MODERATE_ROTATION_SPIKE": 1
     },
-    "global_short_summary": "10 anomaly signals were detected across 80 observations. The highest observed anomaly severity is CRITICAL.",
+    "global_short_summary": "12 anomaly signals were detected across 81 observations. The highest observed anomaly severity is CRITICAL.",
     "global_highest_severity": "CRITICAL",
     "global_recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
   },
   "concentration_summary": {
     "overall_concentration_label": "MODERATE",
     "headline": "Observed infrastructure shows moderate concentration under the current heuristic model.",
-    "key_observation": "Top live ASN is AS51167 with 15 unique IPs (40.54%).",
-    "country_observation": "Top live ASN country code is DE with 18 unique IPs (48.65%).",
+    "key_observation": "Top live ASN is AS51167 with 15 unique IPs (39.47%).",
+    "country_observation": "Top live ASN country code is DE with 18 unique IPs (47.37%).",
     "interpretation": "Top live ASN controls at least 35% of observed unique IPs.",
     "recommended_action": "Use this as an observation aid only. Compare it with registry history, DAC Infrastructure Signal, manual peer identity evidence, live ASN lookup updates, and future watcher snapshots before drawing conclusions.",
     "disclaimer": "Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement.",
@@ -80,19 +81,19 @@
       "live_asn": {
         "top_name": "AS51167",
         "top_count": 15,
-        "top_percentage": 40.54,
+        "top_percentage": 39.47,
         "label": "MODERATE"
       },
       "live_country": {
         "top_name": "DE",
         "top_count": 18,
-        "top_percentage": 48.65,
+        "top_percentage": 47.37,
         "label": "MODERATE"
       },
       "dac_infrastructure_signal": {
         "top_name": "Retained Infrastructure Signal",
         "top_count": 11,
-        "top_percentage": 29.73,
+        "top_percentage": 28.95,
         "label": "LOW"
       }
     }
@@ -1457,6 +1458,23 @@
       "change_severity": "CRITICAL",
       "severity_reason": "Official enode count dropped sharply from 10 to 2.",
       "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
+    },
+    {
+      "observation_index": 81,
+      "phase": "automated_watcher",
+      "status": "changed",
+      "source_time_raw": "Wed Jun 17 04:00:02 PM CEST 2026",
+      "source_time_readable": "Jun 17, 2026 (16:00 CEST)",
+      "checked_at_utc": "2026-06-17T14:04:47.933213+00:00",
+      "current_total": 6,
+      "previous_total": 2,
+      "added_count": 5,
+      "removed_count": 1,
+      "unchanged_count": 1,
+      "target_port": 28657,
+      "change_severity": "MEDIUM",
+      "severity_reason": "Moderate enode rotation detected: 5 added and 1 removed.",
+      "snapshot_file": "data/snapshots/2026-06-17T14-04-47-933213+00-00-changed.json"
     }
   ],
   "anomalies": [
@@ -1639,6 +1657,42 @@
       "unchanged_count": 2,
       "target_port": 28657,
       "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
+    },
+    {
+      "anomaly_type": "HIGH_REMOVAL_EVENT",
+      "severity": "HIGH",
+      "reason": "1 enodes were removed from a previous total of 2.",
+      "technical_impact": "High removal count may indicate bootstrap peer replacement or infrastructure rotation.",
+      "recommended_action": "Review removed enodes and preserve the snapshot for future report comparison.",
+      "observation_index": 81,
+      "phase": "automated_watcher",
+      "source_time_raw": "Wed Jun 17 04:00:02 PM CEST 2026",
+      "source_time_readable": "Jun 17, 2026 (16:00 CEST)",
+      "current_total": 6,
+      "previous_total": 2,
+      "added_count": 5,
+      "removed_count": 1,
+      "unchanged_count": 1,
+      "target_port": 28657,
+      "snapshot_file": "data/snapshots/2026-06-17T14-04-47-933213+00-00-changed.json"
+    },
+    {
+      "anomaly_type": "MODERATE_ROTATION_SPIKE",
+      "severity": "MEDIUM",
+      "reason": "Moderate rotation spike detected: 5 added and 1 removed.",
+      "technical_impact": "This may represent a normal but meaningful bootstrap peer rotation event.",
+      "recommended_action": "Keep the event as report evidence and compare with surrounding observations.",
+      "observation_index": 81,
+      "phase": "automated_watcher",
+      "source_time_raw": "Wed Jun 17 04:00:02 PM CEST 2026",
+      "source_time_readable": "Jun 17, 2026 (16:00 CEST)",
+      "current_total": 6,
+      "previous_total": 2,
+      "added_count": 5,
+      "removed_count": 1,
+      "unchanged_count": 1,
+      "target_port": 28657,
+      "snapshot_file": "data/snapshots/2026-06-17T14-04-47-933213+00-00-changed.json"
     }
   ],
   "report_use_notes": [

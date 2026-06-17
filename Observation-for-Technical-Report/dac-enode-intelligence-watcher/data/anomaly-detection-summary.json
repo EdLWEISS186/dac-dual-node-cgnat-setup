@@ -8,7 +8,7 @@
   "machine_learning_used": false,
   "coverage_note": "Manual backfill is a partial archive. Missing dates represent missed observation windows, not confirmed absence of changes.",
   "observation_scope": {
-    "total_observations": 80,
+    "total_observations": 81,
     "first_observation": {
       "observation_index": 1,
       "phase": "manual_backfill",
@@ -26,20 +26,20 @@
       "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
     },
     "latest_observation": {
-      "observation_index": 80,
+      "observation_index": 81,
       "phase": "automated_watcher",
       "status": "changed",
-      "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
-      "checked_at_utc": "2026-06-17T10:14:43.037124+00:00",
+      "generated_at_source": "Wed Jun 17 04:00:02 PM CEST 2026",
+      "checked_at_utc": "2026-06-17T14:04:47.933213+00:00",
       "target_port": 28657,
-      "current_total": 2,
-      "previous_total": 10,
-      "added_count": 0,
-      "removed_count": 8,
-      "unchanged_count": 2,
-      "change_severity": "CRITICAL",
-      "severity_reason": "Official enode count dropped sharply from 10 to 2.",
-      "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
+      "current_total": 6,
+      "previous_total": 2,
+      "added_count": 5,
+      "removed_count": 1,
+      "unchanged_count": 1,
+      "change_severity": "MEDIUM",
+      "severity_reason": "Moderate enode rotation detected: 5 added and 1 removed.",
+      "snapshot_file": "data/snapshots/2026-06-17T14-04-47-933213+00-00-changed.json"
     }
   },
   "rules": [
@@ -90,21 +90,22 @@
     }
   ],
   "report_summary": {
-    "short_summary": "10 anomaly signals were detected across 80 observations. The highest observed anomaly severity is CRITICAL.",
+    "short_summary": "12 anomaly signals were detected across 81 observations. The highest observed anomaly severity is CRITICAL.",
     "highest_severity": "CRITICAL",
-    "anomaly_count": 10,
+    "anomaly_count": 12,
     "severity_counts": {
-      "HIGH": 7,
+      "HIGH": 8,
       "CRITICAL": 2,
-      "MEDIUM": 1
+      "MEDIUM": 2
     },
     "anomaly_type_counts": {
       "LARGE_ENODE_COUNT_DROP": 1,
-      "HIGH_REMOVAL_EVENT": 2,
+      "HIGH_REMOVAL_EVENT": 3,
       "AGGRESSIVE_ROTATION": 4,
       "SHARP_ENODE_COUNT_DROP": 1,
       "LOW_CONTINUITY_RATIO": 1,
-      "WATCHER_HIGH_SEVERITY_SIGNAL": 1
+      "WATCHER_HIGH_SEVERITY_SIGNAL": 1,
+      "MODERATE_ROTATION_SPIKE": 1
     },
     "technical_interpretation": "The anomaly layer highlights observations that may indicate unusually large peer rotation, sharp enode count changes, low continuity, or unexpected target port behavior.",
     "recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
@@ -338,6 +339,52 @@
         "change_severity": "CRITICAL",
         "severity_reason": "Official enode count dropped sharply from 10 to 2.",
         "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
+      }
+    },
+    {
+      "anomaly_type": "HIGH_REMOVAL_EVENT",
+      "severity": "HIGH",
+      "reason": "1 enodes were removed from a previous total of 2.",
+      "technical_impact": "High removal count may indicate bootstrap peer replacement or infrastructure rotation.",
+      "recommended_action": "Review removed enodes and preserve the snapshot for future report comparison.",
+      "observation": {
+        "observation_index": 81,
+        "phase": "automated_watcher",
+        "status": "changed",
+        "generated_at_source": "Wed Jun 17 04:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-17T14:04:47.933213+00:00",
+        "target_port": 28657,
+        "previous_total": 2,
+        "current_total": 6,
+        "added_count": 5,
+        "removed_count": 1,
+        "unchanged_count": 1,
+        "change_severity": "MEDIUM",
+        "severity_reason": "Moderate enode rotation detected: 5 added and 1 removed.",
+        "snapshot_file": "data/snapshots/2026-06-17T14-04-47-933213+00-00-changed.json"
+      }
+    },
+    {
+      "anomaly_type": "MODERATE_ROTATION_SPIKE",
+      "severity": "MEDIUM",
+      "reason": "Moderate rotation spike detected: 5 added and 1 removed.",
+      "technical_impact": "This may represent a normal but meaningful bootstrap peer rotation event.",
+      "recommended_action": "Keep the event as report evidence and compare with surrounding observations.",
+      "observation": {
+        "observation_index": 81,
+        "phase": "automated_watcher",
+        "status": "changed",
+        "generated_at_source": "Wed Jun 17 04:00:02 PM CEST 2026",
+        "checked_at_utc": "2026-06-17T14:04:47.933213+00:00",
+        "target_port": 28657,
+        "previous_total": 2,
+        "current_total": 6,
+        "added_count": 5,
+        "removed_count": 1,
+        "unchanged_count": 1,
+        "change_severity": "MEDIUM",
+        "severity_reason": "Moderate enode rotation detected: 5 added and 1 removed.",
+        "snapshot_file": "data/snapshots/2026-06-17T14-04-47-933213+00-00-changed.json"
       }
     }
   ]
