@@ -138,7 +138,7 @@
           <small id="nativeBalanceSource">—</small>
         </article>
         <article class="score-card">
-          <span class="score-label">Estimated Stake</span>
+          <span class="score-label">Stake Before Conviction</span>
           <strong id="stakedDaccValue">—</strong>
           <small id="stakedDaccSource">—</small>
         </article>
@@ -171,7 +171,7 @@
         </div>
 
         <div class="score-explain" id="historicalNote">
-          Historical windows are calculated from explorer timestamps when available. Stake Tx Count shows transaction count, while Net Staked shows the net DACC amount staked.
+          Historical windows are split by the Conviction cutover. Stake-era flow is evaluated before block 15021664, while post-cutover unstake activity is tracked as context and does not reduce Estimated Stake Before Conviction.
         </div>
       </section>
 
@@ -181,7 +181,7 @@
             <p class="eyebrow">Sybil Heuristics</p>
             <h3>Behavior Pattern Analysis</h3>
           </div>
-          <small id="sybilModeLabel">EOH-v1.5.2</small>
+          <small id="sybilModeLabel">EOH-v3.5.0</small>
         </div>
 
         <div class="sybil-summary-grid">
@@ -336,7 +336,7 @@
           <dl>
             <div><dt>Trust Profile</dt><dd id="trustProfileValue">—</dd></div>
             <div><dt>Inception Rank</dt><dd id="inceptionRankValue">—</dd></div>
-            <div><dt>Stake Signal</dt><dd id="stakedDaccProfileValue">—</dd></div>
+            <div><dt>Stake / Conviction Signal</dt><dd id="stakedDaccProfileValue">—</dd></div>
             <div><dt>Sybil Risk</dt><dd id="sybilRiskValue">—</dd></div>
             <div><dt>Score Policy</dt><dd>Verified data only</dd></div>
             <div><dt>Fallback Rule</dt><dd>No mock score</dd></div>
@@ -350,7 +350,7 @@
             <p class="eyebrow">Wallet Quality Policy</p>
             <h3>Scoring Breakdown</h3>
           </div>
-          <small id="scoringPolicyLabel">WIL-v1.5.2</small>
+          <small id="scoringPolicyLabel">WIL-v3.5.0</small>
         </div>
 
         <div class="score-breakdown-grid" id="scoreBreakdownGrid">
@@ -415,7 +415,7 @@
             <p class="eyebrow">Official Rank Signal</p>
             <h3>DAC Inception Rank</h3>
           </div>
-          <small id="knownRegistryStatusLabel">WIL-v1.5.2</small>
+          <small id="knownRegistryStatusLabel">known-collection-registry-v1.3.3</small>
         </div>
 
         <div class="registry-grid">

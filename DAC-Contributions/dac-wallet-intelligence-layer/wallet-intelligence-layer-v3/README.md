@@ -1394,3 +1394,17 @@ This project is part of the [`dac-dual-node-cgnat-setup`](https://github.com/EdL
 DAC Infra Tester
 
 Built by Communities for Communities.
+
+## v3.5.0 Live Scoring Completion
+
+This completion patch finalizes the live Wallet Intelligence Layer v3.5.0 browser logic after the Conviction Sprint cutover.
+
+Key updates:
+
+- Freezes stake-era commitment as **Estimated Stake Before Conviction** using the Conviction cutover boundary.
+- Tracks **Conviction Locked** as the new post-cutover active commitment signal.
+- Adds first-lock timeliness into Conviction scoring while keeping the reputation layer capped at 100 points.
+- Updates live policy labels to **WIL-v3.5.0**, **EOH-v3.5.0**, and **DIB-v3.5.0**.
+- Preserves DAC Inception Rank as `known-collection-registry-v1.3.3`.
+- Updates Dynamic Intelligence Badge behavior to monotonic progression: badge updates are only offered when the newly calculated tier is higher than the highest known tier already achieved.
+

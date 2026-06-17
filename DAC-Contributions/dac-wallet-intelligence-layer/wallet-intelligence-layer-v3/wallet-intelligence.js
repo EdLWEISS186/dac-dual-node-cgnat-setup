@@ -11,13 +11,13 @@ const DAC_RPC_URL = "https://rpctest.dachain.tech/";
 const DAC_CHAIN_ID = 21894;
 const NATIVE_SYMBOL = "DACC";
 const REQUEST_TIMEOUT_MS = 18000;
-const APP_VERSION = "v3.1.0";
+const APP_VERSION = "v3.5.0";
 const WAITLIST_PHASE_CUTOFF = Date.UTC(2026, 2, 21, 23, 59, 59) / 1000;
 const KEYCARD_CLAIM_CLOSED_CUTOFF = Date.UTC(2026, 3, 11, 23, 59, 59) / 1000;
 const INCEPTION_LIVE_CUTOFF = Date.UTC(2026, 3, 18, 23, 59, 59) / 1000;
 const HISTORY_BLOCK_TIMESTAMP_RPC_LIMIT = 90;
 
-const INTELLIGENCE_BADGE_VERSION = "DIB-v3.1.0";
+const INTELLIGENCE_BADGE_VERSION = "DIB-v3.5.0";
 const INTELLIGENCE_BADGE_NAME = "Wallet Status SBT + Rank Intelligence";
 const INTELLIGENCE_BADGE_SYMBOL = "Status";
 const DAC_SENDER_NFT_LAUNCHPAD_URL =
@@ -52,6 +52,111 @@ const DACC_STAKING_CONTRACT = "0x3691A78bE270dB1f3b1a86177A8f23F89A8Cef24";
 const STAKE_BALANCE_OF_SELECTOR = "0x70a08231"; // optional balanceOf(address) read
 const STAKE_FUNCTION_SELECTOR = "0x3a4b66f1";
 const UNSTAKE_FUNCTION_SELECTOR = "0x2e17de78";
+
+const CONVICTION_LOCK_CONTRACT = "0xfc416635E3b7330404766bd8ea9E5227800937C1";
+const CONVICTION_LOCK_SELECTOR = "0x3a4b66f1";
+const CONVICTION_CUTOFF_BLOCK = 15021664;
+const CONVICTION_CUTOFF_UNIX = Date.UTC(2026, 5, 16, 7, 50, 29) / 1000;
+const CONVICTION_CUTOFF_LOCAL_LABEL = "2026-06-16 14:50:29 +07:00";
+
+function getTxBlockNumber(tx) {
+  if (!tx) return null;
+  const raw = tx.blockNumber ?? tx.block_number ?? tx.block ?? tx.blockHeight ?? null;
+  if (raw === null || raw === undefined || raw === "") return null;
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function getTxTimestamp(tx) {
+  if (!tx) return null;
+
+  const raw =
+    tx.timeStamp ??
+    tx.timestamp ??
+    tx.time ??
+    tx.blockTimestamp ??
+    tx.block_time ??
+    null;
+
+  if (raw === null || raw === undefined || raw === "") return null;
+
+  if (typeof raw === "number") {
+    return Number.isFinite(raw) ? raw : null;
+  }
+
+  const value = String(raw).trim();
+  if (!value) return null;
+
+  if (/^\d+$/.test(value)) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  const dateMs = Date.parse(value);
+  if (!Number.isFinite(dateMs)) return null;
+  return Math.floor(dateMs / 1000);
+}
+
+function isSuccessfulExplorerTx(tx) {
+  if (!tx) return false;
+
+  const isError = tx.isError ?? tx.is_error ?? null;
+  if (String(isError) === "1") return false;
+
+  const status = tx.txreceipt_status ?? tx.txReceiptStatus ?? tx.status ?? null;
+  if (status !== null && status !== undefined && status !== "") {
+    const normalized = String(status).toLowerCase();
+    if (normalized === "0" || normalized === "0x0" || normalized === "false") return false;
+  }
+
+  return true;
+}
+
+function isPreConvictionEraTx(tx) {
+  const blockNumber = getTxBlockNumber(tx);
+  if (blockNumber === null) return true;
+  return blockNumber < CONVICTION_CUTOFF_BLOCK;
+}
+
+function isPostConvictionEraTx(tx) {
+  const blockNumber = getTxBlockNumber(tx);
+  if (blockNumber !== null) return blockNumber >= CONVICTION_CUTOFF_BLOCK;
+
+  const timestamp = getTxTimestamp(tx);
+  return timestamp !== null && timestamp >= CONVICTION_CUTOFF_UNIX;
+}
+
+function getConvictionTimeliness(firstLockTimestamp) {
+  if (!firstLockTimestamp || firstLockTimestamp < CONVICTION_CUTOFF_UNIX) {
+    return {
+      multiplier: 1,
+      label: "Conviction timing unavailable",
+      deltaSeconds: null,
+      rule: "first lock timestamp unavailable",
+    };
+  }
+
+  const deltaSeconds = Math.max(0, firstLockTimestamp - CONVICTION_CUTOFF_UNIX);
+
+  if (deltaSeconds <= 3600) {
+    return { multiplier: 1.25, label: "Elite early conviction", deltaSeconds, rule: "first lock <= 1 hour" };
+  }
+  if (deltaSeconds <= 21600) {
+    return { multiplier: 1.2, label: "Very early conviction", deltaSeconds, rule: "first lock <= 6 hours" };
+  }
+  if (deltaSeconds <= 86400) {
+    return { multiplier: 1.15, label: "Early conviction", deltaSeconds, rule: "first lock <= 24 hours" };
+  }
+  if (deltaSeconds <= 259200) {
+    return { multiplier: 1.1, label: "Timely conviction", deltaSeconds, rule: "first lock <= 3 days" };
+  }
+  if (deltaSeconds <= 604800) {
+    return { multiplier: 1.05, label: "Conviction week participant", deltaSeconds, rule: "first lock <= 7 days" };
+  }
+
+  return { multiplier: 1, label: "Normal conviction timing", deltaSeconds, rule: "first lock > 7 days" };
+}
+
 
 
 
@@ -122,24 +227,88 @@ function getNativeFundsScore(nativeBalance) {
   return { points: 2, tier: "<5 DACC", rule: "nativeBalance < 5" };
 }
 
+function getEstimatedStakeBeforeConvictionScore(estimatedStakeBeforeConviction) {
+  const amount = Number(estimatedStakeBeforeConviction || 0);
+
+  if (amount >= 200) return { points: 12, tier: "200+ DACC", rule: "estimatedStakeBeforeConviction >= 200" };
+  if (amount >= 150) return { points: 11, tier: "150+ DACC", rule: "estimatedStakeBeforeConviction >= 150" };
+  if (amount >= 100) return { points: 9, tier: "100+ DACC", rule: "estimatedStakeBeforeConviction >= 100" };
+  if (amount >= 50) return { points: 7, tier: "50+ DACC", rule: "estimatedStakeBeforeConviction >= 50" };
+  if (amount >= 20) return { points: 4, tier: "20+ DACC", rule: "estimatedStakeBeforeConviction >= 20" };
+  if (amount >= 10) return { points: 2, tier: "10+ DACC", rule: "estimatedStakeBeforeConviction >= 10" };
+
+  return { points: 0, tier: "<10 DACC", rule: "estimatedStakeBeforeConviction < 10" };
+}
+
+function getConvictionLockedScore(convictionLocked, timelinessMultiplier = 1) {
+  const amount = Number(convictionLocked || 0);
+  const multiplier = Math.max(1, Number(timelinessMultiplier || 1));
+
+  if (amount <= 0) {
+    return {
+      points: 0,
+      rawPoints: 0,
+      tier: "No conviction lock",
+      rule: "convictionLocked = 0",
+      timelinessMultiplier: 0,
+    };
+  }
+
+  let rawPoints = 1;
+  let tier = ">0 DACC";
+
+  if (amount >= 200) {
+    rawPoints = 8;
+    tier = "200+ DACC";
+  } else if (amount >= 100) {
+    rawPoints = 7;
+    tier = "100+ DACC";
+  } else if (amount >= 50) {
+    rawPoints = 5;
+    tier = "50+ DACC";
+  } else if (amount >= 20) {
+    rawPoints = 3;
+    tier = "20+ DACC";
+  } else if (amount >= 10) {
+    rawPoints = 2;
+    tier = "10+ DACC";
+  }
+
+  return {
+    points: Math.min(8, Math.round(rawPoints * multiplier)),
+    rawPoints,
+    tier,
+    rule: `convictionLocked ${tier} × ${multiplier.toFixed(2)} timeliness`,
+    timelinessMultiplier: multiplier,
+  };
+}
+
+function combineCommitmentScores(stakeScore, convictionScore) {
+  const stakePoints = Number(stakeScore && stakeScore.points ? stakeScore.points : 0);
+  const convictionPoints = Number(convictionScore && convictionScore.points ? convictionScore.points : 0);
+
+  const labels = [];
+  if (stakePoints > 0) labels.push(`Stake-era ${stakeScore.tier}`);
+  if (convictionPoints > 0) labels.push(`Conviction ${convictionScore.tier}`);
+
+  return {
+    points: Math.min(20, stakePoints + convictionPoints),
+    tier: labels.length ? labels.join(" + ") : "No stake/conviction commitment",
+    rule: "estimatedStakeBeforeConviction max 12 + convictionLocked max 8",
+    stakePoints,
+    convictionPoints,
+  };
+}
+
 function getStakedDaccScore(stakedDacc) {
-  const amount = Number(stakedDacc || 0);
-
-  if (amount >= 200) return { points: 20, tier: "200+ DACC", rule: "stakedDacc >= 200" };
-  if (amount >= 150) return { points: 18, tier: "150+ DACC", rule: "stakedDacc >= 150" };
-  if (amount >= 100) return { points: 15, tier: "100+ DACC", rule: "stakedDacc >= 100" };
-  if (amount >= 50) return { points: 11, tier: "50+ DACC", rule: "stakedDacc >= 50" };
-  if (amount >= 20) return { points: 7, tier: "20+ DACC", rule: "stakedDacc >= 20" };
-  if (amount >= 10) return { points: 4, tier: "10+ DACC", rule: "stakedDacc >= 10" };
-
-  return { points: 0, tier: "<10 DACC", rule: "stakedDacc < 10" };
+  return getEstimatedStakeBeforeConvictionScore(stakedDacc);
 }
 
 const SCORING_POLICY = Object.freeze({
-  version: "WIL-v1.5.2",
-  policyId: "WIL-2026-05-v1.5.2",
+  version: "WIL-v3.5.0",
+  policyId: "WIL-2026-06-v3.5.0",
   status: "LOCKED",
-  model: "wallet-quality-scoring-v1.5.2",
+  model: "wallet-quality-scoring-v3.5.0-conviction-aware",
   maxScore: "100 reputation + 100 pattern health",
   scoreLayers: Object.freeze([
     "reputationScoring",
@@ -183,67 +352,25 @@ const SCORING_POLICY = Object.freeze({
         { condition: "nativeBalance < 5", points: 2 },
       ]),
     }),
-    daccStakeScore: Object.freeze({
+    daccCommitmentScore: Object.freeze({
       maxPoints: 20,
-      contract: "0x3691A78bE270dB1f3b1a86177A8f23F89A8Cef24",
-      thresholds: Object.freeze([
-        { condition: "stakedDacc >= 200", points: 20 },
-        { condition: "stakedDacc >= 150", points: 18 },
-        { condition: "stakedDacc >= 100", points: 15 },
-        { condition: "stakedDacc >= 50", points: 11 },
-        { condition: "stakedDacc >= 20", points: 7 },
-        { condition: "stakedDacc >= 10", points: 4 },
-        { condition: "stakedDacc < 10", points: 0 },
-      ]),
+      stakeEraMaxPoints: 12,
+      convictionMaxPoints: 8,
+      stakingContract: DACC_STAKING_CONTRACT,
+      convictionContract: CONVICTION_LOCK_CONTRACT,
+      cutoffBlock: CONVICTION_CUTOFF_BLOCK,
+      cutoffLocal: CONVICTION_CUTOFF_LOCAL_LABEL,
     }),
     dacInceptionRankScore: Object.freeze({
       maxPoints: 25,
-      thresholds: Object.freeze([
-        { condition: "rankBadgeCount >= 13", inferredRank: "CROWN", points: 25 },
-        { condition: "rankBadgeCount >= 12", inferredRank: "CIPHER", points: 24 },
-        { condition: "rankBadgeCount >= 11", inferredRank: "PHANTOM", points: 23 },
-        { condition: "rankBadgeCount >= 10", inferredRank: "INTERCEPTOR", points: 21 },
-        { condition: "rankBadgeCount >= 9", inferredRank: "ARCHITECT", points: 20 },
-        { condition: "rankBadgeCount >= 8", inferredRank: "WARRIOR", points: 18 },
-        { condition: "rankBadgeCount >= 7", inferredRank: "SOVEREIGN", points: 16 },
-        { condition: "rankBadgeCount >= 6", inferredRank: "SENTINEL", points: 14 },
-        { condition: "rankBadgeCount >= 5", inferredRank: "VANGUARD", points: 11 },
-        { condition: "rankBadgeCount >= 4", inferredRank: "SHADOW UNIT", points: 9 },
-        { condition: "rankBadgeCount >= 3", inferredRank: "SEAL", points: 7 },
-        { condition: "rankBadgeCount >= 2", inferredRank: "COMMANDO", points: 5 },
-        { condition: "rankBadgeCount >= 1", inferredRank: "CADET", points: 3 },
-        { condition: "rankBadgeCount = 0", inferredRank: "NONE", points: 0 },
-      ]),
     }),
   }),
   behaviorHeuristics: Object.freeze({
-    version: "EOH-v1.5.2",
-    mode: "EXPLORER_ONLY",
+    version: "EOH-v3.5.0",
+    mode: "EXPLORER_ONLY_CONVICTION_AWARE",
     maxScore: 100,
-    components: Object.freeze({
-      walletMaturity: Object.freeze({
-        maxPoints: 15,
-        note: "Special early-participation weight for wallets active from earlier DAC Testnet phases.",
-      }),
-      activitySpread: Object.freeze({ maxPoints: 15 }),
-      activityBurst: Object.freeze({ maxPoints: 10 }),
-      interactionDiversity: Object.freeze({ maxPoints: 15 }),
-      builderTesterSignal: Object.freeze({
-        maxPoints: 20,
-        note: "Protects stress testers, builders, deployers, DAC Sender users, and developer dummy wallets from being misread as repetitive farmers.",
-      }),
-      counterpartyPattern: Object.freeze({ maxPoints: 10 }),
-      officialDacCommitment: Object.freeze({ maxPoints: 15 }),
-    }),
-    labels: Object.freeze({
-      patternHealthScore: Object.freeze([
-        { condition: "score >= 80", sybilRiskEstimate: "LOW" },
-        { condition: "score >= 60", sybilRiskEstimate: "MEDIUM" },
-        { condition: "score < 60", sybilRiskEstimate: "HIGH" },
-      ]),
-    }),
     note:
-      "Explorer-only behavior heuristic. It is not a definitive Sybil detector and does not use backend, IP, device, or private user data.",
+      "Explorer-only Conviction-aware behavior heuristic. It is not a definitive Sybil detector and does not use backend, IP, device, or private user data.",
   }),
   labels: Object.freeze({
     reputationLevel: Object.freeze([
@@ -259,7 +386,7 @@ const SCORING_POLICY = Object.freeze({
     ]),
   }),
   note:
-    "Community-defined wallet-quality policy. v1.5.0 covers both reputation scoring and explorer-only Sybil/behavior heuristics. This is not an official DAC reputation, eligibility, or Sybil system.",
+    "Community-defined wallet-quality policy. v3.5.0 covers Conviction-aware reputation scoring and explorer-only Sybil/behavior heuristics. Stake-era commitment is frozen at the Conviction cutover and post-cutover Conviction Locked becomes the active commitment signal. This is not an official DAC reputation, eligibility, or Sybil system.",
 });
 
 const state = {
@@ -734,27 +861,74 @@ async function getStakedDaccFromStakeFlowClassifier(address) {
   const txs = normalizeExplorerArrayResult(data);
   const wallet = normalizeAddress(address);
   const stakingContract = normalizeAddress(DACC_STAKING_CONTRACT);
+  const convictionContract = normalizeAddress(CONVICTION_LOCK_CONTRACT);
 
   let totalStakeInWei = 0n;
   let totalUnstakeOutWei = 0n;
+  let postCutoverStakeInWei = 0n;
+  let postCutoverUnstakeOutWei = 0n;
+  let convictionLockedWei = 0n;
   let unclassifiedContractInWei = 0n;
   let stakeTxCount = 0;
   let unstakeTxCount = 0;
+  let postCutoverUnstakeTxCount = 0;
+  let convictionLockTxCount = 0;
+  let firstConvictionLockTimestamp = null;
+  let firstConvictionLockBlock = null;
   const flowHashes = [];
 
   for (const tx of txs) {
+    if (!isSuccessfulExplorerTx(tx)) continue;
+
     const from = normalizeAddress(tx.from);
     const to = normalizeAddress(tx.to);
     const input = normalizeInput(tx.input || tx.data || "");
     const value = parseBigIntValue(tx.value || "0");
     const hash = tx.hash || tx.transactionHash;
 
+    if (
+      from === wallet &&
+      to === convictionContract &&
+      input.startsWith(CONVICTION_LOCK_SELECTOR) &&
+      value > 0n &&
+      isPostConvictionEraTx(tx)
+    ) {
+      convictionLockedWei += value;
+      convictionLockTxCount += 1;
+
+      const ts = getTxTimestamp(tx);
+      const blockNumber = getTxBlockNumber(tx);
+
+      if (
+        ts !== null &&
+        (firstConvictionLockTimestamp === null || ts < firstConvictionLockTimestamp)
+      ) {
+        firstConvictionLockTimestamp = ts;
+        firstConvictionLockBlock = blockNumber;
+      } else if (
+        ts === null &&
+        firstConvictionLockTimestamp === null &&
+        blockNumber !== null &&
+        (firstConvictionLockBlock === null || blockNumber < firstConvictionLockBlock)
+      ) {
+        firstConvictionLockBlock = blockNumber;
+      }
+
+      if (hash) flowHashes.push(hash);
+      continue;
+    }
+
     if (from !== wallet || to !== stakingContract) {
       continue;
     }
 
     if (input.startsWith(STAKE_FUNCTION_SELECTOR) && value > 0n) {
-      totalStakeInWei += value;
+      if (isPreConvictionEraTx(tx)) {
+        totalStakeInWei += value;
+      } else {
+        postCutoverStakeInWei += value;
+      }
+
       stakeTxCount += 1;
       if (hash) flowHashes.push(hash);
       continue;
@@ -764,7 +938,13 @@ async function getStakedDaccFromStakeFlowClassifier(address) {
       const decodedAmount = decodeFirstUint256FromInput(input);
 
       if (decodedAmount !== null) {
-        totalUnstakeOutWei += decodedAmount;
+        if (isPreConvictionEraTx(tx)) {
+          totalUnstakeOutWei += decodedAmount;
+        } else {
+          postCutoverUnstakeOutWei += decodedAmount;
+          postCutoverUnstakeTxCount += 1;
+        }
+
         unstakeTxCount += 1;
         if (hash) flowHashes.push(hash);
       }
@@ -772,41 +952,59 @@ async function getStakedDaccFromStakeFlowClassifier(address) {
       continue;
     }
 
-    // Safety bucket: value sent to the staking contract without recognized selector.
-    // This is not used for stake-before-Conviction scoring, but is kept in raw output.
     if (value > 0n) {
       unclassifiedContractInWei += value;
     }
   }
 
-  const estimatedCurrentStakeWei =
+  const estimatedStakeBeforeConvictionWei =
     totalStakeInWei > totalUnstakeOutWei
       ? totalStakeInWei - totalUnstakeOutWei
       : 0n;
 
   const rewardInfo = await getStakeRewardFlow(address, flowHashes);
+  const convictionTimeliness = getConvictionTimeliness(firstConvictionLockTimestamp);
 
   return {
-    amount: weiBigIntToNumber(estimatedCurrentStakeWei),
-    source: "DAC Explorer stake/unstake transaction-flow classifier",
-    mode: "STAKE_FLOW_CLASSIFIER",
+    amount: weiBigIntToNumber(estimatedStakeBeforeConvictionWei),
+    source: "DAC Explorer stake-era + Conviction transaction-flow classifier",
+    mode: "STAKE_BEFORE_CONVICTION_AND_CONVICTION_FLOW",
     contract: DACC_STAKING_CONTRACT,
     confidence: rewardInfo.available ? "HIGH" : "MEDIUM_HIGH",
     stakeSelector: STAKE_FUNCTION_SELECTOR,
     unstakeSelector: UNSTAKE_FUNCTION_SELECTOR,
     totalStakeIn: weiBigIntToNumber(totalStakeInWei),
     totalUnstakeOut: weiBigIntToNumber(totalUnstakeOutWei),
-    estimatedCurrentStake: weiBigIntToNumber(estimatedCurrentStakeWei),
+    estimatedCurrentStake: weiBigIntToNumber(estimatedStakeBeforeConvictionWei),
+    estimatedStakeBeforeConviction: weiBigIntToNumber(estimatedStakeBeforeConvictionWei),
+    postCutoverStakeIn: weiBigIntToNumber(postCutoverStakeInWei),
+    postCutoverUnstakeOut: weiBigIntToNumber(postCutoverUnstakeOutWei),
     rewardReceived: rewardInfo.available ? weiBigIntToNumber(rewardInfo.rewardWei) : null,
     contractOutTotal: rewardInfo.available ? weiBigIntToNumber(rewardInfo.contractOutWei) : null,
     rewardTraceAvailable: rewardInfo.available,
     rewardReadMode: rewardInfo.mode,
     stakeTxCount,
     unstakeTxCount,
-    flowTxCount: stakeTxCount + unstakeTxCount,
+    postCutoverUnstakeTxCount,
+    flowTxCount: stakeTxCount + unstakeTxCount + convictionLockTxCount,
     unclassifiedContractIn: weiBigIntToNumber(unclassifiedContractInWei),
+    convictionLocked: {
+      amount: weiBigIntToNumber(convictionLockedWei),
+      lockTxCount: convictionLockTxCount,
+      firstLockTimestamp: firstConvictionLockTimestamp,
+      firstLockBlock: firstConvictionLockBlock,
+      timelinessLabel: convictionTimeliness.label,
+      timelinessMultiplier: convictionTimeliness.multiplier,
+      timelinessRule: convictionTimeliness.rule,
+      timelinessDeltaSeconds: convictionTimeliness.deltaSeconds,
+      source: "DAC Explorer Conviction lock transaction-flow classifier",
+      contract: CONVICTION_LOCK_CONTRACT,
+      selector: CONVICTION_LOCK_SELECTOR,
+      cutoffBlock: CONVICTION_CUTOFF_BLOCK,
+      cutoffLocal: CONVICTION_CUTOFF_LOCAL_LABEL,
+    },
     note:
-      "Estimated stake before Conviction is calculated as total recognized stake-in minus decoded unstake-out before the Conviction cutover. Contract-to-wallet internal transfers are separated as reward/return flow and are not subtracted from stake unless decoded from the unstake calldata.",
+      "Estimated Stake Before Conviction is calculated from recognized pre-cutoff stake-in minus pre-cutoff decoded unstake-out. Post-cutover unstake is tracked as context and does not reduce the frozen stake-era signal. Conviction Locked is calculated from successful post-cutover lock transactions to the Conviction contract.",
   };
 }
 
@@ -1073,6 +1271,8 @@ function buildFullWalletIntelligence(address, data) {
     totalNFTs,
     rankBadgeCount: rankSignal ? rankSignal.holdings : 0,
     stakedDacc: stakedDacc ? stakedDacc.amount : 0,
+    convictionLocked: stakedDacc && stakedDacc.convictionLocked ? stakedDacc.convictionLocked.amount : 0,
+    convictionTimelinessMultiplier: stakedDacc && stakedDacc.convictionLocked ? stakedDacc.convictionLocked.timelinessMultiplier : 1,
   });
 
   return {
@@ -1239,6 +1439,8 @@ function buildReputationScore({
   totalNFTs,
   rankBadgeCount = 0,
   stakedDacc = 0,
+  convictionLocked = 0,
+  convictionTimelinessMultiplier = 1,
 }) {
   const transactionScore =
     txCount >= 1000 ? 20 : txCount >= 500 ? 15 : txCount >= 100 ? 10 : 5;
@@ -1252,8 +1454,10 @@ function buildReputationScore({
   const nativeScore = getNativeFundsScore(nativeBalance);
   const nativeBalanceScore = nativeScore.points;
 
-  const stakeScore = getStakedDaccScore(stakedDacc);
-  const daccStakeScore = stakeScore.points;
+  const stakeScore = getEstimatedStakeBeforeConvictionScore(stakedDacc);
+  const convictionScore = getConvictionLockedScore(convictionLocked, convictionTimelinessMultiplier);
+  const commitmentScore = combineCommitmentScores(stakeScore, convictionScore);
+  const daccCommitmentScore = commitmentScore.points;
 
   const rankScore = getRankScoreByBadgeCount(rankBadgeCount);
   const dacInceptionRankScore = Math.min(rankScore.points, 25);
@@ -1263,7 +1467,7 @@ function buildReputationScore({
     nftDiversityScore +
     nftHoldingsScore +
     nativeBalanceScore +
-    daccStakeScore +
+    daccCommitmentScore +
     dacInceptionRankScore;
 
   let reputationLevel = "LOW";
@@ -1276,13 +1480,16 @@ function buildReputationScore({
     reputationLevel = "MEDIUM";
   }
 
+  const hasStrongCommitment = stakedDacc >= 50 || convictionLocked >= 50;
+  const hasAdvancedCommitment = stakedDacc >= 100 || convictionLocked >= 100;
+
   let trustProfile = "STANDARD USER";
 
-  if (rankBadgeCount >= 6 && stakedDacc >= 50) {
+  if (rankBadgeCount >= 6 && hasStrongCommitment) {
     trustProfile = "VERIFIED INCEPTION PARTICIPANT";
   }
 
-  if (txCount > 1000 && totalCollections > 10 && rankBadgeCount >= 6 && stakedDacc >= 100) {
+  if (txCount > 1000 && totalCollections > 10 && rankBadgeCount >= 6 && hasAdvancedCommitment) {
     trustProfile = "ADVANCED TESTNET PARTICIPANT";
   }
 
@@ -1350,14 +1557,18 @@ function buildReputationScore({
       tier: nativeScore.tier,
     },
     {
-      key: "daccStakeScore",
-      name: "DACC Stake Score",
-      points: daccStakeScore,
+      key: "daccCommitmentScore",
+      name: "Stake / Conviction Commitment",
+      points: daccCommitmentScore,
       maxPoints: 20,
-      metric: stakedDacc,
-      metricLabel: "stake-era DACC",
-      condition: stakeScore.rule,
-      tier: stakeScore.tier,
+      metric: Number(stakedDacc || 0) + Number(convictionLocked || 0),
+      metricLabel: "stake-era + conviction DACC",
+      condition: commitmentScore.rule,
+      tier: commitmentScore.tier,
+      subScores: {
+        estimatedStakeBeforeConviction: stakeScore.points,
+        convictionLocked: convictionScore.points,
+      },
     },
     {
       key: "dacInceptionRankScore",
@@ -1386,11 +1597,19 @@ function buildReputationScore({
     },
     officialStakeSignal: {
       contract: DACC_STAKING_CONTRACT,
+      convictionContract: CONVICTION_LOCK_CONTRACT,
       stakedDacc,
-      tier: stakeScore.tier,
-      points: daccStakeScore,
+      estimatedStakeBeforeConviction: stakedDacc,
+      convictionLocked,
+      convictionTimelinessMultiplier,
+      tier: commitmentScore.tier,
+      points: daccCommitmentScore,
       maxPoints: 20,
-      rule: stakeScore.rule,
+      stakeEraPoints: stakeScore.points,
+      convictionPoints: convictionScore.points,
+      rule: commitmentScore.rule,
+      cutoffBlock: CONVICTION_CUTOFF_BLOCK,
+      cutoffLocal: CONVICTION_CUTOFF_LOCAL_LABEL,
     },
     officialRankSignal: {
       contract: KNOWN_COLLECTION_REGISTRY[0].contract,
@@ -1402,9 +1621,7 @@ function buildReputationScore({
     },
     breakdown,
   };
-}// ======================================================
-// Partial / failure outputs
-// ======================================================
+}
 
 function buildPartialExplorerOutput(address, explorerResult) {
   const modules = explorerResult.modules;
@@ -1465,6 +1682,11 @@ function buildPartialExplorerOutput(address, explorerResult) {
             totalStakeIn: stakedDacc.totalStakeIn,
             totalUnstakeOut: stakedDacc.totalUnstakeOut,
             estimatedCurrentStake: stakedDacc.estimatedCurrentStake,
+                estimatedStakeBeforeConviction: stakedDacc.estimatedStakeBeforeConviction,
+                postCutoverStakeIn: stakedDacc.postCutoverStakeIn,
+                postCutoverUnstakeOut: stakedDacc.postCutoverUnstakeOut,
+                postCutoverUnstakeTxCount: stakedDacc.postCutoverUnstakeTxCount,
+                convictionLocked: stakedDacc.convictionLocked,
             rewardReceived: stakedDacc.rewardReceived,
             contractOutTotal: stakedDacc.contractOutTotal,
             rewardTraceAvailable: stakedDacc.rewardTraceAvailable,
@@ -1575,7 +1797,7 @@ function buildKnownCollectionSignals(nftCollections) {
     source: "Community-maintained known collection registry",
     scoringEffect: "reputation-score-component",
     note:
-      "DAC Inception Rank is included as a 30-point component in the locked WIL-v1.3.3 reputation score.",
+      "DAC Inception Rank is included as a 25-point official rank component in the WIL-v3.5.0 Conviction-aware reputation score.",
     matched,
   };
 }
@@ -1795,6 +2017,9 @@ function buildHistoricalWindows({ txs, nftTxs, nowSeconds }) {
           stakeIn: stakeWindow.stakeIn,
           unstakeOut: stakeWindow.unstakeOut,
           netStakeFlow: stakeWindow.netStakeFlow,
+            postCutoverUnstakeOut: stakeWindow.postCutoverUnstakeOut,
+            convictionLocked: stakeWindow.convictionLocked,
+            convictionLockEvents: stakeWindow.convictionLockEvents,
         },
       ];
     })
@@ -1802,22 +2027,47 @@ function buildHistoricalWindows({ txs, nftTxs, nowSeconds }) {
 }
 
 function buildStakeWindowMetrics(txs) {
-  const walletStakeTxs = txs.filter((tx) => {
+  const walletCommitmentTxs = txs.filter((tx) => {
     const to = normalizeAddress(tx.to);
-    return to === normalizeAddress(DACC_STAKING_CONTRACT);
+    return (
+      to === normalizeAddress(DACC_STAKING_CONTRACT) ||
+      to === normalizeAddress(CONVICTION_LOCK_CONTRACT)
+    );
   });
 
   let stakeInWei = 0n;
   let unstakeOutWei = 0n;
+  let postCutoverUnstakeOutWei = 0n;
+  let convictionLockedWei = 0n;
   let stakeEvents = 0;
   let unstakeEvents = 0;
+  let convictionLockEvents = 0;
 
-  for (const tx of walletStakeTxs) {
+  for (const tx of walletCommitmentTxs) {
+    if (!isSuccessfulExplorerTx(tx)) continue;
+
+    const to = normalizeAddress(tx.to);
     const input = normalizeInput(tx.input || tx.data || "");
     const value = parseBigIntValue(tx.value || "0");
 
+    if (
+      to === normalizeAddress(CONVICTION_LOCK_CONTRACT) &&
+      input.startsWith(CONVICTION_LOCK_SELECTOR) &&
+      value > 0n &&
+      isPostConvictionEraTx(tx)
+    ) {
+      convictionLockedWei += value;
+      convictionLockEvents += 1;
+      continue;
+    }
+
+    if (to !== normalizeAddress(DACC_STAKING_CONTRACT)) continue;
+
     if (input.startsWith(STAKE_FUNCTION_SELECTOR) && value > 0n) {
-      stakeInWei += value;
+      if (isPreConvictionEraTx(tx)) {
+        stakeInWei += value;
+      }
+
       stakeEvents += 1;
       continue;
     }
@@ -1826,7 +2076,12 @@ function buildStakeWindowMetrics(txs) {
       const decodedAmount = decodeFirstUint256FromInput(input);
 
       if (decodedAmount !== null) {
-        unstakeOutWei += decodedAmount;
+        if (isPreConvictionEraTx(tx)) {
+          unstakeOutWei += decodedAmount;
+        } else {
+          postCutoverUnstakeOutWei += decodedAmount;
+        }
+
         unstakeEvents += 1;
       }
     }
@@ -1837,8 +2092,11 @@ function buildStakeWindowMetrics(txs) {
   return {
     stakeEvents,
     unstakeEvents,
+    convictionLockEvents,
     stakeIn: weiBigIntToNumber(stakeInWei),
     unstakeOut: weiBigIntToNumber(unstakeOutWei),
+    postCutoverUnstakeOut: weiBigIntToNumber(postCutoverUnstakeOutWei),
+    convictionLocked: weiBigIntToNumber(convictionLockedWei),
     netStakeFlow: weiBigIntToNumber(netWei),
   };
 }
@@ -1960,7 +2218,7 @@ async function getSybilHeuristicsSafely(address, outputContext = null) {
 
     return {
       status: "UNAVAILABLE",
-      version: "EOH-v1.5.2",
+      version: "EOH-v3.5.0",
       mode: "EXPLORER_ONLY",
       scoringPolicy: SCORING_POLICY.behaviorHeuristics,
       confidence: "LOW",
@@ -1987,7 +2245,7 @@ async function getSybilHeuristicsFromExplorer(address, outputContext = null) {
   if (!rawTxs.length) {
     return {
       status: "READY",
-      version: "EOH-v1.5.2",
+      version: "EOH-v3.5.0",
       mode: "EXPLORER_ONLY",
       confidence: "LOW",
       patternHealthScore: 0,
@@ -2033,7 +2291,7 @@ async function getSybilHeuristicsFromExplorer(address, outputContext = null) {
 
   return {
     status: "READY",
-    version: "EOH-v1.5.2",
+    version: "EOH-v3.5.0",
     mode: "EXPLORER_ONLY",
     scoringPolicy: SCORING_POLICY.behaviorHeuristics,
     confidence:
@@ -2172,6 +2430,16 @@ function buildSybilBehaviorMetrics(txs, wallet, outputContext, walletAgeDays) {
       ? Number(outputContext.stakedDacc.amount || 0)
       : 0;
 
+  const convictionLocked =
+    outputContext && outputContext.stakedDacc && outputContext.stakedDacc.convictionLocked
+      ? Number(outputContext.stakedDacc.convictionLocked.amount || 0)
+      : 0;
+
+  const convictionTimelinessMultiplier =
+    outputContext && outputContext.stakedDacc && outputContext.stakedDacc.convictionLocked
+      ? Number(outputContext.stakedDacc.convictionLocked.timelinessMultiplier || 1)
+      : 1;
+
   const nativeBalance =
     outputContext && outputContext.nativeBalance
       ? Number(outputContext.nativeBalance.balance || 0)
@@ -2199,6 +2467,8 @@ function buildSybilBehaviorMetrics(txs, wallet, outputContext, walletAgeDays) {
     gasSpent: weiBigIntToNumber(gasSpentWei),
     nativeBalance,
     stakedDacc,
+    convictionLocked,
+    convictionTimelinessMultiplier,
     rankBadgeCount,
   };
 }
@@ -2431,21 +2701,28 @@ function scoreCounterpartyPattern(metrics) {
 }
 
 function scoreOfficialDacCommitment(metrics) {
+  const stakeEraCommitment = Number(metrics.stakedDacc || 0);
+  const convictionLocked = Number(metrics.convictionLocked || 0);
+  const convictionMultiplier = Number(metrics.convictionTimelinessMultiplier || 1);
+  const hasCommitment = stakeEraCommitment > 0 || convictionLocked > 0;
+  const hasStrongCommitment = stakeEraCommitment >= 50 || convictionLocked >= 50;
+  const hasEarlyConviction = convictionLocked > 0 && convictionMultiplier >= 1.15;
+
   let points = 0;
   let rule = "No DAC Ecosystem Signal";
 
-  if (metrics.rankBadgeCount >= 6 && metrics.stakedDacc >= 50) {
+  if (metrics.rankBadgeCount >= 6 && (hasStrongCommitment || hasEarlyConviction)) {
     points = 15;
-    rule = "RankBadges >= 6 & StakedDACC >= 50";
-  } else if (metrics.rankBadgeCount >= 3 || metrics.stakedDacc >= 50) {
+    rule = "RankBadges >= 6 & stake/conviction commitment";
+  } else if (metrics.rankBadgeCount >= 3 || hasStrongCommitment || hasEarlyConviction) {
     points = 12;
-    rule = "RankBadges >= 3 or StakedDACC >= 50";
-  } else if (metrics.rankBadgeCount >= 1 || metrics.stakedDacc >= 10) {
+    rule = "RankBadges >= 3 or strong stake/conviction commitment";
+  } else if (metrics.rankBadgeCount >= 1 || stakeEraCommitment >= 10 || convictionLocked >= 10) {
     points = 8;
-    rule = "RankBadges >= 1 or StakedDACC >= 10";
-  } else if (metrics.stakedDacc > 0) {
+    rule = "RankBadges >= 1 or stake/conviction >= 10";
+  } else if (hasCommitment) {
     points = 5;
-    rule = "StakedDACC > 0";
+    rule = "Stake-era or Conviction commitment > 0";
   }
 
   return {
@@ -2455,7 +2732,7 @@ function scoreOfficialDacCommitment(metrics) {
     maxPoints: 15,
     rule,
     note:
-      "Uses DAC Inception Rank and DACC staking as ecosystem commitment signals, not as official eligibility claims.",
+      "Uses DAC Inception Rank, Estimated Stake Before Conviction, Conviction Locked, and first-lock timing as ecosystem commitment signals, not as official eligibility claims.",
   };
 }
 
@@ -2672,7 +2949,9 @@ function buildDynamicIntelligenceBadge(output) {
       { trait_type: "Verification Mode", value: "ONCHAIN_CORE" },
       { trait_type: "Reputation Score", value: output.reputationScoring.reputationScore },
       { trait_type: "Reputation Level", value: output.reputationScoring.reputationLevel },
-      { trait_type: "DACC Stake", value: output.stakedDacc ? Number(output.stakedDacc.amount || 0) : 0 },
+      { trait_type: "Estimated Stake Before Conviction", value: output.stakedDacc ? Number(output.stakedDacc.amount || 0) : 0 },
+      { trait_type: "Conviction Locked", value: output.stakedDacc && output.stakedDacc.convictionLocked ? Number(output.stakedDacc.convictionLocked.amount || 0) : 0 },
+      { trait_type: "Conviction Timeliness", value: output.stakedDacc && output.stakedDacc.convictionLocked ? output.stakedDacc.convictionLocked.timelinessLabel || "Unavailable" : "Unavailable" },
       { trait_type: "Total Transactions", value: output.metrics.totalTransactions },
       { trait_type: "Total NFTs", value: output.metrics.totalNFTs },
       { trait_type: "Total Collections", value: output.metrics.totalCollections },
@@ -2690,7 +2969,7 @@ function buildDynamicIntelligenceBadge(output) {
     collectionRegistry: INTELLIGENCE_BADGE_COLLECTION_REGISTRY,
     launchpadUrl: DAC_SENDER_NFT_LAUNCHPAD_URL,
     oneBadgePerWallet: true,
-    updateModel: "One evolving badge per wallet. Badge is updated only after the user performs a fresh wallet check and triggers an update/mint action.",
+    updateModel: "One evolving badge per wallet. DIB-v3.5.0 uses monotonic progression: update is offered only when the newly calculated badge tier is higher than the highest known tier already achieved.",
     mainBadgeClass,
     secondary: {
       patternHealth,
@@ -2708,6 +2987,8 @@ function deriveMainBadgeClass(output, patternHealth, sybilRisk, archetype) {
   const level = output.reputationScoring.reputationLevel || "";
   const rank = getInceptionRankLabel(output);
   const stake = output.stakedDacc ? Number(output.stakedDacc.amount || 0) : 0;
+  const conviction = output.stakedDacc && output.stakedDacc.convictionLocked ? Number(output.stakedDacc.convictionLocked.amount || 0) : 0;
+  const hasCommitment = stake > 0 || conviction > 0;
   const hasBuilderSignal = String(archetype || "").includes("BUILDER") || String(archetype || "").includes("STRESS");
 
   if (score >= 90 && patternHealth !== null && patternHealth >= 90 && sybilRisk === "LOW") {
@@ -2718,7 +2999,7 @@ function deriveMainBadgeClass(output, patternHealth, sybilRisk, archetype) {
     return "ADVANCED TESTNET PARTICIPANT";
   }
 
-  if (score >= 50 || stake > 0 || !String(rank).includes("NONE")) {
+  if (score >= 50 || hasCommitment || !String(rank).includes("NONE")) {
     return "VERIFIED TESTNET PARTICIPANT";
   }
 
@@ -2730,6 +3011,88 @@ function normalizeBadgeText(value) {
   return String(value).replace(/\s+/g, " ").trim();
 }
 
+
+
+function normalizeBadgeClassText(value) {
+  return String(value || "").trim().toUpperCase();
+}
+
+function getBadgeClassRank(className) {
+  const normalized = normalizeBadgeClassText(className);
+  if (!normalized || normalized === "RUN WALLET CHECK" || normalized === "UNAVAILABLE") return 0;
+  if (normalized.includes("ELITE") || normalized.includes("SOVEREIGN") || normalized.includes("CROWN")) return 4;
+  if (normalized.includes("ADVANCED") || normalized.includes("HIGH") || normalized.includes("BUILDER") || normalized.includes("VANGUARD") || normalized.includes("ARCHITECT")) return 3;
+  if (normalized.includes("VERIFIED") || normalized.includes("MEDIUM") || normalized.includes("ACTIVE") || normalized.includes("SEAL") || normalized.includes("COMMANDO")) return 2;
+  if (normalized.includes("EMERGING") || normalized.includes("LOW") || normalized.includes("CADET") || normalized.includes("BASIC") || normalized.includes("STARTER")) return 1;
+  return 1;
+}
+
+function getStoredBadgeClassFromOnchain(onchain) {
+  if (!onchain) return "";
+  const candidates = [
+    onchain.badgeClass,
+    onchain.mainBadgeClass,
+    onchain.storedBadgeClass,
+    onchain.badgeText,
+    onchain.badgeTextOf,
+    onchain.text,
+    onchain.profileText,
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    const value = String(candidate).trim();
+    if (value) return value;
+  }
+
+  return "";
+}
+
+function getLocalPreservedBadgeClass(wallet) {
+  if (!wallet || typeof localStorage === "undefined") return "";
+  try {
+    return localStorage.getItem(`wil:v3.5.0:highestBadgeClass:${normalizeAddress(wallet)}`) || "";
+  } catch (_) {
+    return "";
+  }
+}
+
+function rememberLocalPreservedBadgeClass(wallet, className) {
+  if (!wallet || !className || typeof localStorage === "undefined") return;
+  try {
+    const key = `wil:v3.5.0:highestBadgeClass:${normalizeAddress(wallet)}`;
+    const previous = localStorage.getItem(key) || "";
+    if (getBadgeClassRank(className) > getBadgeClassRank(previous)) {
+      localStorage.setItem(key, className);
+    }
+  } catch (_) {
+    // localStorage may be unavailable; on-chain badge state still controls the main flow when available.
+  }
+}
+
+function getHighestKnownBadgeClass(wallet, onchain) {
+  const candidates = [
+    getStoredBadgeClassFromOnchain(onchain),
+    getLocalPreservedBadgeClass(wallet),
+  ].filter(Boolean);
+
+  let best = "";
+  for (const candidate of candidates) {
+    if (getBadgeClassRank(candidate) > getBadgeClassRank(best)) {
+      best = candidate;
+    }
+  }
+
+  return best;
+}
+
+function resolvePreservedBadgeClass(wallet, onchain, calculatedClass) {
+  const knownClass = getHighestKnownBadgeClass(wallet, onchain);
+  if (getBadgeClassRank(knownClass) > getBadgeClassRank(calculatedClass)) {
+    return knownClass;
+  }
+  return calculatedClass || knownClass || "";
+}
 
 let badgePreviewImageRequestId = 0;
 
@@ -2854,6 +3217,16 @@ function renderDynamicIntelligenceBadge(badge) {
     return;
   }
 
+  const calculatedBadgeClass = badge.mainBadgeClass;
+  const preservedBadgeClass = resolvePreservedBadgeClass(badge.wallet, badge.onchain, calculatedBadgeClass);
+  badge.currentCalculatedBadgeClass = calculatedBadgeClass;
+  badge.preservedBadgeClass = preservedBadgeClass;
+  badge.progressionMode = getBadgeClassRank(preservedBadgeClass) > getBadgeClassRank(calculatedBadgeClass)
+    ? "MONOTONIC_NO_DOWNGRADE"
+    : "UPGRADE_OR_CURRENT";
+  badge.mainBadgeClass = preservedBadgeClass;
+  rememberLocalPreservedBadgeClass(badge.wallet, badge.mainBadgeClass);
+
   if (el.badgePreviewCard) el.badgePreviewCard.classList.add("has-final-art");
   setDynamicBadgePreviewImage(badge.wallet);
 
@@ -2899,6 +3272,32 @@ function renderDynamicIntelligenceBadge(badge) {
 
 function applyBadgeActionState(badge) {
   const onchain = badge.onchain || {};
+  const calculatedClass = badge.currentCalculatedBadgeClass || badge.mainBadgeClass;
+  const knownClass = getHighestKnownBadgeClass(badge.wallet, onchain);
+  const calculatedRank = getBadgeClassRank(calculatedClass);
+  const knownRank = getBadgeClassRank(knownClass);
+
+  if (onchain.hasBadge && knownRank > 0 && calculatedRank < knownRank) {
+    rememberLocalPreservedBadgeClass(badge.wallet, knownClass);
+    el.badgeSyncStatus.textContent = "Badge Tier Preserved";
+    el.badgeMintButton.textContent = "No Downgrade Update";
+    el.badgeMintButton.disabled = true;
+    el.badgeMintButton.onclick = null;
+    el.badgeMintNote.textContent =
+      `Badge tier preserved at ${knownClass}. Current live profile calculates ${calculatedClass}, so no downgrade update is offered.`;
+    return;
+  }
+
+  if (onchain.hasBadge && knownRank > 0 && calculatedRank <= knownRank) {
+    rememberLocalPreservedBadgeClass(badge.wallet, knownClass);
+    el.badgeSyncStatus.textContent = "Badge Up To Date";
+    el.badgeMintButton.textContent = "Badge Up To Date";
+    el.badgeMintButton.disabled = true;
+    el.badgeMintButton.onclick = null;
+    el.badgeMintNote.textContent =
+      "Dynamic Intelligence Badge v3.5.0 only offers updates when the wallet reaches a higher badge tier than its preserved highest tier.";
+    return;
+  }
   const action = onchain.action || "CHECK_ON_CLICK";
 
   if (action === "FINAL_CONTRACT_REQUIRED") {
@@ -3767,7 +4166,7 @@ function renderFullOutput(output) {
     el.stakedDaccSource,
     output.stakedDacc ? `${formatNumber(output.stakedDacc.amount, 8)} DACC` : "Unavailable",
     output.stakedDacc
-      ? `${output.stakedDacc.mode || "STAKE_SIGNAL"} · ${output.stakedDacc.confidence || "UNKNOWN"}`
+      ? `${output.stakedDacc.mode || "STAKE_BEFORE_CONVICTION"} · ${output.stakedDacc.confidence || "UNKNOWN"}`
       : "Unavailable"
   );
   setMetric(
@@ -3812,7 +4211,7 @@ function renderFullOutput(output) {
   }
   if (el.stakedDaccProfileValue) {
     el.stakedDaccProfileValue.textContent = output.stakedDacc
-      ? `${formatNumber(output.stakedDacc.amount, 2)} DACC · ${output.stakedDacc.confidence || "UNKNOWN"}`
+      ? `${formatNumber(output.stakedDacc.amount, 2)} DACC before Conviction · ${output.stakedDacc.convictionLocked ? formatNumber(output.stakedDacc.convictionLocked.amount, 2) : "0"} DACC locked`
       : "Unavailable";
   }
   setRegistryStakeValue(output.stakedDacc);
@@ -3862,7 +4261,7 @@ function renderPartialOutput(output) {
       ? `${formatNumber(output.stakedDacc.amount, 8)} DACC`
       : "Unavailable",
     output.availableData.stakedDacc
-      ? `${output.stakedDacc.mode || "STAKE_SIGNAL"} · ${output.stakedDacc.confidence || "UNKNOWN"}`
+      ? `${output.stakedDacc.mode || "STAKE_BEFORE_CONVICTION"} · ${output.stakedDacc.confidence || "UNKNOWN"}`
       : "Module failed"
   );
   setMetric(
@@ -4010,8 +4409,8 @@ function renderSybilHeuristics(sybilHeuristics) {
   if (!sybilHeuristics || sybilHeuristics.status !== "READY") {
     if (el.sybilModeLabel) {
       el.sybilModeLabel.textContent = sybilHeuristics
-        ? `${sybilHeuristics.version || "EOH-v1.5.2"} · ${sybilHeuristics.confidence || "LOW"}`
-        : "EOH-v1.5.2";
+        ? `${sybilHeuristics.version || "EOH-v3.5.0"} · ${sybilHeuristics.confidence || "LOW"}`
+        : "EOH-v3.5.0";
     }
 
     if (el.patternHealthValue) el.patternHealthValue.textContent = "—";
@@ -4219,7 +4618,7 @@ function renderHistoricalActivity(historicalActivity) {
 
     if (el.historicalNote) {
       el.historicalNote.textContent =
-        "Historical windows are calculated from explorer timestamps when available. Stake Tx Count shows transaction count, while Net Staked shows the net DACC amount staked.";
+        "Historical windows are calculated from explorer timestamps when available and split by the Conviction cutover. Stake-era flow is frozen before block 15021664; post-cutover unstake does not reduce Estimated Stake Before Conviction.";
     }
 
     return;
@@ -4373,7 +4772,7 @@ function renderScoringPolicy(policy) {
   const safePolicy = policy || SCORING_POLICY;
 
   if (el.scoringPolicyLabel) {
-    el.scoringPolicyLabel.textContent = safePolicy.version || "WIL-v1.5.2";
+    el.scoringPolicyLabel.textContent = safePolicy.version || "WIL-v3.5.0";
   }
 
   if (el.policyIdValue) {
@@ -4389,7 +4788,7 @@ function renderScoringPolicy(policy) {
   }
 
   if (el.policyEngineValue) {
-    el.policyEngineValue.textContent = safePolicy.model || "wallet-quality-scoring-v1.5.2";
+    el.policyEngineValue.textContent = safePolicy.model || "wallet-quality-scoring-v3.5.0-conviction-aware";
   }
 }
 
@@ -4431,7 +4830,7 @@ function renderScoringBreakdown(reputationScoring) {
 
   if (el.scoreExplanation) {
     el.scoreExplanation.textContent =
-      "This score is generated under the locked WIL-v1.5.2 wallet-quality policy. Reputation scoring remains a 100-point layer, while Explorer-only Sybil Heuristics adds a separate 100-point pattern-health layer. The labels and thresholds are community-defined and are not official DAC eligibility criteria.";
+      "This score is generated under the WIL-v3.5.0 Conviction-aware wallet-quality policy. Reputation scoring remains a 100-point layer. Stake-era commitment is frozen before the Conviction cutover, Conviction Locked adds the new post-cutover commitment signal, and Explorer-only Sybil Heuristics adds a separate 100-point pattern-health layer. The labels and thresholds are community-defined and are not official DAC eligibility criteria.";
   }
 }
 
