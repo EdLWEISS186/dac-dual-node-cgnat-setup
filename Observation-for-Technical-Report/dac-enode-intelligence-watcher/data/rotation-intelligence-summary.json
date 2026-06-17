@@ -4,8 +4,8 @@
   "description": "Aggregated rotation intelligence derived from manual backfill and automated watcher snapshots.",
   "observation_scope": {
     "manual_backfill_snapshots": 14,
-    "automated_watcher_snapshots": 65,
-    "total_snapshots": 79,
+    "automated_watcher_snapshots": 66,
+    "total_snapshots": 80,
     "first_observation": {
       "observation_index": 1,
       "phase": "manual_backfill",
@@ -23,20 +23,20 @@
       "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
     },
     "latest_observation": {
-      "observation_index": 79,
+      "observation_index": 80,
       "phase": "automated_watcher",
       "status": "changed",
-      "generated_at_source": "Wed Jun 17 06:00:02 AM CEST 2026",
-      "checked_at_utc": "2026-06-17T05:24:29.402077+00:00",
+      "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
+      "checked_at_utc": "2026-06-17T10:14:43.037124+00:00",
       "target_port": 28657,
-      "current_total": 10,
-      "previous_total": 9,
-      "added_count": 1,
-      "removed_count": 0,
-      "unchanged_count": 9,
-      "change_severity": "LOW",
-      "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
-      "snapshot_file": "data/snapshots/2026-06-17T05-24-29-402077+00-00-changed.json"
+      "current_total": 2,
+      "previous_total": 10,
+      "added_count": 0,
+      "removed_count": 8,
+      "unchanged_count": 2,
+      "change_severity": "CRITICAL",
+      "severity_reason": "Official enode count dropped sharply from 10 to 2.",
+      "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
     }
   },
   "coverage_note": "Manual backfill is a partial archive. Missing dates represent missed observation windows, not confirmed absence of changes.",
@@ -44,15 +44,16 @@
     28657
   ],
   "enode_count_statistics": {
-    "minimum": 7,
+    "minimum": 2,
     "maximum": 16,
-    "average": 12.66
+    "average": 12.53
   },
   "unique_enode_count": 37,
   "unique_ip_count": 37,
   "severity_counts": {
     "LOW": 60,
-    "MEDIUM": 4
+    "MEDIUM": 4,
+    "CRITICAL": 1
   },
   "provider_detection": {
     "method": "static_prefix_heuristic",
@@ -789,7 +790,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.962,
+      "appearance_ratio": 0.95,
       "appearances": [
         {
           "observation_index": 1,
@@ -1330,7 +1331,7 @@
       "node_id": "9652549979785c10c4d6bbedb7e15d333764498a33d0bcf4b56c1ec695d8dd0a128ee19cf114d6954f1a355f24ba680f4f9c69e5c25c471d9b394c1436d4e8a1",
       "ip": "157.173.127.30",
       "port": 28657,
-      "appearance_count": 74,
+      "appearance_count": 75,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -1339,17 +1340,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 79,
+        "observation_index": 80,
         "phase": "automated_watcher",
-        "generated_at_source": "Wed Jun 17 06:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-17T05:24:29.402077+00:00",
-        "snapshot_file": "data/snapshots/2026-06-17T05-24-29-402077+00-00-changed.json"
+        "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
+        "checked_at_utc": "2026-06-17T10:14:43.037124+00:00",
+        "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9367,
+      "appearance_ratio": 0.9375,
       "appearances": [
         {
           "observation_index": 1,
@@ -1868,6 +1869,13 @@
           "generated_at_source": "Wed Jun 17 06:00:02 AM CEST 2026",
           "checked_at_utc": "2026-06-17T05:24:29.402077+00:00",
           "snapshot_file": "data/snapshots/2026-06-17T05-24-29-402077+00-00-changed.json"
+        },
+        {
+          "observation_index": 80,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-17T10:14:43.037124+00:00",
+          "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
         }
       ]
     },
@@ -1895,7 +1903,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9367,
+      "appearance_ratio": 0.925,
       "appearances": [
         {
           "observation_index": 6,
@@ -2441,7 +2449,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9114,
+      "appearance_ratio": 0.9,
       "appearances": [
         {
           "observation_index": 1,
@@ -2973,7 +2981,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.8734,
+      "appearance_ratio": 0.8625,
       "appearances": [
         {
           "observation_index": 11,
@@ -3484,7 +3492,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.8481,
+      "appearance_ratio": 0.8375,
       "appearances": [
         {
           "observation_index": 11,
@@ -3981,7 +3989,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7975,
+      "appearance_ratio": 0.7875,
       "appearances": [
         {
           "observation_index": 2,
@@ -4450,7 +4458,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7215,
+      "appearance_ratio": 0.7125,
       "appearances": [
         {
           "observation_index": 1,
@@ -4877,7 +4885,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6962,
+      "appearance_ratio": 0.6875,
       "appearances": [
         {
           "observation_index": 1,
@@ -5290,7 +5298,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6456,
+      "appearance_ratio": 0.6375,
       "appearances": [
         {
           "observation_index": 11,
@@ -5724,7 +5732,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.962,
+      "appearance_ratio": 0.95,
       "appearances": [
         {
           "observation_index": 1,
@@ -6337,7 +6345,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 74,
+      "appearance_count": 75,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -6346,17 +6354,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 79,
+        "observation_index": 80,
         "phase": "automated_watcher",
-        "generated_at_source": "Wed Jun 17 06:00:02 AM CEST 2026",
-        "checked_at_utc": "2026-06-17T05:24:29.402077+00:00",
-        "snapshot_file": "data/snapshots/2026-06-17T05-24-29-402077+00-00-changed.json"
+        "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
+        "checked_at_utc": "2026-06-17T10:14:43.037124+00:00",
+        "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9367,
+      "appearance_ratio": 0.9375,
       "appearances": [
         {
           "observation_index": 1,
@@ -6875,6 +6883,13 @@
           "generated_at_source": "Wed Jun 17 06:00:02 AM CEST 2026",
           "checked_at_utc": "2026-06-17T05:24:29.402077+00:00",
           "snapshot_file": "data/snapshots/2026-06-17T05-24-29-402077+00-00-changed.json"
+        },
+        {
+          "observation_index": 80,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-17T10:14:43.037124+00:00",
+          "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -6935,7 +6950,7 @@
         "signal_basis": [
           "Observed 74 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.9367",
+          "Appearance ratio: 0.925",
           "Provider hint: Contabo"
         ],
         "official_ownership_claim": false,
@@ -6951,7 +6966,7 @@
       "signal_basis": [
         "Observed 74 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.9367",
+        "Appearance ratio: 0.925",
         "Provider hint: Contabo"
       ],
       "official_ownership_claim": false,
@@ -6977,7 +6992,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9367,
+      "appearance_ratio": 0.925,
       "appearances": [
         {
           "observation_index": 6,
@@ -7596,7 +7611,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9114,
+      "appearance_ratio": 0.9,
       "appearances": [
         {
           "observation_index": 1,
@@ -8160,7 +8175,7 @@
         "signal_basis": [
           "Observed 69 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.8734"
+          "Appearance ratio: 0.8625"
         ],
         "official_ownership_claim": false,
         "detection_method": "static_report_evidence_and_observation_heuristic",
@@ -8175,7 +8190,7 @@
       "signal_basis": [
         "Observed 69 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.8734"
+        "Appearance ratio: 0.8625"
       ],
       "official_ownership_claim": false,
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
@@ -8200,7 +8215,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.8734,
+      "appearance_ratio": 0.8625,
       "appearances": [
         {
           "observation_index": 11,
@@ -8743,7 +8758,7 @@
         "signal_basis": [
           "Observed 67 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.8481"
+          "Appearance ratio: 0.8375"
         ],
         "official_ownership_claim": false,
         "detection_method": "static_report_evidence_and_observation_heuristic",
@@ -8758,7 +8773,7 @@
       "signal_basis": [
         "Observed 67 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.8481"
+        "Appearance ratio: 0.8375"
       ],
       "official_ownership_claim": false,
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
@@ -8783,7 +8798,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.8481,
+      "appearance_ratio": 0.8375,
       "appearances": [
         {
           "observation_index": 11,
@@ -9353,7 +9368,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7975,
+      "appearance_ratio": 0.7875,
       "appearances": [
         {
           "observation_index": 2,
@@ -9894,7 +9909,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7215,
+      "appearance_ratio": 0.7125,
       "appearances": [
         {
           "observation_index": 1,
@@ -10353,7 +10368,7 @@
         "signal_basis": [
           "Observed 55 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.6962"
+          "Appearance ratio: 0.6875"
         ],
         "official_ownership_claim": false,
         "detection_method": "static_report_evidence_and_observation_heuristic",
@@ -10368,7 +10383,7 @@
       "signal_basis": [
         "Observed 55 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.6962"
+        "Appearance ratio: 0.6875"
       ],
       "official_ownership_claim": false,
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
@@ -10393,7 +10408,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6962,
+      "appearance_ratio": 0.6875,
       "appearances": [
         {
           "observation_index": 1,
@@ -10838,7 +10853,7 @@
         "signal_basis": [
           "Observed 51 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.6456"
+          "Appearance ratio: 0.6375"
         ],
         "official_ownership_claim": false,
         "detection_method": "static_report_evidence_and_observation_heuristic",
@@ -10853,7 +10868,7 @@
       "signal_basis": [
         "Observed 51 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.6456"
+        "Appearance ratio: 0.6375"
       ],
       "official_ownership_claim": false,
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
@@ -10878,7 +10893,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6456,
+      "appearance_ratio": 0.6375,
       "appearances": [
         {
           "observation_index": 11,
@@ -11275,11 +11290,11 @@
       "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
     },
     "largest_removed_count": {
-      "removed_count": 7,
-      "observation_index": 5,
-      "phase": "manual_backfill",
-      "generated_at_source": "Tue May 19 04:00:01 PM CEST 2026",
-      "snapshot_file": "data/manual-backfill/2026-05-19T16-00-01-CEST-manual.json"
+      "removed_count": 8,
+      "observation_index": 80,
+      "phase": "automated_watcher",
+      "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
+      "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
     },
     "largest_total_delta": {
       "total_delta": 12,
@@ -11370,6 +11385,22 @@
         "change_severity": null,
         "severity_reason": null,
         "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
+      },
+      {
+        "observation_index": 80,
+        "phase": "automated_watcher",
+        "status": "changed",
+        "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
+        "checked_at_utc": "2026-06-17T10:14:43.037124+00:00",
+        "target_port": 28657,
+        "current_total": 2,
+        "previous_total": 10,
+        "added_count": 0,
+        "removed_count": 8,
+        "unchanged_count": 2,
+        "change_severity": "CRITICAL",
+        "severity_reason": "Official enode count dropped sharply from 10 to 2.",
+        "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
       }
     ]
   },
@@ -12637,10 +12668,26 @@
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
       "snapshot_file": "data/snapshots/2026-06-17T05-24-29-402077+00-00-changed.json"
+    },
+    {
+      "observation_index": 80,
+      "phase": "automated_watcher",
+      "status": "changed",
+      "generated_at_source": "Wed Jun 17 12:00:01 PM CEST 2026",
+      "checked_at_utc": "2026-06-17T10:14:43.037124+00:00",
+      "target_port": 28657,
+      "current_total": 2,
+      "previous_total": 10,
+      "added_count": 0,
+      "removed_count": 8,
+      "unchanged_count": 2,
+      "change_severity": "CRITICAL",
+      "severity_reason": "Official enode count dropped sharply from 10 to 2.",
+      "snapshot_file": "data/snapshots/2026-06-17T10-14-43-037124+00-00-changed.json"
     }
   ],
   "report_ready_summary": {
-    "short_summary": "Across 79 total observations, the DAC official enode list showed 37 unique enodes and 37 unique IPs. The observed target port remained within [28657]. Enode count ranged from 7 to 16, with an average of 12.66.",
+    "short_summary": "Across 80 total observations, the DAC official enode list showed 37 unique enodes and 37 unique IPs. The observed target port remained within [28657]. Enode count ranged from 2 to 16, with an average of 12.53.",
     "manual_to_automated_context": "The dataset combines partial manual observations from the pre-watcher period with automated GitHub Actions snapshots after the watcher was deployed.",
     "technical_value": "This summary provides a structured basis for analyzing bootstrap peer rotation, persistent observed enodes, IP recurrence, provider hints, ASN hints, DAC Infrastructure Signals, and possible infrastructure maturation patterns."
   }
