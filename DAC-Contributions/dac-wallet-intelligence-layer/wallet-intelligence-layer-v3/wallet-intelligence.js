@@ -218,17 +218,33 @@ function getRankScoreByBadgeCount(rankBadgeCount) {
 
 
 
-function getNativeFundsScore(nativeBalance) {
-  const amount = Number(nativeBalance || 0);
+function getNativeFundsScore(nativeFundsBeforeConviction) {
+  if (nativeFundsBeforeConviction === null || nativeFundsBeforeConviction === undefined) {
+    return {
+      points: 0,
+      tier: "Unavailable",
+      rule: "nativeFundsBeforeConviction unavailable",
+    };
+  }
 
-  if (amount >= 100) return { points: 15, tier: "100+ DACC", rule: "nativeBalance >= 100" };
-  if (amount >= 75) return { points: 14, tier: "75+ DACC", rule: "nativeBalance >= 75" };
-  if (amount >= 50) return { points: 12, tier: "50+ DACC", rule: "nativeBalance >= 50" };
-  if (amount >= 25) return { points: 9, tier: "25+ DACC", rule: "nativeBalance >= 25" };
-  if (amount >= 10) return { points: 6, tier: "10+ DACC", rule: "nativeBalance >= 10" };
-  if (amount >= 5) return { points: 4, tier: "5+ DACC", rule: "nativeBalance >= 5" };
+  const amount = Number(nativeFundsBeforeConviction);
 
-  return { points: 2, tier: "<5 DACC", rule: "nativeBalance < 5" };
+  if (!Number.isFinite(amount)) {
+    return {
+      points: 0,
+      tier: "Unavailable",
+      rule: "nativeFundsBeforeConviction unavailable",
+    };
+  }
+
+  if (amount >= 100) return { points: 15, tier: "100+ DACC", rule: "nativeFundsBeforeConviction >= 100" };
+  if (amount >= 75) return { points: 14, tier: "75+ DACC", rule: "nativeFundsBeforeConviction >= 75" };
+  if (amount >= 50) return { points: 12, tier: "50+ DACC", rule: "nativeFundsBeforeConviction >= 50" };
+  if (amount >= 25) return { points: 9, tier: "25+ DACC", rule: "nativeFundsBeforeConviction >= 25" };
+  if (amount >= 10) return { points: 6, tier: "10+ DACC", rule: "nativeFundsBeforeConviction >= 10" };
+  if (amount >= 5) return { points: 4, tier: "5+ DACC", rule: "nativeFundsBeforeConviction >= 5" };
+
+  return { points: 2, tier: "<5 DACC", rule: "nativeFundsBeforeConviction < 5" };
 }
 
 function getEstimatedStakeBeforeConvictionScore(estimatedStakeBeforeConviction) {
@@ -344,16 +360,16 @@ const SCORING_POLICY = Object.freeze({
         { condition: "totalNFTs < 100", points: 3 },
       ]),
     }),
-    nativeBalanceScore: Object.freeze({
+    nativeFundsBeforeConvictionScore: Object.freeze({
       maxPoints: 15,
       thresholds: Object.freeze([
-        { condition: "nativeBalance >= 100", points: 15 },
-        { condition: "nativeBalance >= 75", points: 14 },
-        { condition: "nativeBalance >= 50", points: 12 },
-        { condition: "nativeBalance >= 25", points: 9 },
-        { condition: "nativeBalance >= 10", points: 6 },
-        { condition: "nativeBalance >= 5", points: 4 },
-        { condition: "nativeBalance < 5", points: 2 },
+        { condition: "nativeFundsBeforeConviction >= 100", points: 15 },
+        { condition: "nativeFundsBeforeConviction >= 75", points: 14 },
+        { condition: "nativeFundsBeforeConviction >= 50", points: 12 },
+        { condition: "nativeFundsBeforeConviction >= 25", points: 9 },
+        { condition: "nativeFundsBeforeConviction >= 10", points: 6 },
+        { condition: "nativeFundsBeforeConviction >= 5", points: 4 },
+        { condition: "nativeFundsBeforeConviction < 5", points: 2 },
       ]),
     }),
     daccCommitmentScore: Object.freeze({
@@ -390,7 +406,7 @@ const SCORING_POLICY = Object.freeze({
     ]),
   }),
   note:
-    "Community-defined wallet-quality policy. v3.5.0 covers Conviction-aware reputation scoring and explorer-only Sybil/behavior heuristics. Stake-era commitment is frozen at the Conviction cutover and post-cutover Conviction Locked becomes the active commitment signal. This is not an official DAC reputation, eligibility, or Sybil system.",
+    "Community-defined wallet-quality policy. v3.5.0 covers Conviction-aware reputation scoring and explorer-only Sybil/behavior heuristics. Stake-era commitment and Native Funds scoring are frozen at the Conviction cutover, while post-cutover Conviction Locked becomes the active commitment signal. This is not an official DAC reputation, eligibility, or Sybil system.",
 });
 
 const state = {
@@ -569,6 +585,15 @@ async function checkWallet(address) {
     const explorerResult = await getExplorerSnapshot(address);
 
     if (explorerResult.status === "FULL") {
+      try {
+        explorerResult.data.nativeFundsBeforeConviction = await getNativeFundsBeforeConviction(
+          address,
+          explorerResult.data.nativeBalance
+        );
+      } catch (error) {
+        explorerResult.data.nativeFundsBeforeConviction = buildUnavailableNativeFundsBeforeConviction(error);
+      }
+
       const output = buildFullWalletIntelligence(address, explorerResult.data);
       output.historicalActivity = await getHistoricalActivitySafely(address);
       output.sybilHeuristics = await getSybilHeuristicsSafely(address, output);
@@ -734,6 +759,141 @@ async function getNativeBalanceFromExplorer(address) {
 
   return decimalWeiToNumber(data.result);
 }
+
+function decimalDaccToWeiBigInt(value) {
+  if (value === null || value === undefined) return 0n;
+
+  const normalized = String(value).trim();
+
+  if (!/^\d+(\.\d+)?$/.test(normalized)) return 0n;
+
+  const [wholePart, decimalPart = ""] = normalized.split(".");
+  const wholeWei = BigInt(wholePart || "0") * 1000000000000000000n;
+  const paddedDecimal = (decimalPart + "0".repeat(18)).slice(0, 18);
+  const decimalWei = BigInt(paddedDecimal || "0");
+
+  return wholeWei + decimalWei;
+}
+
+function buildUnavailableNativeFundsBeforeConviction(error) {
+  return {
+    token: NATIVE_SYMBOL,
+    balance: null,
+    source: "Native Funds cutoff balance unavailable",
+    mode: "CUTOFF_BALANCE_UNAVAILABLE_NON_BLOCKING",
+    confidence: "UNAVAILABLE",
+    cutoffBlock: CONVICTION_CUTOFF_BLOCK,
+    cutoffLocal: CONVICTION_CUTOFF_LOCAL_LABEL,
+    error: error && error.message ? error.message : error ? String(error) : undefined,
+    note:
+      "Native Funds Before Conviction could not be verified. Current Native Balance remains live telemetry but is not used to increase this score.",
+  };
+}
+
+async function getNativeFundsBeforeConviction(address, currentNativeBalance = null) {
+  const wallet = normalizeAddress(address);
+  const cutoffBlockHex = `0x${CONVICTION_CUTOFF_BLOCK.toString(16)}`;
+
+  try {
+    const historicalBalanceHex = await rpcCall("eth_getBalance", [address, cutoffBlockHex]);
+
+    if (/^0x[0-9a-fA-F]+$/.test(String(historicalBalanceHex || ""))) {
+      return {
+        token: NATIVE_SYMBOL,
+        balance: hexWeiToNumber(historicalBalanceHex),
+        source: "DAC RPC eth_getBalance at Conviction cutoff block",
+        mode: "HISTORICAL_RPC_CUTOFF_BALANCE",
+        confidence: "HIGH",
+        cutoffBlock: CONVICTION_CUTOFF_BLOCK,
+        cutoffLocal: CONVICTION_CUTOFF_LOCAL_LABEL,
+        note:
+          "Native Funds score uses wallet native balance at the Conviction cutoff. Post-cutover balance changes do not increase this score.",
+      };
+    }
+  } catch (error) {
+    // Non-archive RPC endpoints may reject historical eth_getBalance.
+  }
+
+  try {
+    const currentBalance =
+      currentNativeBalance === null || currentNativeBalance === undefined
+        ? await getNativeBalanceFromExplorer(address)
+        : Number(currentNativeBalance);
+
+    const currentBalanceWei = decimalDaccToWeiBigInt(currentBalance);
+
+    const txData = await explorerRequest({
+      module: "account",
+      action: "txlist",
+      address,
+      startblock: CONVICTION_CUTOFF_BLOCK,
+      endblock: 99999999,
+      sort: "asc",
+    });
+
+    const txs = Array.isArray(txData)
+      ? txData
+      : txData && Array.isArray(txData.result)
+        ? txData.result
+        : [];
+
+    let postCutoverNetChangeWei = 0n;
+    let postCutoverIncomingWei = 0n;
+    let postCutoverOutgoingWei = 0n;
+    let postCutoverGasPaidWei = 0n;
+    let countedTxCount = 0;
+
+    for (const tx of txs) {
+      if (!isSuccessfulExplorerTx(tx)) continue;
+      if (!isPostConvictionEraTx(tx)) continue;
+
+      const from = normalizeAddress(tx.from);
+      const to = normalizeAddress(tx.to);
+      const value = parseBigIntValue(tx.value || "0");
+
+      if (to === wallet && value > 0n) {
+        postCutoverIncomingWei += value;
+        postCutoverNetChangeWei += value;
+        countedTxCount += 1;
+      }
+
+      if (from === wallet) {
+        const gasUsed = parseBigIntValue(tx.gasUsed || tx.gas_used || "0");
+        const gasPrice = parseBigIntValue(tx.gasPrice || tx.gas_price || "0");
+        const gasPaid = gasUsed > 0n && gasPrice > 0n ? gasUsed * gasPrice : 0n;
+
+        postCutoverOutgoingWei += value;
+        postCutoverGasPaidWei += gasPaid;
+        postCutoverNetChangeWei -= value + gasPaid;
+        countedTxCount += 1;
+      }
+    }
+
+    const estimatedCutoffWei = currentBalanceWei - postCutoverNetChangeWei;
+    const safeEstimatedCutoffWei = estimatedCutoffWei > 0n ? estimatedCutoffWei : 0n;
+
+    return {
+      token: NATIVE_SYMBOL,
+      balance: weiBigIntToNumber(safeEstimatedCutoffWei),
+      source: "DAC Explorer estimated cutoff balance from post-cutover tx flow",
+      mode: "EXPLORER_CUTOFF_BALANCE_ESTIMATE",
+      confidence: "MEDIUM",
+      currentBalance,
+      postCutoverNetChange: weiBigIntToNumber(postCutoverNetChangeWei),
+      postCutoverIncoming: weiBigIntToNumber(postCutoverIncomingWei),
+      postCutoverOutgoing: weiBigIntToNumber(postCutoverOutgoingWei),
+      postCutoverGasPaid: weiBigIntToNumber(postCutoverGasPaidWei),
+      postCutoverTxCount: countedTxCount,
+      cutoffBlock: CONVICTION_CUTOFF_BLOCK,
+      cutoffLocal: CONVICTION_CUTOFF_LOCAL_LABEL,
+      note:
+        "Native Funds score is cutoff-aware. This estimate reconstructs pre-Conviction native funds from current balance and post-cutover external tx flow when historical RPC balance is unavailable.",
+    };
+  } catch (error) {
+    return buildUnavailableNativeFundsBeforeConviction(error);
+  }
+}
+
 
 async function getNftCollectionsFromExplorer(address) {
   const data = await explorerRequest({
@@ -1242,6 +1402,17 @@ async function rpcCall(method, params) {
 
 function buildFullWalletIntelligence(address, data) {
   const nativeBalance = data.nativeBalance;
+  const nativeFundsBeforeConvictionSignal =
+    data.nativeFundsBeforeConviction && Object.prototype.hasOwnProperty.call(data.nativeFundsBeforeConviction, "balance")
+      ? data.nativeFundsBeforeConviction
+      : buildUnavailableNativeFundsBeforeConviction();
+
+  const nativeFundsBeforeConviction =
+    nativeFundsBeforeConvictionSignal.balance === null ||
+    nativeFundsBeforeConvictionSignal.balance === undefined
+      ? null
+      : Number(nativeFundsBeforeConvictionSignal.balance || 0);
+
   const nftCollections = data.nftCollections;
   const txCount = data.transactionCount;
   const nftTransfers = data.nftTransfers;
@@ -1272,6 +1443,7 @@ function buildFullWalletIntelligence(address, data) {
 
   const reputationScoring = buildReputationScore({
     nativeBalance,
+    nativeFundsBeforeConviction,
     txCount,
     totalCollections,
     totalNFTs,
@@ -1445,6 +1617,7 @@ function buildPortfolioProfile(
 
 function buildReputationScore({
   nativeBalance,
+  nativeFundsBeforeConviction = null,
   txCount,
   totalCollections,
   totalNFTs,
@@ -1462,7 +1635,7 @@ function buildReputationScore({
   const nftHoldingsScore =
     totalNFTs >= 200 ? 10 : totalNFTs >= 100 ? 7 : 3;
 
-  const nativeScore = getNativeFundsScore(nativeBalance);
+  const nativeScore = getNativeFundsScore(nativeFundsBeforeConviction);
   const nativeBalanceScore = nativeScore.points;
 
   const stakeScore = getEstimatedStakeBeforeConvictionScore(stakedDacc);
@@ -1512,6 +1685,11 @@ function buildReputationScore({
     sybilRisk = "MEDIUM";
   }
 
+  const nativeFundsMetric =
+    nativeFundsBeforeConviction === null || nativeFundsBeforeConviction === undefined
+      ? "Unavailable"
+      : nativeFundsBeforeConviction;
+
   const breakdown = [
     {
       key: "transactionScore",
@@ -1558,12 +1736,12 @@ function buildReputationScore({
             : "totalNFTs < 100",
     },
     {
-      key: "nativeBalanceScore",
-      name: "Native Funds Score",
+      key: "nativeFundsBeforeConvictionScore",
+      name: "Native Funds Before Conviction",
       points: nativeBalanceScore,
       maxPoints: 15,
-      metric: nativeBalance,
-      metricLabel: "DACC",
+      metric: nativeFundsMetric,
+      metricLabel: "DACC at cutoff",
       condition: nativeScore.rule,
       tier: nativeScore.tier,
     },
@@ -1600,11 +1778,16 @@ function buildReputationScore({
     sybilRisk,
     scoringPolicy: SCORING_POLICY,
     nativeFundsSignal: {
-      balance: nativeBalance,
+      currentBalance: nativeBalance,
+      balanceBeforeConviction: nativeFundsBeforeConviction,
+      balance: nativeFundsBeforeConviction,
       tier: nativeScore.tier,
       points: nativeBalanceScore,
       maxPoints: 15,
       rule: nativeScore.rule,
+      cutoffBlock: CONVICTION_CUTOFF_BLOCK,
+      cutoffLocal: CONVICTION_CUTOFF_LOCAL_LABEL,
+      scoringMode: "NATIVE_FUNDS_BEFORE_CONVICTION",
     },
     officialStakeSignal: {
       contract: DACC_STAKING_CONTRACT,
@@ -2953,7 +3136,7 @@ function buildDynamicIntelligenceBadge(output) {
       { trait_type: "Inception Rank", value: rankClean || "Unavailable" },
       { trait_type: "Archetype", value: archetype || "Unavailable" },
       { trait_type: "Wallet Address", value: output.wallet },
-      { trait_type: "Native Balance Tier", value: output.proofOfNativeFunds ? output.proofOfNativeFunds.balanceTier : "Unavailable" },
+      { trait_type: "Native Funds Before Conviction Tier", value: output.reputationScoring && output.reputationScoring.nativeFundsSignal ? output.reputationScoring.nativeFundsSignal.tier : "Unavailable" },
       { trait_type: "Rank Badge Count", value: output.knownCollectionRegistry ? output.knownCollectionRegistry.rankBadgeCount || 0 : 0 },
       { trait_type: "Version", value: APP_VERSION },
       { trait_type: "Badge Engine", value: INTELLIGENCE_BADGE_VERSION },

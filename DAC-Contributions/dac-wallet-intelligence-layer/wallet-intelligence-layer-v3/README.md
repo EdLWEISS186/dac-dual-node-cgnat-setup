@@ -1427,3 +1427,14 @@ Key changes:
   - `> 7 days -> 1.00x`
 
 This keeps the stake-era and Conviction-era commitment signals visible side by side while preserving the WIL v3.5.0 separation between historical pre-cutover stake and active post-cutover Conviction locks.
+
+## v3.5.0 Native Funds Cutoff Scoring Guard
+
+This patch makes the Native Funds reputation component cutoff-aware without adding a blocking explorer module.
+
+Key changes:
+- The top scoreboard `Native Balance` card remains live/current telemetry.
+- The 15-point Native Funds reputation component is renamed to `Native Funds Before Conviction`.
+- Current post-cutover native balance is no longer used to increase Native Funds score.
+- If a cutoff balance is not loaded, the Native Funds component becomes conservative/unavailable instead of falling back to current liquid balance.
+- This preserves consistency with Conviction-era logic, where locked Conviction commitment is a stronger signal than simply holding liquid DACC after the cutoff.
