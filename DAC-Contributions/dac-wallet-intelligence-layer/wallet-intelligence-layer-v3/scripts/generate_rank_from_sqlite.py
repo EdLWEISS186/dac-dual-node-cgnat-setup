@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WIL v3.5.0 — SQLite Global Rank Publisher
+WIL v3.6.0 — SQLite Global Rank Publisher
 
 Reads the complete SQLite wallet population, calculates all comparative
 ranks globally with SQLite window functions, and emits compact browser
@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable
 
 
-VERSION = "v3.5.0"
+VERSION = "v3.6.0"
 CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
 NATIVE_TOKEN = "DACC"
@@ -35,7 +35,6 @@ SHARD_PREFIX_LENGTH = 2
 SMALL_METRIC_ORDER = [
     "native_funds",
     "estimated_stake_before_conviction",
-    "conviction_locked",
     "transactions",
     "native_volume",
     "gas_used",
@@ -935,7 +934,7 @@ def main() -> None:
     )
 
     print(
-        "[INFO] WIL v3.5.0 SQLite global rank "
+        "[INFO] WIL v3.6.0 SQLite global rank "
         "publisher"
     )
     print(f"[INFO] state_db={source_database}")
@@ -1115,7 +1114,7 @@ def main() -> None:
             "version": VERSION,
             "project": (
                 "Wallet Intelligence Layer "
-                "v3.5.0"
+                "v3.6.0"
             ),
             "feature": (
                 "Wallet Rank Intelligence"
@@ -1142,7 +1141,7 @@ def main() -> None:
             ),
             "rank_model": (
                 "wallet-rank-intelligence-"
-                "v3.5.0-sqlite-global"
+                "v3.6.0-sqlite-global"
             ),
             "total_ranked_wallets": (
                 ranked_wallets
@@ -1164,15 +1163,6 @@ def main() -> None:
             "composite_ranking_variables": (
                 COMPOSITE_METRIC_ORDER
             ),
-            "conviction_locked_signal": {
-                "key": CONVICTION_SIGNAL_KEY,
-                "label": "Conviction Locked",
-                "contract": CONVICTION_CONTRACT,
-                "start_block": CONVICTION_CUTOVER_BLOCK,
-                "start_utc": CONVICTION_CUTOVER_UTC,
-                "start_local": CONVICTION_CUTOVER_LOCAL,
-                "source": "CONVICTION_LOCK_TRANSACTION_FLOW",
-            },
             "official_rank_signal": {
                 "key": OFFICIAL_SIGNAL_KEY,
                 "label": (

@@ -383,10 +383,11 @@ class SQLiteStakingMetrics:
 
 class SQLiteConvictionMetrics:
     """
-    Lazy, rollback-safe Conviction Locked state.
+    Legacy, rollback-safe Conviction state.
 
-    Conviction Locked is derived from successful lock transactions to the
-    Conviction contract after the WIL v3.5.0 cutover block.
+    Legacy Conviction tables are retained for backward compatibility with
+    historical v3.5.0 state. v3.6.0 no longer treats Conviction as an
+    active public scoring or rank signal.
     """
 
     def __init__(self, connection: sqlite3.Connection) -> None:

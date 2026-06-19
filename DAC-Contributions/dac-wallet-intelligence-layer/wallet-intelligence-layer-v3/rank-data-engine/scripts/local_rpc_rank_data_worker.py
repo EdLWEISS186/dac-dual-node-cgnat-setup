@@ -31,7 +31,7 @@ from sqlite_rank_state import SQLiteRankState
 
 CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
-PROJECT = "Wallet Intelligence Layer v3.5.0"
+PROJECT = "Wallet Intelligence Layer v3.6.0"
 
 DEFAULT_PRIMARY_RPC = "http://127.0.0.1:8546"
 DEFAULT_FALLBACK_RPC = "http://192.168.100.7:8545"
@@ -56,6 +56,7 @@ CONVICTION_CONTRACT = (
     "0xfc416635e3b7330404766bd8ea9e5227800937c1"
 )
 CONVICTION_LOCK_FUNCTION_SELECTOR = "0x3a4b66f1"
+CONVICTION_METRICS_ACTIVE = False
 
 
 def now_utc() -> str:
@@ -596,7 +597,7 @@ def process_conviction_transaction(
     block_number: int,
     timestamp: str,
 ) -> Optional[str]:
-    """Accumulate WIL v3.5.0 Conviction Locked flow."""
+    """Accumulate legacy Conviction flow only when legacy compatibility is explicitly enabled."""
 
     if conviction_metrics is None:
         return None
@@ -726,7 +727,7 @@ def main() -> None:
 
         wallet_metrics = sqlite_state.wallet_metrics
         staking_metrics = sqlite_state.staking_metrics
-        conviction_metrics = sqlite_state.conviction_metrics
+        conviction_metrics = sqlite_state.conviction_metrics if CONVICTION_METRICS_ACTIVE else None
         official_inception_nft_tokens = (
             sqlite_state.official_inception_nft_tokens
         )
@@ -1133,23 +1134,12 @@ def main() -> None:
             "fallback_rpc": args.fallback_rpc,
             "mode": "LOCAL_RPC_PRIMARY_WITH_FALLBACK",
             "staking_contract": DACC_STAKING_CONTRACT,
-            "staking_metric": "ESTIMATED_STAKE_BEFORE_CONVICTION",
+            "staking_metric": "ESTIMATED_CURRENT_STAKE",
             "staking_source": (
-                "DAC_STAKE_UNSTAKE_TRANSACTION_FLOW_BEFORE_CONVICTION"
+                "DAC_STAKE_UNSTAKE_TRANSACTION_FLOW"
             ),
-            "staking_cutover_block": CONVICTION_CUTOVER_BLOCK,
-            "staking_cutover_utc": CONVICTION_CUTOVER_UTC,
-            "staking_cutover_local": CONVICTION_CUTOVER_LOCAL,
             "stake_selector": STAKE_FUNCTION_SELECTOR,
             "unstake_selector": UNSTAKE_FUNCTION_SELECTOR,
-            "conviction_contract": CONVICTION_CONTRACT,
-            "conviction_metric": "CONVICTION_LOCKED",
-            "conviction_source": (
-                "CONVICTION_LOCK_TRANSACTION_FLOW"
-            ),
-            "conviction_lock_selector": (
-                CONVICTION_LOCK_FUNCTION_SELECTOR
-            ),
             "official_inception_nft_contract": (
                 OFFICIAL_INCEPTION_NFT_CONTRACT
             ),
@@ -1197,18 +1187,6 @@ def main() -> None:
             staking_metrics is not None
         ),
 
-        "conviction_locked_enabled": (
-            conviction_metrics is not None
-        ),
-
-        "processed_conviction_events": (
-            processed_conviction_events
-        ),
-
-        "conviction_wallets_changed": (
-            len(changed_conviction_wallets)
-        ),
-
         "official_inception_nft_enabled": (
             official_inception_nft_tokens is not None
         ),
@@ -1235,7 +1213,7 @@ def main() -> None:
 
     public_status = {
         "schema": "WIL_V3_PUBLIC_RUN_STATUS",
-        "version": "v3.5.0",
+        "version": "v3.6.0",
         "project": PROJECT,
         "engine": "rank-data-engine",
         "network": NETWORK,
@@ -1258,7 +1236,7 @@ def main() -> None:
         ),
 
         "estimated_current_stake": {
-            "label": "Estimated Stake Before Conviction",
+            "label": "DACC Stake",
             "contract": DACC_STAKING_CONTRACT,
             "source": (
                 "DAC_STAKE_UNSTAKE_TRANSACTION_FLOW"
@@ -1266,23 +1244,6 @@ def main() -> None:
             "stake_selector": STAKE_FUNCTION_SELECTOR,
             "unstake_selector": UNSTAKE_FUNCTION_SELECTOR,
             "direct_contract_read_role": "CROSS_CHECK",
-            "cutover_block": CONVICTION_CUTOVER_BLOCK,
-            "cutover_utc": CONVICTION_CUTOVER_UTC,
-            "cutover_local": CONVICTION_CUTOVER_LOCAL,
-        },
-
-        "conviction_locked_enabled": (
-            conviction_metrics is not None
-        ),
-
-        "conviction_locked": {
-            "label": "Conviction Locked",
-            "contract": CONVICTION_CONTRACT,
-            "source": "CONVICTION_LOCK_TRANSACTION_FLOW",
-            "lock_selector": CONVICTION_LOCK_FUNCTION_SELECTOR,
-            "start_block": CONVICTION_CUTOVER_BLOCK,
-            "start_utc": CONVICTION_CUTOVER_UTC,
-            "start_local": CONVICTION_CUTOVER_LOCAL,
         },
 
         "official_inception_nft_enabled": (
@@ -1357,7 +1318,7 @@ def main() -> None:
             ),
         },
         "last_run": result,
-        "note": "v3.5.0 Conviction cutover status. Heavy wallet metrics remain externalized and are not loaded again by the publish layer during backfill."
+        "note": "v3.6.0 normal rank-state worker status. Legacy Conviction tables may remain in SQLite for backward compatibility, but Conviction is not an active public scoring or rank signal."
     }
 
     if not args.dry_run:

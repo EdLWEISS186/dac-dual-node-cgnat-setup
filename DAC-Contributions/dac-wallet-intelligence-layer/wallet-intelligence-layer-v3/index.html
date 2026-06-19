@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Wallet Intelligence Layer v3.5.0 — DAC Testnet</title>
+<title>Wallet Intelligence Layer v3.6.0 — DAC Testnet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="./wallet-intelligence.css" />
@@ -16,7 +16,7 @@
 
   <header class="topbar">
     <a class="brand-link" href="./" aria-label="DAC Wallet Intelligence Layer home">
-      <div class="brand-name">Wallet Intelligence Layer v3.5.0</div>
+      <div class="brand-name">Wallet Intelligence Layer v3.6.0</div>
       <div class="brand-sub">Wallet Checker</div>
     </a>
 
@@ -52,7 +52,7 @@
     <section class="hero-grid">
       <div class="hero-copy">
         <div class="network-badge"><span class="dot on"></span>DAC TESTNET &middot; CHAIN 21894</div>
-        <h1>Wallet Intelligence Layer v3.5.0</h1>
+        <h1>Wallet Intelligence Layer v3.6.0</h1>
         <p>
           Paste a wallet address and let the checker read public DAC testnet data:
           native funds, NFT ownership, activity metrics, portfolio profile,
@@ -138,14 +138,9 @@
           <small id="nativeBalanceSource">—</small>
         </article>
         <article class="score-card">
-          <span class="score-label">Stake Before Conviction</span>
+          <span class="score-label">DACC Stake</span>
           <strong id="stakedDaccValue">—</strong>
           <small id="stakedDaccSource">—</small>
-        </article>
-        <article class="score-card">
-          <span class="score-label">Conviction Locked</span>
-          <strong id="convictionLockedValue">—</strong>
-          <small id="convictionLockedSource">—</small>
         </article>
         <article class="score-card">
           <span class="score-label">Transactions</span>
@@ -176,7 +171,7 @@
         </div>
 
         <div class="score-explain" id="historicalNote">
-          Historical windows are split by the Conviction cutover. Stake-era flow is evaluated before block 15021664, while post-cutover unstake activity is tracked as context and does not reduce Estimated Stake Before Conviction.
+          Historical windows use explorer-visible stake and unstake flow where available.
         </div>
       </section>
 
@@ -186,7 +181,7 @@
             <p class="eyebrow">Sybil Heuristics</p>
             <h3>Behavior Pattern Analysis</h3>
           </div>
-          <small id="sybilModeLabel">EOH-v3.5.0</small>
+          <small id="sybilModeLabel">EOH-v3.6.0</small>
         </div>
 
         <div class="sybil-summary-grid">
@@ -233,7 +228,7 @@
             <p class="eyebrow">Dynamic Intelligence Badge</p>
             <h3>One Evolving Badge per Wallet</h3>
           </div>
-          <small id="badgeEngineLabel">DIB-v3.5.0</small>
+          <small id="badgeEngineLabel">DIB-v3.6.0</small>
         </div>
 
         <div class="badge-layout">
@@ -341,7 +336,7 @@
           <dl>
             <div><dt>Trust Profile</dt><dd id="trustProfileValue">—</dd></div>
             <div><dt>Inception Rank</dt><dd id="inceptionRankValue">—</dd></div>
-            <div><dt>Stake / Conviction Signal</dt><dd id="stakedDaccProfileValue">—</dd></div>
+            <div><dt>DACC Stake Signal</dt><dd id="stakedDaccProfileValue">—</dd></div>
             <div><dt>Sybil Risk</dt><dd id="sybilRiskValue">—</dd></div>
             <div><dt>Score Policy</dt><dd>Verified data only</dd></div>
             <div><dt>Fallback Rule</dt><dd>No mock score</dd></div>
@@ -355,7 +350,7 @@
             <p class="eyebrow">Wallet Quality Policy</p>
             <h3>Scoring Breakdown</h3>
           </div>
-          <small id="scoringPolicyLabel">WIL-v3.5.0</small>
+          <small id="scoringPolicyLabel">WIL-v3.6.0</small>
         </div>
 
         <div class="score-breakdown-grid" id="scoreBreakdownGrid">
@@ -449,9 +444,9 @@
           </article>
 
           <article class="registry-meta-card">
-            <span>DACC Commitment Signals</span>
+            <span>DACC Stake Signal</span>
             <strong id="registryStakeValue">—</strong>
-            <small>Stake-era signal plus Conviction lock signal</small>
+            <small>Current DACC stake signal</small>
           </article>
         </div>
 
@@ -462,7 +457,7 @@
         </div>
 
         <div class="score-explain">
-          DAC Inception Rank is treated as an official rank badge signal because it is tied to the DAC Inception Rank NFT and QE progress flow. Stake-era activity is preserved as Estimated Stake Before Conviction, while Conviction Locked is displayed as the new post-cutover active commitment signal.
+          DAC Inception Rank is treated as an official rank badge signal because it is tied to the DAC Inception Rank NFT and QE progress flow. DACC Stake is displayed as a separate live ecosystem commitment signal.
         </div>
       </section>
 

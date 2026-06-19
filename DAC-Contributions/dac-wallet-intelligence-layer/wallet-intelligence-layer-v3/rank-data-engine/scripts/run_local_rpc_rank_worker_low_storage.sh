@@ -75,7 +75,7 @@ run_once() {
 
   python3 -m json.tool "$public_status" >/dev/null
 
-  echo "[INFO] WIL v3.5.0 worker result"
+  echo "[INFO] WIL v3.6.0 worker result"
   python3 - "$public_status" <<'STATUS_PY'
 import json
 import sys
@@ -83,7 +83,6 @@ import sys
 status = json.load(open(sys.argv[1], encoding="utf-8"))
 sync = status.get("sync_status", {}) or {}
 last = status.get("last_run", {}) or {}
-conviction = status.get("conviction_locked", {}) or {}
 
 print("[STATUS] project:", status.get("project"))
 print("[STATUS] version:", status.get("version"))
@@ -105,50 +104,13 @@ for key in [
     "processed_transactions",
     "processed_staking_events",
     "staking_wallets_changed",
-    "processed_conviction_events",
-    "conviction_wallets_changed",
     "wallet_rows_written",
     "staking_rows_written",
-    "conviction_rows_written",
-    "conviction_locked_enabled",
     "stop_reason",
 ]:
     print(f"[STATUS] last_run.{key}:", last.get(key))
 
-print("[STATUS] conviction_enabled:", status.get("conviction_locked_enabled"))
-print("[STATUS] conviction_label:", conviction.get("label"))
-print("[STATUS] conviction_start_block:", conviction.get("start_block"))
-print("[STATUS] conviction_contract:", conviction.get("contract"))
 STATUS_PY
-
-  echo "[INFO] WIL v3.5.0 SQLite Conviction tables"
-  python3 - "$EXTERNAL_SQLITE_FILE" <<'CONVICTION_DB_PY'
-import sqlite3
-import sys
-
-conn = sqlite3.connect(sys.argv[1])
-
-tables = {
-    row[0]
-    for row in conn.execute(
-        """
-        SELECT name
-        FROM sqlite_master
-        WHERE type = 'table'
-          AND name IN ('conviction_lock_events', 'conviction_metrics')
-        """
-    )
-}
-
-for table in ["conviction_lock_events", "conviction_metrics"]:
-    if table in tables:
-        count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-        print(f"[STATUS] {table}_rows:", count)
-    else:
-        print(f"[STATUS] {table}_rows: missing")
-
-conn.close()
-CONVICTION_DB_PY
 
   echo "[INFO] Generating lightweight public sync artifacts"
   python3 "$lightweight_generator" --status-file "$public_status"
@@ -265,7 +227,7 @@ PY
   echo "[INFO] Temporary workdir removed after this run."
 }
 
-echo "[INFO] WIL v3.5.0 SQLite Rank State Worker | Inception Evolved - Conviction for Mainnet and TGE"
+echo "[INFO] WIL v3.6.0 SQLite Rank State Worker | Back to Normal - standard stake/rank worker"
 echo "[INFO] primary=$PRIMARY_RPC"
 echo "[INFO] fallback=$FALLBACK_RPC"
 echo "[INFO] max_blocks=$MAX_BLOCKS"

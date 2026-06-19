@@ -1,5 +1,5 @@
 /*
- * Wallet Intelligence Layer v3.5.0 — Wallet Rank Intelligence
+ * Wallet Intelligence Layer v3.6.0 — Wallet Rank Intelligence
  *
  * Hybrid helper:
  * - Fetches real-time Explorer API network snapshot.
@@ -15,8 +15,7 @@
 
   const METRICS = [
     { key: "native_funds", rankKey: "native_funds", label: "Native Funds", suffix: "DACC", layout: "metric" },
-    { key: "estimated_stake_before_conviction", rankKey: "estimated_stake_before_conviction", label: "Estimated Stake Before Conviction", suffix: "DACC", layout: "metric" },
-    { key: "conviction_locked", rankKey: "conviction_locked", label: "Conviction Locked", suffix: "DACC", layout: "metric" },
+    { key: "estimated_stake_before_conviction", rankKey: "estimated_stake_before_conviction", label: "DACC Stake", suffix: "DACC", layout: "metric" },
     { key: "transactions", rankKey: "transactions", label: "Transactions", suffix: "tx", layout: "metric" },
     { key: "native_volume", rankKey: "native_volume", label: "Native Volume", suffix: "DACC", layout: "metric" },
     { key: "gas_used", rankKey: "gas_used", label: "Gas Used", suffix: "gas", layout: "metric" },
@@ -154,7 +153,6 @@
       ? [
           "native_funds",
           "estimated_stake_before_conviction",
-          "conviction_locked",
           "transactions",
           "native_volume",
           "gas_used",
