@@ -3,7 +3,7 @@
   "report_type": "observation_window_comparison",
   "comparison_layer_version": "v1.8.1",
   "comparison_scope": "7d",
-  "generated_at_utc": "2026-06-19T13:33:37.021577+00:00",
+  "generated_at_utc": "2026-06-19T16:20:51.530828+00:00",
   "window_a": {
     "label": "Window A",
     "description": "Earlier observation segment.",
@@ -177,52 +177,52 @@
     "label": "Window B",
     "description": "Later observation segment.",
     "summary": {
-      "snapshot_count": 8,
+      "snapshot_count": 9,
       "first_index": 43,
-      "latest_index": 50,
+      "latest_index": 51,
       "first_checked_at_utc": "2026-06-15T16:32:07.477470+00:00",
-      "latest_checked_at_utc": "2026-06-19T13:33:33.772138+00:00",
+      "latest_checked_at_utc": "2026-06-19T16:20:47.830658+00:00",
       "overall_status_counts": {
         "DEGRADED": 4,
-        "HEALTHY": 3,
+        "HEALTHY": 4,
         "PARTIAL_OUTAGE": 1
       },
       "endpoint_status_counts": {
         "official_public_rpc": {
           "DEGRADED": 4,
-          "HEALTHY": 3,
+          "HEALTHY": 4,
           "UNHEALTHY": 1
         },
         "explorer_web": {
-          "HEALTHY": 8
+          "HEALTHY": 9
         },
         "primary_explorer_api": {
-          "HEALTHY": 8
+          "HEALTHY": 9
         }
       },
       "endpoint_response_summary": {
         "official_public_rpc": {
-          "average_response_ms": 5386.38,
+          "average_response_ms": 4868.44,
           "max_response_ms": 20946.0,
           "response_class_counts": {
             "FAST": 1,
-            "MODERATE": 3,
+            "MODERATE": 4,
             "SLOW": 4
           }
         },
         "explorer_web": {
-          "average_response_ms": 556.0,
+          "average_response_ms": 546.11,
           "max_response_ms": 687.0,
           "response_class_counts": {
-            "FAST": 3,
+            "FAST": 4,
             "MODERATE": 5
           }
         },
         "primary_explorer_api": {
-          "average_response_ms": 436.38,
+          "average_response_ms": 430.56,
           "max_response_ms": 587.0,
           "response_class_counts": {
-            "FAST": 5,
+            "FAST": 6,
             "MODERATE": 3
           }
         }
@@ -340,19 +340,33 @@
         "primary_explorer_api_response_class": "MODERATE",
         "rpc_latest_block_decimal": 15040313,
         "rpc_latest_block_hex": "0xe57f39"
+      },
+      {
+        "index": 51,
+        "snapshot_file": "2026-06-19T16-20-47-830658+00-00-health.json",
+        "checked_at_utc": "2026-06-19T16:20:47.830658+00:00",
+        "overall_status": "HEALTHY",
+        "official_public_rpc_status": "HEALTHY",
+        "official_public_rpc_response_class": "MODERATE",
+        "explorer_web_status": "HEALTHY",
+        "explorer_web_response_class": "FAST",
+        "primary_explorer_api_status": "HEALTHY",
+        "primary_explorer_api_response_class": "FAST",
+        "rpc_latest_block_decimal": 15040982,
+        "rpc_latest_block_hex": "0xe581d6"
       }
     ]
   },
   "comparison": {
     "availability_score_a": 0.6875,
-    "availability_score_b": 0.675,
-    "availability_direction": "WORSENED",
+    "availability_score_b": 0.7111,
+    "availability_direction": "IMPROVED",
     "interpretation": [
-      "Overall availability score changed from 0.6875 to 0.675: WORSENED.",
-      "Official Public RPC average response changed from 1545.75 ms to 5386.38 ms: WORSENED.",
-      "Explorer Web average response changed from 753.38 ms to 556.0 ms: IMPROVED.",
-      "Primary Explorer API average response changed from 562.88 ms to 436.38 ms: IMPROVED.",
-      "The later observation window shows weaker overall infrastructure availability."
+      "Overall availability score changed from 0.6875 to 0.7111: IMPROVED.",
+      "Official Public RPC average response changed from 1545.75 ms to 4868.44 ms: WORSENED.",
+      "Explorer Web average response changed from 753.38 ms to 546.11 ms: IMPROVED.",
+      "Primary Explorer API average response changed from 562.88 ms to 430.56 ms: IMPROVED.",
+      "The later observation window shows stronger overall infrastructure availability."
     ]
   },
   "interpretation_guide": [
