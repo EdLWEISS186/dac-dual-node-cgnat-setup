@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom Last 7 Days Report
 
-Generated at UTC: `2026-06-19T21:37:42.259711+00:00`
+Generated at UTC: `2026-06-19T22:38:11.129602+00:00`
 
 Report range: **Last 7 Days**
 
@@ -15,11 +15,11 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Range | Last 7 Days |
-| Observation count | 33 |
-| First observed source time | Jun 12, 2026 (22:00 CEST) |
-| Last observed source time | Jun 19, 2026 (22:00 CEST) |
-| Latest watcher checked_at_utc | 2026-06-19T20:15:06.858196+00:00 |
-| Latest source generated time | Fri Jun 19 10:00:01 PM CEST 2026 |
+| Observation count | 32 |
+| First observed source time | Jun 13, 2026 (04:00 CEST) |
+| Last observed source time | Jun 20, 2026 (00:00 CEST) |
+| Latest watcher checked_at_utc | 2026-06-19T22:38:08.044850+00:00 |
+| Latest source generated time | Sat Jun 20 12:00:02 AM CEST 2026 |
 
 ## 2. Enode Movement Summary
 
@@ -27,7 +27,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Minimum enode count | 2 |
 | Maximum enode count | 16 |
-| Average enode count | 10.36 |
+| Average enode count | 9.97 |
 | Total added observations | 29 |
 | Total removed observations | 36 |
 | Target ports observed | 28657 |
@@ -36,14 +36,14 @@ Important note: this report is observation-based. It does not make official DAC 
 
 | Phase | Observations |
 | --- | --- |
-| automated_watcher | 33 |
+| automated_watcher | 32 |
 
 ## 4. Anomaly Summary
 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 7 |
-| Global anomaly summary | 12 anomaly signals were detected across 95 observations. The highest observed anomaly severity is CRITICAL. |
+| Global anomaly summary | 12 anomaly signals were detected across 96 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
@@ -83,8 +83,6 @@ Important note: this report is observation-based. It does not make official DAC 
 
 | # | Phase | Status | Source Time | Current | Added | Removed | Unchanged | Port |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 63 | automated_watcher | changed | Jun 12, 2026 (22:00 CEST) | 16 | 1 | 0 | 15 | 28657 |
-| 64 | automated_watcher | changed | Jun 13, 2026 (00:00 CEST) | 15 | 0 | 1 | 15 | 28657 |
 | 65 | automated_watcher | changed | Jun 13, 2026 (04:00 CEST) | 16 | 1 | 0 | 15 | 28657 |
 | 66 | automated_watcher | changed | Jun 13, 2026 (08:00 CEST) | 15 | 0 | 1 | 15 | 28657 |
 | 67 | automated_watcher | changed | Jun 13, 2026 (22:00 CEST) | 14 | 0 | 1 | 14 | 28657 |
@@ -116,6 +114,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | 93 | automated_watcher | changed | Jun 19, 2026 (18:00 CEST) | 9 | 1 | 1 | 8 | 28657 |
 | 94 | automated_watcher | changed | Jun 19, 2026 (20:00 CEST) | 8 | 0 | 1 | 8 | 28657 |
 | 95 | automated_watcher | changed | Jun 19, 2026 (22:00 CEST) | 8 | 1 | 1 | 7 | 28657 |
+| 96 | automated_watcher | changed | Jun 20, 2026 (00:00 CEST) | 8 | 1 | 1 | 7 | 28657 |
 
 ## 7. Report-Use Notes
 
