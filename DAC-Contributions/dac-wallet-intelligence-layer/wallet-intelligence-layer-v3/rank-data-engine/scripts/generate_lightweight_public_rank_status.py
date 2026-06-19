@@ -159,7 +159,7 @@ def main() -> None:
     write_json(index_path, index)
     write_json(manifest_path, manifest)
 
-    print("[OK] WIL v3.3.0 lightweight public artifacts generated")
+    print("[OK] WIL v3.6.0 lightweight public artifacts generated")
     print(f"[OK] Manifest: {manifest_path}")
     print(f"[OK] Summary: {summary_path}")
     print(f"[OK] Index: {index_path}")

@@ -1346,9 +1346,6 @@ def main() -> None:
                 sqlite_state.last_staking_rows_written
             )
 
-            result["conviction_rows_written"] = (
-                sqlite_state.last_conviction_rows_written
-            )
 
             result[
                 "official_inception_nft_rows_written"
