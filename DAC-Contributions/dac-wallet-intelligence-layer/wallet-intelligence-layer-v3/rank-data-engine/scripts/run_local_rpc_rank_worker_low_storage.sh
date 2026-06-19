@@ -50,7 +50,21 @@ run_once() {
   echo "[INFO] Checking external SQLite rank state"
   if [ "${WIL_V3_FULL_SQLITE_QUICK_CHECK:-0}" = "1" ]; then
     echo "[INFO] Running full SQLite quick_check because WIL_V3_FULL_SQLITE_QUICK_CHECK=1"
-    timeout 1800s python3 -c 'import sqlite3,sys; db=sqlite3.connect(f"file:{sys.argv[1]}?mode=ro", uri=True); result=db.execute("PRAGMA quick_check").fetchone()[0]; db.close(); print("[OK] SQLite full quick_check passed" if result=="ok" else "[ERROR] SQLite quick_check failed: "+str(result)); raise SystemExit(0 if result=="ok" else 1)' "$EXTERNAL_SQLITE_FILE"
+    timeout 1800s python3 - "$EXTERNAL_SQLITE_FILE" <<'WIL_SQLITE_FULL_CHECK'
+import sqlite3
+import sys
+
+db_path = sys.argv[1]
+db = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+result = db.execute("PRAGMA quick_check").fetchone()[0]
+db.close()
+
+if result != "ok":
+    print(f"[ERROR] SQLite quick_check failed: {result}")
+    raise SystemExit(1)
+
+print("[OK] SQLite full quick_check passed")
+WIL_SQLITE_FULL_CHECK
     QUICK_RC=$?
     if [ "$QUICK_RC" -ne 0 ]; then
       echo "[ERROR] SQLite full quick_check failed or timed out: exit=$QUICK_RC"
@@ -58,7 +72,30 @@ run_once() {
     fi
   else
     echo "[INFO] Running lightweight SQLite schema guard"
-    timeout 60s python3 -c 'import sqlite3,sys; db=sqlite3.connect(f"file:{sys.argv[1]}?mode=ro", uri=True, timeout=10); db.execute("PRAGMA query_only=ON"); schema=db.execute("PRAGMA schema_version").fetchone()[0]; tables={r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type=\'table\'")}; missing=sorted({"checkpoint","counters","state_meta"}-tables); db.close(); print("[ERROR] SQLite missing required tables: "+", ".join(missing) if missing else f"[OK] SQLite lightweight schema guard passed | schema_version={schema}"); raise SystemExit(1 if missing else 0)' "$EXTERNAL_SQLITE_FILE"
+    timeout 60s python3 - "$EXTERNAL_SQLITE_FILE" <<'WIL_SQLITE_LIGHT_CHECK'
+import sqlite3
+import sys
+
+db_path = sys.argv[1]
+db = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, timeout=10)
+db.execute("PRAGMA query_only=ON")
+schema_version = db.execute("PRAGMA schema_version").fetchone()[0]
+
+tables = {
+    row[0]
+    for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")
+}
+
+required_tables = {"checkpoint", "counters", "state_meta"}
+missing_tables = sorted(required_tables - tables)
+db.close()
+
+if missing_tables:
+    print("[ERROR] SQLite missing required tables: " + ", ".join(missing_tables))
+    raise SystemExit(1)
+
+print(f"[OK] SQLite lightweight schema guard passed | schema_version={schema_version}")
+WIL_SQLITE_LIGHT_CHECK
     LIGHT_RC=$?
     if [ "$LIGHT_RC" -ne 0 ]; then
       echo "[ERROR] SQLite lightweight schema guard failed or timed out: exit=$LIGHT_RC"
