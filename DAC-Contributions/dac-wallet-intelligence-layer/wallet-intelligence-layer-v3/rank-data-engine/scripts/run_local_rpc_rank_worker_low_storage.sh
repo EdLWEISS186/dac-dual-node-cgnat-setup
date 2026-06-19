@@ -12,6 +12,8 @@ BALANCE_ENRICH_LIMIT="${BALANCE_ENRICH_LIMIT:-700}"
 SLEEP_SECONDS="${SLEEP_SECONDS:-600}"
 PUSH_TO_GITHUB="${PUSH_TO_GITHUB:-1}"
 RUN_ONCE="${RUN_ONCE:-0}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SQLITE_HEALTH_GUARD="$SCRIPT_DIR/sqlite_health_guard.py"
 
 EXTERNAL_STATE_DIR="${EXTERNAL_STATE_DIR:-$HOME/wil-v3-rank-state}"
 EXTERNAL_SQLITE_FILE="${EXTERNAL_SQLITE_FILE:-$EXTERNAL_STATE_DIR/wil-v3-rank-state.sqlite}"
@@ -49,71 +51,42 @@ run_once() {
 
   echo "[INFO] Checking external SQLite rank state"
   if [ "${WIL_V3_FULL_SQLITE_QUICK_CHECK:-0}" = "1" ]; then
-    echo "[INFO] Running full SQLite quick_check because WIL_V3_FULL_SQLITE_QUICK_CHECK=1"
-    timeout 1800s python3 - "$EXTERNAL_SQLITE_FILE" <<'WIL_SQLITE_FULL_CHECK'
-import sqlite3
-import sys
-
-db_path = sys.argv[1]
-db = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
-result = db.execute("PRAGMA quick_check").fetchone()[0]
-db.close()
-
-if result != "ok":
-    print(f"[ERROR] SQLite quick_check failed: {result}")
-    raise SystemExit(1)
-
-print("[OK] SQLite full quick_check passed")
-WIL_SQLITE_FULL_CHECK
-    QUICK_RC=$?
-    if [ "$QUICK_RC" -ne 0 ]; then
-      echo "[ERROR] SQLite full quick_check failed or timed out: exit=$QUICK_RC"
-      exit "$QUICK_RC"
-    fi
+    echo "[INFO] Running full SQLite health guard because WIL_V3_FULL_SQLITE_QUICK_CHECK=1"
+    timeout 1800s python3 "$SQLITE_HEALTH_GUARD" --sqlite-state "$EXTERNAL_SQLITE_FILE" --mode full
+    HEALTH_RC=$?
   else
-    echo "[INFO] Running lightweight SQLite schema guard"
-    timeout 60s python3 - "$EXTERNAL_SQLITE_FILE" <<'WIL_SQLITE_LIGHT_CHECK'
-import sqlite3
-import sys
+    echo "[INFO] Running lightweight SQLite health guard"
+    timeout 60s python3 "$SQLITE_HEALTH_GUARD" --sqlite-state "$EXTERNAL_SQLITE_FILE" --mode lightweight
+    HEALTH_RC=$?
+  fi
 
-db_path = sys.argv[1]
-db = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, timeout=10)
-db.execute("PRAGMA query_only=ON")
-schema_version = db.execute("PRAGMA schema_version").fetchone()[0]
-
-tables = {
-    row[0]
-    for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")
-}
-
-required_tables = {"checkpoint", "counters", "state_meta"}
-missing_tables = sorted(required_tables - tables)
-db.close()
-
-if missing_tables:
-    print("[ERROR] SQLite missing required tables: " + ", ".join(missing_tables))
-    raise SystemExit(1)
-
-print(f"[OK] SQLite lightweight schema guard passed | schema_version={schema_version}")
-WIL_SQLITE_LIGHT_CHECK
-    LIGHT_RC=$?
-    if [ "$LIGHT_RC" -ne 0 ]; then
-      echo "[ERROR] SQLite lightweight schema guard failed or timed out: exit=$LIGHT_RC"
-      exit "$LIGHT_RC"
-    fi
+  if [ "$HEALTH_RC" -ne 0 ]; then
+    echo "[ERROR] SQLite preflight health guard failed: exit=$HEALTH_RC"
+    timeout 1800s python3 "$SQLITE_HEALTH_GUARD" --sqlite-state "$EXTERNAL_SQLITE_FILE" --mode diagnose --force-full || true
+    exit "$HEALTH_RC"
   fi
 
   echo "[INFO] Using external SQLite rank state directly"
 
   echo "[INFO] Running local RPC worker"
+  set +e
   /usr/bin/time -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
-    python3 "$worker" \
+      python3 "$LOCAL_RPC_WORKER" \
       --primary-rpc "$PRIMARY_RPC" \
       --fallback-rpc "$FALLBACK_RPC" \
       --sqlite-state "$EXTERNAL_SQLITE_FILE" \
       --max-blocks "$MAX_BLOCKS" \
       --balance-enrich-limit "$BALANCE_ENRICH_LIMIT" \
       --no-snapshot-archive
+  WORKER_RC=$?
+  set -e
+
+  if [ "$WORKER_RC" -ne 0 ]; then
+    echo "[ERROR] Local RPC worker failed: exit=$WORKER_RC"
+    echo "[INFO] Running SQLite failure diagnostic"
+    timeout 1800s python3 "$SQLITE_HEALTH_GUARD" --sqlite-state "$EXTERNAL_SQLITE_FILE" --mode diagnose --force-full || true
+    exit "$WORKER_RC"
+  fi
 
   if [ "$BACKUP_EXTERNAL_STATE_EVERY_RUN" = "1" ]; then
     backup_file="$EXTERNAL_BACKUP_DIR/wil-v3-rank-state-$(date -u +"%Y-%m-%dT%H-%M-%SZ").sqlite"
