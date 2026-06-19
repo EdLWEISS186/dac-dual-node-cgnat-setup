@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Technical Observation Report
 
-Generated at UTC: `2026-06-19T05:25:04.809266+00:00`
+Generated at UTC: `2026-06-19T09:59:06.766123+00:00`
 
 Project: **DAC Enode Intelligence Watcher**
 
@@ -14,7 +14,7 @@ Related previous report:
 
 ## 1. Executive Summary
 
-Across 90 total observations, the DAC official enode list showed 38 unique enodes and 38 unique IPs. The observed target port remained within [28657]. Enode count ranged from 2 to 16, with an average of 12.01.
+Across 91 total observations, the DAC official enode list showed 38 unique enodes and 38 unique IPs. The observed target port remained within [28657]. Enode count ranged from 2 to 16, with an average of 11.95.
 
 The dataset combines partial manual observations from the pre-watcher period with automated GitHub Actions snapshots after the watcher was deployed.
 
@@ -25,10 +25,10 @@ This summary provides a structured basis for analyzing bootstrap peer rotation, 
 | Metric | Value |
 | --- | --- |
 | Manual backfill snapshots | 14 |
-| Automated watcher snapshots | 76 |
-| Total observations | 90 |
+| Automated watcher snapshots | 77 |
+| Total observations | 91 |
 | First observation | Fri May 15 12:00:01 AM CEST 2026 |
-| Latest observation | Fri Jun 19 07:00:01 AM CEST 2026 |
+| Latest observation | Fri Jun 19 11:00:01 AM CEST 2026 |
 | Target ports observed | 28657 |
 | Unique enodes | 38 |
 | Unique IPs | 38 |
@@ -56,26 +56,26 @@ The manual backfill dataset preserves those earlier observations as structured J
 
 | Latest Field | Value |
 | --- | --- |
-| Generated at source | Fri Jun 19 07:00:01 AM CEST 2026 |
-| Checked at UTC | 2026-06-19T05:25:04.809266+00:00 |
+| Generated at source | Fri Jun 19 11:00:01 AM CEST 2026 |
+| Checked at UTC | 2026-06-19T09:59:06.766123+00:00 |
 | Target port | 28657 |
-| Previous total | 9 |
-| Current total | 8 |
-| Added count | 0 |
-| Removed count | 1 |
-| Unchanged count | 8 |
-| Change severity | LOW |
-| Severity reason | Small enode rotation detected: 0 added and 1 removed. |
+| Previous total | 8 |
+| Current total | 6 |
+| Added count | 1 |
+| Removed count | 3 |
+| Unchanged count | 5 |
+| Change severity | MEDIUM |
+| Severity reason | Moderate enode rotation detected: 1 added and 3 removed. |
 
 Latest AI-style summary:
 
-> DAC official enode list changed: 0 enodes added, 1 removed, and 8 remained unchanged. Current total: 8 enodes.
+> DAC official enode list changed: 1 enodes added, 3 removed, and 5 remained unchanged. Current total: 6 enodes.
 
-Rotation interpretation: **Small bootstrap peer rotation detected.**
+Rotation interpretation: **Moderate bootstrap peer rotation detected.**
 
-Technical impact: This appears to be a minor peer-list refresh.
+Technical impact: Node runners may review the updated list if they manually refresh official peers.
 
-Recommended action: No urgent action is required, but the snapshot is preserved for history.
+Recommended action: Compare added and removed enodes before updating manual peer records.
 
 ## 5. Enode Count Statistics
 
@@ -83,37 +83,37 @@ Recommended action: No urgent action is required, but the snapshot is preserved 
 | --- | --- |
 | Minimum enode count | 2 |
 | Maximum enode count | 16 |
-| Average enode count | 12.01 |
+| Average enode count | 11.95 |
 
 ## 6. Most Persistent Enodes
 
 | Enode | IP | Port | Appearances | Ratio | Phases Seen |
 | --- | --- | --- | --- | --- | --- |
-| enode://9652549979...7.30:28657 | 157.173.127.30 | 28657 | 85 | 0.9444 | automated_watcher, manual_backfill |
-| enode://09b8b08d71....204:28657 | 206.189.127.204 | 28657 | 82 | 0.9111 | automated_watcher, manual_backfill |
-| enode://21159ac612....213:28657 | 173.212.217.213 | 28657 | 82 | 0.9111 | automated_watcher, manual_backfill |
-| enode://637ec7dff7....243:28657 | 213.136.82.243 | 28657 | 76 | 0.8444 | automated_watcher, manual_backfill |
-| enode://0af12348ee....112:28657 | 194.60.201.112 | 28657 | 69 | 0.7667 | automated_watcher, manual_backfill |
-| enode://4cd695fc27...6.21:28657 | 5.9.116.21 | 28657 | 67 | 0.7444 | automated_watcher, manual_backfill |
-| enode://52a3c25ccb...3.98:28657 | 217.76.53.98 | 28657 | 65 | 0.7222 | automated_watcher, manual_backfill |
-| enode://b3158fbb36....180:28657 | 95.216.70.180 | 28657 | 63 | 0.7 | automated_watcher, manual_backfill |
-| enode://d764df8af4...7.91:28657 | 207.154.217.91 | 28657 | 55 | 0.6111 | automated_watcher, manual_backfill |
-| enode://e84693f2ae....213:28657 | 113.173.209.213 | 28657 | 51 | 0.5667 | automated_watcher, manual_backfill |
+| enode://9652549979...7.30:28657 | 157.173.127.30 | 28657 | 86 | 0.9451 | automated_watcher, manual_backfill |
+| enode://09b8b08d71....204:28657 | 206.189.127.204 | 28657 | 83 | 0.9121 | automated_watcher, manual_backfill |
+| enode://21159ac612....213:28657 | 173.212.217.213 | 28657 | 82 | 0.9011 | automated_watcher, manual_backfill |
+| enode://637ec7dff7....243:28657 | 213.136.82.243 | 28657 | 76 | 0.8352 | automated_watcher, manual_backfill |
+| enode://0af12348ee....112:28657 | 194.60.201.112 | 28657 | 69 | 0.7582 | automated_watcher, manual_backfill |
+| enode://4cd695fc27...6.21:28657 | 5.9.116.21 | 28657 | 67 | 0.7363 | automated_watcher, manual_backfill |
+| enode://52a3c25ccb...3.98:28657 | 217.76.53.98 | 28657 | 65 | 0.7143 | automated_watcher, manual_backfill |
+| enode://b3158fbb36....180:28657 | 95.216.70.180 | 28657 | 63 | 0.6923 | automated_watcher, manual_backfill |
+| enode://d764df8af4...7.91:28657 | 207.154.217.91 | 28657 | 55 | 0.6044 | automated_watcher, manual_backfill |
+| enode://4ff5ceea9c....231:28657 | 152.228.141.231 | 28657 | 52 | 0.5714 | automated_watcher, manual_backfill |
 
 ## 7. Most Persistent IPs
 
 | IP | DAC Signal | Signal Confidence | Peer Identity | Static Provider | Static ASN | Provider Confidence | Live ASN | Live ASN Name | Country | Appearances | Ratio | Phases Seen | First Seen | Last Seen |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 157.173.127.30 | Authority-like Core Signal | HIGH | DAC Testnet Authority 2 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 85 | 0.9444 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Fri Jun 19 07:00:01 AM CEST 2026 |
-| 206.189.127.204 | Relay-like DAC Node Signal | HIGH | DAC-Node 05 | DigitalOcean | AS14061 | HIGH | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC, US | US | 82 | 0.9111 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Fri Jun 19 07:00:01 AM CEST 2026 |
-| 173.212.217.213 | Retained Infrastructure Signal | MEDIUM | N/A | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 82 | 0.9111 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | Fri Jun 19 07:00:01 AM CEST 2026 |
-| 213.136.82.243 | Unlisted Active Peer Signal | MEDIUM | SAPInode | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 76 | 0.8444 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Wed Jun 17 06:00:02 AM CEST 2026 |
-| 194.60.201.112 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 69 | 0.7667 | automated_watcher, manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | Wed Jun 17 06:00:02 AM CEST 2026 |
-| 5.9.116.21 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS24940 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 67 | 0.7444 | automated_watcher, manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | Wed Jun 17 06:00:02 AM CEST 2026 |
-| 217.76.53.98 | Community VPS-like Signal | MEDIUM | whale-vps1 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 65 | 0.7222 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Fri Jun 19 12:00:02 AM CEST 2026 |
-| 95.216.70.180 | Community VPS-like Signal | MEDIUM | Fertal | Hetzner | AS24940 | HIGH | AS24940 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 63 | 0.7 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun 15 08:00:01 AM CEST 2026 |
-| 207.154.217.91 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC, US | US | 55 | 0.6111 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun 16 04:00:02 AM CEST 2026 |
-| 113.173.209.213 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS45899 | VNPT-AS-VN - VNPT Corp, VN | VN | 51 | 0.5667 | automated_watcher, manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | Wed Jun 17 06:00:02 AM CEST 2026 |
+| 157.173.127.30 | Authority-like Core Signal | HIGH | DAC Testnet Authority 2 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 86 | 0.9451 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Fri Jun 19 11:00:01 AM CEST 2026 |
+| 206.189.127.204 | Relay-like DAC Node Signal | HIGH | DAC-Node 05 | DigitalOcean | AS14061 | HIGH | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC, US | US | 83 | 0.9121 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Fri Jun 19 11:00:01 AM CEST 2026 |
+| 173.212.217.213 | Retained Infrastructure Signal | MEDIUM | N/A | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 82 | 0.9011 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | Fri Jun 19 07:00:01 AM CEST 2026 |
+| 213.136.82.243 | Unlisted Active Peer Signal | MEDIUM | SAPInode | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 76 | 0.8352 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Wed Jun 17 06:00:02 AM CEST 2026 |
+| 194.60.201.112 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 69 | 0.7582 | automated_watcher, manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | Wed Jun 17 06:00:02 AM CEST 2026 |
+| 5.9.116.21 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS24940 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 67 | 0.7363 | automated_watcher, manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | Wed Jun 17 06:00:02 AM CEST 2026 |
+| 217.76.53.98 | Community VPS-like Signal | MEDIUM | whale-vps1 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 65 | 0.7143 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Fri Jun 19 12:00:02 AM CEST 2026 |
+| 95.216.70.180 | Community VPS-like Signal | MEDIUM | Fertal | Hetzner | AS24940 | HIGH | AS24940 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 63 | 0.6923 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | Mon Jun 15 08:00:01 AM CEST 2026 |
+| 207.154.217.91 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC, US | US | 55 | 0.6044 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Tue Jun 16 04:00:02 AM CEST 2026 |
+| 152.228.141.231 | Legacy Relay-like Signal | MEDIUM | gdacnode legacy build | OVHcloud | AS16276 | HIGH | AS16276 | OVH - OVH SAS, FR | FR | 52 | 0.5714 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | Fri Jun 19 11:00:01 AM CEST 2026 |
 
 ## 8. Live ASN Lookup Summary
 
@@ -138,8 +138,8 @@ ASN and provider names are based on external routing data and should be treated 
 | AS24940 | 2 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 5.9.116.21, 95.216.70.180 |
 | AS141995 | 2 | CAPL-AS-AP - Contabo Asia Private Limited, SG | DE | 156.67.104.212, 5.104.86.129 |
 | AS8452 | 2 | TE-AS - IDDQD-AS, EG | EG | 41.39.22.179, 41.39.226.188 |
-| AS45899 | 1 | VNPT-AS-VN - VNPT Corp, VN | VN | 113.173.209.213 |
 | AS16276 | 1 | OVH - OVH SAS, FR | FR | 152.228.141.231 |
+| AS45899 | 1 | VNPT-AS-VN - VNPT Corp, VN | VN | 113.173.209.213 |
 | AS29222 | 1 | Infomaniak-AS - Infomaniak Network SA, CH | CH | 83.228.229.39 |
 | AS63949 | 1 | AKAMAI-LINODE-AP - Akamai Connected Cloud, SG | NL | 139.162.1.250 |
 | AS3269 | 1 | ASN-IBSNAZ - Telecom Italia S.p.A., IT | IT | 95.249.175.94 |
@@ -341,6 +341,7 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | 88 | automated_watcher | Thu Jun 18 07:00:01 PM CEST 2026 | 28657 | 8 | 0 | 1 | LOW |
 | 89 | automated_watcher | Fri Jun 19 12:00:02 AM CEST 2026 | 28657 | 9 | 1 | 0 | LOW |
 | 90 | automated_watcher | Fri Jun 19 07:00:01 AM CEST 2026 | 28657 | 8 | 0 | 1 | LOW |
+| 91 | automated_watcher | Fri Jun 19 11:00:01 AM CEST 2026 | 28657 | 6 | 1 | 3 | MEDIUM |
 
 ## 15. Technical Interpretation
 
