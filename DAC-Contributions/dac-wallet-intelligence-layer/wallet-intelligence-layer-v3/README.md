@@ -34,6 +34,7 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 - [Authoritative SQLite State](#authoritative-sqlite-state)
 - [Rank Data Workflow](#rank-data-workflow)
 - [Low-Storage Worker Model](#low-storage-worker-model)
+- [SQLite Health Escalation Guard](#sqlite-health-escalation-guard)
 - [Global Rank Builder](#global-rank-builder)
 - [Compact Public Rank Schema V3](#compact-public-rank-schema-v3)
 - [Ranking Model](#ranking-model)
@@ -444,6 +445,218 @@ remove temporary work
 Temporary work may include a temporary repository clone, a consistent source database snapshot, a temporary rank-build database, a temporary snapshot repository, compressed backup work, and temporary manifests.
 
 This design keeps daily source work lightweight and prevents generated operational data from being accidentally committed.
+
+The runner also uses the SQLite Health Escalation Guard before and after worker execution to prevent expensive full-database checks from blocking normal startup while still preserving a clear diagnostic path when SQLite-related failures appear.
+
+---
+
+## SQLite Health Escalation Guard
+
+v3.6.0 adds a dedicated SQLite health escalation layer for the long-running local RPC rank worker.
+
+Health guard script:
+
+```text
+rank-data-engine/scripts/sqlite_health_guard.py
+```
+
+Runner integration:
+
+```text
+rank-data-engine/scripts/run_local_rpc_rank_worker_low_storage.sh
+```
+
+The guard exists because the authoritative SQLite state can grow large during historical indexing. In the validated v3.6.0 environment, the rank-state database reached approximately:
+
+```text
+~/wil-v3-rank-state/wil-v3-rank-state.sqlite
+≈ 5.8 GB
+```
+
+Running a full SQLite integrity scan on every worker start is operationally expensive for a large state file. v3.6.0 therefore separates normal startup readiness checks from deeper diagnostic checks.
+
+### Normal startup path
+
+During normal worker startup, the runner uses a lightweight SQLite readiness check.
+
+```text
+Start worker cycle
+↓
+Run lightweight SQLite health guard
+↓
+If OK, continue indexing
+```
+
+The lightweight check verifies:
+
+```text
+SQLite state file exists
+SQLite state file is large enough to be plausible
+SQLite state opens read-only
+PRAGMA schema_version is readable
+Required tables are present
+```
+
+Required core tables:
+
+```text
+checkpoint
+counters
+state_meta
+```
+
+This check is intentionally fast. It is a readiness check, not a full corruption audit.
+
+Expected normal output:
+
+```text
+[INFO] Checking external SQLite rank state
+[INFO] Running lightweight SQLite health guard
+[OK] SQLite lightweight schema guard passed | schema_version=19
+[INFO] Using external SQLite rank state directly
+```
+
+### Full integrity check path
+
+Full SQLite integrity checking remains available through:
+
+```text
+PRAGMA quick_check
+```
+
+However, it is no longer executed on every normal startup. It is reserved for manual audit or automatic escalation.
+
+Manual full check mode:
+
+```bash
+WIL_V3_FULL_SQLITE_QUICK_CHECK=1 ./rank-data-engine/scripts/run_local_rpc_rank_worker_low_storage.sh
+```
+
+Direct script mode:
+
+```bash
+python3 rank-data-engine/scripts/sqlite_health_guard.py \
+  --sqlite-state "$HOME/wil-v3-rank-state/wil-v3-rank-state.sqlite" \
+  --mode full
+```
+
+### Automatic escalation path
+
+The runner now has a safer failure path.
+
+```text
+Worker starts
+↓
+Lightweight SQLite guard runs
+↓
+If preflight fails:
+    run diagnosis
+    escalate to full quick_check
+    stop indexing if necessary
+
+Worker runs
+↓
+If worker exits non-zero:
+    classify failure symptoms
+    run SQLite diagnosis
+    escalate to full quick_check when SQLite-related symptoms are present
+```
+
+The diagnostic mode can classify common failure families:
+
+```text
+SQLITE_RELATED_FAILURE
+DISK_OR_FILESYSTEM_FAILURE
+RPC_OR_NETWORK_FAILURE
+GIT_OR_PUBLISH_FAILURE
+UNCLASSIFIED_FAILURE
+```
+
+SQLite-related patterns include:
+
+```text
+database disk image is malformed
+file is not a database
+disk I/O error
+database is locked
+database or disk is full
+no such table
+readonly database
+unable to open database file
+sqlite
+```
+
+### Safe reaction policy
+
+The health guard is intentionally conservative.
+
+Allowed automatic reactions:
+
+```text
+Run lightweight SQLite readiness checks
+Run diagnostic classification
+Escalate to full quick_check when SQLite-related failures appear
+Stop indexing on serious SQLite integrity failure
+Print clear action guidance in worker logs
+```
+
+Not allowed automatically:
+
+```text
+Delete the SQLite database
+Overwrite the active SQLite database from backup
+Reset major checkpoints
+Drop or recreate tables
+Run destructive repair
+Remove WAL/SHM while SQLite processes are active
+```
+
+This design prevents the worker from making aggressive recovery decisions against a large, valuable rank-state database.
+
+The intended behavior is:
+
+```text
+Fast path when healthy
+Clear diagnosis when unhealthy
+Safe stop before destructive action
+Manual operator decision for restore/recovery
+```
+
+### Operational analogy
+
+The previous approach was like opening a vehicle engine and performing a deep inspection every time before starting the car.
+
+The v3.6.0 health guard behaves more like a normal dashboard readiness check:
+
+```text
+Check battery, fuel, oil indicator, and engine readiness first.
+If warning lights appear, stop and run deeper diagnostics.
+If serious engine damage is detected, do not keep driving.
+```
+
+### Validation result
+
+Validated health guard behavior:
+
+```text
+health_guard_py_compile_exit_code=0
+runner_bash_check_exit_code=0
+diff_check_exit_code=0
+health_lightweight_exit_code=0
+health_diagnose_exit_code=0
+commit_exit_code=0
+pull_rebase_exit_code=0
+push_exit_code=0
+```
+
+Validated commits:
+
+```text
+a10cb37 Add SQLite health escalation guard for WIL worker
+11ddb27 Wire WIL runner to SQLite health guard
+```
+
+The health guard does not change indexing math, rank scoring, checkpoint semantics, GitHub publishing, or Google Drive backup behavior. It only improves operational readiness and failure diagnosis around the SQLite state layer.
 
 ---
 
@@ -904,6 +1117,42 @@ v3.6.0 browser validation confirmed:
 - Wallet Rank Intelligence no longer shows `Conviction Locked`;
 - Dynamic Intelligence Badge still only offers update when tier increases.
 
+### SQLite Health Escalation Guard Validation
+
+v3.6.0 also includes an operational SQLite health escalation layer for the local RPC worker.
+
+Validated commits:
+
+```text
+a10cb37 Add SQLite health escalation guard for WIL worker
+11ddb27 Wire WIL runner to SQLite health guard
+```
+
+Validated commands and outcomes:
+
+```text
+python3 -m py_compile rank-data-engine/scripts/sqlite_health_guard.py
+bash -n rank-data-engine/scripts/run_local_rpc_rank_worker_low_storage.sh
+git diff --check
+python3 rank-data-engine/scripts/sqlite_health_guard.py --mode lightweight
+python3 rank-data-engine/scripts/sqlite_health_guard.py --mode diagnose
+```
+
+Validated results:
+
+```text
+health_guard_py_compile_exit_code=0
+runner_bash_check_exit_code=0
+diff_check_exit_code=0
+health_lightweight_exit_code=0
+health_diagnose_exit_code=0
+commit_exit_code=0
+pull_rebase_exit_code=0
+push_exit_code=0
+```
+
+The worker startup path now uses a lightweight SQLite readiness guard during normal operation and escalates to full SQLite diagnosis only when a relevant failure condition appears.
+
 ---
 
 ## Changelog
@@ -930,6 +1179,11 @@ v3.6.0 browser validation confirmed:
 - Updated public worker staking source to `DAC_STAKE_UNSTAKE_TRANSACTION_FLOW`.
 - Disabled active Conviction worker processing with `CONVICTION_METRICS_ACTIVE = False`.
 - Preserved legacy Conviction SQLite state only for backward compatibility.
+- Added `sqlite_health_guard.py` as a dedicated SQLite operational health guard.
+- Replaced normal startup full SQLite integrity scanning with a lightweight SQLite readiness guard.
+- Added automatic SQLite diagnostic escalation for preflight or worker failures.
+- Preserved optional full `PRAGMA quick_check` mode for manual audit or failure escalation.
+- Wired the low-storage runner to stop indexing safely on serious SQLite health failures.
 - Documented the release as `Back to Normal — inconsistent Conviction by Official DAC Team`.
 
 ### v3.5.0 — Conviction-aware Web Schema
