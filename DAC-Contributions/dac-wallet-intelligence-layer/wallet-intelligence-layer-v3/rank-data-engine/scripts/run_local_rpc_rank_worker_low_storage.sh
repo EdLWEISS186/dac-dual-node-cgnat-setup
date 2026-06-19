@@ -71,7 +71,7 @@ run_once() {
   echo "[INFO] Running local RPC worker"
   set +e
   /usr/bin/time -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
-      python3 "$LOCAL_RPC_WORKER" \
+      python3 "$worker" \
       --primary-rpc "$PRIMARY_RPC" \
       --fallback-rpc "$FALLBACK_RPC" \
       --sqlite-state "$EXTERNAL_SQLITE_FILE" \
