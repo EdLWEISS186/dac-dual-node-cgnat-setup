@@ -79,6 +79,7 @@ BACKUP_EXTERNAL_STATE_EVERY_RUN="${BACKUP_EXTERNAL_STATE_EVERY_RUN:-0}"
 run_once() {
   local workdir
   workdir="$(mktemp -d "$TMP_PARENT/wil-v3-rank-run.XXXXXX")"
+  local repo="$workdir/repo"
 
   cleanup() {
     cd "$HOME" 2>/dev/null || true
@@ -96,6 +97,8 @@ run_once() {
   local worker="$base/rank-data-engine/scripts/local_rpc_rank_data_worker.py"
   local lightweight_generator="$base/rank-data-engine/scripts/generate_lightweight_public_rank_status.py"
   local public_status="$base/rank-data-engine/data/public-run-status.json"
+  local worker_abs="$repo/$worker"
+  local public_status_abs="$repo/$public_status"
 
   mkdir -p "$base/rank-data-engine/data" "$base/data" "$EXTERNAL_STATE_DIR" "$EXTERNAL_BACKUP_DIR"
 
@@ -182,7 +185,7 @@ run_once() {
 
       set +e
       /usr/bin/time -o "$chunk_time_file" -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
-          python3 "$repo/$worker" \
+          python3 "$worker_abs" \
           --primary-rpc "$PRIMARY_RPC" \
           --fallback-rpc "$FALLBACK_RPC" \
           --sqlite-state "$EXTERNAL_SQLITE_FILE" \
@@ -213,7 +216,7 @@ run_once() {
       fi
 
       python3 "$ADAPTIVE_CHUNK_GUARD" \
-        --status "$public_status" \
+        --status "$public_status_abs" \
         --elapsed-seconds "$chunk_elapsed" \
         --wal-growth-bytes "$wal_growth_bytes" \
         --free-kb "$free_after_kb" \
@@ -256,7 +259,7 @@ run_once() {
     echo "[INFO] Adaptive chunk checkpoint mode disabled or not needed"
     set +e
     /usr/bin/time -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
-        python3 "$repo/$worker" \
+        python3 "$worker_abs" \
         --primary-rpc "$PRIMARY_RPC" \
         --fallback-rpc "$FALLBACK_RPC" \
         --sqlite-state "$EXTERNAL_SQLITE_FILE" \
