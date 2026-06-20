@@ -14,6 +14,21 @@ PUSH_TO_GITHUB="${PUSH_TO_GITHUB:-1}"
 RUN_ONCE="${RUN_ONCE:-0}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SQLITE_HEALTH_GUARD="$SCRIPT_DIR/sqlite_health_guard.py"
+ADAPTIVE_CHUNK_GUARD="$SCRIPT_DIR/adaptive_chunk_guard.py"
+ADAPTIVE_CHUNK_MODE="${ADAPTIVE_CHUNK_MODE:-1}"
+ADAPTIVE_CHUNK_SIZE="${ADAPTIVE_CHUNK_SIZE:-5000}"
+ADAPTIVE_MAX_CHUNK_SECONDS="${ADAPTIVE_MAX_CHUNK_SECONDS:-180}"
+ADAPTIVE_MAX_CHUNK_TX="${ADAPTIVE_MAX_CHUNK_TX:-5000}"
+ADAPTIVE_MAX_CHUNK_WALLET_ROWS="${ADAPTIVE_MAX_CHUNK_WALLET_ROWS:-1000}"
+ADAPTIVE_MAX_CHUNK_STAKING_ROWS="${ADAPTIVE_MAX_CHUNK_STAKING_ROWS:-500}"
+ADAPTIVE_MAX_CHUNK_WAL_GROWTH_BYTES="${ADAPTIVE_MAX_CHUNK_WAL_GROWTH_BYTES:-536870912}"
+ADAPTIVE_MIN_FREE_KB="${ADAPTIVE_MIN_FREE_KB:-26214400}"
+ADAPTIVE_MIN_MEM_AVAILABLE_KB="${ADAPTIVE_MIN_MEM_AVAILABLE_KB:-1048576}"
+ADAPTIVE_MAX_SWAP_USED_KB="${ADAPTIVE_MAX_SWAP_USED_KB:-1048576}"
+ADAPTIVE_MAX_WORKER_MEM_KB="${ADAPTIVE_MAX_WORKER_MEM_KB:-768000}"
+ADAPTIVE_MAX_LOAD_FACTOR_X100="${ADAPTIVE_MAX_LOAD_FACTOR_X100:-150}"
+ADAPTIVE_MIN_CPU_IDLE_PCT="${ADAPTIVE_MIN_CPU_IDLE_PCT:-15}"
+ADAPTIVE_MAX_IO_WAIT_PCT="${ADAPTIVE_MAX_IO_WAIT_PCT:-20}"
 
 EXTERNAL_STATE_DIR="${EXTERNAL_STATE_DIR:-$HOME/wil-v3-rank-state}"
 EXTERNAL_SQLITE_FILE="${EXTERNAL_SQLITE_FILE:-$EXTERNAL_STATE_DIR/wil-v3-rank-state.sqlite}"
@@ -69,23 +84,142 @@ run_once() {
   echo "[INFO] Using external SQLite rank state directly"
 
   echo "[INFO] Running local RPC worker"
-  set +e
-  /usr/bin/time -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
-      python3 "$worker" \
-      --primary-rpc "$PRIMARY_RPC" \
-      --fallback-rpc "$FALLBACK_RPC" \
-      --sqlite-state "$EXTERNAL_SQLITE_FILE" \
-      --max-blocks "$MAX_BLOCKS" \
-      --balance-enrich-limit "$BALANCE_ENRICH_LIMIT" \
-      --no-snapshot-archive
-  WORKER_RC=$?
-  set -e
 
-  if [ "$WORKER_RC" -ne 0 ]; then
-    echo "[ERROR] Local RPC worker failed: exit=$WORKER_RC"
-    echo "[INFO] Running SQLite failure diagnostic"
-    timeout 1800s python3 "$SQLITE_HEALTH_GUARD" --sqlite-state "$EXTERNAL_SQLITE_FILE" --mode diagnose --force-full || true
-    exit "$WORKER_RC"
+  get_mem_available_kb() { awk '/MemAvailable:/ {print $2}' /proc/meminfo 2>/dev/null || echo 0; }
+  get_swap_used_kb() { awk '/SwapTotal:/ {t=$2} /SwapFree:/ {f=$2} END {print t-f}' /proc/meminfo 2>/dev/null || echo 0; }
+  get_load1() { awk '{print $1}' /proc/loadavg 2>/dev/null || echo 0; }
+  get_cpu_cores() { nproc 2>/dev/null || echo 1; }
+  get_cpu_idle_pct() { vmstat 1 2 2>/dev/null | tail -1 | awk '{print $15}' || echo 100; }
+  get_io_wait_pct() { vmstat 1 2 2>/dev/null | tail -1 | awk '{print $16}' || echo 0; }
+
+  if [ "$ADAPTIVE_CHUNK_MODE" = "1" ] && [ "$MAX_BLOCKS" -gt "$ADAPTIVE_CHUNK_SIZE" ]; then
+    echo "[INFO] Adaptive chunk checkpoint mode enabled"
+    echo "[INFO] adaptive_target_blocks=$MAX_BLOCKS"
+    echo "[INFO] adaptive_chunk_size=$ADAPTIVE_CHUNK_SIZE"
+    echo "[INFO] adaptive_max_chunk_seconds=$ADAPTIVE_MAX_CHUNK_SECONDS"
+    echo "[INFO] adaptive_max_chunk_tx=$ADAPTIVE_MAX_CHUNK_TX"
+    echo "[INFO] adaptive_max_chunk_wallet_rows=$ADAPTIVE_MAX_CHUNK_WALLET_ROWS"
+    echo "[INFO] adaptive_max_chunk_staking_rows=$ADAPTIVE_MAX_CHUNK_STAKING_ROWS"
+    echo "[INFO] adaptive_max_chunk_wal_growth_bytes=$ADAPTIVE_MAX_CHUNK_WAL_GROWTH_BYTES"
+    echo "[INFO] adaptive_min_free_kb=$ADAPTIVE_MIN_FREE_KB"
+    echo "[INFO] adaptive_min_mem_available_kb=$ADAPTIVE_MIN_MEM_AVAILABLE_KB"
+    echo "[INFO] adaptive_max_swap_used_kb=$ADAPTIVE_MAX_SWAP_USED_KB"
+    echo "[INFO] adaptive_max_worker_mem_kb=$ADAPTIVE_MAX_WORKER_MEM_KB"
+    echo "[INFO] adaptive_max_load_factor_x100=$ADAPTIVE_MAX_LOAD_FACTOR_X100"
+    echo "[INFO] adaptive_min_cpu_idle_pct=$ADAPTIVE_MIN_CPU_IDLE_PCT"
+    echo "[INFO] adaptive_max_io_wait_pct=$ADAPTIVE_MAX_IO_WAIT_PCT"
+
+    adaptive_done_blocks=0
+    adaptive_chunk_index=0
+
+    while [ "$adaptive_done_blocks" -lt "$MAX_BLOCKS" ]; do
+      adaptive_remaining=$((MAX_BLOCKS - adaptive_done_blocks))
+      adaptive_this_chunk="$ADAPTIVE_CHUNK_SIZE"
+      if [ "$adaptive_remaining" -lt "$adaptive_this_chunk" ]; then
+        adaptive_this_chunk="$adaptive_remaining"
+      fi
+
+      adaptive_chunk_index=$((adaptive_chunk_index + 1))
+      echo "[INFO] Adaptive chunk $adaptive_chunk_index started | target_blocks=$adaptive_this_chunk | completed_before=$adaptive_done_blocks"
+
+      free_before_kb="$(df -Pk "$EXTERNAL_STATE_DIR" | awk 'NR==2 {print $4}')"
+      wal_before_bytes="$(stat -c %s "$EXTERNAL_SQLITE_FILE-wal" 2>/dev/null || echo 0)"
+      chunk_time_file="$workdir/adaptive-chunk-$adaptive_chunk_index.time"
+      decision_file="$workdir/adaptive-chunk-$adaptive_chunk_index.env"
+      chunk_start_ts="$(date +%s)"
+
+      set +e
+      /usr/bin/time -o "$chunk_time_file" -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
+          python3 "$worker" \
+          --primary-rpc "$PRIMARY_RPC" \
+          --fallback-rpc "$FALLBACK_RPC" \
+          --sqlite-state "$EXTERNAL_SQLITE_FILE" \
+          --max-blocks "$adaptive_this_chunk" \
+          --balance-enrich-limit "$BALANCE_ENRICH_LIMIT" \
+          --no-snapshot-archive
+      WORKER_RC=$?
+      set -e
+
+      cat "$chunk_time_file" 2>/dev/null || true
+      worker_mem_kb="$(awk -F'mem_kb=' '/mem_kb=/ {print $2}' "$chunk_time_file" 2>/dev/null | awk '{print $1}' | tail -1)"
+      worker_mem_kb="${worker_mem_kb:-0}"
+
+      chunk_end_ts="$(date +%s)"
+      chunk_elapsed=$((chunk_end_ts - chunk_start_ts))
+      free_after_kb="$(df -Pk "$EXTERNAL_STATE_DIR" | awk 'NR==2 {print $4}')"
+      wal_after_bytes="$(stat -c %s "$EXTERNAL_SQLITE_FILE-wal" 2>/dev/null || echo 0)"
+      wal_growth_bytes=$((wal_after_bytes - wal_before_bytes))
+      if [ "$wal_growth_bytes" -lt 0 ]; then
+        wal_growth_bytes=0
+      fi
+
+      if [ "$WORKER_RC" -ne 0 ]; then
+        echo "[ERROR] Local RPC worker failed in adaptive chunk $adaptive_chunk_index: exit=$WORKER_RC"
+        echo "[INFO] Running SQLite failure diagnostic"
+        timeout 1800s python3 "$SQLITE_HEALTH_GUARD" --sqlite-state "$EXTERNAL_SQLITE_FILE" --mode diagnose --force-full || true
+        exit "$WORKER_RC"
+      fi
+
+      python3 "$ADAPTIVE_CHUNK_GUARD" \
+        --status "$public_status" \
+        --elapsed-seconds "$chunk_elapsed" \
+        --wal-growth-bytes "$wal_growth_bytes" \
+        --free-kb "$free_after_kb" \
+        --mem-available-kb "$(get_mem_available_kb)" \
+        --swap-used-kb "$(get_swap_used_kb)" \
+        --worker-mem-kb "$worker_mem_kb" \
+        --load1 "$(get_load1)" \
+        --cpu-cores "$(get_cpu_cores)" \
+        --cpu-idle-pct "$(get_cpu_idle_pct)" \
+        --io-wait-pct "$(get_io_wait_pct)" \
+        --max-chunk-seconds "$ADAPTIVE_MAX_CHUNK_SECONDS" \
+        --max-chunk-tx "$ADAPTIVE_MAX_CHUNK_TX" \
+        --max-wallet-rows "$ADAPTIVE_MAX_CHUNK_WALLET_ROWS" \
+        --max-staking-rows "$ADAPTIVE_MAX_CHUNK_STAKING_ROWS" \
+        --max-wal-growth-bytes "$ADAPTIVE_MAX_CHUNK_WAL_GROWTH_BYTES" \
+        --min-free-kb "$ADAPTIVE_MIN_FREE_KB" \
+        --min-mem-available-kb "$ADAPTIVE_MIN_MEM_AVAILABLE_KB" \
+        --max-swap-used-kb "$ADAPTIVE_MAX_SWAP_USED_KB" \
+        --max-worker-mem-kb "$ADAPTIVE_MAX_WORKER_MEM_KB" \
+        --max-load-factor-x100 "$ADAPTIVE_MAX_LOAD_FACTOR_X100" \
+        --min-cpu-idle-pct "$ADAPTIVE_MIN_CPU_IDLE_PCT" \
+        --max-io-wait-pct "$ADAPTIVE_MAX_IO_WAIT_PCT" \
+        > "$decision_file"
+
+      sed 's/^/[ADAPTIVE_DECISION] /' "$decision_file"
+      . "$decision_file"
+
+      adaptive_done_blocks=$((adaptive_done_blocks + ADAPTIVE_CHUNK_PROCESSED_BLOCKS))
+
+      echo "[ADAPTIVE] chunk=$adaptive_chunk_index blocks=$ADAPTIVE_CHUNK_PROCESSED_BLOCKS tx=$ADAPTIVE_CHUNK_PROCESSED_TX wallet_rows=$ADAPTIVE_CHUNK_WALLET_ROWS staking_rows=$ADAPTIVE_CHUNK_STAKING_ROWS elapsed_seconds=$ADAPTIVE_CHUNK_ELAPSED_SECONDS worker_mem_kb=$ADAPTIVE_WORKER_MEM_KB wal_growth_bytes=$ADAPTIVE_CHUNK_WAL_GROWTH_BYTES free_kb=$ADAPTIVE_FREE_KB mem_available_kb=$ADAPTIVE_MEM_AVAILABLE_KB swap_used_kb=$ADAPTIVE_SWAP_USED_KB load1=$ADAPTIVE_LOAD1 load_threshold=$ADAPTIVE_LOAD_THRESHOLD cpu_idle_pct=$ADAPTIVE_CPU_IDLE_PCT io_wait_pct=$ADAPTIVE_IO_WAIT_PCT stop_reason=$ADAPTIVE_CHUNK_WORKER_STOP_REASON decision=$ADAPTIVE_SHOULD_CONTINUE reason=$ADAPTIVE_STOP_REASON total_blocks=$adaptive_done_blocks"
+
+      if [ "$ADAPTIVE_SHOULD_CONTINUE" != "1" ]; then
+        echo "[WARN] Adaptive guard stopping cycle early: $ADAPTIVE_STOP_REASON"
+        break
+      fi
+    done
+
+    echo "[INFO] Adaptive cycle completed | target_blocks=$MAX_BLOCKS | actual_blocks=$adaptive_done_blocks"
+  else
+    echo "[INFO] Adaptive chunk checkpoint mode disabled or not needed"
+    set +e
+    /usr/bin/time -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
+        python3 "$worker" \
+        --primary-rpc "$PRIMARY_RPC" \
+        --fallback-rpc "$FALLBACK_RPC" \
+        --sqlite-state "$EXTERNAL_SQLITE_FILE" \
+        --max-blocks "$MAX_BLOCKS" \
+        --balance-enrich-limit "$BALANCE_ENRICH_LIMIT" \
+        --no-snapshot-archive
+    WORKER_RC=$?
+    set -e
+
+    if [ "$WORKER_RC" -ne 0 ]; then
+      echo "[ERROR] Local RPC worker failed: exit=$WORKER_RC"
+      echo "[INFO] Running SQLite failure diagnostic"
+      timeout 1800s python3 "$SQLITE_HEALTH_GUARD" --sqlite-state "$EXTERNAL_SQLITE_FILE" --mode diagnose --force-full || true
+      exit "$WORKER_RC"
+    fi
   fi
 
   if [ "$BACKUP_EXTERNAL_STATE_EVERY_RUN" = "1" ]; then
