@@ -280,12 +280,7 @@ run_once() {
 
       sed 's/^/[ADAPTIVE_DECISION] /' "$decision_file"
 
-      # Sourcing the adaptive decision env file must not trigger the RETURN trap,
-      # because that trap cleans the temporary cloned repo needed by later chunks.
-      trap - RETURN
       . "$decision_file"
-      ACTIVE_WORKDIR="$workdir"
-  # RETURN trap disabled for adaptive multi-chunk mode; cleanup is explicit.
 
       adaptive_done_blocks=$((adaptive_done_blocks + ADAPTIVE_CHUNK_PROCESSED_BLOCKS))
 
@@ -518,4 +513,4 @@ while true; do
   cleanup_active_workdir || true
 
   sleep "$SLEEP_SECONDS"
-done\n
+done
