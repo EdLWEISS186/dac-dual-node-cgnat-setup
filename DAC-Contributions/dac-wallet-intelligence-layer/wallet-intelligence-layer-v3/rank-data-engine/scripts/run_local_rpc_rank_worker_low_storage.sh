@@ -17,6 +17,7 @@ SQLITE_HEALTH_GUARD="$SCRIPT_DIR/sqlite_health_guard.py"
 ADAPTIVE_CHUNK_GUARD="$SCRIPT_DIR/adaptive_chunk_guard.py"
 ADAPTIVE_RUNTIME_DIR="${ADAPTIVE_RUNTIME_DIR:-$HOME/wil-v3-worker-logs/adaptive-runtime}"
 ADAPTIVE_ACTIVE_RUNTIME_DIR=""
+ACTIVE_WORKDIR=""
 ADAPTIVE_CHUNK_MODE="${ADAPTIVE_CHUNK_MODE:-1}"
 ADAPTIVE_CHUNK_SIZE="${ADAPTIVE_CHUNK_SIZE:-5000}"
 ADAPTIVE_MAX_CHUNK_SECONDS="${ADAPTIVE_MAX_CHUNK_SECONDS:-180}"
@@ -54,6 +55,28 @@ cleanup_adaptive_runtime_dir() {
   esac
 }
 
+
+cleanup_active_workdir() {
+  local dir="${ACTIVE_WORKDIR:-}"
+
+  if [ -z "$dir" ]; then
+    return 0
+  fi
+
+  case "$dir" in
+    /tmp/wil-v3-rank-run.*)
+      if [ -d "$dir" ]; then
+        rm -rf -- "$dir"
+        echo "[INFO] Cleaned temp workdir: $dir"
+      fi
+      ACTIVE_WORKDIR=""
+      ;;
+    *)
+      echo "[WARN] Refusing to clean unexpected temp workdir: $dir"
+      ;;
+  esac
+}
+
 cleanup_stale_adaptive_runtime_dirs() {
   mkdir -p "$ADAPTIVE_RUNTIME_DIR"
 
@@ -68,7 +91,7 @@ cleanup_stale_adaptive_runtime_dirs() {
     2>/dev/null || true
 }
 
-trap 'cleanup_adaptive_runtime_dir || true' EXIT
+trap 'cleanup_adaptive_runtime_dir || true; cleanup_active_workdir || true' EXIT
 
 
 EXTERNAL_STATE_DIR="${EXTERNAL_STATE_DIR:-$HOME/wil-v3-rank-state}"
@@ -85,7 +108,8 @@ run_once() {
     cd "$HOME" 2>/dev/null || true
     rm -rf "$workdir"
   }
-  trap cleanup RETURN
+  ACTIVE_WORKDIR="$workdir"
+  # RETURN trap disabled for adaptive multi-chunk mode; cleanup is explicit.
 
   echo "[INFO] Temporary workdir: $workdir"
   echo "[INFO] Cloning repo..."
@@ -205,6 +229,8 @@ run_once() {
         echo "[ERROR] Local RPC worker failed in adaptive chunk $adaptive_chunk_index: exit=$WORKER_RC"
         echo "[INFO] Running SQLite failure diagnostic"
         timeout 1800s python3 "$SQLITE_HEALTH_GUARD" --sqlite-state "$EXTERNAL_SQLITE_FILE" --mode diagnose --force-full || true
+        cleanup_adaptive_runtime_dir || true
+        cleanup_active_workdir || true
         exit "$WORKER_RC"
       fi
 
@@ -258,7 +284,8 @@ run_once() {
       # because that trap cleans the temporary cloned repo needed by later chunks.
       trap - RETURN
       . "$decision_file"
-      trap cleanup RETURN
+      ACTIVE_WORKDIR="$workdir"
+  # RETURN trap disabled for adaptive multi-chunk mode; cleanup is explicit.
 
       adaptive_done_blocks=$((adaptive_done_blocks + ADAPTIVE_CHUNK_PROCESSED_BLOCKS))
 
@@ -486,6 +513,9 @@ while true; do
   echo "[INFO] Sleeping ${SLEEP_SECONDS}s..."
   echo "[INFO] Clean adaptive runtime before sleep"
   cleanup_adaptive_runtime_dir || true
+
+  echo "[INFO] Clean temp workdir before sleep"
+  cleanup_active_workdir || true
 
   sleep "$SLEEP_SECONDS"
 done\n
