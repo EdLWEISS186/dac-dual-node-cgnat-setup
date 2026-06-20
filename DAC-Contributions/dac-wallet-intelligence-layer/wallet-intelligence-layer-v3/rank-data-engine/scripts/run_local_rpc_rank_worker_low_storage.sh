@@ -16,6 +16,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SQLITE_HEALTH_GUARD="$SCRIPT_DIR/sqlite_health_guard.py"
 ADAPTIVE_CHUNK_GUARD="$SCRIPT_DIR/adaptive_chunk_guard.py"
 ADAPTIVE_RUNTIME_DIR="${ADAPTIVE_RUNTIME_DIR:-$HOME/wil-v3-worker-logs/adaptive-runtime}"
+ADAPTIVE_ACTIVE_RUNTIME_DIR=""
 ADAPTIVE_CHUNK_MODE="${ADAPTIVE_CHUNK_MODE:-1}"
 ADAPTIVE_CHUNK_SIZE="${ADAPTIVE_CHUNK_SIZE:-5000}"
 ADAPTIVE_MAX_CHUNK_SECONDS="${ADAPTIVE_MAX_CHUNK_SECONDS:-180}"
@@ -30,6 +31,45 @@ ADAPTIVE_MAX_WORKER_MEM_KB="${ADAPTIVE_MAX_WORKER_MEM_KB:-768000}"
 ADAPTIVE_MAX_LOAD_FACTOR_X100="${ADAPTIVE_MAX_LOAD_FACTOR_X100:-150}"
 ADAPTIVE_MIN_CPU_IDLE_PCT="${ADAPTIVE_MIN_CPU_IDLE_PCT:-15}"
 ADAPTIVE_MAX_IO_WAIT_PCT="${ADAPTIVE_MAX_IO_WAIT_PCT:-20}"
+
+
+cleanup_adaptive_runtime_dir() {
+  local dir="${ADAPTIVE_ACTIVE_RUNTIME_DIR:-}"
+
+  if [ -z "$dir" ]; then
+    return 0
+  fi
+
+  case "$dir" in
+    "$ADAPTIVE_RUNTIME_DIR"/wil-v3-rank-run.*)
+      if [ -d "$dir" ]; then
+        rm -rf -- "$dir"
+        echo "[INFO] Cleaned adaptive runtime dir: $dir"
+      fi
+      ADAPTIVE_ACTIVE_RUNTIME_DIR=""
+      ;;
+    *)
+      echo "[WARN] Refusing to clean unexpected adaptive runtime dir: $dir"
+      ;;
+  esac
+}
+
+cleanup_stale_adaptive_runtime_dirs() {
+  mkdir -p "$ADAPTIVE_RUNTIME_DIR"
+
+  find "$ADAPTIVE_RUNTIME_DIR" \
+    -mindepth 1 \
+    -maxdepth 1 \
+    -type d \
+    -name "wil-v3-rank-run.*" \
+    -mmin +120 \
+    -print \
+    -exec rm -rf {} + \
+    2>/dev/null || true
+}
+
+trap 'cleanup_adaptive_runtime_dir || true' EXIT
+
 
 EXTERNAL_STATE_DIR="${EXTERNAL_STATE_DIR:-$HOME/wil-v3-rank-state}"
 EXTERNAL_SQLITE_FILE="${EXTERNAL_SQLITE_FILE:-$EXTERNAL_STATE_DIR/wil-v3-rank-state.sqlite}"
@@ -111,6 +151,15 @@ run_once() {
     echo "[INFO] adaptive_max_io_wait_pct=$ADAPTIVE_MAX_IO_WAIT_PCT"
 
     mkdir -p "$ADAPTIVE_RUNTIME_DIR"
+    cleanup_stale_adaptive_runtime_dirs || true
+
+    adaptive_run_id="$(basename "$workdir")"
+    adaptive_cycle_runtime_dir="$ADAPTIVE_RUNTIME_DIR/$adaptive_run_id"
+    ADAPTIVE_ACTIVE_RUNTIME_DIR="$adaptive_cycle_runtime_dir"
+
+    rm -rf -- "$adaptive_cycle_runtime_dir"
+    mkdir -p "$adaptive_cycle_runtime_dir"
+
     adaptive_done_blocks=0
     adaptive_chunk_index=0
 
@@ -126,9 +175,6 @@ run_once() {
 
       free_before_kb="$(df -Pk "$EXTERNAL_STATE_DIR" | awk 'NR==2 {print $4}')"
       wal_before_bytes="$(stat -c %s "$EXTERNAL_SQLITE_FILE-wal" 2>/dev/null || echo 0)"
-      adaptive_run_id="$(basename "$workdir")"
-      adaptive_cycle_runtime_dir="$ADAPTIVE_RUNTIME_DIR/$adaptive_run_id"
-      mkdir -p "$adaptive_cycle_runtime_dir"
       chunk_time_file="$adaptive_cycle_runtime_dir/adaptive-chunk-$adaptive_chunk_index.time"
       decision_file="$adaptive_cycle_runtime_dir/adaptive-chunk-$adaptive_chunk_index.env"
       rm -f "$chunk_time_file" "$decision_file"
@@ -419,5 +465,8 @@ while true; do
   fi
 
   echo "[INFO] Sleeping ${SLEEP_SECONDS}s..."
+  echo "[INFO] Clean adaptive runtime before sleep"
+  cleanup_adaptive_runtime_dir || true
+
   sleep "$SLEEP_SECONDS"
 done
