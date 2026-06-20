@@ -129,13 +129,6 @@ run_once() {
 
   echo "[INFO] Running local RPC worker"
 
-  get_mem_available_kb() { awk '/MemAvailable:/ {print $2}' /proc/meminfo 2>/dev/null || echo 0; }
-  get_swap_used_kb() { awk '/SwapTotal:/ {t=$2} /SwapFree:/ {f=$2} END {print t-f}' /proc/meminfo 2>/dev/null || echo 0; }
-  get_load1() { awk '{print $1}' /proc/loadavg 2>/dev/null || echo 0; }
-  get_cpu_cores() { nproc 2>/dev/null || echo 1; }
-  get_cpu_idle_pct() { vmstat 1 2 2>/dev/null | tail -1 | awk '{print $15}' || echo 100; }
-  get_io_wait_pct() { vmstat 1 2 2>/dev/null | tail -1 | awk '{print $16}' || echo 0; }
-
   if [ "$ADAPTIVE_CHUNK_MODE" = "1" ] && [ "$MAX_BLOCKS" -gt "$ADAPTIVE_CHUNK_SIZE" ]; then
     echo "[INFO] Adaptive chunk checkpoint mode enabled"
     echo "[INFO] adaptive_target_blocks=$MAX_BLOCKS"
@@ -215,18 +208,36 @@ run_once() {
         exit "$WORKER_RC"
       fi
 
+      mem_available_kb="$(awk '/MemAvailable:/ {print $2}' /proc/meminfo 2>/dev/null || echo 0)"
+      mem_available_kb="${mem_available_kb:-0}"
+
+      swap_used_kb="$(awk '/SwapTotal:/ {t=$2} /SwapFree:/ {f=$2} END {print t-f}' /proc/meminfo 2>/dev/null || echo 0)"
+      swap_used_kb="${swap_used_kb:-0}"
+
+      load1="$(awk '{print $1}' /proc/loadavg 2>/dev/null || echo 0)"
+      load1="${load1:-0}"
+
+      cpu_cores="$(nproc 2>/dev/null || echo 1)"
+      cpu_cores="${cpu_cores:-1}"
+
+      vmstat_sample="$(vmstat 1 2 2>/dev/null | tail -1 || true)"
+      cpu_idle_pct="$(printf '%s\n' "$vmstat_sample" | awk '{print $15}')"
+      cpu_idle_pct="${cpu_idle_pct:-100}"
+      io_wait_pct="$(printf '%s\n' "$vmstat_sample" | awk '{print $16}')"
+      io_wait_pct="${io_wait_pct:-0}"
+
       python3 "$ADAPTIVE_CHUNK_GUARD" \
         --status "$public_status_abs" \
         --elapsed-seconds "$chunk_elapsed" \
         --wal-growth-bytes "$wal_growth_bytes" \
         --free-kb "$free_after_kb" \
-        --mem-available-kb "$(get_mem_available_kb)" \
-        --swap-used-kb "$(get_swap_used_kb)" \
+        --mem-available-kb "$mem_available_kb" \
+        --swap-used-kb "$swap_used_kb" \
         --worker-mem-kb "$worker_mem_kb" \
-        --load1 "$(get_load1)" \
-        --cpu-cores "$(get_cpu_cores)" \
-        --cpu-idle-pct "$(get_cpu_idle_pct)" \
-        --io-wait-pct "$(get_io_wait_pct)" \
+        --load1 "$load1" \
+        --cpu-cores "$cpu_cores" \
+        --cpu-idle-pct "$cpu_idle_pct" \
+        --io-wait-pct "$io_wait_pct" \
         --max-chunk-seconds "$ADAPTIVE_MAX_CHUNK_SECONDS" \
         --max-chunk-tx "$ADAPTIVE_MAX_CHUNK_TX" \
         --max-wallet-rows "$ADAPTIVE_MAX_CHUNK_WALLET_ROWS" \
