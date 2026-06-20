@@ -15,6 +15,7 @@ RUN_ONCE="${RUN_ONCE:-0}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SQLITE_HEALTH_GUARD="$SCRIPT_DIR/sqlite_health_guard.py"
 ADAPTIVE_CHUNK_GUARD="$SCRIPT_DIR/adaptive_chunk_guard.py"
+ADAPTIVE_RUNTIME_DIR="${ADAPTIVE_RUNTIME_DIR:-$HOME/wil-v3-worker-logs/adaptive-runtime}"
 ADAPTIVE_CHUNK_MODE="${ADAPTIVE_CHUNK_MODE:-1}"
 ADAPTIVE_CHUNK_SIZE="${ADAPTIVE_CHUNK_SIZE:-5000}"
 ADAPTIVE_MAX_CHUNK_SECONDS="${ADAPTIVE_MAX_CHUNK_SECONDS:-180}"
@@ -109,6 +110,7 @@ run_once() {
     echo "[INFO] adaptive_min_cpu_idle_pct=$ADAPTIVE_MIN_CPU_IDLE_PCT"
     echo "[INFO] adaptive_max_io_wait_pct=$ADAPTIVE_MAX_IO_WAIT_PCT"
 
+    mkdir -p "$ADAPTIVE_RUNTIME_DIR"
     adaptive_done_blocks=0
     adaptive_chunk_index=0
 
@@ -124,8 +126,12 @@ run_once() {
 
       free_before_kb="$(df -Pk "$EXTERNAL_STATE_DIR" | awk 'NR==2 {print $4}')"
       wal_before_bytes="$(stat -c %s "$EXTERNAL_SQLITE_FILE-wal" 2>/dev/null || echo 0)"
-      chunk_time_file="$workdir/adaptive-chunk-$adaptive_chunk_index.time"
-      decision_file="$workdir/adaptive-chunk-$adaptive_chunk_index.env"
+      adaptive_run_id="$(basename "$workdir")"
+      adaptive_cycle_runtime_dir="$ADAPTIVE_RUNTIME_DIR/$adaptive_run_id"
+      mkdir -p "$adaptive_cycle_runtime_dir"
+      chunk_time_file="$adaptive_cycle_runtime_dir/adaptive-chunk-$adaptive_chunk_index.time"
+      decision_file="$adaptive_cycle_runtime_dir/adaptive-chunk-$adaptive_chunk_index.env"
+      rm -f "$chunk_time_file" "$decision_file"
       chunk_start_ts="$(date +%s)"
 
       set +e
