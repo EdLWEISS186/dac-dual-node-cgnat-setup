@@ -182,7 +182,7 @@ run_once() {
 
       set +e
       /usr/bin/time -o "$chunk_time_file" -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
-          python3 "$worker" \
+          python3 "$repo/$worker" \
           --primary-rpc "$PRIMARY_RPC" \
           --fallback-rpc "$FALLBACK_RPC" \
           --sqlite-state "$EXTERNAL_SQLITE_FILE" \
@@ -256,7 +256,7 @@ run_once() {
     echo "[INFO] Adaptive chunk checkpoint mode disabled or not needed"
     set +e
     /usr/bin/time -f "[TIME] elapsed=%E cpu=%P mem_kb=%M" \
-        python3 "$worker" \
+        python3 "$repo/$worker" \
         --primary-rpc "$PRIMARY_RPC" \
         --fallback-rpc "$FALLBACK_RPC" \
         --sqlite-state "$EXTERNAL_SQLITE_FILE" \
