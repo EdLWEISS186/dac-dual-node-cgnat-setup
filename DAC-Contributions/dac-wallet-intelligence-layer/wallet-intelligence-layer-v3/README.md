@@ -34,7 +34,6 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 - [Authoritative SQLite State](#authoritative-sqlite-state)
 - [Rank Data Workflow](#rank-data-workflow)
 - [Low-Storage Worker Model](#low-storage-worker-model)
-- [SQLite Health Escalation Guard](#sqlite-health-escalation-guard)
 - [Global Rank Builder](#global-rank-builder)
 - [Compact Public Rank Schema V3](#compact-public-rank-schema-v3)
 - [Ranking Model](#ranking-model)
@@ -48,6 +47,7 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 - [Local Development Workspace](#local-development-workspace)
 - [Security and Trust Model](#security-and-trust-model)
 - [Validation Status](#validation-status)
+- [50,000-Block Adaptive Ceiling Validation](#50000-block-adaptive-ceiling-validation)
 - [Changelog](#changelog)
 - [License](#license)
 - [Author](#author)
@@ -93,6 +93,8 @@ Address-prefix shards
 ↓
 Browser wallet lookup
 ```
+
+Operationally, the v3.6.0 worker now supports an adaptive chunk checkpoint model. The local runner may use a large cycle ceiling, such as `50,000` blocks, while preserving a `5,000`-block safety unit. Each chunk is evaluated before the next chunk starts. If chain density or device pressure becomes too high, the cycle stops early, publishes the completed work, cleans temporary state, and then sleeps normally.
 
 The shard is only a delivery format. The comparison population remains global.
 
@@ -149,6 +151,11 @@ Key updates:
 - Preserved legacy SQLite Conviction tables for backward compatibility only.
 - Preserved Dynamic Intelligence Badge monotonic progression.
 - Added legacy localStorage fallback so v3.6.0 respects preserved badge tier state from v3.5.0.
+- Added an adaptive chunk checkpoint worker mode for long local backfill cycles.
+- Preserved `5,000` blocks as the safety unit while allowing a higher cycle ceiling.
+- Validated `50,000/1000/180` as an adaptive operating preset.
+- Replaced premature `RETURN`-trap cleanup with explicit cycle-level cleanup.
+- Ensured adaptive checkpoint runtime and temporary repository clones are cleaned only after the cycle completes or exits.
 
 Active v3.6.0 scoring anchors:
 
@@ -202,10 +209,10 @@ v3.2.0 — Externalized state and Google Drive backup
 v3.3.0 — Stable SQLite-backed production architecture
 v3.4.0 — Worker Acceleration & Operational Hardening
 v3.5.0 — Conviction-aware web, worker, and Compact V3 public rank schema
-v3.6.0 — Back to Normal scoring after official Conviction flow inconsistency
+v3.6.0 — Back to Normal scoring after official Conviction flow inconsistency, with adaptive checkpoint worker hardening
 ```
 
-Version `v3.6.0` keeps the v3.3.0/v3.4.0 architecture but returns the active logic to normal scoring because the official Conviction flow was removed/refunded and became unsuitable as an active score signal.
+Version `v3.6.0` keeps the v3.3.0/v3.4.0 architecture but returns the active logic to normal scoring because the official Conviction flow was removed/refunded and became unsuitable as an active score signal. Later v3.6.0 operational hardening also adds an adaptive chunk checkpoint worker so large cycle ceilings can be attempted without changing the underlying 5,000-block safety unit.
 
 “Production-ready” refers to the completed and validated architecture. Rank completeness still follows the current synchronization phase. During historical backfill or catch-up, the UI must not imply that the full chain population is already finalized.
 
@@ -262,6 +269,12 @@ Wallet Intelligence Layer v3.6.0 uses the hybrid local-processing and public-del
                            │ Local RPC Rank Worker        │
                            │ Backfill / Catch-up / Sync   │
                            │ v3.6.0 normal mode           │
+                           └──────────────┬───────────────┘
+                                          ▼
+                           ┌──────────────────────────────┐
+                           │ Adaptive Chunk Guard         │
+                           │ 5,000-block safety unit      │
+                           │ 50,000-block cycle ceiling   │
                            └──────────────┬───────────────┘
                                           ▼
                            ┌──────────────────────────────┐
@@ -407,6 +420,8 @@ The main worker uses three synchronization phases.
 | Post-Backfill Catch-Up | Fills the forward gap created while backfill was running. |
 | Incremental Sync | Processes newly produced blocks only. |
 
+During long historical backfill, the worker may run in adaptive checkpoint mode. In that mode, each 5,000-block chunk is treated as an evaluation point. The cycle may continue toward a larger ceiling when the chunk is light, or stop early when the chunk is dense or the device shows pressure.
+
 Worker responsibilities in v3.6.0:
 
 - block transactions;
@@ -446,219 +461,172 @@ Temporary work may include a temporary repository clone, a consistent source dat
 
 This design keeps daily source work lightweight and prevents generated operational data from being accidentally committed.
 
-The runner also uses the SQLite Health Escalation Guard before and after worker execution to prevent expensive full-database checks from blocking normal startup while still preserving a clear diagnostic path when SQLite-related failures appear.
-
 ---
 
-## SQLite Health Escalation Guard
+## Adaptive Chunk Checkpoint Worker
 
-v3.6.0 adds a dedicated SQLite health escalation layer for the long-running local RPC rank worker.
+v3.6.0 adds an adaptive chunk checkpoint worker mode for the local RPC rank worker.
 
-Health guard script:
+The purpose is to make historical backfill faster without removing the original safety behavior of the `5,000/1000/180` worker preset.
+
+### Operating preset
+
+Validated high-efficiency preset:
 
 ```text
-rank-data-engine/scripts/sqlite_health_guard.py
+MAX_BLOCKS=50000
+BALANCE_ENRICH_LIMIT=1000
+SLEEP_SECONDS=180
+ADAPTIVE_CHUNK_MODE=1
+ADAPTIVE_CHUNK_SIZE=5000
 ```
 
-Runner integration:
+This means:
 
 ```text
-rank-data-engine/scripts/run_local_rpc_rank_worker_low_storage.sh
+Cycle ceiling: 50,000 blocks
+Safety unit: 5,000 blocks
+Maximum chunks per full cycle: 10
+Sleep after cycle: 180 seconds
 ```
 
-The guard exists because the authoritative SQLite state can grow large during historical indexing. In the validated v3.6.0 environment, the rank-state database reached approximately:
+The cycle ceiling is not a forced workload. It is only the maximum the worker may attempt when the observed chain range and device signals remain safe.
+
+### Why this improves throughput
+
+Previous safe baseline:
 
 ```text
-~/wil-v3-rank-state/wil-v3-rank-state.sqlite
-≈ 5.8 GB
-```
-
-Running a full SQLite integrity scan on every worker start is operationally expensive for a large state file. v3.6.0 therefore separates normal startup readiness checks from deeper diagnostic checks.
-
-### Normal startup path
-
-During normal worker startup, the runner uses a lightweight SQLite readiness check.
-
-```text
-Start worker cycle
+5,000 blocks
 ↓
-Run lightweight SQLite health guard
+publish
 ↓
-If OK, continue indexing
-```
-
-The lightweight check verifies:
-
-```text
-SQLite state file exists
-SQLite state file is large enough to be plausible
-SQLite state opens read-only
-PRAGMA schema_version is readable
-Required tables are present
-```
-
-Required core tables:
-
-```text
-checkpoint
-counters
-state_meta
-```
-
-This check is intentionally fast. It is a readiness check, not a full corruption audit.
-
-Expected normal output:
-
-```text
-[INFO] Checking external SQLite rank state
-[INFO] Running lightweight SQLite health guard
-[OK] SQLite lightweight schema guard passed | schema_version=19
-[INFO] Using external SQLite rank state directly
-```
-
-### Full integrity check path
-
-Full SQLite integrity checking remains available through:
-
-```text
-PRAGMA quick_check
-```
-
-However, it is no longer executed on every normal startup. It is reserved for manual audit or automatic escalation.
-
-Manual full check mode:
-
-```bash
-WIL_V3_FULL_SQLITE_QUICK_CHECK=1 ./rank-data-engine/scripts/run_local_rpc_rank_worker_low_storage.sh
-```
-
-Direct script mode:
-
-```bash
-python3 rank-data-engine/scripts/sqlite_health_guard.py \
-  --sqlite-state "$HOME/wil-v3-rank-state/wil-v3-rank-state.sqlite" \
-  --mode full
-```
-
-### Automatic escalation path
-
-The runner now has a safer failure path.
-
-```text
-Worker starts
+sleep 180s
 ↓
-Lightweight SQLite guard runs
+5,000 blocks
 ↓
-If preflight fails:
-    run diagnosis
-    escalate to full quick_check
-    stop indexing if necessary
-
-Worker runs
+publish
 ↓
-If worker exits non-zero:
-    classify failure symptoms
-    run SQLite diagnosis
-    escalate to full quick_check when SQLite-related symptoms are present
+sleep 180s
 ```
 
-The diagnostic mode can classify common failure families:
+Adaptive high-efficiency mode:
 
 ```text
-SQLITE_RELATED_FAILURE
-DISK_OR_FILESYSTEM_FAILURE
-RPC_OR_NETWORK_FAILURE
-GIT_OR_PUBLISH_FAILURE
-UNCLASSIFIED_FAILURE
+5,000 blocks
+↓
+check safety
+↓
+5,000 blocks
+↓
+check safety
+↓
+continue up to 50,000 only while safe
+↓
+publish once
+↓
+sleep 180s
 ```
 
-SQLite-related patterns include:
+The sleep duration is not reduced. Instead, the worker reduces unnecessary sleep frequency when it is processing light block ranges.
+
+### Safety model
+
+Each chunk is evaluated before the next chunk starts.
+
+The adaptive guard evaluates chain-density and device-resource signals, including:
 
 ```text
-database disk image is malformed
-file is not a database
-disk I/O error
-database is locked
-database or disk is full
-no such table
-readonly database
-unable to open database file
-sqlite
+processed blocks
+processed transactions
+wallet rows written
+staking rows written
+chunk elapsed time
+SQLite WAL growth
+free disk space
+available memory
+swap usage
+worker RSS memory
+system load
+CPU idle percentage
+IO wait percentage
 ```
 
-### Safe reaction policy
-
-The health guard is intentionally conservative.
-
-Allowed automatic reactions:
+Default threshold examples:
 
 ```text
-Run lightweight SQLite readiness checks
-Run diagnostic classification
-Escalate to full quick_check when SQLite-related failures appear
-Stop indexing on serious SQLite integrity failure
-Print clear action guidance in worker logs
+ADAPTIVE_MAX_CHUNK_SECONDS=180
+ADAPTIVE_MAX_CHUNK_TX=5000
+ADAPTIVE_MAX_CHUNK_WALLET_ROWS=1000
+ADAPTIVE_MAX_CHUNK_STAKING_ROWS=500
+ADAPTIVE_MAX_CHUNK_WAL_GROWTH_BYTES=536870912
+ADAPTIVE_MIN_FREE_KB=26214400
+ADAPTIVE_MIN_MEM_AVAILABLE_KB=1048576
+ADAPTIVE_MAX_SWAP_USED_KB=1048576
+ADAPTIVE_MAX_WORKER_MEM_KB=768000
+ADAPTIVE_MAX_LOAD_FACTOR_X100=150
+ADAPTIVE_MIN_CPU_IDLE_PCT=15
+ADAPTIVE_MAX_IO_WAIT_PCT=20
 ```
 
-Not allowed automatically:
+If a chunk exceeds a threshold, the cycle stops early.
+
+Example stop reasons:
 
 ```text
-Delete the SQLite database
-Overwrite the active SQLite database from backup
-Reset major checkpoints
-Drop or recreate tables
-Run destructive repair
-Remove WAL/SHM while SQLite processes are active
+tx_density_high_20873_gt_5000
+load_high_11.34_gt_9.00
+io_wait_high_22.00_gt_20
+cpu_idle_low_0.00_lt_15
 ```
 
-This design prevents the worker from making aggressive recovery decisions against a large, valuable rank-state database.
+A stop-early cycle is not treated as a worker failure. It means the adaptive safety layer worked as intended.
 
-The intended behavior is:
+### Cleanup lifecycle
+
+The adaptive runner uses explicit cycle-level cleanup:
 
 ```text
-Fast path when healthy
-Clear diagnosis when unhealthy
-Safe stop before destructive action
-Manual operator decision for restore/recovery
+cycle starts
+↓
+create temporary repo clone
+↓
+create adaptive runtime checkpoint directory
+↓
+run chunk 1..N
+↓
+complete full ceiling or stop early
+↓
+publish completed state
+↓
+clean adaptive runtime directory
+↓
+clean temporary repo clone
+↓
+sleep 180s
 ```
 
-### Operational analogy
+The runner intentionally does not clean the temporary repository after a single chunk, because subsequent chunks in the same cycle still need the cloned source tree.
 
-The previous approach was like opening a vehicle engine and performing a deep inspection every time before starting the car.
-
-The v3.6.0 health guard behaves more like a normal dashboard readiness check:
+Validated cleanup markers:
 
 ```text
-Check battery, fuel, oil indicator, and engine readiness first.
-If warning lights appear, stop and run deeper diagnostics.
-If serious engine damage is detected, do not keep driving.
+cleanup_adaptive_runtime=True
+cleanup_temp_workdir=True
 ```
 
-### Validation result
+### Interpretation of 50,000-block mode
 
-Validated health guard behavior:
+The `50,000` preset should be interpreted as:
 
 ```text
-health_guard_py_compile_exit_code=0
-runner_bash_check_exit_code=0
-diff_check_exit_code=0
-health_lightweight_exit_code=0
-health_diagnose_exit_code=0
-commit_exit_code=0
-pull_rebase_exit_code=0
-push_exit_code=0
+Try up to 50,000 blocks when safe.
+Fall back to 5,000-block behavior when dense or resource-heavy.
 ```
 
-Validated commits:
+Dense ranges may stop after one chunk, behaving like the original `5,000/1000/180` baseline.
 
-```text
-a10cb37 Add SQLite health escalation guard for WIL worker
-11ddb27 Wire WIL runner to SQLite health guard
-```
-
-The health guard does not change indexing math, rank scoring, checkpoint semantics, GitHub publishing, or Google Drive backup behavior. It only improves operational readiness and failure diagnosis around the SQLite state layer.
-
----
+Light ranges may complete all ten chunks, significantly reducing calendar time to reach incremental sync.
 
 ## Global Rank Builder
 
@@ -1117,41 +1085,106 @@ v3.6.0 browser validation confirmed:
 - Wallet Rank Intelligence no longer shows `Conviction Locked`;
 - Dynamic Intelligence Badge still only offers update when tier increases.
 
-### SQLite Health Escalation Guard Validation
+### Adaptive 50,000-Block Ceiling Validation
 
-v3.6.0 also includes an operational SQLite health escalation layer for the local RPC worker.
+v3.6.0 adaptive checkpoint mode was validated after the explicit cleanup and syntax fixes.
 
-Validated commits:
-
-```text
-a10cb37 Add SQLite health escalation guard for WIL worker
-11ddb27 Wire WIL runner to SQLite health guard
-```
-
-Validated commands and outcomes:
+Relevant operational commits:
 
 ```text
-python3 -m py_compile rank-data-engine/scripts/sqlite_health_guard.py
-bash -n rank-data-engine/scripts/run_local_rpc_rank_worker_low_storage.sh
-git diff --check
-python3 rank-data-engine/scripts/sqlite_health_guard.py --mode lightweight
-python3 rank-data-engine/scripts/sqlite_health_guard.py --mode diagnose
+764801cc Replace RETURN trap with explicit WIL worker cleanup
+8dd43618 Fix WIL runner explicit cleanup syntax
 ```
 
-Validated results:
+Validated local preset:
 
 ```text
-health_guard_py_compile_exit_code=0
-runner_bash_check_exit_code=0
-diff_check_exit_code=0
-health_lightweight_exit_code=0
-health_diagnose_exit_code=0
-commit_exit_code=0
-pull_rebase_exit_code=0
-push_exit_code=0
+MAX_BLOCKS=50000
+BALANCE_ENRICH_LIMIT=1000
+SLEEP_SECONDS=180
+ADAPTIVE_CHUNK_SIZE=5000
 ```
 
-The worker startup path now uses a lightweight SQLite readiness guard during normal operation and escalates to full SQLite diagnosis only when a relevant failure condition appears.
+Validation confirmed that `MAX_BLOCKS=50000` behaves as a ceiling, not a forced workload.
+
+Dense-range behavior:
+
+```text
+target_blocks=50000
+actual_blocks=5000
+chunks=1
+reason=tx_density_high_20873_gt_5000
+cleanup_adaptive_runtime=True
+cleanup_temp_workdir=True
+```
+
+Other dense or pressure stop reasons observed:
+
+```text
+tx_density_high_20597_gt_5000
+tx_density_high_20625_gt_5000
+tx_density_high_21076_gt_5000
+io_wait_high_22.00_gt_20
+cpu_idle_low_0.00_lt_15
+```
+
+Light-range behavior:
+
+```text
+target_blocks=50000
+actual_blocks=50000
+chunks=10
+chunk1..chunk10 reason=OK
+cleanup_adaptive_runtime=True
+cleanup_temp_workdir=True
+```
+
+This validates the intended behavior:
+
+```text
+Heavy range:
+5,000-block safety behavior is preserved.
+
+Light range:
+50,000-block ceiling improves throughput by reducing unnecessary publish/sleep cycles.
+```
+
+No evidence of premature temporary repository cleanup appeared after explicit cycle-level cleanup was added. No `can't open file`, syntax, or unbound-variable worker error remained in the validated adaptive 50,000-block runs.
+
+## 50,000-Block Adaptive Ceiling Validation
+
+This release documents `50,000/1000/180` as the validated adaptive operating preset for the local worker.
+
+The important design distinction is:
+
+```text
+50,000 = maximum cycle ceiling
+5,000 = fixed safety unit
+180s = unchanged sleep duration after cycle completion or early stop
+```
+
+The worker does not reduce the sleep duration. It reduces the number of unnecessary sleep events when the indexed block range is light enough to safely continue across multiple chunks.
+
+Recommended operator interpretation:
+
+```text
+COMPLETED actual_blocks=50000
+→ light range, full high-efficiency cycle completed safely
+
+STOPPED_EARLY actual_blocks=5000 or higher
+→ dense or resource-heavy range, adaptive guard safely reduced the cycle
+```
+
+Required healthy markers:
+
+```text
+cleanup_adaptive_runtime=True
+cleanup_temp_workdir=True
+no syntax error
+no unbound variable
+no can't open file
+no missing temporary repository during later chunks
+```
 
 ---
 
@@ -1179,11 +1212,6 @@ The worker startup path now uses a lightweight SQLite readiness guard during nor
 - Updated public worker staking source to `DAC_STAKE_UNSTAKE_TRANSACTION_FLOW`.
 - Disabled active Conviction worker processing with `CONVICTION_METRICS_ACTIVE = False`.
 - Preserved legacy Conviction SQLite state only for backward compatibility.
-- Added `sqlite_health_guard.py` as a dedicated SQLite operational health guard.
-- Replaced normal startup full SQLite integrity scanning with a lightweight SQLite readiness guard.
-- Added automatic SQLite diagnostic escalation for preflight or worker failures.
-- Preserved optional full `PRAGMA quick_check` mode for manual audit or failure escalation.
-- Wired the low-storage runner to stop indexing safely on serious SQLite health failures.
 - Documented the release as `Back to Normal — inconsistent Conviction by Official DAC Team`.
 
 ### v3.5.0 — Conviction-aware Web Schema
