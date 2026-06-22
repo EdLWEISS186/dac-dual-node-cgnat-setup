@@ -1965,3 +1965,60 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
     grid-template-columns: 1fr;
   }
 }
+
+/* WIL v3.6.0 — adaptive rank engine status layout */
+.wallet-rank-engine-status-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wallet-rank-engine-status-grid-main {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.wallet-rank-engine-status-grid-pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.wallet-rank-engine-status-grid div {
+  min-height: 58px;
+}
+
+.wallet-rank-engine-position {
+  border: 1px solid rgba(245, 197, 24, 0.38);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(245, 197, 24, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wallet-rank-engine-position span {
+  color: #f5d76e;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wallet-rank-engine-position strong {
+  color: #f5d76e;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+@media (max-width: 980px) {
+  .wallet-rank-engine-status-grid-main,
+  .wallet-rank-engine-status-grid-pair {
+    grid-template-columns: 1fr;
+  }
+
+  .wallet-rank-engine-position {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

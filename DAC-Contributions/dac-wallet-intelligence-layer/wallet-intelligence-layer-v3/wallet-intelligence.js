@@ -2947,6 +2947,28 @@ function hexToUtf8(hex) {
   return new TextDecoder().decode(bytes);
 }
 
+function clearDynamicBadgePreviewImage() {
+  badgePreviewImageRequestId += 1;
+
+  if (el.badgePreviewCard) el.badgePreviewCard.classList.remove("has-final-art");
+  if (el.badgePreviewImage) el.badgePreviewImage.removeAttribute("src");
+  if (el.badgePreviewSvg) {
+    el.badgePreviewSvg.innerHTML = "";
+    el.badgePreviewSvg.setAttribute("aria-hidden", "true");
+  }
+}
+
+function shouldUseOnchainBadgePreview(badge) {
+  const action = badge?.onchain?.action || "";
+  const hasBadge = Boolean(badge?.onchain?.hasBadge);
+  const needsUpdate = Boolean(badge?.onchain?.needsUpdate);
+
+  // Trust the on-chain SVG only when it is explicitly current.
+  // If an update is pending, keep the HTML preview authoritative so the
+  // preview card and the right-side status panel show the same target state.
+  return hasBadge && action === "UP_TO_DATE" && !needsUpdate;
+}
+
 function renderDynamicIntelligenceBadge(badge) {
   if (!el.badgeEngineLabel) return;
 
@@ -3002,9 +3024,12 @@ function renderDynamicIntelligenceBadge(badge) {
     : "UPGRADE_OR_CURRENT";
   badge.mainBadgeClass = preservedBadgeClass;
   rememberLocalPreservedBadgeClass(badge.wallet, badge.mainBadgeClass);
-
-  if (el.badgePreviewCard) el.badgePreviewCard.classList.add("has-final-art");
-  setDynamicBadgePreviewImage(badge.wallet);
+    if (shouldUseOnchainBadgePreview(badge)) {
+      if (el.badgePreviewCard) el.badgePreviewCard.classList.add("has-final-art");
+      setDynamicBadgePreviewImage(badge.wallet);
+    } else {
+      clearDynamicBadgePreviewImage();
+    }
 
   el.badgePreviewClass.textContent = badge.mainBadgeClass;
   if (el.badgePreviewWallet) {
@@ -3048,10 +3073,31 @@ function renderDynamicIntelligenceBadge(badge) {
 
 function applyBadgeActionState(badge) {
   const onchain = badge.onchain || {};
+  const action = onchain.action || "CHECK_ON_CLICK";
   const calculatedClass = badge.currentCalculatedBadgeClass || badge.mainBadgeClass;
   const knownClass = getHighestKnownBadgeClass(badge.wallet, onchain);
   const calculatedRank = getBadgeClassRank(calculatedClass);
   const knownRank = getBadgeClassRank(knownClass);
+
+  if (action === "FINAL_CONTRACT_REQUIRED") {
+    el.badgeSyncStatus.textContent = "Final Contract Required";
+    el.badgeMintButton.textContent = "Deploy Final Contract First";
+    el.badgeMintButton.disabled = true;
+    el.badgeMintButton.onclick = null;
+    el.badgeMintNote.textContent =
+      "The final metadata contract is not configured yet. Deploy WalletStatusBadgeFinal.sol, then paste the new contract address into wallet-intelligence.js.";
+    return;
+  }
+
+  if (action === "UPDATE") {
+    el.badgeSyncStatus.textContent = "Update Available";
+    el.badgeMintButton.textContent = "Update Badge · 0.001 DACC";
+    el.badgeMintButton.disabled = false;
+    el.badgeMintButton.onclick = () => mintOrUpdateWalletStatusBadge(badge);
+    el.badgeMintNote.textContent =
+      "Wallet popup will appear only after clicking Update. The contract recalculates the on-chain core profile and updates the same badge token.";
+    return;
+  }
 
   if (onchain.hasBadge && knownRank > 0 && calculatedRank < knownRank) {
     rememberLocalPreservedBadgeClass(badge.wallet, knownClass);
@@ -3071,18 +3117,7 @@ function applyBadgeActionState(badge) {
     el.badgeMintButton.disabled = true;
     el.badgeMintButton.onclick = null;
     el.badgeMintNote.textContent =
-      "Dynamic Intelligence Badge v3.6.0 only offers updates when the wallet reaches a higher badge tier than its preserved highest tier.";
-    return;
-  }
-  const action = onchain.action || "CHECK_ON_CLICK";
-
-  if (action === "FINAL_CONTRACT_REQUIRED") {
-    el.badgeSyncStatus.textContent = "Final Contract Required";
-    el.badgeMintButton.textContent = "Deploy Final Contract First";
-    el.badgeMintButton.disabled = true;
-    el.badgeMintButton.onclick = null;
-    el.badgeMintNote.textContent =
-      "The final metadata contract is not configured yet. Deploy WalletStatusBadgeFinal.sol, then paste the new contract address into wallet-intelligence.js.";
+      "This wallet already has a Wallet Status badge and the on-chain core profile is current.";
     return;
   }
 
@@ -3093,16 +3128,6 @@ function applyBadgeActionState(badge) {
     el.badgeMintButton.onclick = null;
     el.badgeMintNote.textContent =
       "This wallet already has a Wallet Status badge and the on-chain core profile is current.";
-    return;
-  }
-
-  if (action === "UPDATE") {
-    el.badgeSyncStatus.textContent = "Update Available";
-    el.badgeMintButton.textContent = "Update Badge · 0.001 DACC";
-    el.badgeMintButton.disabled = false;
-    el.badgeMintButton.onclick = () => mintOrUpdateWalletStatusBadge(badge);
-    el.badgeMintNote.textContent =
-      "Wallet popup will appear only after clicking Update. The contract recalculates the on-chain core profile and updates the same badge token.";
     return;
   }
 
@@ -3529,7 +3554,23 @@ function renderOfficialRankSignalCard({
 
 function renderRankSyncStatus(summary) {
   const sync = summary?.sync_status || summary?.engine_checkpoint || {};
-  const isFullySynced = sync.historical_backfill_complete === true;
+  const rawPhase = String(sync.sync_phase || sync.phase || "").toUpperCase();
+
+  const historicalCompleteBool =
+    sync.historical_backfill_complete === true ||
+    rawPhase === "POST_BACKFILL_CATCH_UP" ||
+    rawPhase === "INCREMENTAL";
+
+  const catchupCompleteBool =
+    sync.catch_up_status === "CAUGHT_UP" ||
+    sync.catchup_complete === true ||
+    rawPhase === "INCREMENTAL";
+
+  const incrementalBool =
+    rawPhase === "INCREMENTAL" ||
+    sync.incremental === true;
+
+  const isFullySynced = historicalCompleteBool && catchupCompleteBool && incrementalBool;
 
   const latestSnapshotTime =
     sync.latest_snapshot_time ||
@@ -3542,16 +3583,56 @@ function renderRankSyncStatus(summary) {
     summary?.engine_latest_snapshot ||
     "Unknown";
 
-  const processedTx = summary?.total_processed_transactions ?? "NaN";
-  const rankedWallets = summary?.total_ranked_wallets ?? "NaN";
+  const processedTx =
+    summary?.total_processed_transactions ??
+    sync.total_processed_transactions ??
+    "NaN";
+
+  const indexedWallets =
+    sync.total_indexed_wallets ??
+    summary?.total_ranked_wallets ??
+    "NaN";
+
   const lastSync = sync.last_sync_at || latestSnapshotTime || "Unknown";
-  const backfillStatus = sync.backfill_status || "UNKNOWN";
-  const historicalComplete = isFullySynced ? "true" : "false";
-  const stateLabel = isFullySynced ? "Fully synced" : "Backfill in progress";
+
+  const backfillPosition =
+    sync.local_rpc_backfill_next_block ??
+    sync.backfill_next_block ??
+    sync.last_synced_block ??
+    null;
+
+  const backfillStatus = historicalCompleteBool
+    ? "COMPLETE"
+    : rawPhase === "HISTORICAL_BACKFILL_IN_PROGRESS"
+      ? "IN PROGRESS"
+      : "IN PROGRESS";
+
+  const postBackfillStatus = rawPhase === "POST_BACKFILL_CATCH_UP"
+    ? "IN PROGRESS"
+    : historicalCompleteBool
+      ? "COMPLETE"
+      : "PENDING";
+
+  const incrementalStatus = incrementalBool ? "INCREMENTAL" : "PENDING";
+
+  const stateLabel = isFullySynced
+    ? "INCREMENTAL"
+    : rawPhase === "POST_BACKFILL_CATCH_UP"
+      ? "POST BACKFILL CATCH UP"
+      : "BACKFILL IN PROGRESS";
 
   const tooltip = isFullySynced
-    ? `Rank data is valid and fully synced from genesis to the latest snapshot. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`
-    : `Rank data is still being backfilled from latest transactions toward genesis. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`;
+    ? `Rank data has reached incremental mode. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`
+    : `Rank data is still being synchronized. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`;
+
+  const positionLine = backfillPosition !== null && backfillPosition !== undefined
+    ? `
+      <div class="wallet-rank-engine-position">
+        <span>Current Backfill Position</span>
+        <strong>block ${formatRankValue(backfillPosition)}</strong>
+      </div>
+    `
+    : "";
 
   return `
     <div class="wallet-rank-engine-status ${isFullySynced ? "is-synced" : "is-backfilling"}">
@@ -3563,31 +3644,60 @@ function renderRankSyncStatus(summary) {
         <strong>${escapeRankHtml(stateLabel)}</strong>
       </div>
 
-      <div class="wallet-rank-engine-status-grid">
-        <div>
-          <span>Last Sync</span>
-          <strong>${escapeRankHtml(lastSync)}</strong>
+      <div class="wallet-rank-engine-status-stack">
+        <div class="wallet-rank-engine-status-grid wallet-rank-engine-status-grid-main">
+          <div>
+            <span>Last Sync</span>
+            <strong>${escapeRankHtml(lastSync)}</strong>
+          </div>
+          <div>
+            <span>Latest Snapshot</span>
+            <strong>${escapeRankHtml(latestSnapshotTime)}</strong>
+          </div>
+          <div>
+            <span>Processed Transactions</span>
+            <strong>${formatRankValue(processedTx)}</strong>
+          </div>
+          <div>
+            <span>Indexed Wallets</span>
+            <strong>${formatRankValue(indexedWallets)}</strong>
+          </div>
         </div>
-        <div>
-          <span>Latest Snapshot</span>
-          <strong>${escapeRankHtml(latestSnapshotTime)}</strong>
+
+        <div class="wallet-rank-engine-status-grid wallet-rank-engine-status-grid-pair">
+          <div>
+            <span>Backfill Status</span>
+            <strong>${escapeRankHtml(backfillStatus)}</strong>
+          </div>
+          <div>
+            <span>Historical Complete</span>
+            <strong>${historicalCompleteBool ? "true" : "false"}</strong>
+          </div>
         </div>
-        <div>
-          <span>Processed Transactions</span>
-          <strong>${formatRankValue(processedTx)}</strong>
+
+        <div class="wallet-rank-engine-status-grid wallet-rank-engine-status-grid-pair">
+          <div>
+            <span>Post Backfill Catch Up Status</span>
+            <strong>${escapeRankHtml(postBackfillStatus)}</strong>
+          </div>
+          <div>
+            <span>Catchup Complete</span>
+            <strong>${catchupCompleteBool ? "true" : "false"}</strong>
+          </div>
         </div>
-        <div>
-          <span>Ranked Wallets</span>
-          <strong>${formatRankValue(rankedWallets)}</strong>
+
+        <div class="wallet-rank-engine-status-grid wallet-rank-engine-status-grid-pair">
+          <div>
+            <span>Incremental Status</span>
+            <strong>${escapeRankHtml(incrementalStatus)}</strong>
+          </div>
+          <div>
+            <span>Incremental</span>
+            <strong>${incrementalBool ? "true" : "false"}</strong>
+          </div>
         </div>
-        <div>
-          <span>Backfill Status</span>
-          <strong>${escapeRankHtml(backfillStatus)}</strong>
-        </div>
-        <div>
-          <span>Historical Complete</span>
-          <strong>${historicalComplete}</strong>
-        </div>
+
+        ${positionLine}
       </div>
     </div>
   `;
