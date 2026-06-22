@@ -3,56 +3,56 @@
   "report_type": "observation_window_comparison",
   "comparison_layer_version": "v1.8.1",
   "comparison_scope": "7d",
-  "generated_at_utc": "2026-06-22T11:14:15.812164+00:00",
+  "generated_at_utc": "2026-06-22T16:02:19.825579+00:00",
   "window_a": {
     "label": "Window A",
     "description": "Earlier observation segment.",
     "summary": {
-      "snapshot_count": 5,
+      "snapshot_count": 6,
       "first_index": 43,
-      "latest_index": 47,
+      "latest_index": 48,
       "first_checked_at_utc": "2026-06-15T16:32:07.477470+00:00",
-      "latest_checked_at_utc": "2026-06-18T17:47:21.319826+00:00",
+      "latest_checked_at_utc": "2026-06-19T00:07:49.114576+00:00",
       "overall_status_counts": {
-        "DEGRADED": 2,
+        "DEGRADED": 3,
         "HEALTHY": 2,
         "PARTIAL_OUTAGE": 1
       },
       "endpoint_status_counts": {
         "official_public_rpc": {
-          "DEGRADED": 2,
+          "DEGRADED": 3,
           "HEALTHY": 2,
           "UNHEALTHY": 1
         },
         "explorer_web": {
-          "HEALTHY": 5
+          "HEALTHY": 6
         },
         "primary_explorer_api": {
-          "HEALTHY": 5
+          "HEALTHY": 6
         }
       },
       "endpoint_response_summary": {
         "official_public_rpc": {
-          "average_response_ms": 7987.4,
+          "average_response_ms": 6905.67,
           "max_response_ms": 20946.0,
           "response_class_counts": {
             "MODERATE": 2,
-            "SLOW": 3
+            "SLOW": 4
           }
         },
         "explorer_web": {
-          "average_response_ms": 573.0,
+          "average_response_ms": 551.33,
           "max_response_ms": 687.0,
           "response_class_counts": {
-            "FAST": 2,
+            "FAST": 3,
             "MODERATE": 3
           }
         },
         "primary_explorer_api": {
-          "average_response_ms": 431.8,
+          "average_response_ms": 419.17,
           "max_response_ms": 517.0,
           "response_class_counts": {
-            "FAST": 3,
+            "FAST": 4,
             "MODERATE": 2
           }
         }
@@ -128,63 +128,7 @@
         "primary_explorer_api_response_class": "FAST",
         "rpc_latest_block_decimal": 15035570,
         "rpc_latest_block_hex": "0xe56cb2"
-      }
-    ]
-  },
-  "window_b": {
-    "label": "Window B",
-    "description": "Later observation segment.",
-    "summary": {
-      "snapshot_count": 6,
-      "first_index": 48,
-      "latest_index": 53,
-      "first_checked_at_utc": "2026-06-19T00:07:49.114576+00:00",
-      "latest_checked_at_utc": "2026-06-21T10:45:15.026750+00:00",
-      "overall_status_counts": {
-        "DEGRADED": 3,
-        "HEALTHY": 3
       },
-      "endpoint_status_counts": {
-        "official_public_rpc": {
-          "DEGRADED": 3,
-          "HEALTHY": 3
-        },
-        "explorer_web": {
-          "HEALTHY": 6
-        },
-        "primary_explorer_api": {
-          "HEALTHY": 6
-        }
-      },
-      "endpoint_response_summary": {
-        "official_public_rpc": {
-          "average_response_ms": 2412.17,
-          "max_response_ms": 9356.0,
-          "response_class_counts": {
-            "FAST": 1,
-            "MODERATE": 2,
-            "SLOW": 3
-          }
-        },
-        "explorer_web": {
-          "average_response_ms": 610.33,
-          "max_response_ms": 1016.0,
-          "response_class_counts": {
-            "FAST": 2,
-            "MODERATE": 4
-          }
-        },
-        "primary_explorer_api": {
-          "average_response_ms": 482.67,
-          "max_response_ms": 811.0,
-          "response_class_counts": {
-            "FAST": 3,
-            "MODERATE": 3
-          }
-        }
-      }
-    },
-    "timeline": [
       {
         "index": 48,
         "snapshot_file": "2026-06-19T00-07-49-114576+00-00-health.json",
@@ -198,7 +142,65 @@
         "primary_explorer_api_response_class": "FAST",
         "rpc_latest_block_decimal": 15035796,
         "rpc_latest_block_hex": "0xe56d94"
+      }
+    ]
+  },
+  "window_b": {
+    "label": "Window B",
+    "description": "Later observation segment.",
+    "summary": {
+      "snapshot_count": 6,
+      "first_index": 49,
+      "latest_index": 54,
+      "first_checked_at_utc": "2026-06-19T05:22:45.224068+00:00",
+      "latest_checked_at_utc": "2026-06-22T16:01:14.927486+00:00",
+      "overall_status_counts": {
+        "DEGRADED": 2,
+        "HEALTHY": 3,
+        "PARTIAL_OUTAGE": 1
       },
+      "endpoint_status_counts": {
+        "official_public_rpc": {
+          "DEGRADED": 2,
+          "HEALTHY": 3,
+          "UNHEALTHY": 1
+        },
+        "explorer_web": {
+          "HEALTHY": 6
+        },
+        "primary_explorer_api": {
+          "HEALTHY": 6
+        }
+      },
+      "endpoint_response_summary": {
+        "official_public_rpc": {
+          "average_response_ms": 5648.33,
+          "max_response_ms": 23841.0,
+          "response_class_counts": {
+            "FAST": 1,
+            "MODERATE": 2,
+            "SLOW": 3
+          }
+        },
+        "explorer_web": {
+          "average_response_ms": 645.0,
+          "max_response_ms": 1016.0,
+          "response_class_counts": {
+            "FAST": 1,
+            "MODERATE": 5
+          }
+        },
+        "primary_explorer_api": {
+          "average_response_ms": 525.33,
+          "max_response_ms": 811.0,
+          "response_class_counts": {
+            "FAST": 2,
+            "MODERATE": 4
+          }
+        }
+      }
+    },
+    "timeline": [
       {
         "index": 49,
         "snapshot_file": "2026-06-19T05-22-45-224068+00-00-health.json",
@@ -268,18 +270,32 @@
         "primary_explorer_api_response_class": "MODERATE",
         "rpc_latest_block_decimal": 15051129,
         "rpc_latest_block_hex": "0xe5a979"
+      },
+      {
+        "index": 54,
+        "snapshot_file": "2026-06-22T16-01-14-927486+00-00-health.json",
+        "checked_at_utc": "2026-06-22T16:01:14.927486+00:00",
+        "overall_status": "PARTIAL_OUTAGE",
+        "official_public_rpc_status": "UNHEALTHY",
+        "official_public_rpc_response_class": "SLOW",
+        "explorer_web_status": "HEALTHY",
+        "explorer_web_response_class": "MODERATE",
+        "primary_explorer_api_status": "HEALTHY",
+        "primary_explorer_api_response_class": "MODERATE",
+        "rpc_latest_block_decimal": null,
+        "rpc_latest_block_hex": null
       }
     ]
   },
   "comparison": {
-    "availability_score_a": 0.66,
-    "availability_score_b": 0.775,
+    "availability_score_a": 0.6417,
+    "availability_score_b": 0.7167,
     "availability_direction": "IMPROVED",
     "interpretation": [
-      "Overall availability score changed from 0.66 to 0.775: IMPROVED.",
-      "Official Public RPC average response changed from 7987.4 ms to 2412.17 ms: IMPROVED.",
-      "Explorer Web average response changed from 573.0 ms to 610.33 ms: WORSENED.",
-      "Primary Explorer API average response changed from 431.8 ms to 482.67 ms: WORSENED.",
+      "Overall availability score changed from 0.6417 to 0.7167: IMPROVED.",
+      "Official Public RPC average response changed from 6905.67 ms to 5648.33 ms: IMPROVED.",
+      "Explorer Web average response changed from 551.33 ms to 645.0 ms: WORSENED.",
+      "Primary Explorer API average response changed from 419.17 ms to 525.33 ms: WORSENED.",
       "The later observation window shows stronger overall infrastructure availability."
     ]
   },
