@@ -1,7 +1,7 @@
 {
   "project": "DAC Enode Intelligence Watcher",
   "summary_type": "custom_json_report_summary",
-  "generated_at_utc": "2026-06-22T07:06:00.456159+00:00",
+  "generated_at_utc": "2026-06-22T13:06:41.079912+00:00",
   "range": "30d",
   "range_label": "Last 30 Days",
   "source_files": {
@@ -12,30 +12,30 @@
   },
   "important_note": "This custom JSON summary is observation-based. It does not make official DAC ownership claims and should not be treated as a definitive decentralization measurement.",
   "latest_observation": {
-    "checked_at_utc": "2026-06-22T07:05:57.088120+00:00",
-    "generated_at_source": "Mon Jun 22 09:00:01 AM CEST 2026",
+    "checked_at_utc": "2026-06-22T13:06:37.837271+00:00",
+    "generated_at_source": "Mon Jun 22 03:00:01 PM CEST 2026",
     "target_port": 28657,
-    "current_total": 8,
-    "previous_total": 10,
+    "current_total": 6,
+    "previous_total": 8,
     "added_count": 0,
     "removed_count": 2,
-    "unchanged_count": 8,
+    "unchanged_count": 6,
     "change_severity": "LOW",
     "severity_reason": "Small enode rotation detected: 0 added and 2 removed."
   },
   "observation_scope": {
     "selected_observation_count": 99,
-    "first_observed_source_time": "May 23, 2026 (12:00 CEST)",
-    "last_observed_source_time": "Jun 22, 2026 (09:00 CEST)",
+    "first_observed_source_time": "May 24, 2026 (04:00 CEST)",
+    "last_observed_source_time": "Jun 22, 2026 (15:00 CEST)",
     "phase_counts": {
-      "manual_backfill": 7,
-      "automated_watcher": 92
+      "manual_backfill": 6,
+      "automated_watcher": 93
     },
     "status_counts": {
-      "manual_changed": 6,
+      "manual_changed": 5,
       "manual_unchanged": 1,
       "initial": 1,
-      "changed": 91
+      "changed": 92
     },
     "target_ports_observed": [
       28657
@@ -44,26 +44,26 @@
   "enode_movement_summary": {
     "min_enode_count": 2,
     "max_enode_count": 16,
-    "avg_enode_count": 11.63,
-    "total_added_events": 96,
-    "total_removed_events": 85
+    "avg_enode_count": 11.57,
+    "total_added_events": 92,
+    "total_removed_events": 83
   },
   "anomaly_summary": {
-    "selected_anomaly_signal_count": 9,
+    "selected_anomaly_signal_count": 8,
     "selected_severity_counts": {
-      "HIGH": 5,
+      "HIGH": 4,
       "CRITICAL": 2,
       "MEDIUM": 2
     },
     "selected_anomaly_type_counts": {
-      "AGGRESSIVE_ROTATION": 3,
+      "AGGRESSIVE_ROTATION": 2,
       "SHARP_ENODE_COUNT_DROP": 1,
       "HIGH_REMOVAL_EVENT": 2,
       "LOW_CONTINUITY_RATIO": 1,
       "WATCHER_HIGH_SEVERITY_SIGNAL": 1,
       "MODERATE_ROTATION_SPIKE": 1
     },
-    "global_short_summary": "12 anomaly signals were detected across 106 observations. The highest observed anomaly severity is CRITICAL.",
+    "global_short_summary": "12 anomaly signals were detected across 107 observations. The highest observed anomaly severity is CRITICAL.",
     "global_highest_severity": "CRITICAL",
     "global_recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
   },
@@ -97,23 +97,6 @@
     }
   },
   "timeline": [
-    {
-      "observation_index": 8,
-      "phase": "manual_backfill",
-      "status": "manual_changed",
-      "source_time_raw": "Sat May 23 12:00:02 PM CEST 2026",
-      "source_time_readable": "May 23, 2026 (12:00 CEST)",
-      "checked_at_utc": null,
-      "current_total": 12,
-      "previous_total": 12,
-      "added_count": 4,
-      "removed_count": 4,
-      "unchanged_count": 8,
-      "target_port": 28657,
-      "change_severity": null,
-      "severity_reason": null,
-      "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
-    },
     {
       "observation_index": 9,
       "phase": "manual_backfill",
@@ -1779,27 +1762,26 @@
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 0 added and 2 removed.",
       "snapshot_file": "data/snapshots/2026-06-22T07-05-57-088120+00-00-changed.json"
+    },
+    {
+      "observation_index": 107,
+      "phase": "automated_watcher",
+      "status": "changed",
+      "source_time_raw": "Mon Jun 22 03:00:01 PM CEST 2026",
+      "source_time_readable": "Jun 22, 2026 (15:00 CEST)",
+      "checked_at_utc": "2026-06-22T13:06:37.837271+00:00",
+      "current_total": 6,
+      "previous_total": 8,
+      "added_count": 0,
+      "removed_count": 2,
+      "unchanged_count": 6,
+      "target_port": 28657,
+      "change_severity": "LOW",
+      "severity_reason": "Small enode rotation detected: 0 added and 2 removed.",
+      "snapshot_file": "data/snapshots/2026-06-22T13-06-37-837271+00-00-changed.json"
     }
   ],
   "anomalies": [
-    {
-      "anomaly_type": "AGGRESSIVE_ROTATION",
-      "severity": "HIGH",
-      "reason": "Large rotation intensity detected: 4 added and 4 removed.",
-      "technical_impact": "High rotation intensity may suggest infrastructure maintenance, peer refresh, or node replacement.",
-      "recommended_action": "Track whether the next observations stabilize or continue rotating heavily.",
-      "observation_index": 8,
-      "phase": "manual_backfill",
-      "source_time_raw": "Sat May 23 12:00:02 PM CEST 2026",
-      "source_time_readable": "May 23, 2026 (12:00 CEST)",
-      "current_total": 12,
-      "previous_total": 12,
-      "added_count": 4,
-      "removed_count": 4,
-      "unchanged_count": 8,
-      "target_port": 28657,
-      "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
-    },
     {
       "anomaly_type": "AGGRESSIVE_ROTATION",
       "severity": "HIGH",
