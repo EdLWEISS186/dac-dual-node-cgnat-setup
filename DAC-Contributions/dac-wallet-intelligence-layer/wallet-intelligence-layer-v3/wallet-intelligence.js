@@ -3601,6 +3601,16 @@ function renderRankSyncStatus(summary) {
     sync.last_synced_block ??
     null;
 
+  const backfillAnchor =
+    sync.historical_backfill_anchor_block ??
+    sync.backfill_anchor_block ??
+    (
+      sync.post_backfill_catch_up_from_block !== null &&
+      sync.post_backfill_catch_up_from_block !== undefined
+        ? Number(sync.post_backfill_catch_up_from_block) - 1
+        : null
+    );
+
   const backfillStatus = historicalCompleteBool
     ? "COMPLETE"
     : rawPhase === "HISTORICAL_BACKFILL_IN_PROGRESS"
@@ -3625,11 +3635,18 @@ function renderRankSyncStatus(summary) {
     ? `Rank data has reached incremental mode. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`
     : `Rank data is still being synchronized. Latest snapshot: ${latestSnapshot}. Snapshot time: ${latestSnapshotTime}.`;
 
-  const positionLine = backfillPosition !== null && backfillPosition !== undefined
+  const positionLine = (backfillAnchor !== null && backfillAnchor !== undefined) ||
+    (backfillPosition !== null && backfillPosition !== undefined)
     ? `
-      <div class="wallet-rank-engine-position">
-        <span>Current Backfill Position</span>
-        <strong>block ${formatRankValue(backfillPosition)}</strong>
+      <div class="wallet-rank-engine-position wallet-rank-engine-position-dual">
+        <div>
+          <span>Backfill Anchor</span>
+          <strong>${backfillAnchor !== null && backfillAnchor !== undefined ? `block ${formatRankValue(backfillAnchor)}` : "Unavailable"}</strong>
+        </div>
+        <div>
+          <span>Current Backfill Position</span>
+          <strong>${backfillPosition !== null && backfillPosition !== undefined ? `block ${formatRankValue(backfillPosition)}` : "Unavailable"}</strong>
+        </div>
       </div>
     `
     : "";

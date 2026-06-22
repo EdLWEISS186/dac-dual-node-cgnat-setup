@@ -2021,4 +2021,31 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
     align-items: flex-start;
     flex-direction: column;
   }
+}\n\n/* WIL v3.6.0 — backfill anchor + current position */
+.wallet-rank-engine-position-dual {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.wallet-rank-engine-position-dual > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wallet-rank-engine-position-dual > div:last-child {
+  align-items: flex-end;
+  text-align: right;
+}
+
+@media (max-width: 780px) {
+  .wallet-rank-engine-position-dual {
+    grid-template-columns: 1fr;
+  }
+
+  .wallet-rank-engine-position-dual > div:last-child {
+    align-items: flex-start;
+    text-align: left;
+  }
 }
