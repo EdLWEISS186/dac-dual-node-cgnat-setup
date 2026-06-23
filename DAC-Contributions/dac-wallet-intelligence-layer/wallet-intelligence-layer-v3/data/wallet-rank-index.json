@@ -8,15 +8,15 @@
   "status": "EXTERNALIZED_STATE_PENDING_VALID_PUBLISH",
   "summary": "Rank shards are intentionally not published during historical backfill or catch-up.",
   "sync_status": {
-    "catch_up_next_block": 14975372,
-    "catch_up_status": null,
+    "catch_up_next_block": 14980372,
+    "catch_up_status": "IN_PROGRESS",
     "historical_backfill_anchor_block": 14975371,
     "historical_backfill_complete": true,
     "incremental_next_block": null,
-    "last_sync_at": "2026-06-23T02:25:27+00:00",
-    "last_synced_block": 0,
+    "last_sync_at": "2026-06-23T02:29:31+00:00",
+    "last_synced_block": 14980371,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15060680,
+    "local_rpc_latest_block_at_sync": 15060696,
     "phase": "POST_BACKFILL_CATCH_UP"
   },
   "version": "v3.3.0"
