@@ -3658,44 +3658,62 @@ function renderRankSyncStatus(summary) {
 
   const positionLine = `
     <div class="wallet-rank-engine-position-stack">
-      <div class="wallet-rank-engine-position wallet-rank-engine-position-dual">
-        <div>
-          <span>Backfill Anchor</span>
-          <strong>${formatEngineBlockLabel(backfillAnchor)}</strong>
+      <div class="wallet-rank-engine-position-row">
+        <div class="wallet-rank-engine-position-row-head">
+          <span>Historical Backfill</span>
+          <strong>${historicalCompleteBool ? "COMPLETE" : "IN PROGRESS"}</strong>
         </div>
-        <div>
-          <span>Current Backfill Position</span>
-          <strong>${
-            historicalCompleteBool
-              ? "Complete / block 0"
-              : formatEngineBlockLabel(currentBackfillPosition)
-          }</strong>
-        </div>
-      </div>
-
-      <div class="wallet-rank-engine-position wallet-rank-engine-position-dual">
-        <div>
-          <span>Post Backfill Catch Up Anchor</span>
-          <strong>${formatEngineBlockLabel(catchUpAnchor)}</strong>
-        </div>
-        <div>
-          <span>Current Catch Up Position</span>
-          <strong>${
-            catchupCompleteBool
-              ? "Complete"
-              : formatEngineBlockLabel(currentCatchUpPosition)
-          }</strong>
+        <div class="wallet-rank-engine-position-row-grid">
+          <div>
+            <span>Anchor</span>
+            <strong>${formatEngineBlockLabel(backfillAnchor)}</strong>
+          </div>
+          <div>
+            <span>Current Position</span>
+            <strong>${
+              historicalCompleteBool
+                ? "Complete / block 0"
+                : formatEngineBlockLabel(currentBackfillPosition)
+            }</strong>
+          </div>
         </div>
       </div>
 
-      <div class="wallet-rank-engine-position wallet-rank-engine-position-dual">
-        <div>
-          <span>Incremental</span>
+      <div class="wallet-rank-engine-position-row">
+        <div class="wallet-rank-engine-position-row-head">
+          <span>Post Backfill Catch Up</span>
+          <strong>${escapeRankHtml(postBackfillStatus)}</strong>
+        </div>
+        <div class="wallet-rank-engine-position-row-grid">
+          <div>
+            <span>Anchor</span>
+            <strong>${formatEngineBlockLabel(catchUpAnchor)}</strong>
+          </div>
+          <div>
+            <span>Current Position</span>
+            <strong>${
+              catchupCompleteBool
+                ? "Complete"
+                : formatEngineBlockLabel(currentCatchUpPosition)
+            }</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="wallet-rank-engine-position-row">
+        <div class="wallet-rank-engine-position-row-head">
+          <span>Incremental Sync</span>
           <strong>${escapeRankHtml(incrementalStatus)}</strong>
         </div>
-        <div>
-          <span>Current Incremental Position</span>
-          <strong>${formatEngineBlockLabel(currentIncrementalPosition)}</strong>
+        <div class="wallet-rank-engine-position-row-grid">
+          <div>
+            <span>Status</span>
+            <strong>${incrementalBool ? "true" : "false"}</strong>
+          </div>
+          <div>
+            <span>Current Position</span>
+            <strong>${formatEngineBlockLabel(currentIncrementalPosition)}</strong>
+          </div>
         </div>
       </div>
     </div>

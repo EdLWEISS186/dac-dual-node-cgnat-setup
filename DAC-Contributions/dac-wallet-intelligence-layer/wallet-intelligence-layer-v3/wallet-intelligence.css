@@ -2057,4 +2057,98 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
 
 .wallet-rank-engine-position-stack .wallet-rank-engine-position {
   margin-top: 0;
+}\n\n/* WIL v3.6.0 — clean engine position rows */
+.wallet-rank-engine-position-stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.wallet-rank-engine-position-row {
+  border: 1px solid rgba(245, 197, 24, 0.36);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(245, 197, 24, 0.075), rgba(2, 6, 23, 0.34));
+  overflow: hidden;
+}
+
+.wallet-rank-engine-position-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid rgba(245, 197, 24, 0.16);
+}
+
+.wallet-rank-engine-position-row-head span,
+.wallet-rank-engine-position-row-grid span {
+  color: #f5d76e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wallet-rank-engine-position-row-head strong {
+  color: #f5d76e;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+.wallet-rank-engine-position-row-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.wallet-rank-engine-position-row-grid > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 52px;
+  padding: 10px 12px;
+}
+
+.wallet-rank-engine-position-row-grid > div + div {
+  border-left: 1px solid rgba(245, 197, 24, 0.12);
+}
+
+.wallet-rank-engine-position-row-grid strong {
+  color: #f8fafc;
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .wallet-rank-engine-position-row-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wallet-rank-engine-position-row-grid > div + div {
+    border-left: 0;
+    border-top: 1px solid rgba(245, 197, 24, 0.12);
+  }
+
+  .wallet-rank-engine-position-row-head,
+  .wallet-rank-engine-position-row-grid > div {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wallet-rank-engine-position-row-head strong,
+  .wallet-rank-engine-position-row-grid strong {
+    text-align: left;
+  }
+}
+
+/* Supersede the earlier experimental dual-position bar styles. */
+.wallet-rank-engine-position-stack .wallet-rank-engine-position,
+.wallet-rank-engine-position-dual {
+  display: none;
 }
