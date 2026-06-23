@@ -2,7 +2,7 @@
 
 Client-side wallet intelligence interface and globally comparative public wallet rank system for the **DAC Quantum Chain Testnet**.
 
-Wallet Intelligence Layer v3.6.0 is the **Back to Normal** release. It restores the normal WIL scoring model after the official DAC Testnet Inception Conviction Lock flow became inconsistent as an active scoring basis.
+Wallet Intelligence Layer v3.6.0 is the **Back to Normal** release. It restores the normal WIL scoring model after the official DAC Testnet Inception Conviction Lock flow became inconsistent as an active scoring basis, and it hardens the worker path from historical backfill into live incremental sync.
 
 The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
@@ -34,6 +34,9 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 - [Authoritative SQLite State](#authoritative-sqlite-state)
 - [Rank Data Workflow](#rank-data-workflow)
 - [Low-Storage Worker Model](#low-storage-worker-model)
+- [SQLite Health Escalation Guard](#sqlite-health-escalation-guard)
+- [Adaptive Chunk Checkpoint Worker](#adaptive-chunk-checkpoint-worker)
+- [Phase-Aware Incremental Micro-Sync](#phase-aware-incremental-micro-sync)
 - [Global Rank Builder](#global-rank-builder)
 - [Compact Public Rank Schema V3](#compact-public-rank-schema-v3)
 - [Ranking Model](#ranking-model)
@@ -47,7 +50,6 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 - [Local Development Workspace](#local-development-workspace)
 - [Security and Trust Model](#security-and-trust-model)
 - [Validation Status](#validation-status)
-- [50,000-Block Adaptive Ceiling Validation](#50000-block-adaptive-ceiling-validation)
 - [Changelog](#changelog)
 - [License](#license)
 - [Author](#author)
@@ -94,7 +96,17 @@ Address-prefix shards
 Browser wallet lookup
 ```
 
-Operationally, the v3.6.0 worker now supports an adaptive chunk checkpoint model. The local runner may use a large cycle ceiling, such as `50,000` blocks, while preserving a `5,000`-block safety unit. Each chunk is evaluated before the next chunk starts. If chain density or device pressure becomes too high, the cycle stops early, publishes the completed work, cleans temporary state, and then sleeps normally.
+Operationally, v3.6.0 also hardens the rank worker lifecycle:
+
+```text
+Historical Backfill
+↓
+Post-Backfill Catch-Up
+↓
+Incremental Micro-Sync
+```
+
+Backfill and catch-up use large safe cycle ceilings with adaptive chunk checkpoints. Incremental sync uses small, frequent, lag-aware micro-sync cycles so the public rank status can remain close to the chain tip after WIL reaches live sync.
 
 The shard is only a delivery format. The comparison population remains global.
 
@@ -151,9 +163,14 @@ Key updates:
 - Preserved legacy SQLite Conviction tables for backward compatibility only.
 - Preserved Dynamic Intelligence Badge monotonic progression.
 - Added legacy localStorage fallback so v3.6.0 respects preserved badge tier state from v3.5.0.
-- Added an adaptive chunk checkpoint worker mode for long local backfill cycles.
-- Preserved `5,000` blocks as the safety unit while allowing a higher cycle ceiling.
-- Validated `50,000/1000/180` as an adaptive operating preset.
+- Added an adaptive chunk checkpoint worker mode for long local backfill and catch-up cycles.
+- Preserved `5,000` blocks as the backfill/catch-up safety unit while allowing a higher cycle ceiling.
+- Validated `50,000/1000/180` as an adaptive backfill/catch-up operating preset.
+- Added phase-aware runner presets for historical backfill, post-backfill catch-up, and incremental sync.
+- Added incremental micro-sync behavior using `10` blocks and `60s` sleep in normal live mode.
+- Added lag-aware incremental recovery presets for larger temporary gaps.
+- Kept `SLEEP_SECONDS=180` for post-backfill catch-up.
+- Added rank-status UI rows for backfill anchor, catch-up anchor, current catch-up position, current incremental position, chain latest block, and incremental lag.
 - Replaced premature `RETURN`-trap cleanup with explicit cycle-level cleanup.
 - Ensured adaptive checkpoint runtime and temporary repository clones are cleaned only after the cycle completes or exits.
 
@@ -209,10 +226,22 @@ v3.2.0 — Externalized state and Google Drive backup
 v3.3.0 — Stable SQLite-backed production architecture
 v3.4.0 — Worker Acceleration & Operational Hardening
 v3.5.0 — Conviction-aware web, worker, and Compact V3 public rank schema
-v3.6.0 — Back to Normal scoring after official Conviction flow inconsistency, with adaptive checkpoint worker hardening
+v3.6.0 — Back to Normal scoring after official Conviction flow inconsistency, with adaptive checkpoint worker hardening and phase-aware incremental micro-sync
 ```
 
-Version `v3.6.0` keeps the v3.3.0/v3.4.0 architecture but returns the active logic to normal scoring because the official Conviction flow was removed/refunded and became unsuitable as an active score signal. Later v3.6.0 operational hardening also adds an adaptive chunk checkpoint worker so large cycle ceilings can be attempted without changing the underlying 5,000-block safety unit.
+Version `v3.6.0` keeps the v3.3.0/v3.4.0 architecture but returns the active logic to normal scoring because the official Conviction flow was removed/refunded and became unsuitable as an active score signal.
+
+Later v3.6.0 operational hardening adds:
+
+```text
+Adaptive backfill/catch-up ceiling
++
+SQLite health escalation guard
++
+phase-aware incremental micro-sync
++
+rank status freshness fields
+```
 
 “Production-ready” refers to the completed and validated architecture. Rank completeness still follows the current synchronization phase. During historical backfill or catch-up, the UI must not imply that the full chain population is already finalized.
 
@@ -227,7 +256,7 @@ Wallet Intelligence Layer v3.6.0 is part of a broader DAC tooling progression.
 | DAC Sender | `v1.4.3` | Activity-generation and testnet interaction tool. | [DAC Sender](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Sender-Web) |
 | Wallet Intelligence Layer | `v1.5.4` | First wallet intelligence layer focused on reading public DAC wallet activity. | [Wallet Intelligence Layer v1](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1) |
 | Wallet Intelligence Layer | `v2.0.2` | Dynamic wallet-bound status badge workflow. | [Wallet Intelligence Layer v2](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v2) |
-| Wallet Intelligence Layer | `v3.6.0` | Global comparative wallet intelligence using local DAC nodes, SQLite state, Compact V3 rank artifacts, normal current-funds/current-stake scoring, and public shard lookup. | [Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
+| Wallet Intelligence Layer | `v3.6.0` | Global comparative wallet intelligence using local DAC nodes, SQLite state, Compact V3 rank artifacts, normal current-funds/current-stake scoring, adaptive catch-up, and phase-aware incremental micro-sync. | [Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
 
 ```text
 DAC Sender
@@ -266,15 +295,26 @@ Wallet Intelligence Layer v3.6.0 uses the hybrid local-processing and public-del
                        └──────────────────┬───────────────────┘
                                           ▼
                            ┌──────────────────────────────┐
+                           │ Phase-Aware Local Runner     │
+                           │ Backfill / Catch-up / Micro  │
+                           │ v3.6.0 normal scoring        │
+                           └──────────────┬───────────────┘
+                                          ▼
+                           ┌──────────────────────────────┐
                            │ Local RPC Rank Worker        │
-                           │ Backfill / Catch-up / Sync   │
-                           │ v3.6.0 normal mode           │
+                           │ SQLite-backed indexing       │
+                           │ normal stake/rank worker     │
                            └──────────────┬───────────────┘
                                           ▼
                            ┌──────────────────────────────┐
                            │ Adaptive Chunk Guard         │
                            │ 5,000-block safety unit      │
                            │ 50,000-block cycle ceiling   │
+                           └──────────────┬───────────────┘
+                                          ▼
+                           ┌──────────────────────────────┐
+                           │ SQLite Health Guard          │
+                           │ lightweight / full / diagnose│
                            └──────────────┬───────────────┘
                                           ▼
                            ┌──────────────────────────────┐
@@ -414,13 +454,13 @@ These legacy tables are retained to avoid breaking historical state, but Convict
 
 The main worker uses three synchronization phases.
 
-| Phase | Meaning |
-|---|---|
-| Historical Backfill | Processes historical blocks backward toward genesis. |
-| Post-Backfill Catch-Up | Fills the forward gap created while backfill was running. |
-| Incremental Sync | Processes newly produced blocks only. |
+| Phase | Meaning | v3.6.0 runner behavior |
+|---|---|---|
+| `HISTORICAL_BACKFILL_IN_PROGRESS` | Processes historical blocks backward toward genesis. | Large adaptive ceiling, 5,000-block safety chunks, 180s sleep. |
+| `POST_BACKFILL_CATCH_UP` | Fills the forward gap created while backfill was running. | Large adaptive ceiling, 5,000-block safety chunks, 180s sleep. |
+| `INCREMENTAL` | Processes newly produced blocks after catch-up reaches the chain tip. | Small lag-aware micro-sync cycles, normally 10 blocks, 60s sleep. |
 
-During long historical backfill, the worker may run in adaptive checkpoint mode. In that mode, each 5,000-block chunk is treated as an evaluation point. The cycle may continue toward a larger ceiling when the chunk is light, or stop early when the chunk is dense or the device shows pressure.
+During long historical backfill or post-backfill catch-up, the worker may run in adaptive checkpoint mode. In that mode, each 5,000-block chunk is treated as an evaluation point. The cycle may continue toward a larger ceiling when the chunk is light, or stop early when the chunk is dense or the device shows pressure.
 
 Worker responsibilities in v3.6.0:
 
@@ -433,9 +473,10 @@ Worker responsibilities in v3.6.0:
 - collection diversity;
 - stake and unstake flow;
 - Official Inception NFT `Transfer` logs;
-- checkpoint and phase transitions.
+- checkpoint and phase transitions;
+- incremental position and lag metadata.
 
-Lightweight status may include sync phase, last synced block, next backfill block, latest chain block at sync, indexed wallet count, total processed transactions, state backend, feature support flags, and public rank readiness.
+Lightweight status may include sync phase, last synced block, next backfill block, catch-up next block, incremental next block, latest chain block at sync, indexed wallet count, total processed transactions, state backend, feature support flags, and public rank readiness.
 
 Global rank generation is handled separately.
 
@@ -457,9 +498,68 @@ publish or persist output
 remove temporary work
 ```
 
-Temporary work may include a temporary repository clone, a consistent source database snapshot, a temporary rank-build database, a temporary snapshot repository, compressed backup work, and temporary manifests.
+Temporary work may include a temporary repository clone, a consistent source database snapshot, a temporary rank-build database, a temporary snapshot repository, compressed backup work, adaptive runtime checkpoint files, and temporary manifests.
 
 This design keeps daily source work lightweight and prevents generated operational data from being accidentally committed.
+
+The low-storage runner is phase-aware in v3.6.0. It resolves the current synchronization phase from SQLite before each run and applies the correct preset for backfill, catch-up, or incremental sync.
+
+---
+
+## SQLite Health Escalation Guard
+
+v3.6.0 includes a SQLite health guard to protect the authoritative rank-state database from silent corruption or unsafe writes.
+
+The guard supports three modes:
+
+```text
+lightweight
+full
+diagnose
+```
+
+### Normal startup path
+
+The default worker startup uses a lightweight preflight check.
+
+```text
+sqlite_health_guard.py --mode lightweight
+```
+
+This is intended to be fast enough for every worker cycle.
+
+### Full integrity check path
+
+A full SQLite integrity check may be enabled explicitly when deeper validation is needed.
+
+```text
+WIL_V3_FULL_SQLITE_QUICK_CHECK=1
+sqlite_health_guard.py --mode full
+```
+
+### Automatic escalation path
+
+If a lightweight check fails, the runner escalates to diagnostic mode:
+
+```text
+sqlite_health_guard.py --mode diagnose --force-full
+```
+
+The worker should not continue as if the state is healthy when the SQLite preflight fails.
+
+### Safe reaction policy
+
+A health failure is treated as a state-safety event, not a normal worker stop.
+
+Safe reaction:
+
+```text
+stop worker
+run diagnose
+preserve external SQLite state
+avoid publishing suspect output
+restore or repair before continuing
+```
 
 ---
 
@@ -467,11 +567,11 @@ This design keeps daily source work lightweight and prevents generated operation
 
 v3.6.0 adds an adaptive chunk checkpoint worker mode for the local RPC rank worker.
 
-The purpose is to make historical backfill faster without removing the original safety behavior of the `5,000/1000/180` worker preset.
+The purpose is to make historical backfill and post-backfill catch-up faster without removing the original safety behavior of the `5,000/1000/180` worker preset.
 
 ### Operating preset
 
-Validated high-efficiency preset:
+Validated high-efficiency preset for backfill/catch-up:
 
 ```text
 MAX_BLOCKS=50000
@@ -528,7 +628,7 @@ publish once
 sleep 180s
 ```
 
-The sleep duration is not reduced. Instead, the worker reduces unnecessary sleep frequency when it is processing light block ranges.
+The sleep duration is not reduced for backfill/catch-up. Instead, the worker reduces unnecessary sleep frequency when it is processing light block ranges.
 
 ### Safety model
 
@@ -627,6 +727,96 @@ Fall back to 5,000-block behavior when dense or resource-heavy.
 Dense ranges may stop after one chunk, behaving like the original `5,000/1000/180` baseline.
 
 Light ranges may complete all ten chunks, significantly reducing calendar time to reach incremental sync.
+
+---
+
+## Phase-Aware Incremental Micro-Sync
+
+v3.6.0 adds a phase-aware runtime preset layer to the low-storage runner.
+
+The runner reads the current sync phase from SQLite before each cycle and applies a preset appropriate to the phase.
+
+### Phase presets
+
+| Phase | MAX_BLOCKS | ADAPTIVE_CHUNK_SIZE | SLEEP_SECONDS | Purpose |
+|---|---:|---:|---:|---|
+| `HISTORICAL_BACKFILL_IN_PROGRESS` | `50000` | `5000` | `180` | Fast historical progress while preserving 5,000-block safety. |
+| `POST_BACKFILL_CATCH_UP` | `50000` | `5000` | `180` | Fill the forward gap without reducing device rest time. |
+| `INCREMENTAL` normal | `10` | `10` | `60` | Keep public data close to the chain tip. |
+| `INCREMENTAL` lag <= 100 | `25` | `25` | `60` | Recover from a small temporary gap. |
+| `INCREMENTAL` lag <= 500 | `100` | `100` | `60` | Recover from a medium temporary gap. |
+| `INCREMENTAL` lag > 500 | `500` | `100` | `60` | Recover from a larger outage or delayed runner restart. |
+
+### Why incremental does not use the 50,000-block preset
+
+The `50,000/5000/180` behavior is useful for historical and catch-up phases, but it is too coarse for live incremental mode.
+
+In incremental mode, the worker should not wait for a large batch before publishing. Instead, it should process the new blocks that appeared during the previous push/sleep interval and publish again when the public manifest changes.
+
+Normal incremental behavior:
+
+```text
+check latest block
+↓
+process up to 10 blocks
+↓
+publish changed public artifacts
+↓
+sleep 60s
+↓
+repeat
+```
+
+This does not make WIL real-time, but it makes the freshness gap explicit and small.
+
+### Incremental lag model
+
+The UI can display:
+
+```text
+Current Incremental Position
+Chain Latest
+Incremental Lag
+```
+
+The lag is calculated as:
+
+```text
+lag_blocks = max(0, chain_latest_block - incremental_next_block + 1)
+```
+
+Example UI interpretation:
+
+```text
+Incremental Sync        INCREMENTAL
+Current Position        block 15,062,125
+Chain Latest            block 15,062,130
+Incremental Lag         6 blocks
+```
+
+This lets users understand how close the public WIL output is to the latest known chain block.
+
+### Graceful activation
+
+The phase-aware runner source becomes active after the currently running runner process is restarted or a new runner process starts from the updated source.
+
+The safe operational order is:
+
+```text
+let current catch-up chunk finish
+↓
+let worker publish completed state
+↓
+stop runner gracefully
+↓
+pull latest source locally
+↓
+restart runner
+↓
+confirm phase-aware preset log line
+```
+
+---
 
 ## Global Rank Builder
 
@@ -937,6 +1127,24 @@ cutoff-aware
 postCutover
 ```
 
+The Rank Data Engine Status UI exposes synchronization position rows:
+
+```text
+Historical Backfill
+- Anchor
+- Current Position
+
+Post Backfill Catch Up
+- Anchor
+- Current Position
+
+Incremental Sync
+- Status
+- Current Position
+- Chain Latest
+- Incremental Lag
+```
+
 ---
 
 ## Rank Data Status Model
@@ -946,6 +1154,18 @@ postCutover
 | `HISTORICAL_BACKFILL_IN_PROGRESS` | The worker is processing historical blocks backward toward genesis. |
 | `POST_BACKFILL_CATCH_UP` | Historical backfill reached genesis and the worker is filling the forward gap. |
 | `INCREMENTAL` | The worker has caught up and is processing newly produced blocks. |
+
+Important status fields:
+
+| Field | Meaning |
+|---|---|
+| `historical_backfill_anchor_block` | The block at which the historical backfill anchor was established. |
+| `local_rpc_backfill_next_block` | The next historical block to process while backfill is active. |
+| `post_backfill_catch_up_from_block` | The first block of the forward catch-up range. |
+| `catch_up_next_block` | The next catch-up block to process. |
+| `incremental_next_block` | The next incremental block to process after catch-up. |
+| `local_rpc_latest_block_at_sync` | The latest chain block observed by the worker at sync time. |
+| `incremental_lag_blocks` | UI-computed freshness gap between latest block and incremental position. |
 
 The UI should only imply a fully synchronized rank dataset after historical backfill and catch-up are complete.
 
@@ -1040,18 +1260,14 @@ The system should be treated as a transparent community analytics layer, not an 
 
 The v3.6.0 code update was validated before commit and push.
 
-Validated commit:
-
-```text
-bc7baa8 Update WIL v3.6.0 back to normal scoring
-```
-
-Validation commands:
+Representative validation commands:
 
 ```text
 python3 -m py_compile scripts/generate_rank_from_sqlite.py
 python3 -m py_compile rank-data-engine/scripts/local_rpc_rank_data_worker.py
 python3 -m py_compile rank-data-engine/scripts/sqlite_rank_state.py
+python3 -m py_compile rank-data-engine/scripts/adaptive_chunk_guard.py
+python3 -m py_compile rank-data-engine/scripts/sqlite_health_guard.py
 bash -n scripts/publish_rank_snapshot_branch.sh
 bash -n rank-data-engine/scripts/run_local_rpc_rank_worker_low_storage.sh
 node --check wallet-intelligence.js
@@ -1059,12 +1275,14 @@ node --check rank-engine.js
 git diff --check
 ```
 
-Validated results:
+Validated results across the v3.6.0 work:
 
 ```text
 py_compile_all_exit_code=0
 publish_bash_check_exit_code=0
 runner_bash_check_exit_code=0
+worker_py_compile_exit_code=0
+guard_py_compile_exit_code=0
 wallet_js_node_check_exit_code=0
 rank_engine_node_check_exit_code=0
 diff_check_exit_code=0
@@ -1083,18 +1301,13 @@ v3.6.0 browser validation confirmed:
 - Wallet Rank Intelligence shows `DACC Stake`;
 - Wallet Rank Intelligence no longer shows `Estimated Stake Before Conviction`;
 - Wallet Rank Intelligence no longer shows `Conviction Locked`;
-- Dynamic Intelligence Badge still only offers update when tier increases.
+- Dynamic Intelligence Badge still only offers update when tier increases;
+- Rank Data Engine Status shows backfill, catch-up, and incremental position rows;
+- Incremental Sync row exposes current position, chain latest, and incremental lag.
 
 ### Adaptive 50,000-Block Ceiling Validation
 
-v3.6.0 adaptive checkpoint mode was validated after the explicit cleanup and syntax fixes.
-
-Relevant operational commits:
-
-```text
-764801cc Replace RETURN trap with explicit WIL worker cleanup
-8dd43618 Fix WIL runner explicit cleanup syntax
-```
+v3.6.0 adaptive checkpoint mode was validated after explicit cleanup and syntax fixes.
 
 Validated local preset:
 
@@ -1118,16 +1331,6 @@ cleanup_adaptive_runtime=True
 cleanup_temp_workdir=True
 ```
 
-Other dense or pressure stop reasons observed:
-
-```text
-tx_density_high_20597_gt_5000
-tx_density_high_20625_gt_5000
-tx_density_high_21076_gt_5000
-io_wait_high_22.00_gt_20
-cpu_idle_low_0.00_lt_15
-```
-
 Light-range behavior:
 
 ```text
@@ -1139,58 +1342,40 @@ cleanup_adaptive_runtime=True
 cleanup_temp_workdir=True
 ```
 
-This validates the intended behavior:
+### Phase-Aware Incremental Validation
+
+The phase-aware runner patch was validated with:
 
 ```text
-Heavy range:
-5,000-block safety behavior is preserved.
-
-Light range:
-50,000-block ceiling improves throughput by reducing unnecessary publish/sleep cycles.
+runner_bash_check_exit_code=0
+worker_py_compile_exit_code=0
+guard_py_compile_exit_code=0
+runner_diff_check_exit_code=0
 ```
 
-No evidence of premature temporary repository cleanup appeared after explicit cycle-level cleanup was added. No `can't open file`, syntax, or unbound-variable worker error remained in the validated adaptive 50,000-block runs.
-
-## 50,000-Block Adaptive Ceiling Validation
-
-This release documents `50,000/1000/180` as the validated adaptive operating preset for the local worker.
-
-The important design distinction is:
+The incremental UI lag fields were validated with:
 
 ```text
-50,000 = maximum cycle ceiling
-5,000 = fixed safety unit
-180s = unchanged sleep duration after cycle completion or early stop
+wallet_js_node_check_exit_code=0
+rank_engine_node_check_exit_code=0
+ui_diff_check_exit_code=0
 ```
 
-The worker does not reduce the sleep duration. It reduces the number of unnecessary sleep events when the indexed block range is light enough to safely continue across multiple chunks.
-
-Recommended operator interpretation:
+Relevant v3.6.0 commits:
 
 ```text
-COMPLETED actual_blocks=50000
-→ light range, full high-efficiency cycle completed safely
-
-STOPPED_EARLY actual_blocks=5000 or higher
-→ dense or resource-heavy range, adaptive guard safely reduced the cycle
-```
-
-Required healthy markers:
-
-```text
-cleanup_adaptive_runtime=True
-cleanup_temp_workdir=True
-no syntax error
-no unbound variable
-no can't open file
-no missing temporary repository during later chunks
+bc7baa8 Update WIL v3.6.0 back to normal scoring
+6fc1f8b4 Clean WIL rank engine position layout
+5e0705b5 Add WIL catch-up and incremental positions to rank UI
+3436291f Add phase-aware incremental micro-sync runner preset
+9f5d9fda Add WIL incremental lag fields to rank UI
 ```
 
 ---
 
 ## Changelog
 
-### v3.6.0 — Back to Normal Scoring
+### v3.6.0 — Back to Normal Scoring and Phase-Aware Worker Hardening
 
 - Restored normal Native Funds Score using current live native DACC balance.
 - Restored normal DACC Stake Score using current stake/unstake flow.
@@ -1213,6 +1398,15 @@ no missing temporary repository during later chunks
 - Disabled active Conviction worker processing with `CONVICTION_METRICS_ACTIVE = False`.
 - Preserved legacy Conviction SQLite state only for backward compatibility.
 - Documented the release as `Back to Normal — inconsistent Conviction by Official DAC Team`.
+- Added SQLite health escalation guard.
+- Added adaptive chunk checkpoint worker mode.
+- Validated the `50,000/1000/180` adaptive ceiling while preserving 5,000-block safety behavior.
+- Added phase-aware runner presets for historical backfill, post-backfill catch-up, and incremental sync.
+- Kept post-backfill catch-up on `SLEEP_SECONDS=180`.
+- Added incremental micro-sync behavior with normal `10` block cycles and `60s` sleep.
+- Added lag-aware incremental recovery for larger sync gaps.
+- Added rank status UI rows for historical backfill, post-backfill catch-up, and incremental sync.
+- Added UI freshness fields for `Chain Latest` and `Incremental Lag`.
 
 ### v3.5.0 — Conviction-aware Web Schema
 
