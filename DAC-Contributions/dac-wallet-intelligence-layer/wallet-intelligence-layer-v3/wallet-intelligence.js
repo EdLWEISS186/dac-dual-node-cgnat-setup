@@ -3627,6 +3627,20 @@ function renderRankSyncStatus(summary) {
     sync.incremental_next_block ??
     null;
 
+  const chainLatestBlock =
+    sync.local_rpc_latest_block_at_sync ??
+    sync.latest_block ??
+    summary?.latest_block ??
+    null;
+
+  const incrementalLagBlocks =
+    currentIncrementalPosition !== null &&
+    currentIncrementalPosition !== undefined &&
+    chainLatestBlock !== null &&
+    chainLatestBlock !== undefined
+      ? Math.max(0, Number(chainLatestBlock) - Number(currentIncrementalPosition) + 1)
+      : null;
+
   const formatEngineBlockLabel = (value, fallback = "Unavailable") =>
     value !== null && value !== undefined
       ? `block ${formatRankValue(value)}`
@@ -3705,14 +3719,26 @@ function renderRankSyncStatus(summary) {
           <span>Incremental Sync</span>
           <strong>${escapeRankHtml(incrementalStatus)}</strong>
         </div>
-        <div class="wallet-rank-engine-position-row-grid">
+        <div class="wallet-rank-engine-position-row-grid wallet-rank-engine-position-row-grid-quad">
           <div>
             <span>Status</span>
-            <strong>${incrementalBool ? "true" : "false"}</strong>
+            <strong>${incrementalBool ? "ACTIVE" : "PENDING"}</strong>
           </div>
           <div>
             <span>Current Position</span>
             <strong>${formatEngineBlockLabel(currentIncrementalPosition)}</strong>
+          </div>
+          <div>
+            <span>Chain Latest</span>
+            <strong>${formatEngineBlockLabel(chainLatestBlock)}</strong>
+          </div>
+          <div>
+            <span>Incremental Lag</span>
+            <strong>${
+              incrementalLagBlocks !== null && incrementalLagBlocks !== undefined
+                ? `${formatRankValue(incrementalLagBlocks)} block${Number(incrementalLagBlocks) === 1 ? "" : "s"}`
+                : "Unavailable"
+            }</strong>
           </div>
         </div>
       </div>

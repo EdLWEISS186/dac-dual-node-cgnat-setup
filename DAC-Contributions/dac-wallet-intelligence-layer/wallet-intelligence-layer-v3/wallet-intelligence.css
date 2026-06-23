@@ -2152,3 +2152,8 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
 .wallet-rank-engine-position-dual {
   display: none;
 }
+
+/* WIL v3.6.0 — incremental latest/lag fields */
+.wallet-rank-engine-position-row-grid-quad {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
