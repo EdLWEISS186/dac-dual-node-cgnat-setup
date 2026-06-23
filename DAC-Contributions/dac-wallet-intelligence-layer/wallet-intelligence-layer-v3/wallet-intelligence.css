@@ -2048,4 +2048,13 @@ pre{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:
     align-items: flex-start;
     text-align: left;
   }
+}\n\n/* WIL v3.6.0 — catch-up and incremental position stack */
+.wallet-rank-engine-position-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wallet-rank-engine-position-stack .wallet-rank-engine-position {
+  margin-top: 0;
 }
