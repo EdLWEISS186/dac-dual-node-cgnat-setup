@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom All Time Report
 
-Generated at UTC: `2026-06-23T04:20:36.150547+00:00`
+Generated at UTC: `2026-06-23T08:03:47.582332+00:00`
 
 Report range: **All Time**
 
@@ -15,11 +15,11 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Range | All Time |
-| Observation count | 112 |
+| Observation count | 113 |
 | First observed source time | May 15, 2026 (00:00 CEST) |
-| Last observed source time | Jun 23, 2026 (06:00 CEST) |
-| Latest watcher checked_at_utc | 2026-06-23T04:20:32.470972+00:00 |
-| Latest source generated time | Tue Jun 23 06:00:01 AM CEST 2026 |
+| Last observed source time | Jun 23, 2026 (10:00 CEST) |
+| Latest watcher checked_at_utc | 2026-06-23T08:03:43.610903+00:00 |
+| Latest source generated time | Tue Jun 23 10:00:01 AM CEST 2026 |
 
 ## 2. Enode Movement Summary
 
@@ -28,7 +28,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | Minimum enode count | 2 |
 | Maximum enode count | 16 |
 | Average enode count | 11.5 |
-| Total added observations | 127 |
+| Total added observations | 128 |
 | Total removed observations | 101 |
 | Target ports observed | 28657 |
 
@@ -36,7 +36,7 @@ Important note: this report is observation-based. It does not make official DAC 
 
 | Phase | Observations |
 | --- | --- |
-| automated_watcher | 98 |
+| automated_watcher | 99 |
 | manual_backfill | 14 |
 
 ## 4. Anomaly Summary
@@ -44,7 +44,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 12 |
-| Global anomaly summary | 12 anomaly signals were detected across 112 observations. The highest observed anomaly severity is CRITICAL. |
+| Global anomaly summary | 12 anomaly signals were detected across 113 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
@@ -70,16 +70,16 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Overall concentration label | MODERATE |
 | Headline | Observed infrastructure shows moderate concentration under the current heuristic model. |
-| Key observation | Top live ASN is AS51167 with 15 unique IPs (39.47%). |
-| Country observation | Top live ASN country code is DE with 18 unique IPs (47.37%). |
+| Key observation | Top live ASN is AS51167 with 15 unique IPs (38.46%). |
+| Country observation | Top live ASN country code is DE with 18 unique IPs (46.15%). |
 | Interpretation | Top live ASN controls at least 35% of observed unique IPs. |
 | Disclaimer | Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement. |
 
 | Dimension | Top Name | Top Count | Top % | Label |
 | --- | --- | --- | --- | --- |
-| Live ASN | AS51167 | 15 | 39.47 | MODERATE |
-| Live Country | DE | 18 | 47.37 | MODERATE |
-| DAC Infrastructure Signal | Retained Infrastructure Signal | 12 | 31.58 | LOW |
+| Live ASN | AS51167 | 15 | 38.46 | MODERATE |
+| Live Country | DE | 18 | 46.15 | MODERATE |
+| DAC Infrastructure Signal | Retained Infrastructure Signal | 12 | 30.77 | LOW |
 
 ## 6. Observation Timeline
 
@@ -197,6 +197,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | 110 | automated_watcher | changed | Jun 23, 2026 (00:00 CEST) | 9 | 0 | 1 | 9 | 28657 |
 | 111 | automated_watcher | changed | Jun 23, 2026 (02:00 CEST) | 10 | 1 | 0 | 9 | 28657 |
 | 112 | automated_watcher | changed | Jun 23, 2026 (06:00 CEST) | 11 | 1 | 0 | 10 | 28657 |
+| 113 | automated_watcher | changed | Jun 23, 2026 (10:00 CEST) | 12 | 1 | 0 | 11 | 28657 |
 
 ## 7. Report-Use Notes
 
