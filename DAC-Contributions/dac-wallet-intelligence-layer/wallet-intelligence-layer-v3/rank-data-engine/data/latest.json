@@ -3,15 +3,15 @@
   "counters": {
     "last_sync_official_inception_nft_events": 0,
     "last_sync_official_inception_nft_tokens_changed": 0,
-    "last_sync_processed_blocks": 5000,
-    "last_sync_processed_transactions": 27,
+    "last_sync_processed_blocks": 2427,
+    "last_sync_processed_transactions": 9,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 6,
-    "native_balance_snapshots": 113173,
-    "total_indexed_wallets": 3421947,
+    "last_sync_wallets_changed": 2,
+    "native_balance_snapshots": 113207,
+    "total_indexed_wallets": 3421958,
     "total_official_inception_nft_events": 1648565,
-    "total_processed_transactions": 20887868,
+    "total_processed_transactions": 20888002,
     "total_staking_events": 2364849
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 3421947
+    "total_ranked_wallets": 3421958
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -35,17 +35,17 @@
   "snapshot_archive_written": false,
   "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
   "sync_status": {
-    "catch_up_next_block": null,
+    "catch_up_next_block": 14975372,
     "catch_up_status": null,
     "historical_backfill_anchor_block": 14975371,
-    "historical_backfill_complete": false,
+    "historical_backfill_complete": true,
     "incremental_next_block": null,
-    "last_sync_at": "2026-06-23T02:20:19+00:00",
-    "last_synced_block": 42427,
-    "local_rpc_backfill_next_block": 42426,
-    "local_rpc_latest_block_at_sync": 15060659,
-    "phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
+    "last_sync_at": "2026-06-23T02:25:27+00:00",
+    "last_synced_block": 0,
+    "local_rpc_backfill_next_block": 0,
+    "local_rpc_latest_block_at_sync": 15060680,
+    "phase": "POST_BACKFILL_CATCH_UP"
   },
-  "updated_at": "2026-06-23T02:20:29+00:00",
+  "updated_at": "2026-06-23T02:25:35+00:00",
   "version": "v3.3.0"
 }
