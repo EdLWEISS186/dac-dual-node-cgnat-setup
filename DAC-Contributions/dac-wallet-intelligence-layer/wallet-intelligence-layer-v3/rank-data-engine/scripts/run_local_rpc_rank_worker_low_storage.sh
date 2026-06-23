@@ -7,11 +7,34 @@ TMP_PARENT="${TMP_PARENT:-/tmp}"
 
 PRIMARY_RPC="${PRIMARY_RPC:-http://127.0.0.1:8546}"
 FALLBACK_RPC="${FALLBACK_RPC:-http://192.168.100.7:8545}"
-MAX_BLOCKS="${MAX_BLOCKS:-100}"
-BALANCE_ENRICH_LIMIT="${BALANCE_ENRICH_LIMIT:-700}"
-SLEEP_SECONDS="${SLEEP_SECONDS:-600}"
+MAX_BLOCKS="${MAX_BLOCKS:-50000}"
+BALANCE_ENRICH_LIMIT="${BALANCE_ENRICH_LIMIT:-1000}"
+SLEEP_SECONDS="${SLEEP_SECONDS:-180}"
 PUSH_TO_GITHUB="${PUSH_TO_GITHUB:-1}"
 RUN_ONCE="${RUN_ONCE:-0}"
+
+# Phase-aware runtime presets.
+# Backfill/catch-up stay conservative and device-safe.
+# Incremental switches to small, frequent micro-sync cycles.
+WIL_PHASE_AWARE_PRESET="${WIL_PHASE_AWARE_PRESET:-1}"
+
+BACKFILL_MAX_BLOCKS="${BACKFILL_MAX_BLOCKS:-50000}"
+BACKFILL_ADAPTIVE_CHUNK_SIZE="${BACKFILL_ADAPTIVE_CHUNK_SIZE:-5000}"
+BACKFILL_SLEEP_SECONDS="${BACKFILL_SLEEP_SECONDS:-180}"
+
+CATCHUP_MAX_BLOCKS="${CATCHUP_MAX_BLOCKS:-50000}"
+CATCHUP_ADAPTIVE_CHUNK_SIZE="${CATCHUP_ADAPTIVE_CHUNK_SIZE:-5000}"
+CATCHUP_SLEEP_SECONDS="${CATCHUP_SLEEP_SECONDS:-180}"
+
+INCREMENTAL_SLEEP_SECONDS="${INCREMENTAL_SLEEP_SECONDS:-60}"
+INCREMENTAL_MAX_BLOCKS_NORMAL="${INCREMENTAL_MAX_BLOCKS_NORMAL:-10}"
+INCREMENTAL_CHUNK_SIZE_NORMAL="${INCREMENTAL_CHUNK_SIZE_NORMAL:-10}"
+INCREMENTAL_MAX_BLOCKS_LAG_100="${INCREMENTAL_MAX_BLOCKS_LAG_100:-25}"
+INCREMENTAL_CHUNK_SIZE_LAG_100="${INCREMENTAL_CHUNK_SIZE_LAG_100:-25}"
+INCREMENTAL_MAX_BLOCKS_LAG_500="${INCREMENTAL_MAX_BLOCKS_LAG_500:-100}"
+INCREMENTAL_CHUNK_SIZE_LAG_500="${INCREMENTAL_CHUNK_SIZE_LAG_500:-100}"
+INCREMENTAL_MAX_BLOCKS_LAG_HIGH="${INCREMENTAL_MAX_BLOCKS_LAG_HIGH:-500}"
+INCREMENTAL_CHUNK_SIZE_LAG_HIGH="${INCREMENTAL_CHUNK_SIZE_LAG_HIGH:-100}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SQLITE_HEALTH_GUARD="$SCRIPT_DIR/sqlite_health_guard.py"
 ADAPTIVE_CHUNK_GUARD="$SCRIPT_DIR/adaptive_chunk_guard.py"
@@ -98,6 +121,141 @@ EXTERNAL_STATE_DIR="${EXTERNAL_STATE_DIR:-$HOME/wil-v3-rank-state}"
 EXTERNAL_SQLITE_FILE="${EXTERNAL_SQLITE_FILE:-$EXTERNAL_STATE_DIR/wil-v3-rank-state.sqlite}"
 EXTERNAL_BACKUP_DIR="${EXTERNAL_BACKUP_DIR:-$EXTERNAL_STATE_DIR/backups}"
 BACKUP_EXTERNAL_STATE_EVERY_RUN="${BACKUP_EXTERNAL_STATE_EVERY_RUN:-0}"
+
+load_wil_sync_snapshot_env() {
+  local preset_file
+  preset_file="$(mktemp)"
+
+  python3 - "$EXTERNAL_SQLITE_FILE" "$PRIMARY_RPC" > "$preset_file" <<'WIL_PHASE_SNAPSHOT_PY'
+import json
+import sqlite3
+import sys
+import urllib.request
+
+sqlite_path = sys.argv[1]
+rpc_url = sys.argv[2]
+
+def shell_quote(value):
+    text = "" if value is None else str(value)
+    return "'" + text.replace("'", "'\"'\"'") + "'"
+
+def load_checkpoint(path):
+    conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=10)
+    rows = conn.execute("SELECT key, value_json FROM checkpoint").fetchall()
+    conn.close()
+
+    out = {}
+    for key, value in rows:
+        try:
+            out[key] = json.loads(value)
+        except Exception:
+            out[key] = value
+    return out
+
+def rpc_latest_block(url):
+    payload = json.dumps({
+        "jsonrpc": "2.0",
+        "method": "eth_blockNumber",
+        "params": [],
+        "id": 1,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    with urllib.request.urlopen(req, timeout=8) as resp:
+        return int(json.loads(resp.read().decode("utf-8"))["result"], 16)
+
+try:
+    cp = load_checkpoint(sqlite_path)
+except Exception as exc:
+    cp = {}
+    print(f"WIL_PHASE_PRESET_ERROR={shell_quote('sqlite:' + str(exc))}")
+
+phase = cp.get("sync_phase") or "HISTORICAL_BACKFILL_IN_PROGRESS"
+latest_block = None
+
+try:
+    latest_block = rpc_latest_block(rpc_url)
+except Exception as exc:
+    print(f"WIL_PHASE_RPC_ERROR={shell_quote(str(exc))}")
+
+incremental_next = cp.get("incremental_next_block")
+catch_up_next = cp.get("catch_up_next_block")
+backfill_next = cp.get("local_rpc_backfill_next_block")
+
+lag = 0
+if str(phase).upper() == "INCREMENTAL" and latest_block is not None and incremental_next is not None:
+    try:
+        lag = max(0, int(latest_block) - int(incremental_next) + 1)
+    except Exception:
+        lag = 0
+
+print(f"WIL_PHASE_SYNC_PHASE={shell_quote(phase)}")
+print(f"WIL_PHASE_CHAIN_LATEST_BLOCK={shell_quote(latest_block)}")
+print(f"WIL_PHASE_BACKFILL_NEXT_BLOCK={shell_quote(backfill_next)}")
+print(f"WIL_PHASE_CATCH_UP_NEXT_BLOCK={shell_quote(catch_up_next)}")
+print(f"WIL_PHASE_INCREMENTAL_NEXT_BLOCK={shell_quote(incremental_next)}")
+print(f"WIL_PHASE_INCREMENTAL_LAG_BLOCKS={shell_quote(lag)}")
+WIL_PHASE_SNAPSHOT_PY
+
+  # shellcheck disable=SC1090
+  . "$preset_file"
+  rm -f "$preset_file"
+}
+
+resolve_phase_aware_preset() {
+  if [ "$WIL_PHASE_AWARE_PRESET" != "1" ]; then
+    echo "[INFO] Phase-aware preset disabled | MAX_BLOCKS=$MAX_BLOCKS | ADAPTIVE_CHUNK_SIZE=$ADAPTIVE_CHUNK_SIZE | SLEEP_SECONDS=$SLEEP_SECONDS"
+    return 0
+  fi
+
+  load_wil_sync_snapshot_env
+
+  local phase
+  phase="${WIL_PHASE_SYNC_PHASE:-HISTORICAL_BACKFILL_IN_PROGRESS}"
+
+  case "$phase" in
+    INCREMENTAL)
+      local lag
+      lag="${WIL_PHASE_INCREMENTAL_LAG_BLOCKS:-0}"
+
+      if [ "$lag" -le 20 ]; then
+        MAX_BLOCKS="$INCREMENTAL_MAX_BLOCKS_NORMAL"
+        ADAPTIVE_CHUNK_SIZE="$INCREMENTAL_CHUNK_SIZE_NORMAL"
+      elif [ "$lag" -le 100 ]; then
+        MAX_BLOCKS="$INCREMENTAL_MAX_BLOCKS_LAG_100"
+        ADAPTIVE_CHUNK_SIZE="$INCREMENTAL_CHUNK_SIZE_LAG_100"
+      elif [ "$lag" -le 500 ]; then
+        MAX_BLOCKS="$INCREMENTAL_MAX_BLOCKS_LAG_500"
+        ADAPTIVE_CHUNK_SIZE="$INCREMENTAL_CHUNK_SIZE_LAG_500"
+      else
+        MAX_BLOCKS="$INCREMENTAL_MAX_BLOCKS_LAG_HIGH"
+        ADAPTIVE_CHUNK_SIZE="$INCREMENTAL_CHUNK_SIZE_LAG_HIGH"
+      fi
+
+      SLEEP_SECONDS="$INCREMENTAL_SLEEP_SECONDS"
+      ;;
+
+    POST_BACKFILL_CATCH_UP)
+      MAX_BLOCKS="$CATCHUP_MAX_BLOCKS"
+      ADAPTIVE_CHUNK_SIZE="$CATCHUP_ADAPTIVE_CHUNK_SIZE"
+      SLEEP_SECONDS="$CATCHUP_SLEEP_SECONDS"
+      ;;
+
+    *)
+      MAX_BLOCKS="$BACKFILL_MAX_BLOCKS"
+      ADAPTIVE_CHUNK_SIZE="$BACKFILL_ADAPTIVE_CHUNK_SIZE"
+      SLEEP_SECONDS="$BACKFILL_SLEEP_SECONDS"
+      ;;
+  esac
+
+  echo "[INFO] Phase-aware preset | phase=${phase} | latest=${WIL_PHASE_CHAIN_LATEST_BLOCK:-unknown} | backfill_next=${WIL_PHASE_BACKFILL_NEXT_BLOCK:-unknown} | catch_up_next=${WIL_PHASE_CATCH_UP_NEXT_BLOCK:-unknown} | incremental_next=${WIL_PHASE_INCREMENTAL_NEXT_BLOCK:-unknown} | lag_blocks=${WIL_PHASE_INCREMENTAL_LAG_BLOCKS:-0} | MAX_BLOCKS=$MAX_BLOCKS | ADAPTIVE_CHUNK_SIZE=$ADAPTIVE_CHUNK_SIZE | SLEEP_SECONDS=$SLEEP_SECONDS"
+}
 
 run_once() {
   local workdir
@@ -496,6 +654,7 @@ while true; do
   echo "[INFO] Run started at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
   echo "============================================================"
 
+  resolve_phase_aware_preset
   run_once
 
   echo "[INFO] Run finished at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
