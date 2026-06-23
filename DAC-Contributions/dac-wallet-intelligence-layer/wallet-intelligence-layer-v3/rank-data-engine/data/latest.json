@@ -1,17 +1,17 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 163,
-    "last_sync_official_inception_nft_tokens_changed": 163,
-    "last_sync_processed_blocks": 8,
-    "last_sync_processed_transactions": 736,
+    "last_sync_official_inception_nft_events": 119,
+    "last_sync_official_inception_nft_tokens_changed": 119,
+    "last_sync_processed_blocks": 7,
+    "last_sync_processed_transactions": 856,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 1028,
-    "native_balance_snapshots": 195200,
-    "total_indexed_wallets": 6279650,
-    "total_official_inception_nft_events": 2427871,
-    "total_processed_transactions": 29251755,
+    "last_sync_wallets_changed": 1203,
+    "native_balance_snapshots": 196200,
+    "total_indexed_wallets": 6279739,
+    "total_official_inception_nft_events": 2427990,
+    "total_processed_transactions": 29252611,
     "total_staking_events": 2656797
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 6279650
+    "total_ranked_wallets": 6279739
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -39,13 +39,13 @@
     "catch_up_status": "CAUGHT_UP",
     "historical_backfill_anchor_block": 14975371,
     "historical_backfill_complete": true,
-    "incremental_next_block": 15065845,
-    "last_sync_at": "2026-06-23T23:56:37+00:00",
-    "last_synced_block": 15065844,
+    "incremental_next_block": 15065852,
+    "last_sync_at": "2026-06-23T23:58:23+00:00",
+    "last_synced_block": 15065851,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15065844,
+    "local_rpc_latest_block_at_sync": 15065851,
     "phase": "INCREMENTAL"
   },
-  "updated_at": "2026-06-23T23:56:45+00:00",
+  "updated_at": "2026-06-23T23:58:33+00:00",
   "version": "v3.3.0"
 }
