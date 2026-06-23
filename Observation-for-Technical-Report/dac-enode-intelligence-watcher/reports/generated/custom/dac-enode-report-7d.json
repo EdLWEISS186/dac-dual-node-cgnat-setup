@@ -1,7 +1,7 @@
 {
   "project": "DAC Enode Intelligence Watcher",
   "summary_type": "custom_json_report_summary",
-  "generated_at_utc": "2026-06-23T00:07:01.741344+00:00",
+  "generated_at_utc": "2026-06-23T04:20:36.072538+00:00",
   "range": "7d",
   "range_label": "Last 7 Days",
   "source_files": {
@@ -12,21 +12,21 @@
   },
   "important_note": "This custom JSON summary is observation-based. It does not make official DAC ownership claims and should not be treated as a definitive decentralization measurement.",
   "latest_observation": {
-    "checked_at_utc": "2026-06-23T00:06:59.559884+00:00",
-    "generated_at_source": "Tue Jun 23 02:00:01 AM CEST 2026",
+    "checked_at_utc": "2026-06-23T04:20:32.470972+00:00",
+    "generated_at_source": "Tue Jun 23 06:00:01 AM CEST 2026",
     "target_port": 28657,
-    "current_total": 10,
-    "previous_total": 9,
+    "current_total": 11,
+    "previous_total": 10,
     "added_count": 1,
     "removed_count": 0,
-    "unchanged_count": 9,
+    "unchanged_count": 10,
     "change_severity": "LOW",
     "severity_reason": "Small enode rotation detected: 1 added and 0 removed."
   },
   "observation_scope": {
     "selected_observation_count": 37,
-    "first_observed_source_time": "Jun 16, 2026 (04:00 CEST)",
-    "last_observed_source_time": "Jun 23, 2026 (02:00 CEST)",
+    "first_observed_source_time": "Jun 16, 2026 (14:00 CEST)",
+    "last_observed_source_time": "Jun 23, 2026 (06:00 CEST)",
     "phase_counts": {
       "automated_watcher": 37
     },
@@ -40,9 +40,9 @@
   "enode_movement_summary": {
     "min_enode_count": 2,
     "max_enode_count": 12,
-    "avg_enode_count": 8.78,
-    "total_added_events": 37,
-    "total_removed_events": 38
+    "avg_enode_count": 8.81,
+    "total_added_events": 38,
+    "total_removed_events": 37
   },
   "anomaly_summary": {
     "selected_anomaly_signal_count": 7,
@@ -59,7 +59,7 @@
       "WATCHER_HIGH_SEVERITY_SIGNAL": 1,
       "MODERATE_ROTATION_SPIKE": 1
     },
-    "global_short_summary": "12 anomaly signals were detected across 111 observations. The highest observed anomaly severity is CRITICAL.",
+    "global_short_summary": "12 anomaly signals were detected across 112 observations. The highest observed anomaly severity is CRITICAL.",
     "global_highest_severity": "CRITICAL",
     "global_recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
   },
@@ -93,23 +93,6 @@
     }
   },
   "timeline": [
-    {
-      "observation_index": 75,
-      "phase": "automated_watcher",
-      "status": "changed",
-      "source_time_raw": "Tue Jun 16 04:00:02 AM CEST 2026",
-      "source_time_readable": "Jun 16, 2026 (04:00 CEST)",
-      "checked_at_utc": "2026-06-16T02:07:34.788855+00:00",
-      "current_total": 10,
-      "previous_total": 11,
-      "added_count": 0,
-      "removed_count": 1,
-      "unchanged_count": 10,
-      "target_port": 28657,
-      "change_severity": "LOW",
-      "severity_reason": "Small enode rotation detected: 0 added and 1 removed.",
-      "snapshot_file": "data/snapshots/2026-06-16T02-07-34-788855+00-00-changed.json"
-    },
     {
       "observation_index": 76,
       "phase": "automated_watcher",
@@ -721,6 +704,23 @@
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
       "snapshot_file": "data/snapshots/2026-06-23T00-06-59-559884+00-00-changed.json"
+    },
+    {
+      "observation_index": 112,
+      "phase": "automated_watcher",
+      "status": "changed",
+      "source_time_raw": "Tue Jun 23 06:00:01 AM CEST 2026",
+      "source_time_readable": "Jun 23, 2026 (06:00 CEST)",
+      "checked_at_utc": "2026-06-23T04:20:32.470972+00:00",
+      "current_total": 11,
+      "previous_total": 10,
+      "added_count": 1,
+      "removed_count": 0,
+      "unchanged_count": 10,
+      "target_port": 28657,
+      "change_severity": "LOW",
+      "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
+      "snapshot_file": "data/snapshots/2026-06-23T04-20-32-470972+00-00-changed.json"
     }
   ],
   "anomalies": [
