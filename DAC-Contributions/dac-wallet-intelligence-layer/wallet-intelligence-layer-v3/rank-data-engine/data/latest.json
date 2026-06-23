@@ -1,17 +1,17 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 135,
-    "last_sync_official_inception_nft_tokens_changed": 135,
-    "last_sync_processed_blocks": 10,
-    "last_sync_processed_transactions": 1080,
+    "last_sync_official_inception_nft_events": 382,
+    "last_sync_official_inception_nft_tokens_changed": 382,
+    "last_sync_processed_blocks": 25,
+    "last_sync_processed_transactions": 2967,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 1588,
-    "native_balance_snapshots": 171207,
-    "total_indexed_wallets": 6276118,
-    "total_official_inception_nft_events": 2420500,
-    "total_processed_transactions": 29207367,
+    "last_sync_wallets_changed": 3161,
+    "native_balance_snapshots": 172207,
+    "total_indexed_wallets": 6276297,
+    "total_official_inception_nft_events": 2420882,
+    "total_processed_transactions": 29210334,
     "total_staking_events": 2656797
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 6276118
+    "total_ranked_wallets": 6276297
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -39,13 +39,13 @@
     "catch_up_status": "CAUGHT_UP",
     "historical_backfill_anchor_block": 14975371,
     "historical_backfill_complete": true,
-    "incremental_next_block": 15065436,
-    "last_sync_at": "2026-06-23T22:16:35+00:00",
-    "last_synced_block": 15065435,
+    "incremental_next_block": 15065461,
+    "last_sync_at": "2026-06-23T22:21:06+00:00",
+    "last_synced_block": 15065460,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15065444,
+    "local_rpc_latest_block_at_sync": 15065462,
     "phase": "INCREMENTAL"
   },
-  "updated_at": "2026-06-23T22:19:31+00:00",
+  "updated_at": "2026-06-23T22:24:03+00:00",
   "version": "v3.3.0"
 }
