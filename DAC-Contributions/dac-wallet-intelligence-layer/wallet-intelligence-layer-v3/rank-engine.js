@@ -125,7 +125,7 @@
       numericRank <= 0 ||
       numericTotal <= 0
     ) {
-      return "NaN";
+      return null;
     }
 
     return ((numericRank / numericTotal) * 100).toFixed(6);

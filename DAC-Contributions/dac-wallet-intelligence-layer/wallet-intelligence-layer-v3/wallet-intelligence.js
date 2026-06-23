@@ -3517,10 +3517,10 @@ function renderOfficialRankSignalCard({
     return `
       <article class="wallet-rank-metric wallet-rank-metric-nan wallet-rank-official-card">
         <span>${escapeRankHtml(metric.label)}</span>
-        <strong class="wallet-rank-official-tier">NaN</strong>
+        <strong class="wallet-rank-official-tier">Pending</strong>
         <div class="wallet-rank-official-count">NFT count unavailable</div>
-        <div class="rank-line">Rank: NaN / ${denominator ? formatRankValue(denominator) : "NaN"}</div>
-        <div class="percentile-line">Percentile: NaN%</div>
+        <div class="rank-line">Rank pending / ${denominator ? formatRankValue(denominator) : "population pending"}</div>
+        <div class="percentile-line">Percentile pending</div>
         <div class="rank-scope-line">${escapeRankHtml(denominatorLabel)}</div>
       </article>
     `;
@@ -3586,12 +3586,12 @@ function renderRankSyncStatus(summary) {
   const processedTx =
     summary?.total_processed_transactions ??
     sync.total_processed_transactions ??
-    "NaN";
+    null;
 
   const indexedWallets =
     sync.total_indexed_wallets ??
     summary?.total_ranked_wallets ??
-    "NaN";
+    null;
 
   const lastSync = sync.last_sync_at || latestSnapshotTime || "Unknown";
 
@@ -3642,8 +3642,13 @@ function renderRankSyncStatus(summary) {
       : null;
 
   const formatEngineBlockLabel = (value, fallback = "Unavailable") =>
-    value !== null && value !== undefined
+    value !== null && value !== undefined && Number.isFinite(Number(value))
       ? `block ${formatRankValue(value)}`
+      : fallback;
+
+  const formatEngineNumberLabel = (value, fallback = "Unavailable") =>
+    value !== null && value !== undefined && Number.isFinite(Number(value))
+      ? formatRankValue(value)
       : fallback;
 
   const backfillStatus = historicalCompleteBool
@@ -3893,15 +3898,15 @@ function renderWalletRankIntelligence(rankData) {
   }
 
   if (!validIndex || rankData.status === "PENDING_VALID_INDEX") {
-    el.walletRankStatus.textContent = "Network snapshot live · Rank data NaN";
+    el.walletRankStatus.textContent = "Network snapshot live · Rank pending until incremental sync";
     el.walletRankMeta.innerHTML = snapshotHtml;
 
     const nanRankCards = metricRankCards.map((metric) => `
       <article class="wallet-rank-metric wallet-rank-metric-nan">
         <span>${escapeRankHtml(metric.label)}</span>
-        <strong>NaN</strong>
-        <div class="rank-line">Rank: NaN / ${snapshot.total_addresses ? formatRankValue(snapshot.total_addresses) : "NaN"}</div>
-        <div class="percentile-line">Percentile: NaN%</div>
+        <strong>Pending</strong>
+        <div class="rank-line">Rank pending / ${snapshot.total_addresses ? formatRankValue(snapshot.total_addresses) : "population pending"}</div>
+        <div class="percentile-line">Percentile pending</div>
       </article>
     `).join("");
 
@@ -3924,9 +3929,9 @@ function renderWalletRankIntelligence(rankData) {
       const overallNanCard = overallRankMetric ? `
         <article class="wallet-rank-metric wallet-rank-metric-nan wallet-rank-overall-card">
           <span>${escapeRankHtml(overallRankMetric.label)}</span>
-          <strong>NaN</strong>
-          <div class="rank-line">Rank: NaN / ${snapshot.total_addresses ? formatRankValue(snapshot.total_addresses) : "NaN"}</div>
-          <div class="percentile-line">Percentile: NaN%</div>
+          <strong>Pending</strong>
+          <div class="rank-line">Rank pending / ${snapshot.total_addresses ? formatRankValue(snapshot.total_addresses) : "population pending"}</div>
+          <div class="percentile-line">Percentile pending</div>
           <div class="rank-scope-line">final composite rank signal</div>
         </article>
       ` : "";
@@ -3959,9 +3964,9 @@ function renderWalletRankIntelligence(rankData) {
     const placeholderCards = metricRankCards.map((metric) => `
       <article class="wallet-rank-metric wallet-rank-metric-nan">
         <span>${escapeRankHtml(metric.label)}</span>
-        <strong>NaN</strong>
-        <div class="rank-line">Rank: NaN / ${rankDenominator === "NaN" ? "NaN" : formatRankValue(rankDenominator)}</div>
-        <div class="percentile-line">Percentile: NaN%</div>
+        <strong>Pending</strong>
+        <div class="rank-line">Rank pending / ${rankDenominator ? formatRankValue(rankDenominator) : "population pending"}</div>
+        <div class="percentile-line">Percentile pending</div>
         <div class="rank-scope-line">${escapeRankHtml(denominatorLabel)}</div>
       </article>
     `).join("");
@@ -3973,9 +3978,7 @@ function renderWalletRankIntelligence(rankData) {
           ranks: {},
           percentiles: {},
           totalRanked:
-            rankDenominator === "NaN"
-              ? 0
-              : Number(rankDenominator),
+            rankDenominator ? Number(rankDenominator) : 0,
           explorerVisibleWallets: 0,
           availableVariables: new Set(),
           placeholder: true,
@@ -3985,9 +3988,9 @@ function renderWalletRankIntelligence(rankData) {
       const overallPlaceholderCard = overallRankMetric ? `
         <article class="wallet-rank-metric wallet-rank-metric-nan wallet-rank-overall-card">
           <span>${escapeRankHtml(overallRankMetric.label)}</span>
-          <strong>NaN</strong>
-          <div class="rank-line">Rank: NaN / ${rankDenominator === "NaN" ? "NaN" : formatRankValue(rankDenominator)}</div>
-          <div class="percentile-line">Percentile: NaN%</div>
+          <strong>Pending</strong>
+          <div class="rank-line">Rank pending / ${rankDenominator ? formatRankValue(rankDenominator) : "population pending"}</div>
+          <div class="percentile-line">Percentile pending</div>
           <div class="rank-scope-line">${escapeRankHtml(denominatorLabel)} · final composite rank signal</div>
         </article>
       ` : "";
@@ -4054,9 +4057,9 @@ function renderWalletRankIntelligence(rankData) {
         return `
           <article class="wallet-rank-metric wallet-rank-metric-nan">
             <span>${escapeRankHtml(metric.label)}</span>
-            <strong>NaN</strong>
-            <div class="rank-line">Rank: NaN / ${totalRanked || explorerVisibleWallets ? formatRankValue(totalRanked || explorerVisibleWallets) : "NaN"}</div>
-            <div class="percentile-line">Percentile: NaN%</div>
+            <strong>Pending</strong>
+            <div class="rank-line">Rank pending / ${totalRanked || explorerVisibleWallets ? formatRankValue(totalRanked || explorerVisibleWallets) : "population pending"}</div>
+            <div class="percentile-line">Percentile pending</div>
             <div class="rank-scope-line">rank variable pending</div>
           </article>
         `;
@@ -4101,9 +4104,9 @@ function renderWalletRankIntelligence(rankData) {
         return `
           <article class="wallet-rank-metric wallet-rank-metric-nan wallet-rank-overall-card">
             <span>${escapeRankHtml(overallRankMetric.label)}</span>
-            <strong>NaN</strong>
-            <div class="rank-line">Rank: NaN / ${totalRanked || explorerVisibleWallets ? formatRankValue(totalRanked || explorerVisibleWallets) : "NaN"}</div>
-            <div class="percentile-line">Percentile: NaN%</div>
+            <strong>Pending</strong>
+            <div class="rank-line">Rank pending / ${totalRanked || explorerVisibleWallets ? formatRankValue(totalRanked || explorerVisibleWallets) : "population pending"}</div>
+            <div class="percentile-line">Percentile pending</div>
             <div class="rank-scope-line">final composite rank signal</div>
           </article>
         `;
