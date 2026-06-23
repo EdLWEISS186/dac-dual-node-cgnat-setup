@@ -1,18 +1,18 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 12698,
-    "last_sync_official_inception_nft_tokens_changed": 12698,
+    "last_sync_official_inception_nft_events": 40639,
+    "last_sync_official_inception_nft_tokens_changed": 40639,
     "last_sync_processed_blocks": 5000,
-    "last_sync_processed_transactions": 418278,
-    "last_sync_staking_events": 35644,
-    "last_sync_staking_wallets_changed": 24593,
-    "last_sync_wallets_changed": 133061,
-    "native_balance_snapshots": 117207,
-    "total_indexed_wallets": 3723855,
-    "total_official_inception_nft_events": 1707566,
-    "total_processed_transactions": 22401682,
-    "total_staking_events": 2499348
+    "last_sync_processed_transactions": 446475,
+    "last_sync_staking_events": 40005,
+    "last_sync_staking_wallets_changed": 30022,
+    "last_sync_wallets_changed": 166438,
+    "native_balance_snapshots": 119207,
+    "total_indexed_wallets": 3982632,
+    "total_official_inception_nft_events": 1761353,
+    "total_processed_transactions": 23424914,
+    "total_staking_events": 2573012
   },
   "engine": "rank-data-engine",
   "externalized_state": true,
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 3723855
+    "total_ranked_wallets": 3982632
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -35,17 +35,17 @@
   "snapshot_archive_written": false,
   "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
   "sync_status": {
-    "catch_up_next_block": 14995372,
+    "catch_up_next_block": 15005372,
     "catch_up_status": "IN_PROGRESS",
     "historical_backfill_anchor_block": 14975371,
     "historical_backfill_complete": true,
     "incremental_next_block": null,
-    "last_sync_at": "2026-06-23T04:28:34+00:00",
-    "last_synced_block": 14995371,
+    "last_sync_at": "2026-06-23T06:26:26+00:00",
+    "last_synced_block": 15005371,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15061172,
+    "local_rpc_latest_block_at_sync": 15061644,
     "phase": "POST_BACKFILL_CATCH_UP"
   },
-  "updated_at": "2026-06-23T05:16:12+00:00",
+  "updated_at": "2026-06-23T07:23:56+00:00",
   "version": "v3.3.0"
 }
