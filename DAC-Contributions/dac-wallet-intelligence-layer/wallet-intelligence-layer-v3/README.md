@@ -171,6 +171,10 @@ Key updates:
 - Added lag-aware incremental recovery presets for larger temporary gaps.
 - Kept `SLEEP_SECONDS=180` for post-backfill catch-up.
 - Added rank-status UI rows for backfill anchor, catch-up anchor, current catch-up position, current incremental position, chain latest block, and incremental lag.
+- Added user-facing pending-rank guards so Wallet Rank Intelligence no longer renders `NaN` for unavailable rank, percentile, tier, or population values.
+- Replaced pre-rank and not-indexed rank placeholders with explicit `Pending`, `Rank pending`, `Percentile pending`, and `population pending` labels.
+- Added `walletRankIntelligence` to `RAW OUTPUT` so the JSON view and Copy JSON include the asynchronous public rank lookup result and rank-engine sync context.
+- Added RAW OUTPUT rank statuses for `LOADING`, `PENDING_VALID_INDEX`, `NOT_INDEXED`, `INDEXED`, `ERROR`, and `NOT_REQUESTED`.
 - Replaced premature `RETURN`-trap cleanup with explicit cycle-level cleanup.
 - Ensured adaptive checkpoint runtime and temporary repository clones are cleaned only after the cycle completes or exits.
 
@@ -241,6 +245,10 @@ SQLite health escalation guard
 phase-aware incremental micro-sync
 +
 rank status freshness fields
++
+pending rank state guards
++
+RAW OUTPUT Wallet Rank Intelligence context
 ```
 
 “Production-ready” refers to the completed and validated architecture. Rank completeness still follows the current synchronization phase. During historical backfill or catch-up, the UI must not imply that the full chain population is already finalized.
@@ -330,22 +338,22 @@ Wallet Intelligence Layer v3.6.0 uses the hybrid local-processing and public-del
           │ Drive A / Drive B        │               │ Full population compare  │
           └──────────────────────────┘               └─────────────┬────────────┘
                                                                    ▼
-                                                    ┌──────────────────────────┐
-                                                    │ Compact V3 Rank Artifacts│
-                                                    │ summary / index / shards │
-                                                    │ normal public signals    │
-                                                    └─────────────┬────────────┘
+                                                     ┌──────────────────────────┐
+                                                     │ Compact V3 Rank Artifacts│
+                                                     │ summary / index / shards │
+                                                     │ normal public signals    │
+                                                     └─────────────┬────────────┘
                                                                    ▼
-                                                    ┌──────────────────────────┐
-                                                    │ Snapshot Publisher       │
-                                                    │ wil-v3-rank-data branch  │
-                                                    └─────────────┬────────────┘
+                                                     ┌──────────────────────────┐
+                                                     │ Snapshot Publisher       │
+                                                     │ wil-v3-rank-data branch  │
+                                                     └─────────────┬────────────┘
                                                                    ▼
-                                                    ┌──────────────────────────┐
-                                                    │ Static UI / GitHub Pages │
-                                                    │ rank-engine.js lookup    │
-                                                    │ Compact V2/V3 decoder    │
-                                                    └──────────────────────────┘
+                                                     ┌──────────────────────────┐
+                                                     │ Static UI / GitHub Pages │
+                                                     │ rank-engine.js lookup    │
+                                                     │ Compact V2/V3 decoder    │
+                                                     └──────────────────────────┘
 ```
 
 ---
@@ -1145,6 +1153,114 @@ Incremental Sync
 - Incremental Lag
 ```
 
+
+### Pending Rank State Rendering
+
+Wallet Rank Intelligence is intentionally defensive when rank data is not publish-ready yet.
+
+The UI should not render user-facing `NaN` for rank cards, official rank cards, percentile rows, or rank population denominators.
+
+Pending rank states are rendered as explicit text:
+
+```text
+Rank pending
+Percentile pending
+population pending
+Pending
+```
+
+Typical pre-rank/catch-up display:
+
+```text
+Network snapshot live · Rank pending until incremental sync
+Rank pending / <population>
+Percentile pending
+```
+
+Typical wallet-not-indexed display:
+
+```text
+Network snapshot live · Wallet not indexed
+Rank pending / <population>
+Percentile pending
+```
+
+When rank shards are available and the wallet is indexed, the same UI returns to numeric rank display:
+
+```text
+#1,279 / 4,300,000
+Percentile: 99.97%
+```
+
+This means a pending global rank is shown as an understandable synchronization state, not as a broken numeric value.
+
+### RAW OUTPUT Wallet Rank Intelligence Context
+
+Wallet Rank Intelligence is loaded asynchronously after the main wallet profile render.
+
+v3.6.0 mirrors that asynchronous rank lookup into the `RAW OUTPUT` object through:
+
+```text
+walletRankIntelligence
+```
+
+This makes the visual Wallet Rank Intelligence panel and the copied JSON output consistent.
+
+The RAW OUTPUT field may include:
+
+```json
+{
+  "walletRankIntelligence": {
+    "module": "Wallet Rank Intelligence",
+    "status": "LOADING | PENDING_VALID_INDEX | NOT_INDEXED | INDEXED | ERROR | NOT_REQUESTED",
+    "wallet": "0x...",
+    "hasValidIndex": false,
+    "message": null,
+    "syncStatus": {
+      "syncPhase": "POST_BACKFILL_CATCH_UP | INCREMENTAL",
+      "rankLookupEnabled": false,
+      "rankShardsPublished": false,
+      "historicalBackfillComplete": true,
+      "catchUpStatus": "IN_PROGRESS",
+      "lastSyncedBlock": 15020371,
+      "currentCatchUpPosition": 15020372,
+      "currentIncrementalPosition": null,
+      "chainLatestBlock": 15062719,
+      "incrementalLagBlocks": null,
+      "totalIndexedWallets": 4256165,
+      "totalProcessedTransactions": 24553113
+    },
+    "profile": null,
+    "metrics": [],
+    "pendingVariables": [],
+    "summary": {},
+    "networkSnapshot": {},
+    "updatedAt": "ISO-8601 timestamp"
+  }
+}
+```
+
+Full Explorer Primary behavior:
+
+```text
+initial render
+↓
+walletRankIntelligence.status = LOADING
+↓
+rank lookup completes
+↓
+RAW OUTPUT updates to PENDING_VALID_INDEX / NOT_INDEXED / INDEXED / ERROR
+```
+
+Partial, RPC fallback, or failure output uses:
+
+```text
+walletRankIntelligence.status = NOT_REQUESTED
+```
+
+The Copy JSON button uses the latest `state.lastOutput`, so copied JSON includes the updated Wallet Rank Intelligence context after the asynchronous lookup completes.
+
+
 ---
 
 ## Rank Data Status Model
@@ -1168,6 +1284,8 @@ Important status fields:
 | `incremental_lag_blocks` | UI-computed freshness gap between latest block and incremental position. |
 
 The UI should only imply a fully synchronized rank dataset after historical backfill and catch-up are complete.
+
+When rank data is not ready, the UI renders explicit pending labels instead of user-facing `NaN` values. When rank data is available but incremental sync has lag, the UI keeps the last valid rank context visible and uses Current Position, Chain Latest, and Incremental Lag to explain freshness.
 
 ---
 
@@ -1304,6 +1422,10 @@ v3.6.0 browser validation confirmed:
 - Dynamic Intelligence Badge still only offers update when tier increases;
 - Rank Data Engine Status shows backfill, catch-up, and incremental position rows;
 - Incremental Sync row exposes current position, chain latest, and incremental lag.
+- Wallet Rank Intelligence pending states no longer render user-facing `NaN` values.
+- Pending rank cards render `Rank pending`, `Percentile pending`, and `population pending` labels.
+- RAW OUTPUT includes `walletRankIntelligence` with rank status, sync status, profile, metrics, summary, and network snapshot context.
+- Copy JSON includes the latest asynchronous Wallet Rank Intelligence result after rank lookup completes.
 
 ### Adaptive 50,000-Block Ceiling Validation
 
@@ -1369,6 +1491,8 @@ bc7baa8 Update WIL v3.6.0 back to normal scoring
 5e0705b5 Add WIL catch-up and incremental positions to rank UI
 3436291f Add phase-aware incremental micro-sync runner preset
 9f5d9fda Add WIL incremental lag fields to rank UI
+4de2120c Guard WIL rank UI against pending NaN states
+0dcfa8f1 Include WIL rank intelligence in raw output
 ```
 
 ---
@@ -1407,6 +1531,9 @@ bc7baa8 Update WIL v3.6.0 back to normal scoring
 - Added lag-aware incremental recovery for larger sync gaps.
 - Added rank status UI rows for historical backfill, post-backfill catch-up, and incremental sync.
 - Added UI freshness fields for `Chain Latest` and `Incremental Lag`.
+- Added pending-rank UI guards so unavailable rank data is shown as `Pending` / `Rank pending` / `Percentile pending` instead of user-facing `NaN`.
+- Added RAW OUTPUT enrichment for Wallet Rank Intelligence, including rank lookup status, sync status, profile, metrics, summary, and network snapshot context.
+- Updated Copy JSON behavior so copied output includes the latest asynchronous Wallet Rank Intelligence result.
 
 ### v3.5.0 — Conviction-aware Web Schema
 
