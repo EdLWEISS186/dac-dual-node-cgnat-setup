@@ -3417,6 +3417,130 @@ function escapeRankHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+
+function cloneJsonSafe(value, fallback = null) {
+  if (value === null || value === undefined) return fallback;
+
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch {
+    return fallback;
+  }
+}
+
+function buildWalletRankRawOutputStatus(status, message, wallet = null) {
+  return {
+    module: "Wallet Rank Intelligence",
+    status,
+    wallet: wallet || null,
+    message,
+    updatedAt: new Date().toISOString(),
+    note:
+      "This field mirrors the asynchronous Wallet Rank Intelligence panel so RAW OUTPUT and Copy JSON include the public rank/sync context.",
+  };
+}
+
+function summarizeWalletRankSyncForRawOutput(summary) {
+  const sync = summary?.sync_status || summary?.engine_checkpoint || {};
+  const currentIncrementalPosition = sync.incremental_next_block ?? null;
+  const chainLatestBlock =
+    sync.local_rpc_latest_block_at_sync ??
+    sync.latest_block ??
+    summary?.latest_block ??
+    null;
+
+  const incrementalLagBlocks =
+    currentIncrementalPosition !== null &&
+    currentIncrementalPosition !== undefined &&
+    chainLatestBlock !== null &&
+    chainLatestBlock !== undefined &&
+    Number.isFinite(Number(currentIncrementalPosition)) &&
+    Number.isFinite(Number(chainLatestBlock))
+      ? Math.max(0, Number(chainLatestBlock) - Number(currentIncrementalPosition) + 1)
+      : null;
+
+  return {
+    syncPhase: sync.sync_phase || sync.phase || null,
+    manifestStatus: sync.manifest_status || summary?.status || null,
+    rankLookupEnabled: Boolean(sync.rank_lookup_enabled ?? summary?.rank_lookup_enabled ?? false),
+    rankShardsPublished: Boolean(sync.rank_shards_published ?? summary?.rank_shards_published ?? false),
+    historicalBackfillComplete: Boolean(sync.historical_backfill_complete ?? false),
+    catchUpStatus: sync.catch_up_status || null,
+    lastSyncedBlock: sync.last_synced_block ?? null,
+    backfillAnchorBlock: sync.historical_backfill_anchor_block ?? sync.backfill_anchor_block ?? null,
+    currentBackfillPosition: sync.local_rpc_backfill_next_block ?? sync.backfill_next_block ?? null,
+    catchUpAnchorBlock: sync.post_backfill_catch_up_from_block ?? null,
+    currentCatchUpPosition: sync.catch_up_next_block ?? null,
+    currentIncrementalPosition,
+    chainLatestBlock,
+    incrementalLagBlocks,
+    totalIndexedWallets: sync.total_indexed_wallets ?? summary?.total_ranked_wallets ?? null,
+    totalProcessedTransactions: summary?.total_processed_transactions ?? sync.total_processed_transactions ?? null,
+    latestSnapshot: sync.latest_snapshot || summary?.engine_latest_snapshot || null,
+    latestSnapshotTime: sync.latest_snapshot_time || sync.last_sync_at || summary?.engine_updated_at || null,
+  };
+}
+
+function sanitizeWalletRankIntelligenceForRawOutput(rankData, wallet = null) {
+  if (!rankData) {
+    return buildWalletRankRawOutputStatus(
+      "LOADING",
+      "Wallet Rank Intelligence lookup is still loading.",
+      wallet
+    );
+  }
+
+  const summary = rankData.summary || null;
+  const status = rankData.status || "UNKNOWN";
+
+  return {
+    module: "Wallet Rank Intelligence",
+    status,
+    wallet,
+    hasValidIndex: Boolean(rankData.hasValidIndex),
+    message: rankData.message || null,
+    note:
+      status === "PENDING_VALID_INDEX"
+        ? "Rank lookup is pending until the rank engine reaches a valid incremental index."
+        : status === "NOT_INDEXED"
+          ? "Wallet rank index is available, but this wallet is not indexed in the current public rank shard."
+          : status === "ERROR"
+            ? "Wallet Rank Intelligence lookup failed; see message."
+            : "Wallet Rank Intelligence result copied from the asynchronous rank panel.",
+    syncStatus: summarizeWalletRankSyncForRawOutput(summary),
+    profile: cloneJsonSafe(rankData.profile, null),
+    metrics: cloneJsonSafe(Array.isArray(rankData.metrics) ? rankData.metrics : [], []),
+    pendingVariables: cloneJsonSafe(Array.isArray(rankData.pendingVariables) ? rankData.pendingVariables : [], []),
+    summary: cloneJsonSafe(summary, null),
+    networkSnapshot: cloneJsonSafe(rankData.networkSnapshot || null, null),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function isCurrentRawOutputWallet(wallet) {
+  return Boolean(
+    wallet &&
+    state.lastOutput &&
+    state.lastOutput.wallet &&
+    String(state.lastOutput.wallet).toLowerCase() === String(wallet).toLowerCase()
+  );
+}
+
+function attachWalletRankIntelligenceToRawOutput(output, rankData, renderNow = true) {
+  if (!output) return;
+
+  output.walletRankIntelligence = sanitizeWalletRankIntelligenceForRawOutput(
+    rankData,
+    output.wallet || null
+  );
+  state.lastOutput = output;
+
+  if (renderNow) {
+    renderJson(output);
+  }
+}
+
+
 function formatRankValue(value) {
   if (value === null || value === undefined || value === "") return "—";
 
@@ -4219,12 +4343,44 @@ function renderFullOutput(output) {
   renderSybilHeuristics(output.sybilHeuristics);
   renderDynamicIntelligenceBadge(output.dynamicIntelligenceBadge);
   renderWalletRankIntelligence(null);
+  attachWalletRankIntelligenceToRawOutput(
+    output,
+    buildWalletRankRawOutputStatus(
+      "LOADING",
+      "Wallet Rank Intelligence lookup is still loading.",
+      output.wallet
+    ),
+    false
+  );
 
   if (output && output.wallet) {
-    getWalletRankIntelligenceSafely(output.wallet)
-      .then(renderWalletRankIntelligence)
+    const rankLookupWallet = output.wallet;
+
+    getWalletRankIntelligenceSafely(rankLookupWallet)
+      .then((rankData) => {
+        if (!isCurrentRawOutputWallet(rankLookupWallet)) return;
+
+        renderWalletRankIntelligence(rankData);
+        attachWalletRankIntelligenceToRawOutput(state.lastOutput || output, rankData, true);
+      })
       .catch((error) => {
         console.warn("Wallet Rank Intelligence isolated render failed:", error);
+
+        if (!isCurrentRawOutputWallet(rankLookupWallet)) return;
+
+        const message =
+          error && error.message
+            ? error.message
+            : String(error || "Wallet Rank Intelligence lookup failed.");
+
+        const rankError = buildWalletRankRawOutputStatus(
+          "ERROR",
+          message,
+          rankLookupWallet
+        );
+
+        renderWalletRankIntelligence(rankError);
+        attachWalletRankIntelligenceToRawOutput(state.lastOutput || output, rankError, true);
       });
   }
   renderScoringBreakdown(output.reputationScoring);
@@ -4291,6 +4447,15 @@ function renderPartialOutput(output) {
   renderScoringUnavailable("Not generated because one or more required explorer modules failed.");
   renderKnownCollectionRegistry(output.knownCollectionRegistry);
   renderCollections(output.nftCollections || []);
+  attachWalletRankIntelligenceToRawOutput(
+    output,
+    buildWalletRankRawOutputStatus(
+      "NOT_REQUESTED",
+      "Wallet Rank Intelligence lookup is only requested after a full Explorer Primary profile render.",
+      output.wallet
+    ),
+    false
+  );
   renderJson(output);
 }
 
@@ -4328,6 +4493,15 @@ function renderRpcFallbackOutput(output) {
   renderScoringUnavailable("Not generated in RPC fallback mode. Explorer data is required for full scoring.");
   renderKnownCollectionRegistry(null);
   renderCollections([]);
+  attachWalletRankIntelligenceToRawOutput(
+    output,
+    buildWalletRankRawOutputStatus(
+      "NOT_REQUESTED",
+      "Wallet Rank Intelligence lookup is not requested in RPC fallback mode because explorer/public rank context is incomplete.",
+      output.wallet
+    ),
+    false
+  );
   renderJson(output);
 }
 
@@ -4355,6 +4529,15 @@ function renderFailureOutput(output) {
   renderScoringUnavailable("No verified explorer or RPC data was available.");
   renderKnownCollectionRegistry(null);
   renderCollections([]);
+  attachWalletRankIntelligenceToRawOutput(
+    output,
+    buildWalletRankRawOutputStatus(
+      "NOT_REQUESTED",
+      "Wallet Rank Intelligence lookup is not requested because no verified wallet data was available.",
+      output.wallet
+    ),
+    false
+  );
   renderJson(output);
 }
 
