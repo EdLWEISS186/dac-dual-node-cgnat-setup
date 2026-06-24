@@ -1,17 +1,17 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 175,
-    "last_sync_official_inception_nft_tokens_changed": 175,
-    "last_sync_processed_blocks": 9,
-    "last_sync_processed_transactions": 1146,
+    "last_sync_official_inception_nft_events": 213,
+    "last_sync_official_inception_nft_tokens_changed": 213,
+    "last_sync_processed_blocks": 10,
+    "last_sync_processed_transactions": 1263,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 1572,
-    "native_balance_snapshots": 265556,
-    "total_indexed_wallets": 6288933,
-    "total_official_inception_nft_events": 2444061,
-    "total_processed_transactions": 29331323,
+    "last_sync_wallets_changed": 1644,
+    "native_balance_snapshots": 266556,
+    "total_indexed_wallets": 6289019,
+    "total_official_inception_nft_events": 2444274,
+    "total_processed_transactions": 29332586,
     "total_staking_events": 2656797
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 6288933
+    "total_ranked_wallets": 6289019
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -39,13 +39,13 @@
     "catch_up_status": "CAUGHT_UP",
     "historical_backfill_anchor_block": 14975371,
     "historical_backfill_complete": true,
-    "incremental_next_block": 15066703,
-    "last_sync_at": "2026-06-24T03:31:08+00:00",
-    "last_synced_block": 15066702,
+    "incremental_next_block": 15066713,
+    "last_sync_at": "2026-06-24T03:34:44+00:00",
+    "last_synced_block": 15066712,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15066702,
+    "local_rpc_latest_block_at_sync": 15066717,
     "phase": "INCREMENTAL"
   },
-  "updated_at": "2026-06-24T03:32:59+00:00",
+  "updated_at": "2026-06-24T03:35:09+00:00",
   "version": "v3.3.0"
 }
