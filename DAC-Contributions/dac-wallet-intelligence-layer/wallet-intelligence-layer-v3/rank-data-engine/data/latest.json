@@ -1,17 +1,17 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 191,
-    "last_sync_official_inception_nft_tokens_changed": 191,
+    "last_sync_official_inception_nft_events": 219,
+    "last_sync_official_inception_nft_tokens_changed": 219,
     "last_sync_processed_blocks": 10,
-    "last_sync_processed_transactions": 943,
+    "last_sync_processed_transactions": 812,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 1211,
-    "native_balance_snapshots": 234056,
-    "total_indexed_wallets": 6285034,
-    "total_official_inception_nft_events": 2437162,
-    "total_processed_transactions": 29290873,
+    "last_sync_wallets_changed": 947,
+    "native_balance_snapshots": 235003,
+    "total_indexed_wallets": 6285189,
+    "total_official_inception_nft_events": 2437381,
+    "total_processed_transactions": 29291685,
     "total_staking_events": 2656797
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 6285034
+    "total_ranked_wallets": 6285189
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -39,13 +39,13 @@
     "catch_up_status": "CAUGHT_UP",
     "historical_backfill_anchor_block": 14975371,
     "historical_backfill_complete": true,
-    "incremental_next_block": 15066307,
-    "last_sync_at": "2026-06-24T01:54:24+00:00",
-    "last_synced_block": 15066306,
+    "incremental_next_block": 15066317,
+    "last_sync_at": "2026-06-24T01:57:25+00:00",
+    "last_synced_block": 15066316,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15066315,
+    "local_rpc_latest_block_at_sync": 15066327,
     "phase": "INCREMENTAL"
   },
-  "updated_at": "2026-06-24T01:55:50+00:00",
+  "updated_at": "2026-06-24T01:58:47+00:00",
   "version": "v3.3.0"
 }
