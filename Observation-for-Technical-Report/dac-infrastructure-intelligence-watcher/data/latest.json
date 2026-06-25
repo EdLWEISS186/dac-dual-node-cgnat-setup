@@ -2,7 +2,7 @@
   "project": "DAC Infrastructure Intelligence Watcher",
   "version": "v1.0.0",
   "summary_type": "infrastructure_health",
-  "checked_at_utc": "2026-06-25T10:36:00.952733+00:00",
+  "checked_at_utc": "2026-06-25T13:05:33.842831+00:00",
   "monitoring_scope": {
     "official_public_rpc": "https://rpctest.dachain.tech/",
     "explorer_web": "https://exptest.dachain.tech/",
@@ -28,33 +28,33 @@
       "chain_id_decimal": null,
       "latest_block_hex": null,
       "latest_block_decimal": null,
-      "latency_ms_avg": 16571,
-      "latency_ms_max": 19656,
+      "latency_ms_avg": 15816,
+      "latency_ms_max": 17296,
       "latency_class": "SLOW",
       "checks": {
         "eth_chainId": {
           "method": "eth_chainId",
           "ok": false,
           "http_status": null,
-          "latency_ms": 15030,
+          "latency_ms": 15098,
           "result": null,
-          "error": "HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='rpctest.dachain.tech', port=443) at 0x7f509422e4d0>, 'Connection to rpctest.dachain.tech timed out. (connect timeout=15)'))"
+          "error": "HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='rpctest.dachain.tech', port=443) at 0x7f0fcfcb3390>, 'Connection to rpctest.dachain.tech timed out. (connect timeout=15)'))"
         },
         "eth_blockNumber": {
           "method": "eth_blockNumber",
           "ok": false,
           "http_status": null,
-          "latency_ms": 19656,
+          "latency_ms": 15053,
           "result": null,
-          "error": "HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Read timed out. (read timeout=15)"
+          "error": "HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='rpctest.dachain.tech', port=443) at 0x7f0fcfcb9390>, 'Connection to rpctest.dachain.tech timed out. (connect timeout=15)'))"
         },
         "web3_clientVersion": {
           "method": "web3_clientVersion",
           "ok": false,
           "http_status": null,
-          "latency_ms": 15027,
+          "latency_ms": 17296,
           "result": null,
-          "error": "HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='rpctest.dachain.tech', port=443) at 0x7f509356ba50>, 'Connection to rpctest.dachain.tech timed out. (connect timeout=15)'))"
+          "error": "HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Read timed out. (read timeout=15)"
         }
       }
     },
@@ -65,8 +65,8 @@
       "ok": true,
       "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
       "http_status": 200,
-      "latency_ms": 651,
-      "latency_class": "MODERATE",
+      "latency_ms": 480,
+      "latency_class": "FAST",
       "content_type": "text/html; charset=utf-8",
       "server": "Apache",
       "x_powered_by": "Next.js",
@@ -81,15 +81,15 @@
       "summary": "Explorer API responded successfully to supported stats endpoint.",
       "root_expected_validation": true,
       "stats_ok": true,
-      "latency_ms_avg": 497,
-      "latency_ms_max": 502,
-      "latency_class": "MODERATE",
+      "latency_ms_avg": 335,
+      "latency_ms_max": 341,
+      "latency_class": "FAST",
       "checks": {
         "root": {
           "url": "https://exptest.dachain.tech/api",
           "request_ok": true,
           "http_status": 400,
-          "latency_ms": 492,
+          "latency_ms": 329,
           "latency_class": "FAST",
           "json": {
             "message": "Params 'module' and 'action' are required parameters",
@@ -102,11 +102,11 @@
           "url": "https://exptest.dachain.tech/api?module=stats&action=ethsupply",
           "request_ok": true,
           "http_status": 200,
-          "latency_ms": 502,
-          "latency_class": "MODERATE",
+          "latency_ms": 341,
+          "latency_class": "FAST",
           "json": {
             "message": "OK",
-            "result": "115792089237316195423570985008687907853269984665740576808215507279206802395803",
+            "result": "115792089237316195423570985008687907853269984665740576808214467162383820862829",
             "status": "1"
           },
           "error": null
