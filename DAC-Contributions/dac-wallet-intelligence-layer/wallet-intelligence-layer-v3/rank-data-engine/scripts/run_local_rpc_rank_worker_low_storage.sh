@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+WIL_RUNNER_SAFE_CWD="${WIL_RUNNER_SAFE_CWD:-$PWD}"
+
 REPO_URL="${REPO_URL:-git@github.com:EdLWEISS186/dac-dual-node-cgnat-setup.git}"
 BRANCH="${BRANCH:-main}"
 TMP_PARENT="${TMP_PARENT:-/tmp}"
