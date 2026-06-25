@@ -1,10 +1,10 @@
 {
   "project": "DAC Infrastructure Intelligence Watcher",
   "version": "v1.8.0",
-  "source_latest_checked_at_utc": "2026-06-25T04:00:32.118733+00:00",
+  "source_latest_checked_at_utc": "2026-06-25T07:53:39.662511+00:00",
   "freshness": {
     "status": "FRESH",
-    "age_minutes": 0.55,
+    "age_minutes": 0.87,
     "threshold_minutes": 30,
     "summary": "Latest watcher state is fresh."
   },
@@ -16,10 +16,10 @@
   },
   "latest": {
     "overall": {
-      "overall_status": "HEALTHY",
-      "summary": "All monitored DAC infrastructure endpoints are healthy.",
-      "healthy_count": 3,
-      "degraded_count": 0,
+      "overall_status": "DEGRADED",
+      "summary": "All monitored endpoints are reachable, but at least one endpoint is degraded.",
+      "healthy_count": 2,
+      "degraded_count": 1,
       "unhealthy_count": 0,
       "total_endpoints": 3
     },
@@ -34,15 +34,15 @@
         "key": "official_public_rpc",
         "name": "Official Public RPC",
         "url": "https://rpctest.dachain.tech/",
-        "status": "HEALTHY",
+        "status": "DEGRADED",
         "ok": true,
-        "summary": "Public RPC responded to required and optional JSON-RPC checks.",
+        "summary": "Public RPC is reachable, but one or more JSON-RPC checks failed.",
         "chain_id_hex": "0x5586",
         "chain_id_decimal": 21894,
-        "latest_block_hex": "0xe5fcc9",
-        "latest_block_decimal": 15072457,
-        "latency_ms_avg": 10603,
-        "latency_ms_max": 17491,
+        "latest_block_hex": "0xe6006f",
+        "latest_block_decimal": 15073391,
+        "latency_ms_avg": 17000,
+        "latency_ms_max": 25009,
         "latency_class": "SLOW"
       },
       {
@@ -53,7 +53,7 @@
         "ok": true,
         "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
         "http_status": 200,
-        "latency_ms": 628,
+        "latency_ms": 611,
         "latency_class": "MODERATE",
         "title": "DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats",
         "has_explorer_signal": true
@@ -67,8 +67,8 @@
         "summary": "Explorer API responded successfully to supported stats endpoint.",
         "root_expected_validation": true,
         "stats_ok": true,
-        "latency_ms_avg": 494,
-        "latency_ms_max": 499,
+        "latency_ms_avg": 482,
+        "latency_ms_max": 486,
         "latency_class": "FAST"
       }
     ],
@@ -80,25 +80,25 @@
     ]
   },
   "history": {
-    "snapshot_count": 59,
+    "snapshot_count": 60,
     "first_snapshot": "2026-06-04T09-54-55-772035+00-00-health.json",
-    "latest_snapshot": "2026-06-24T18-06-14-278129+00-00-health.json",
+    "latest_snapshot": "2026-06-25T07-53-39-662511+00-00-health.json",
     "overall_status_counts": {
-      "DEGRADED": 23,
+      "DEGRADED": 24,
       "HEALTHY": 27,
       "PARTIAL_OUTAGE": 9
     },
     "endpoint_status_counts": {
       "official_public_rpc": {
-        "DEGRADED": 23,
+        "DEGRADED": 24,
         "HEALTHY": 27,
         "UNHEALTHY": 9
       },
       "explorer_web": {
-        "HEALTHY": 59
+        "HEALTHY": 60
       },
       "primary_explorer_api": {
-        "HEALTHY": 59
+        "HEALTHY": 60
       }
     },
     "timeline": [
@@ -927,6 +927,20 @@
         "primary_explorer_api_response_class": "FAST",
         "rpc_latest_block_decimal": 15070080,
         "rpc_latest_block_hex": "0xe5f380"
+      },
+      {
+        "index": 60,
+        "snapshot_file": "2026-06-25T07-53-39-662511+00-00-health.json",
+        "checked_at_utc": "2026-06-25T07:53:39.662511+00:00",
+        "overall_status": "DEGRADED",
+        "official_public_rpc_status": "DEGRADED",
+        "official_public_rpc_response_class": "SLOW",
+        "explorer_web_status": "HEALTHY",
+        "explorer_web_response_class": "MODERATE",
+        "primary_explorer_api_status": "HEALTHY",
+        "primary_explorer_api_response_class": "FAST",
+        "rpc_latest_block_decimal": 15073391,
+        "rpc_latest_block_hex": "0xe6006f"
       }
     ]
   },
@@ -934,7 +948,7 @@
     "overall_status_distribution": [
       {
         "label": "DEGRADED",
-        "count": 23
+        "count": 24
       },
       {
         "label": "HEALTHY",
@@ -948,17 +962,17 @@
     "endpoint_status_distribution": [
       {
         "endpoint": "official_public_rpc",
-        "DEGRADED": 23,
+        "DEGRADED": 24,
         "HEALTHY": 27,
         "UNHEALTHY": 9
       },
       {
         "endpoint": "explorer_web",
-        "HEALTHY": 59
+        "HEALTHY": 60
       },
       {
         "endpoint": "primary_explorer_api",
-        "HEALTHY": 59
+        "HEALTHY": 60
       }
     ],
     "response_class_distribution": [
@@ -966,18 +980,18 @@
         "endpoint": "official_public_rpc",
         "FAST": 3,
         "MODERATE": 8,
-        "SLOW": 38,
+        "SLOW": 39,
         "UNKNOWN": 10
       },
       {
         "endpoint": "explorer_web",
         "FAST": 15,
-        "MODERATE": 34,
+        "MODERATE": 35,
         "UNKNOWN": 10
       },
       {
         "endpoint": "primary_explorer_api",
-        "FAST": 30,
+        "FAST": 31,
         "MODERATE": 19,
         "UNKNOWN": 10
       }
@@ -1336,6 +1350,12 @@
         "checked_at_utc": "2026-06-24T18:06:14.278129+00:00",
         "overall_status": "HEALTHY",
         "score": 100
+      },
+      {
+        "index": 60,
+        "checked_at_utc": "2026-06-25T07:53:39.662511+00:00",
+        "overall_status": "DEGRADED",
+        "score": 55
       }
     ]
   }
