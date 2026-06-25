@@ -3,7 +3,7 @@
   "report_type": "observation_window_comparison",
   "comparison_layer_version": "v1.8.1",
   "comparison_scope": "all",
-  "generated_at_utc": "2026-06-25T17:36:26.276167+00:00",
+  "generated_at_utc": "2026-06-25T19:29:49.392244+00:00",
   "window_a": {
     "label": "Window A",
     "description": "Earlier observation segment.",
@@ -502,53 +502,53 @@
     "label": "Window B",
     "description": "Later observation segment.",
     "summary": {
-      "snapshot_count": 31,
+      "snapshot_count": 32,
       "first_index": 32,
-      "latest_index": 62,
+      "latest_index": 63,
       "first_checked_at_utc": "2026-06-10T21:13:30.728841+00:00",
-      "latest_checked_at_utc": "2026-06-25T15:44:39.846328+00:00",
+      "latest_checked_at_utc": "2026-06-25T19:29:25.516852+00:00",
       "overall_status_counts": {
         "DEGRADED": 12,
-        "HEALTHY": 14,
+        "HEALTHY": 15,
         "PARTIAL_OUTAGE": 5
       },
       "endpoint_status_counts": {
         "official_public_rpc": {
           "DEGRADED": 12,
-          "HEALTHY": 14,
+          "HEALTHY": 15,
           "UNHEALTHY": 5
         },
         "explorer_web": {
-          "HEALTHY": 31
+          "HEALTHY": 32
         },
         "primary_explorer_api": {
-          "HEALTHY": 31
+          "HEALTHY": 32
         }
       },
       "endpoint_response_summary": {
         "official_public_rpc": {
-          "average_response_ms": 6222.52,
+          "average_response_ms": 6256.34,
           "max_response_ms": 25009.0,
           "response_class_counts": {
             "FAST": 3,
             "MODERATE": 5,
-            "SLOW": 23
+            "SLOW": 24
           }
         },
         "explorer_web": {
-          "average_response_ms": 632.55,
+          "average_response_ms": 631.31,
           "max_response_ms": 1246.0,
           "response_class_counts": {
             "FAST": 9,
-            "MODERATE": 22
+            "MODERATE": 23
           }
         },
         "primary_explorer_api": {
-          "average_response_ms": 486.26,
+          "average_response_ms": 486.78,
           "max_response_ms": 1157.0,
           "response_class_counts": {
             "FAST": 17,
-            "MODERATE": 14
+            "MODERATE": 15
           }
         }
       }
@@ -987,18 +987,32 @@
         "primary_explorer_api_response_class": "FAST",
         "rpc_latest_block_decimal": 15075276,
         "rpc_latest_block_hex": "0xe607cc"
+      },
+      {
+        "index": 63,
+        "snapshot_file": "2026-06-25T19-29-25-516852+00-00-health.json",
+        "checked_at_utc": "2026-06-25T19:29:25.516852+00:00",
+        "overall_status": "HEALTHY",
+        "official_public_rpc_status": "HEALTHY",
+        "official_public_rpc_response_class": "SLOW",
+        "explorer_web_status": "HEALTHY",
+        "explorer_web_response_class": "MODERATE",
+        "primary_explorer_api_status": "HEALTHY",
+        "primary_explorer_api_response_class": "MODERATE",
+        "rpc_latest_block_decimal": 15076106,
+        "rpc_latest_block_hex": "0xe60b0a"
       }
     ]
   },
   "comparison": {
     "availability_score_a": 0.6823,
-    "availability_score_b": 0.6968,
+    "availability_score_b": 0.7063,
     "availability_direction": "IMPROVED",
     "interpretation": [
-      "Overall availability score changed from 0.6823 to 0.6968: IMPROVED.",
-      "Official Public RPC average response changed from 2806.33 ms to 6222.52 ms: WORSENED.",
-      "Explorer Web average response changed from 834.58 ms to 632.55 ms: IMPROVED.",
-      "Primary Explorer API average response changed from 437.67 ms to 486.26 ms: WORSENED.",
+      "Overall availability score changed from 0.6823 to 0.7063: IMPROVED.",
+      "Official Public RPC average response changed from 2806.33 ms to 6256.34 ms: WORSENED.",
+      "Explorer Web average response changed from 834.58 ms to 631.31 ms: IMPROVED.",
+      "Primary Explorer API average response changed from 437.67 ms to 486.78 ms: WORSENED.",
       "The later observation window shows stronger overall infrastructure availability."
     ]
   },
