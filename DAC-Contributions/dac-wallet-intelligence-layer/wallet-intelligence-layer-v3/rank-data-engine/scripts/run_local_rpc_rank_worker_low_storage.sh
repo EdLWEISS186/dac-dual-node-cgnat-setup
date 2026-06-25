@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_URL="${REPO_URL:-https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup.git}"
+REPO_URL="${REPO_URL:-git@github.com:EdLWEISS186/dac-dual-node-cgnat-setup.git}"
 BRANCH="${BRANCH:-main}"
 TMP_PARENT="${TMP_PARENT:-/tmp}"
 

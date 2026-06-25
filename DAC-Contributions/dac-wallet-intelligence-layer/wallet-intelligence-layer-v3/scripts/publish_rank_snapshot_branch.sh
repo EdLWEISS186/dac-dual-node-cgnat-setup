@@ -9,7 +9,7 @@ SCRIPT_DIR="$(
 BUILDER="${BUILDER:-$SCRIPT_DIR/generate_rank_from_sqlite.py}"
 
 STATE_DB="${STATE_DB:-$HOME/wil-v3-rank-state/wil-v3-rank-state.sqlite}"
-REPO_URL="${REPO_URL:-https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup.git}"
+REPO_URL="${REPO_URL:-git@github.com:EdLWEISS186/dac-dual-node-cgnat-setup.git}"
 DATA_BRANCH="${DATA_BRANCH:-wil-v3-rank-data}"
 
 WORK_ROOT="${WORK_ROOT:-$HOME/wil-v3-rank-state/rank-snapshot-publisher}"
