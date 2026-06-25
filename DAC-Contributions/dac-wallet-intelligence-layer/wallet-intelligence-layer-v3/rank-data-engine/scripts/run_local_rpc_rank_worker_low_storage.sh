@@ -278,9 +278,27 @@ run_once() {
 
   echo "[INFO] Temporary workdir: $workdir"
   echo "[INFO] Cloning repo..."
-  git clone --depth 1 --branch "$BRANCH" "$REPO_URL" "$workdir/repo"
+  local clone_ok=0
+  for clone_attempt in 1 2 3; do
+    echo "[INFO] Clone attempt ${clone_attempt}/3"
+    rm -rf "$repo"
 
-  cd "$workdir/repo"
+    if git clone --depth 1 --branch "$BRANCH" "$REPO_URL" "$repo"; then
+      clone_ok=1
+      break
+    fi
+
+    echo "[WARN] Git clone failed on attempt ${clone_attempt}; retrying after 10s..."
+    sleep 10
+  done
+
+  if [ "$clone_ok" != "1" ]; then
+    echo "[WARN] Git clone failed after retries; skipping this cycle and keeping runner alive."
+    cleanup_active_workdir || true
+    return 0
+  fi
+
+  cd "$repo"
 
   local base="DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3"
   local worker="$base/rank-data-engine/scripts/local_rpc_rank_data_worker.py"
