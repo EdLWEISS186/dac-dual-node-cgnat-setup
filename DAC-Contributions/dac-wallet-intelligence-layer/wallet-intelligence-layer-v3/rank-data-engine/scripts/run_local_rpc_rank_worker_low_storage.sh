@@ -43,6 +43,10 @@ ADAPTIVE_CHUNK_GUARD="$SCRIPT_DIR/adaptive_chunk_guard.py"
 ADAPTIVE_RUNTIME_DIR="${ADAPTIVE_RUNTIME_DIR:-$HOME/wil-v3-worker-logs/adaptive-runtime}"
 ADAPTIVE_ACTIVE_RUNTIME_DIR=""
 ACTIVE_WORKDIR=""
+
+ensure_safe_cwd() {
+  cd "$WIL_RUNNER_SAFE_CWD" 2>/dev/null || cd "$HOME" 2>/dev/null || cd /
+}
 ADAPTIVE_CHUNK_MODE="${ADAPTIVE_CHUNK_MODE:-1}"
 ADAPTIVE_CHUNK_SIZE="${ADAPTIVE_CHUNK_SIZE:-5000}"
 ADAPTIVE_MAX_CHUNK_SECONDS="${ADAPTIVE_MAX_CHUNK_SECONDS:-180}"
@@ -91,6 +95,7 @@ cleanup_active_workdir() {
   case "$dir" in
     /tmp/wil-v3-rank-run.*)
       if [ -d "$dir" ]; then
+        ensure_safe_cwd
         rm -rf -- "$dir"
         echo "[INFO] Cleaned temp workdir: $dir"
       fi
@@ -265,7 +270,7 @@ run_once() {
   local repo="$workdir/repo"
 
   cleanup() {
-    cd "$HOME" 2>/dev/null || true
+    ensure_safe_cwd
     rm -rf "$workdir"
   }
   ACTIVE_WORKDIR="$workdir"
@@ -651,6 +656,7 @@ echo "[INFO] run_once=$RUN_ONCE"
 echo "[INFO] sqlite_state_file=$EXTERNAL_SQLITE_FILE"
 
 while true; do
+  ensure_safe_cwd
   echo
   echo "============================================================"
   echo "[INFO] Run started at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
