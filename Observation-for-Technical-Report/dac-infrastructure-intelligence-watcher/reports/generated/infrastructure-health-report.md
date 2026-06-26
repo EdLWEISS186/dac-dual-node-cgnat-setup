@@ -1,6 +1,6 @@
 # DAC Infrastructure Intelligence Watcher — Health Report
 
-Generated from latest watcher state UTC: **2026-06-26T17:22:19.643754+00:00**
+Generated from latest watcher state UTC: **2026-06-26T19:14:49.072671+00:00**
 
 This report is generated from DAC Infrastructure Intelligence Watcher JSON outputs.
 
@@ -15,7 +15,7 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Project | DAC Infrastructure Intelligence Watcher |
 | Watcher version | v1.0.0 |
 | Report layer version | v1.1.0 |
-| Checked at UTC | 2026-06-26T17:22:19.643754+00:00 |
+| Checked at UTC | 2026-06-26T19:14:49.072671+00:00 |
 | Overall status | DEGRADED |
 | Overall summary | All monitored endpoints are reachable, but at least one endpoint is degraded. |
 | Healthy endpoints | 2 |
@@ -47,17 +47,17 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | RPC status | DEGRADED |
 | Chain ID | N/A |
 | Chain ID hex | N/A |
-| Latest block hex | 0xe61fcf |
-| Latest block decimal | 15081423 |
-| Average response time | 22168 ms |
-| Maximum response time | 27732 ms |
+| Latest block hex | 0xe6218f |
+| Latest block decimal | 15081871 |
+| Average response time | 12444 ms |
+| Maximum response time | 15053 ms |
 | Response class | SLOW |
 
 | Method | OK | HTTP Status | Result | Error |
 |---|---:|---:|---|---|
-| eth_chainId | False | N/A | N/A | HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Read timed out. (read timeout=15) |
-| eth_blockNumber | True | 200 | 0xe61fcf | N/A |
-| web3_clientVersion | False | N/A | N/A | HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Read timed out. (read timeout=15) |
+| eth_chainId | False | N/A | N/A | HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='rpctest.dachain.tech', port=443) at 0x7f389d267410>, 'Connection to rpctest.dachain.tech timed out. (connect timeout=15)')) |
+| eth_blockNumber | True | 200 | 0xe6218f | N/A |
+| web3_clientVersion | False | N/A | N/A | HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='rpctest.dachain.tech', port=443) at 0x7f389c525b10>, 'Connection to rpctest.dachain.tech timed out. (connect timeout=15)')) |
 
 ## 5. Explorer Details
 
@@ -66,8 +66,8 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Status | HEALTHY | HEALTHY |
 | OK | True | True |
 | HTTP / validation | 200 | root_validation=True, stats_ok=True |
-| Response time | 465 ms | avg=359 ms, max=378 ms |
-| Response class | FAST | FAST |
+| Response time | 807 ms | avg=587 ms, max=651 ms |
+| Response class | MODERATE | MODERATE |
 | Title / API URL | DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats | https://exptest.dachain.tech/api |
 
 ## 6. Snapshot History Summary
