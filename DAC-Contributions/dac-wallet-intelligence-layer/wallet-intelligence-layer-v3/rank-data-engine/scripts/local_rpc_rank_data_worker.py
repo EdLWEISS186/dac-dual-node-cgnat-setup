@@ -1297,7 +1297,7 @@ def main() -> None:
 
     public_status = {
         "schema": "WIL_V3_PUBLIC_RUN_STATUS",
-        "version": "v3.6.0",
+        "version": "v3.7.0",
         "project": PROJECT,
         "engine": "rank-data-engine",
         "network": NETWORK,

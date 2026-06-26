@@ -386,7 +386,7 @@ class SQLiteConvictionMetrics:
     Legacy, rollback-safe Conviction state.
 
     Legacy Conviction tables are retained for backward compatibility with
-    historical v3.5.0 state. v3.6.0 no longer treats Conviction as an
+    historical v3.5.0 state. v3.7.0 no longer treats Conviction as an
     active public scoring or rank signal.
     """
 

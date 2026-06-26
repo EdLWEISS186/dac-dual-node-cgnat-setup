@@ -38,7 +38,7 @@ if [ ! -f "$STATE_DB" ]; then
   exit 1
 fi
 
-echo "[INFO] WIL v3.3.0 SQLite GDrive rollover backup"
+echo "[INFO] WIL v3.7.0 SQLite GDrive rollover backup"
 echo "[INFO] state_db=$STATE_DB"
 echo "[INFO] primary=$PRIMARY_REMOTE_NAME"
 echo "[INFO] secondary=$SECONDARY_REMOTE_NAME"
@@ -384,4 +384,4 @@ find "$WORK_DIR" \
   -delete
 
 echo
-echo "[OK] WIL v3.3.0 SQLite GDrive rollover backup complete"
+echo "[OK] WIL v3.7.0 SQLite GDrive rollover backup complete"

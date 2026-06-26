@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WIL v3.3.0 Official Testnet Inception NFT gap repair scanner.
+WIL v3.7.0 Official Testnet Inception NFT gap repair scanner.
 
 Repairs the block range processed before Official Inception NFT ownership
 tracking was introduced.
@@ -606,7 +606,7 @@ def main() -> None:
         )
 
         print(
-            "[INFO] WIL v3.3.0 Official Testnet "
+            "[INFO] WIL v3.7.0 Official Testnet "
             "Inception NFT repair"
         )
         print(f"[INFO] database={database}")

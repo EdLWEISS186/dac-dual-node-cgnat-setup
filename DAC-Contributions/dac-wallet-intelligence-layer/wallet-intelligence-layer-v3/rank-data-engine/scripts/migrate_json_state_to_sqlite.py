@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WIL v3.3.0 — Streaming JSON State to SQLite Migrator
+WIL v3.7.0 — Streaming JSON State to SQLite Migrator
 
 Preserves:
 - wallet_metrics

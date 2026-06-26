@@ -105,7 +105,7 @@ fi
 
 mkdir -p "$OUTPUT_DIR"
 
-echo "[INFO] WIL v3.6.0 compact rank snapshot publisher"
+echo "[INFO] WIL v3.7.0 compact rank snapshot publisher"
 echo "[INFO] state_db=$STATE_DB"
 echo "[INFO] data_branch=$DATA_BRANCH"
 echo "[INFO] push_to_github=$PUSH_TO_GITHUB"
@@ -175,7 +175,7 @@ index = json.loads(
     index_path.read_text(encoding="utf-8")
 )
 
-if summary.get("version") != "v3.6.0":
+if summary.get("version") != "v3.7.0":
     raise SystemExit("Unexpected summary version")
 
 if summary.get("state_backend") != "SQLITE":
@@ -414,7 +414,7 @@ index = json.loads(
 
 manifest = {
     "schema": "WIL_V3_RANK_SNAPSHOT_MANIFEST",
-    "version": "v3.6.0",
+    "version": "v3.7.0",
     "branch": branch,
     "created_at": datetime.now(
         timezone.utc
@@ -457,7 +457,7 @@ print("[OK] snapshot manifest created")
 PY
 
 cat > "$SNAPSHOT_REPO/README.md" <<'EOF'
-# WIL v3.6.0 Rank Data Snapshot
+# WIL v3.7.0 Rank Data Snapshot
 
 This branch contains the current compact public Wallet Intelligence Layer
 rank snapshot.
@@ -483,7 +483,7 @@ git -C "$SNAPSHOT_REPO" \
 git -C "$SNAPSHOT_REPO" add .
 
 git -C "$SNAPSHOT_REPO" commit -q \
-  -m "publish: WIL v3.6.0 compact rank snapshot $STAMP"
+  -m "publish: WIL v3.7.0 compact rank snapshot $STAMP"
 
 SNAPSHOT_COMMIT="$(
   git -C "$SNAPSHOT_REPO" rev-parse HEAD
@@ -520,4 +520,4 @@ find "$SNAPSHOT_REPO" \
   | tail -20
 
 echo
-echo "[OK] WIL v3.6.0 compact rank snapshot publisher complete"
+echo "[OK] WIL v3.7.0 compact rank snapshot publisher complete"

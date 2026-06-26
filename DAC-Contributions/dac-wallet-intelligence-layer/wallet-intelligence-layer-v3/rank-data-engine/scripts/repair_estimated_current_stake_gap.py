@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WIL v3.3.0 Estimated Current Stake gap repair scanner.
+WIL v3.7.0 Estimated Current Stake gap repair scanner.
 
 Repairs the block range processed before staking tracking was introduced.
 The main WIL synchronization checkpoint is never modified.
@@ -490,7 +490,7 @@ def main() -> None:
         )
 
         print(
-            "[INFO] WIL v3.3.0 Estimated Current "
+            "[INFO] WIL v3.7.0 Estimated Current "
             "Stake repair"
         )
         print(f"[INFO] database={database}")
