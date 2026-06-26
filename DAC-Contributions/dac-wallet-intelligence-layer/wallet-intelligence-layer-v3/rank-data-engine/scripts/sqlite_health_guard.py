@@ -27,6 +27,10 @@ REQUIRED_TABLES = {
     "checkpoint",
     "counters",
     "state_meta",
+    "wallet_metrics",
+    "enrichment_queue",
+    "indexed_block_coverage",
+    "indexed_transaction_ledger",
 }
 
 SQLITE_ERROR_PATTERNS = [

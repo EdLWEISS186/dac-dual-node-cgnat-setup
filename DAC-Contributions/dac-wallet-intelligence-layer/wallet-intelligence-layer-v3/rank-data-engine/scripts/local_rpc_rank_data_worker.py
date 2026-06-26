@@ -31,7 +31,8 @@ from sqlite_rank_state import SQLiteRankState
 
 CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
-PROJECT = "Wallet Intelligence Layer v3.6.0"
+PROJECT = "Wallet Intelligence Layer v3.7.0"
+V3_7_0_DETERMINISTIC_REBUILD_ANCHOR_BLOCK = 15_000_000
 
 DEFAULT_PRIMARY_RPC = "http://127.0.0.1:8546"
 DEFAULT_FALLBACK_RPC = "http://192.168.100.7:8545"
@@ -195,7 +196,7 @@ def empty_latest() -> Dict[str, Any]:
         "chain_id": CHAIN_ID,
         "data_model": "NORMALIZED_WALLET_METRIC_DELTAS",
         "raw_transaction_dump": False,
-        "status": "SYNCED",
+        "status": ("COVERAGE_SYNCED" if checkpoint.get("sync_phase") == "INCREMENTAL" else "REBUILDING"),
         "updated_at": now_utc(),
         "sources": {},
         "checkpoint": {},
@@ -785,6 +786,7 @@ def main() -> None:
     processed_staking_events = 0
     processed_conviction_events = 0
     processed_official_inception_nft_events = 0
+    skipped_complete_blocks = 0
 
     changed_wallets: Set[str] = set()
     changed_staking_wallets: Set[str] = set()
@@ -805,22 +807,49 @@ def main() -> None:
         nonlocal processed_staking_events
         nonlocal processed_conviction_events
         nonlocal processed_official_inception_nft_events
+        nonlocal skipped_complete_blocks
         nonlocal last_tx_hash
         nonlocal last_synced_block
 
-        block = rpc_call(rpc_urls, "eth_getBlockByNumber", [int_to_hex(block_number), True], timeout=45)
-
-        if not block:
+        if sqlite_state is not None and sqlite_state.is_block_complete(
+            block_number
+        ):
+            skipped_complete_blocks += 1
+            processed_blocks += 1
+            last_synced_block = block_number
             return
 
+        block = rpc_call(
+            rpc_urls,
+            "eth_getBlockByNumber",
+            [int_to_hex(block_number), True],
+            timeout=45,
+        )
+
+        if not block:
+            raise RuntimeError(f"RPC returned empty block: {block_number}")
+
+        block_hash = str(block.get("hash") or "")
+        parent_hash = block.get("parentHash")
         block_timestamp = now_utc()
         txs = block.get("transactions") or []
+        block_expected_transactions = len(txs)
+        block_processed_transactions = 0
+        first_tx_hash = None
+        last_block_tx_hash = None
 
-        for tx in txs:
-            tx_hash = tx.get("hash")
+        for tx_position, tx in enumerate(txs):
+            tx_hash = str(tx.get("hash") or "").lower()
 
             if not tx_hash:
-                continue
+                raise RuntimeError(
+                    f"Transaction without hash in block {block_number}"
+                )
+
+            if first_tx_hash is None:
+                first_tx_hash = tx_hash
+
+            last_block_tx_hash = tx_hash
 
             receipt = rpc_call(
                 rpc_urls,
@@ -828,6 +857,27 @@ def main() -> None:
                 [tx_hash],
                 timeout=45,
             ) or {}
+
+            transaction_index_raw = tx.get("transactionIndex")
+
+            if transaction_index_raw is None:
+                transaction_index = tx_position
+            else:
+                transaction_index = hex_to_int(transaction_index_raw)
+
+            if sqlite_state is not None:
+                staged = sqlite_state.stage_transaction(
+                    tx_hash=tx_hash,
+                    block_number=block_number,
+                    transaction_index=transaction_index,
+                    from_address=tx.get("from"),
+                    to_address=tx.get("to"),
+                    status=receipt.get("status"),
+                    indexed_at=block_timestamp,
+                )
+
+                if not staged:
+                    continue
 
             staking_address = process_staking_transaction(
                 staking_metrics=staking_metrics,
@@ -838,9 +888,7 @@ def main() -> None:
             )
 
             if staking_address:
-                changed_staking_wallets.add(
-                    staking_address
-                )
+                changed_staking_wallets.add(staking_address)
                 processed_staking_events += 1
 
             conviction_address = process_conviction_transaction(
@@ -852,9 +900,7 @@ def main() -> None:
             )
 
             if conviction_address:
-                changed_conviction_wallets.add(
-                    conviction_address
-                )
+                changed_conviction_wallets.add(conviction_address)
                 processed_conviction_events += 1
 
             (
@@ -889,7 +935,31 @@ def main() -> None:
 
             changed_wallets.update(changed)
             processed_transactions += 1
+            block_processed_transactions += 1
             last_tx_hash = tx_hash
+
+        if block_processed_transactions != block_expected_transactions:
+            raise RuntimeError(
+                "Block transaction parity failed "
+                f"block={block_number} "
+                f"expected={block_expected_transactions} "
+                f"processed={block_processed_transactions}"
+            )
+
+        if sqlite_state is not None:
+            sqlite_state.stage_block_coverage(
+                block_number=block_number,
+                block_hash=block_hash,
+                parent_hash=parent_hash,
+                tx_count=block_expected_transactions,
+                processed_tx_count=block_processed_transactions,
+                first_tx_hash=first_tx_hash,
+                last_tx_hash=last_block_tx_hash,
+                status="COMPLETE",
+                direction=direction,
+                mode=mode,
+                indexed_at=block_timestamp,
+            )
 
         processed_blocks += 1
         last_synced_block = block_number
@@ -1045,9 +1115,14 @@ def main() -> None:
         limit=args.balance_enrich_limit,
     )
 
-    previous_processed = int(
-        counters.get("total_processed_transactions") or 0
-    )
+    if sqlite_state is not None:
+        previous_processed = (
+            sqlite_state.covered_processed_transaction_count()
+        )
+    else:
+        previous_processed = int(
+            counters.get("total_processed_transactions") or 0
+        )
 
     previous_staking_events = int(
         counters.get("total_staking_events") or 0
@@ -1067,6 +1142,9 @@ def main() -> None:
     counters["last_sync_processed_blocks"] = processed_blocks
     counters["last_sync_processed_transactions"] = processed_transactions
     counters["last_sync_wallets_changed"] = len(changed_wallets)
+    counters["last_sync_skipped_complete_blocks"] = (
+        skipped_complete_blocks
+    )
 
     counters["last_sync_staking_events"] = (
         processed_staking_events
@@ -1127,7 +1205,7 @@ def main() -> None:
         "chain_id": CHAIN_ID,
         "data_model": "NORMALIZED_WALLET_METRIC_DELTAS",
         "raw_transaction_dump": False,
-        "status": "SYNCED",
+        "status": ("COVERAGE_SYNCED" if checkpoint.get("sync_phase") == "INCREMENTAL" else "REBUILDING"),
         "updated_at": run_started_at,
         "sources": {
             "primary_rpc": args.primary_rpc,
@@ -1318,7 +1396,7 @@ def main() -> None:
             ),
         },
         "last_run": result,
-        "note": "v3.6.0 normal rank-state worker status. Legacy Conviction tables may remain in SQLite for backward compatibility, but Conviction is not an active public scoring or rank signal."
+        "note": "v3.7.0 parity-safe rebuild worker status. Legacy Conviction tables may remain in SQLite for backward compatibility, but Conviction is not an active public scoring or rank signal."
     }
 
     if not args.dry_run:

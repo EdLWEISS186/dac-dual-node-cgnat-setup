@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WIL v3.3.0 SQLite rank-state adapter.
+WIL v3.7.0 parity-safe SQLite rank-state adapter.
 
 Provides:
 - lazy wallet reads
@@ -916,10 +916,7 @@ class SQLiteRankState:
     def __init__(self, database: Path | str) -> None:
         self.database = Path(database).expanduser().resolve()
 
-        if not self.database.is_file():
-            raise FileNotFoundError(
-                f"SQLite rank state not found: {self.database}"
-            )
+        self.database.parent.mkdir(parents=True, exist_ok=True)
 
         self.connection = sqlite3.connect(
             self.database,
@@ -943,6 +940,11 @@ class SQLiteRankState:
             SQLiteOfficialInceptionNFTTokens(self.connection)
         )
 
+        self.pending_transaction_ledger: Dict[str, tuple[Any, ...]] = {}
+        self.pending_block_coverage: Dict[int, tuple[Any, ...]] = {}
+
+        self.last_transaction_ledger_rows_written = 0
+        self.last_block_coverage_rows_written = 0
         self.last_staking_rows_written = 0
         self.last_conviction_rows_written = 0
         self.last_official_inception_nft_rows_written = 0
@@ -950,6 +952,72 @@ class SQLiteRankState:
     def _ensure_schema(self) -> None:
         self.connection.executescript(
             """
+              CREATE TABLE IF NOT EXISTS state_meta (
+                  key TEXT PRIMARY KEY,
+                  value_json TEXT NOT NULL
+              );
+
+              CREATE TABLE IF NOT EXISTS checkpoint (
+                  key TEXT PRIMARY KEY,
+                  value_json TEXT NOT NULL
+              );
+
+              CREATE TABLE IF NOT EXISTS counters (
+                  key TEXT PRIMARY KEY,
+                  value_json TEXT NOT NULL
+              );
+
+              CREATE TABLE IF NOT EXISTS enrichment_queue (
+                  position INTEGER PRIMARY KEY,
+                  value_json TEXT NOT NULL
+              );
+
+              CREATE TABLE IF NOT EXISTS wallet_metrics (
+                  address TEXT PRIMARY KEY COLLATE NOCASE,
+                  payload_json TEXT NOT NULL
+              );
+
+              CREATE TABLE IF NOT EXISTS indexed_block_coverage (
+                  block_number INTEGER PRIMARY KEY,
+                  block_hash TEXT NOT NULL,
+                  parent_hash TEXT,
+                  tx_count INTEGER NOT NULL,
+                  processed_tx_count INTEGER NOT NULL,
+                  first_tx_hash TEXT,
+                  last_tx_hash TEXT,
+                  status TEXT NOT NULL,
+                  direction TEXT NOT NULL,
+                  mode TEXT NOT NULL,
+                  indexed_at TEXT NOT NULL,
+                  error TEXT NOT NULL DEFAULT ''
+              );
+
+              CREATE INDEX IF NOT EXISTS
+                  indexed_block_coverage_status_block
+              ON indexed_block_coverage(status, block_number);
+
+              CREATE TABLE IF NOT EXISTS indexed_transaction_ledger (
+                  tx_hash TEXT PRIMARY KEY,
+                  block_number INTEGER NOT NULL,
+                  transaction_index INTEGER NOT NULL,
+                  from_address TEXT COLLATE NOCASE,
+                  to_address TEXT COLLATE NOCASE,
+                  status TEXT,
+                  indexed_at TEXT NOT NULL
+              );
+
+              CREATE INDEX IF NOT EXISTS
+                  indexed_transaction_ledger_block
+              ON indexed_transaction_ledger(block_number, transaction_index);
+
+              CREATE INDEX IF NOT EXISTS
+                  indexed_transaction_ledger_from_address
+              ON indexed_transaction_ledger(from_address);
+
+              CREATE INDEX IF NOT EXISTS
+                  indexed_transaction_ledger_to_address
+              ON indexed_transaction_ledger(to_address);
+
             CREATE TABLE IF NOT EXISTS staking_metrics (
                 address TEXT PRIMARY KEY COLLATE NOCASE,
 
@@ -1089,6 +1157,214 @@ class SQLiteRankState:
 
         self.connection.commit()
 
+    @staticmethod
+    def normalize_tx_hash(tx_hash: Any) -> str:
+        return str(tx_hash or "").lower()
+
+    @staticmethod
+    def normalize_address(address: Any) -> Optional[str]:
+        if address is None:
+            return None
+
+        text = str(address).lower()
+        return text if text else None
+
+    def is_block_complete(self, block_number: int) -> bool:
+        row = self.connection.execute(
+            """
+            SELECT status
+            FROM indexed_block_coverage
+            WHERE block_number = ?
+            """,
+            (int(block_number),),
+        ).fetchone()
+
+        return row is not None and str(row[0]) == "COMPLETE"
+
+    def has_transaction(self, tx_hash: Any) -> bool:
+        tx_hash = self.normalize_tx_hash(tx_hash)
+
+        if not tx_hash:
+            return False
+
+        if tx_hash in self.pending_transaction_ledger:
+            return True
+
+        row = self.connection.execute(
+            """
+            SELECT 1
+            FROM indexed_transaction_ledger
+            WHERE tx_hash = ?
+            LIMIT 1
+            """,
+            (tx_hash,),
+        ).fetchone()
+
+        return row is not None
+
+    def stage_transaction(
+        self,
+        *,
+        tx_hash: Any,
+        block_number: int,
+        transaction_index: int,
+        from_address: Any,
+        to_address: Any,
+        status: Any,
+        indexed_at: str,
+    ) -> bool:
+        tx_hash = self.normalize_tx_hash(tx_hash)
+
+        if not tx_hash:
+            return False
+
+        if self.has_transaction(tx_hash):
+            return False
+
+        self.pending_transaction_ledger[tx_hash] = (
+            tx_hash,
+            int(block_number),
+            int(transaction_index),
+            self.normalize_address(from_address),
+            self.normalize_address(to_address),
+            None if status is None else str(status),
+            str(indexed_at),
+        )
+
+        return True
+
+    def stage_block_coverage(
+        self,
+        *,
+        block_number: int,
+        block_hash: Any,
+        parent_hash: Any,
+        tx_count: int,
+        processed_tx_count: int,
+        first_tx_hash: Any,
+        last_tx_hash: Any,
+        status: str,
+        direction: str,
+        mode: str,
+        indexed_at: str,
+        error: str = "",
+    ) -> None:
+        self.pending_block_coverage[int(block_number)] = (
+            int(block_number),
+            str(block_hash or ""),
+            None if parent_hash is None else str(parent_hash),
+            int(tx_count),
+            int(processed_tx_count),
+            None if first_tx_hash is None else self.normalize_tx_hash(first_tx_hash),
+            None if last_tx_hash is None else self.normalize_tx_hash(last_tx_hash),
+            str(status),
+            str(direction),
+            str(mode),
+            str(indexed_at),
+            str(error or ""),
+        )
+
+    def flush_audit_ledgers(self) -> tuple[int, int]:
+        tx_rows = [
+            self.pending_transaction_ledger[key]
+            for key in sorted(self.pending_transaction_ledger)
+        ]
+
+        if tx_rows:
+            self.connection.executemany(
+                """
+                INSERT OR IGNORE INTO indexed_transaction_ledger (
+                    tx_hash,
+                    block_number,
+                    transaction_index,
+                    from_address,
+                    to_address,
+                    status,
+                    indexed_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                tx_rows,
+            )
+
+        block_rows = [
+            self.pending_block_coverage[key]
+            for key in sorted(self.pending_block_coverage)
+        ]
+
+        if block_rows:
+            self.connection.executemany(
+                """
+                INSERT INTO indexed_block_coverage (
+                    block_number,
+                    block_hash,
+                    parent_hash,
+                    tx_count,
+                    processed_tx_count,
+                    first_tx_hash,
+                    last_tx_hash,
+                    status,
+                    direction,
+                    mode,
+                    indexed_at,
+                    error
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(block_number) DO UPDATE SET
+                    block_hash = excluded.block_hash,
+                    parent_hash = excluded.parent_hash,
+                    tx_count = excluded.tx_count,
+                    processed_tx_count = excluded.processed_tx_count,
+                    first_tx_hash = excluded.first_tx_hash,
+                    last_tx_hash = excluded.last_tx_hash,
+                    status = excluded.status,
+                    direction = excluded.direction,
+                    mode = excluded.mode,
+                    indexed_at = excluded.indexed_at,
+                    error = excluded.error
+                """,
+                block_rows,
+            )
+
+        tx_written = len(tx_rows)
+        block_written = len(block_rows)
+
+        self.pending_transaction_ledger.clear()
+        self.pending_block_coverage.clear()
+
+        self.last_transaction_ledger_rows_written = tx_written
+        self.last_block_coverage_rows_written = block_written
+
+        return tx_written, block_written
+
+    def covered_processed_transaction_count(self) -> int:
+        value = self.connection.execute(
+            """
+            SELECT COALESCE(SUM(processed_tx_count), 0)
+            FROM indexed_block_coverage
+            WHERE status = 'COMPLETE'
+            """
+        ).fetchone()[0]
+
+        return int(value or 0)
+
+    def complete_block_count_between(
+        self,
+        start_block: int,
+        end_block: int,
+    ) -> int:
+        value = self.connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM indexed_block_coverage
+            WHERE status = 'COMPLETE'
+              AND block_number BETWEEN ? AND ?
+            """,
+            (int(start_block), int(end_block)),
+        ).fetchone()[0]
+
+        return int(value or 0)
+
     def read_key_value_table(self, table: str) -> Dict[str, Any]:
         allowed = {"checkpoint", "counters", "state_meta"}
 
@@ -1188,6 +1464,19 @@ class SQLiteRankState:
             self.last_official_inception_nft_rows_written
         )
 
+        pending_transaction_ledger_before = dict(
+            self.pending_transaction_ledger
+        )
+        pending_block_coverage_before = dict(
+            self.pending_block_coverage
+        )
+        last_transaction_ledger_rows_written_before = (
+            self.last_transaction_ledger_rows_written
+        )
+        last_block_coverage_rows_written_before = (
+            self.last_block_coverage_rows_written
+        )
+
         try:
             self.connection.execute("BEGIN IMMEDIATE")
 
@@ -1198,6 +1487,8 @@ class SQLiteRankState:
             official_inception_nft_rows_written = (
                 self.official_inception_nft_tokens.flush()
             )
+
+            self.flush_audit_ledgers()
 
             self._upsert_key_value_table(
                 "checkpoint",
@@ -1261,6 +1552,19 @@ class SQLiteRankState:
 
             self.last_official_inception_nft_rows_written = (
                 last_official_inception_nft_rows_written_before
+            )
+
+            self.pending_transaction_ledger = (
+                pending_transaction_ledger_before
+            )
+            self.pending_block_coverage = (
+                pending_block_coverage_before
+            )
+            self.last_transaction_ledger_rows_written = (
+                last_transaction_ledger_rows_written_before
+            )
+            self.last_block_coverage_rows_written = (
+                last_block_coverage_rows_written_before
             )
 
             raise

@@ -309,11 +309,18 @@ run_once() {
 
   mkdir -p "$base/rank-data-engine/data" "$base/data" "$EXTERNAL_STATE_DIR" "$EXTERNAL_BACKUP_DIR"
 
-  if [ ! -f "$EXTERNAL_SQLITE_FILE" ]; then
-    echo "[ERROR] SQLite rank state not found: $EXTERNAL_SQLITE_FILE"
-    echo "[ERROR] Restore or migrate wil-v3-rank-state.sqlite before running the worker."
-    exit 1
-  fi
+    if [ ! -f "$EXTERNAL_SQLITE_FILE" ]; then
+      echo "[INFO] SQLite rank state not found; bootstrapping fresh v3.7.0 rebuild DB: $EXTERNAL_SQLITE_FILE"
+      PYTHONPATH="$(dirname "$worker_abs")" python3 - "$EXTERNAL_SQLITE_FILE" <<'WIL_V3_7_BOOTSTRAP_SQLITE'
+import sys
+from pathlib import Path
+from sqlite_rank_state import SQLiteRankState
+
+state = SQLiteRankState(Path(sys.argv[1]))
+state.close()
+print("[OK] Bootstrapped fresh SQLite rank state")
+WIL_V3_7_BOOTSTRAP_SQLITE
+    fi
 
   echo "[INFO] Checking external SQLite rank state"
   if [ "${WIL_V3_FULL_SQLITE_QUICK_CHECK:-0}" = "1" ]; then
@@ -511,7 +518,7 @@ run_once() {
 
   python3 -m json.tool "$public_status" >/dev/null
 
-  echo "[INFO] WIL v3.6.0 worker result"
+  echo "[INFO] WIL v3.7.0 worker result"
   python3 - "$public_status" <<'STATUS_PY'
 import json
 import sys
@@ -663,7 +670,7 @@ PY
   echo "[INFO] Temporary workdir removed after this run."
 }
 
-echo "[INFO] WIL v3.6.0 SQLite Rank State Worker | Back to Normal - standard stake/rank worker"
+echo "[INFO] WIL v3.7.0 SQLite Rank State Worker | Parity-Safe Rebuild"
 echo "[INFO] primary=$PRIMARY_RPC"
 echo "[INFO] fallback=$FALLBACK_RPC"
 echo "[INFO] max_blocks=$MAX_BLOCKS"
