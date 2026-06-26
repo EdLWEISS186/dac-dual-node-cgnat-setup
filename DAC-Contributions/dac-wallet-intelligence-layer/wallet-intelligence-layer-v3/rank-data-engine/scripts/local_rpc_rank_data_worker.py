@@ -196,7 +196,7 @@ def empty_latest() -> Dict[str, Any]:
         "chain_id": CHAIN_ID,
         "data_model": "NORMALIZED_WALLET_METRIC_DELTAS",
         "raw_transaction_dump": False,
-        "status": ("COVERAGE_SYNCED" if checkpoint.get("sync_phase") == "INCREMENTAL" else "REBUILDING"),
+        "status": "REBUILDING",
         "updated_at": now_utc(),
         "sources": {},
         "checkpoint": {},
