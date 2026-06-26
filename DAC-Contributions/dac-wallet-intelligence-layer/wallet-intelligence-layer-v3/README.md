@@ -1,8 +1,8 @@
-# DAC Wallet Intelligence Layer v3.6.0
+# DAC Wallet Intelligence Layer v3.7.0
 
 Client-side wallet intelligence interface and globally comparative public wallet rank system for the **DAC Quantum Chain Testnet**.
 
-Wallet Intelligence Layer v3.6.0 is the **Back to Normal** release. It restores the normal WIL scoring model after the official DAC Testnet Inception Conviction Lock flow became inconsistent as an active scoring basis, and it hardens the worker path from historical backfill into live incremental sync.
+Wallet Intelligence Layer v3.7.0 is the **Parity-Safe Rebuild** release. It rebuilds the local SQLite rank state from a deterministic anchor with explicit block-coverage and transaction-ledger guards so WIL cannot silently claim full sync while missing block or transaction data.
 
 The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
@@ -12,13 +12,14 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
 - [Wallet Intelligence Layer v3](https://edlweiss186.github.io/dac-dual-node-cgnat-setup/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3/)
 
-![Version](https://img.shields.io/badge/version-v3.6.0-blue?style=flat-square)
-![Release](https://img.shields.io/badge/release-back%20to%20normal-brightgreen?style=flat-square)
+![Version](https://img.shields.io/badge/version-v3.7.0-blue?style=flat-square)
+![Release](https://img.shields.io/badge/release-parity--safe%20rebuild-brightgreen?style=flat-square)
 ![Network](https://img.shields.io/badge/network-DAC%20testnet-yellow?style=flat-square)
 ![Chain ID](https://img.shields.io/badge/chain%20ID-21894-blueviolet?style=flat-square)
 ![Wallet Check](https://img.shields.io/badge/wallet%20check-no%20connect%20required-brightgreen?style=flat-square)
 ![State Backend](https://img.shields.io/badge/state-SQLite-orange?style=flat-square)
 ![Rank Schema](https://img.shields.io/badge/rank%20schema-Compact%20V3-informational?style=flat-square)
+![Backup](https://img.shields.io/badge/backup-GDrive%20rollover-lightgrey?style=flat-square)
 ![Public Output](https://img.shields.io/badge/public%20output-GitHub-lightgrey?style=flat-square)
 
 ---
@@ -26,12 +27,14 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 ## Table of Contents
 
 - [Overview](#overview)
-- [v3.6.0 Update Summary](#v360-update-summary)
+- [v3.7.0 Update Summary](#v370-update-summary)
 - [Release Notes](#release-notes)
 - [Relationship to Previous Projects](#relationship-to-previous-projects)
 - [Architecture Topology](#architecture-topology)
 - [Data Sources](#data-sources)
+- [Scoring Compatibility Model](#scoring-compatibility-model)
 - [Authoritative SQLite State](#authoritative-sqlite-state)
+- [Parity-Safe Rebuild Workflow](#parity-safe-rebuild-workflow)
 - [Rank Data Workflow](#rank-data-workflow)
 - [Low-Storage Worker Model](#low-storage-worker-model)
 - [SQLite Health Escalation Guard](#sqlite-health-escalation-guard)
@@ -58,9 +61,25 @@ The project is community-built by **JERUZZALEM — DAC Infra Tester**.
 
 ## Overview
 
-Wallet Intelligence Layer v3.6.0 is a DAC Testnet wallet intelligence and comparative ranking system using a static browser interface, locally indexed rank state, compact public rank artifacts, and a no-wallet-connect check flow.
+Wallet Intelligence Layer v3.7.0 is a DAC Testnet wallet intelligence and comparative ranking system using a static browser interface, locally indexed rank state, compact public rank artifacts, and a no-wallet-connect check flow.
 
-The v3.6.0 release returns WIL to the normal wallet-quality scoring model:
+The v3.7.0 release is primarily an **indexing correctness and operational safety release**.
+
+It does not introduce a new scoring formula. Instead, it rebuilds the WIL rank-state database with stricter proof of coverage:
+
+```text
+Deterministic rebuild anchor
++
+Block coverage table
++
+Transaction ledger table
++
+SQLite checkpoint resume
++
+phase-aware worker workflow
+```
+
+The v3.6.0 normal wallet-quality scoring model remains the active scoring policy:
 
 ```text
 Current Native Funds
@@ -96,126 +115,70 @@ Address-prefix shards
 Browser wallet lookup
 ```
 
-Operationally, v3.6.0 also hardens the rank worker lifecycle:
-
-```text
-Historical Backfill
-↓
-Post-Backfill Catch-Up
-↓
-Incremental Micro-Sync
-```
-
-Backfill and catch-up use large safe cycle ceilings with adaptive chunk checkpoints. Incremental sync uses small, frequent, lag-aware micro-sync cycles so the public rank status can remain close to the chain tip after WIL reaches live sync.
+During the v3.7.0 rebuild, public output may temporarily expose lightweight status artifacts rather than complete rank shards. The UI must treat this as a synchronization state, not as a completed global rank dataset.
 
 The shard is only a delivery format. The comparison population remains global.
 
 ---
 
-## v3.6.0 Update Summary
+## v3.7.0 Update Summary
 
-Version `v3.6.0` is the **Back to Normal** release.
+Version `v3.7.0` is the **Parity-Safe Rebuild** release.
 
-This release is documented as:
+The release exists because previous state could claim or approach incremental sync while the indexed wallet and transaction population did not match the full explorer/network population. v3.7.0 rebuilds the state from a known deterministic anchor and adds explicit coverage accounting so this class of silent mismatch is not accepted as complete sync.
+
+Core v3.7.0 rebuild parameters:
 
 ```text
-Back to Normal — inconsistent Conviction by Official DAC Team
+REBUILD_ANCHOR_BLOCK = 15,000,000
+anchor_source = V3_7_0_DETERMINISTIC_REBUILD_ANCHOR
+initial direction = latest_to_genesis
+initial phase = HISTORICAL_BACKFILL_IN_PROGRESS
+state status = REBUILDING
 ```
 
-The reason for the rollback is that the official DAC Testnet Inception Conviction Lock flow was removed from the web testnet path and previously locked funds were refunded. Because of that, Conviction/cutoff scoring is no longer a reliable active scoring basis for WIL.
-
-The v3.6.0 update restores:
+Current high-level workflow:
 
 ```text
-Native Funds Before Conviction
+Backfill from block 15,000,000 down to genesis
 ↓
-Current Native Funds
-```
-
-```text
-Estimated Stake Before Conviction + Conviction Locked
+Catch up from block 15,000,001 toward the chain tip
 ↓
-Current DACC Stake
-```
-
-```text
-Conviction-aware reputation model
-↓
-Normal wallet-quality reputation model
+Incremental sync after catch-up reaches latest
 ```
 
 Key updates:
 
-- Updated WIL web labels to `Wallet Intelligence Layer v3.6.0`.
-- Updated policy label to `WIL-v3.6.0`.
-- Updated model label to `wallet-quality-scoring-v3.6.0-normal`.
-- Updated Dynamic Intelligence Badge label to `DIB-v3.6.0`.
-- Updated Explorer-only Sybil Heuristics label to `EOH-v3.6.0`.
-- Removed Conviction Locked from active scoreboard/UI output.
-- Removed Conviction Timeliness from active badge metadata.
-- Restored Native Funds Score to current live native DACC balance.
-- Restored DACC Stake Score to normal current stake flow.
-- Restored stake classifier to `STAKE_FLOW_CLASSIFIER`.
-- Normalized public worker staking metadata to `ESTIMATED_CURRENT_STAKE`.
-- Normalized public worker staking source to `DAC_STAKE_UNSTAKE_TRANSACTION_FLOW`.
-- Updated rank publisher and snapshot metadata to v3.6.0.
-- Disabled active Conviction worker processing with `CONVICTION_METRICS_ACTIVE = False`.
-- Preserved legacy SQLite Conviction tables for backward compatibility only.
-- Preserved Dynamic Intelligence Badge monotonic progression.
-- Added legacy localStorage fallback so v3.6.0 respects preserved badge tier state from v3.5.0.
-- Added an adaptive chunk checkpoint worker mode for long local backfill and catch-up cycles.
-- Preserved `5,000` blocks as the backfill/catch-up safety unit while allowing a higher cycle ceiling.
-- Validated `50,000/1000/180` as an adaptive backfill/catch-up operating preset.
-- Added phase-aware runner presets for historical backfill, post-backfill catch-up, and incremental sync.
-- Added incremental micro-sync behavior using `10` blocks and `60s` sleep in normal live mode.
-- Added lag-aware incremental recovery presets for larger temporary gaps.
-- Kept `SLEEP_SECONDS=180` for post-backfill catch-up.
-- Added rank-status UI rows for backfill anchor, catch-up anchor, current catch-up position, current incremental position, chain latest block, and incremental lag.
-- Added user-facing pending-rank guards so Wallet Rank Intelligence no longer renders `NaN` for unavailable rank, percentile, tier, or population values.
-- Replaced pre-rank and not-indexed rank placeholders with explicit `Pending`, `Rank pending`, `Percentile pending`, and `population pending` labels.
-- Added `walletRankIntelligence` to `RAW OUTPUT` so the JSON view and Copy JSON include the asynchronous public rank lookup result and rank-engine sync context.
-- Added RAW OUTPUT rank statuses for `LOADING`, `PENDING_VALID_INDEX`, `NOT_INDEXED`, `INDEXED`, `ERROR`, and `NOT_REQUESTED`.
-- Replaced premature `RETURN`-trap cleanup with explicit cycle-level cleanup.
-- Ensured adaptive checkpoint runtime and temporary repository clones are cleaned only after the cycle completes or exits.
+- Reset and rebuilt the active SQLite state for v3.7.0.
+- Added deterministic historical backfill anchor at block `15,000,000`.
+- Added explicit block coverage tracking through `indexed_block_coverage`.
+- Added explicit processed transaction tracking through `indexed_transaction_ledger`.
+- Added guard semantics requiring `tx_count == processed_tx_count` for a block to be complete.
+- Derived total processed transactions from coverage/ledger data instead of trusting a loose counter alone.
+- Kept `state_meta.status = REBUILDING` until full parity is proven.
+- Prevented premature public `SYNCED` / `INCREMENTAL` claims during rebuild.
+- Reset public artifacts to v3.7.0 rebuild/pending status before the first rebuild cycle.
+- Published lightweight public progress artifacts during rebuild.
+- Normalized worker, generator, backup, rank builder, and publisher labels to v3.7.0 where they describe release/workflow status.
+- Updated the public UI browser title, topbar, and hero heading to `Wallet Intelligence Layer v3.7.0`.
+- Preserved v3.6.0 scoring/model labels where they identify unchanged scoring policy.
+- Reconnected and verified Google Drive `rclone` remotes after OAuth token expiration/revocation.
+- Verified GDrive backup upload to `gdrive_wil_a:WIL-v3-rank-state`.
+- Preserved low-storage adaptive worker behavior using temporary clones, adaptive runtime directories, cleanup, and sleep cycles.
 
-Active v3.6.0 scoring anchors:
+Important scoring compatibility note:
 
 ```text
-CURRENT_NATIVE_FUNDS
-CURRENT_DACC_STAKE
-STAKE_FLOW_CLASSIFIER
-ESTIMATED_CURRENT_STAKE
-DAC_STAKE_UNSTAKE_TRANSACTION_FLOW
+Project/UI release label       → v3.7.0
+Rebuild/indexing workflow      → v3.7.0
+Public progress/status labels  → v3.7.0
+Scoring policy marker          → WIL-v3.6.0
+Scoring model marker           → wallet-quality-scoring-v3.6.0-normal
+Dynamic Intelligence Badge     → DIB-v3.6.0
+Explorer-only Sybil Heuristics → EOH-v3.6.0
 ```
 
-Deprecated as active scoring/UI signals:
-
-```text
-Native Funds Before Conviction
-Estimated Stake Before Conviction
-Conviction Locked
-Conviction Timeliness
-Conviction cutoff scoring
-first-lock timing multiplier
-post-cutover Conviction rank signal
-```
-
-Important compatibility note:
-
-Some internal historical field names may remain for compact schema compatibility, such as:
-
-```text
-estimated_stake_before_conviction
-conviction_metrics
-conviction_lock_events
-conviction_locked_wei
-```
-
-In v3.6.0, these are not promoted as active scoring labels. For example, the public rank UI displays the compatibility stake key as:
-
-```text
-DACC Stake
-```
+v3.7.0 is therefore not a scoring reset. It is a parity-safe state rebuild and operational correctness release.
 
 ---
 
@@ -231,40 +194,25 @@ v3.3.0 — Stable SQLite-backed production architecture
 v3.4.0 — Worker Acceleration & Operational Hardening
 v3.5.0 — Conviction-aware web, worker, and Compact V3 public rank schema
 v3.6.0 — Back to Normal scoring after official Conviction flow inconsistency, with adaptive checkpoint worker hardening and phase-aware incremental micro-sync
+v3.7.0 — Parity-safe rebuild from deterministic anchor with block coverage and transaction ledger guards
 ```
 
-Version `v3.6.0` keeps the v3.3.0/v3.4.0 architecture but returns the active logic to normal scoring because the official Conviction flow was removed/refunded and became unsuitable as an active score signal.
+Version `v3.7.0` keeps the v3.6.0 normal scoring model but rebuilds the authoritative rank-state path so full sync cannot be accepted without explicit block and transaction coverage.
 
-Later v3.6.0 operational hardening adds:
-
-```text
-Adaptive backfill/catch-up ceiling
-+
-SQLite health escalation guard
-+
-phase-aware incremental micro-sync
-+
-rank status freshness fields
-+
-pending rank state guards
-+
-RAW OUTPUT Wallet Rank Intelligence context
-```
-
-“Production-ready” refers to the completed and validated architecture. Rank completeness still follows the current synchronization phase. During historical backfill or catch-up, the UI must not imply that the full chain population is already finalized.
+“Production-ready” refers to the architecture and safety model. Rank completeness still follows the current synchronization phase. During historical backfill or catch-up, the UI must not imply that the full chain population is already finalized.
 
 ---
 
 ## Relationship to Previous Projects
 
-Wallet Intelligence Layer v3.6.0 is part of a broader DAC tooling progression.
+Wallet Intelligence Layer v3.7.0 is part of a broader DAC tooling progression.
 
 | Project | Version | Role in the Progression | Reference |
 |---|---:|---|---|
 | DAC Sender | `v1.4.3` | Activity-generation and testnet interaction tool. | [DAC Sender](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/Sender-Web) |
 | Wallet Intelligence Layer | `v1.5.4` | First wallet intelligence layer focused on reading public DAC wallet activity. | [Wallet Intelligence Layer v1](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v1) |
 | Wallet Intelligence Layer | `v2.0.2` | Dynamic wallet-bound status badge workflow. | [Wallet Intelligence Layer v2](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v2) |
-| Wallet Intelligence Layer | `v3.6.0` | Global comparative wallet intelligence using local DAC nodes, SQLite state, Compact V3 rank artifacts, normal current-funds/current-stake scoring, adaptive catch-up, and phase-aware incremental micro-sync. | [Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
+| Wallet Intelligence Layer | `v3.7.0` | Global comparative wallet intelligence using local DAC nodes, SQLite state, Compact V3 rank artifacts, normal v3.6.0 scoring policy, and parity-safe rebuild/indexing guards. | [Wallet Intelligence Layer v3](https://github.com/EdLWEISS186/dac-dual-node-cgnat-setup/tree/main/DAC-Contributions/dac-wallet-intelligence-layer/wallet-intelligence-layer-v3) |
 
 ```text
 DAC Sender
@@ -284,7 +232,7 @@ Wallet Intelligence Layer v3
 
 ## Architecture Topology
 
-Wallet Intelligence Layer v3.6.0 uses the hybrid local-processing and public-delivery architecture established in v3.3.0.
+Wallet Intelligence Layer v3.7.0 uses the hybrid local-processing and public-delivery architecture established in v3.3.0, the normal scoring policy restored in v3.6.0, and the parity-safe indexing guards added in v3.7.0.
 
 ```text
                            ┌──────────────────────────────┐
@@ -305,13 +253,13 @@ Wallet Intelligence Layer v3.6.0 uses the hybrid local-processing and public-del
                            ┌──────────────────────────────┐
                            │ Phase-Aware Local Runner     │
                            │ Backfill / Catch-up / Micro  │
-                           │ v3.6.0 normal scoring        │
+                           │ low-storage temp clone model │
                            └──────────────┬───────────────┘
                                           ▼
                            ┌──────────────────────────────┐
                            │ Local RPC Rank Worker        │
-                           │ SQLite-backed indexing       │
-                           │ normal stake/rank worker     │
+                           │ v3.7.0 parity-safe rebuild   │
+                           │ v3.6.0 scoring compatibility │
                            └──────────────┬───────────────┘
                                           ▼
                            ┌──────────────────────────────┐
@@ -328,7 +276,7 @@ Wallet Intelligence Layer v3.6.0 uses the hybrid local-processing and public-del
                            ┌──────────────────────────────┐
                            │ Authoritative SQLite State   │
                            │ wallet / stake / NFT / sync  │
-                           │ legacy compatibility state   │
+                           │ coverage / transaction ledger│
                            └───────────┬───────────┬──────┘
                                        │           │
                        ┌───────────────┘           └────────────────┐
@@ -341,7 +289,6 @@ Wallet Intelligence Layer v3.6.0 uses the hybrid local-processing and public-del
                                                      ┌──────────────────────────┐
                                                      │ Compact V3 Rank Artifacts│
                                                      │ summary / index / shards │
-                                                     │ normal public signals    │
                                                      └─────────────┬────────────┘
                                                                    ▼
                                                      ┌──────────────────────────┐
@@ -398,7 +345,7 @@ Expected chain ID:
 
 ### Current DACC Stake Flow
 
-v3.6.0 uses normal stake/unstake flow for current DACC stake estimation.
+v3.7.0 keeps the v3.6.0 normal stake/unstake flow for current DACC stake estimation.
 
 ```text
 staking_metric = ESTIMATED_CURRENT_STAKE
@@ -416,11 +363,38 @@ Estimated Current Stake = totalStakeIn - totalUnstakeOut
 
 Legacy Conviction tables may remain in SQLite for backward compatibility with v3.5.0 state.
 
-In v3.6.0, Conviction is not an active public scoring or rank signal.
+In v3.7.0, Conviction remains inactive as a public scoring or rank signal.
 
 ```text
 CONVICTION_METRICS_ACTIVE = False
 ```
+
+---
+
+## Scoring Compatibility Model
+
+v3.7.0 separates the **release / indexing workflow version** from the **scoring policy version**.
+
+The project and rebuild workflow are v3.7.0:
+
+```text
+Wallet Intelligence Layer v3.7.0
+Parity-Safe Rebuild
+V3_7_0_DETERMINISTIC_REBUILD_ANCHOR
+```
+
+The active wallet-quality scoring policy remains v3.6.0:
+
+```text
+WIL-v3.6.0
+wallet-quality-scoring-v3.6.0-normal
+DIB-v3.6.0
+EOH-v3.6.0
+```
+
+This is intentional.
+
+v3.7.0 does not change the formula for reputation scoring, badge tiering, or Explorer-only Sybil Heuristics. It changes the safety of the state that feeds global rank and public status.
 
 ---
 
@@ -432,7 +406,7 @@ The active heavy state is stored outside GitHub:
 ~/wil-v3-rank-state/wil-v3-rank-state.sqlite
 ```
 
-SQLite is the source of truth for the v3.6.0 rank worker.
+SQLite is the source of truth for the v3.7.0 rank worker.
 
 Principal logical tables include:
 
@@ -445,6 +419,8 @@ counters
 state_meta
 enrichment_queue
 official_inception_nft_repair_state
+indexed_block_coverage
+indexed_transaction_ledger
 ```
 
 Legacy compatibility tables may also exist:
@@ -454,7 +430,82 @@ conviction_lock_events
 conviction_metrics
 ```
 
-These legacy tables are retained to avoid breaking historical state, but Conviction is not active in v3.6.0 scoring.
+These legacy tables are retained to avoid breaking historical state, but Conviction is not active in v3.7.0 scoring.
+
+### v3.7.0 Coverage Tables
+
+`indexed_block_coverage` records whether a block was fully processed.
+
+A block is complete only when:
+
+```text
+tx_count == processed_tx_count
+status = COMPLETE
+```
+
+`indexed_transaction_ledger` records processed transactions for the coverage range.
+
+A healthy parity checkpoint should satisfy:
+
+```text
+SUM(indexed_block_coverage.tx_count)
+=
+SUM(indexed_block_coverage.processed_tx_count)
+=
+COUNT(indexed_transaction_ledger)
+```
+
+This is the core v3.7.0 guard against silent missing block or transaction data.
+
+---
+
+## Parity-Safe Rebuild Workflow
+
+v3.7.0 starts from a deterministic historical anchor:
+
+```text
+historical_backfill_anchor_block = 15000000
+historical_backfill_anchor_source = V3_7_0_DETERMINISTIC_REBUILD_ANCHOR
+```
+
+The rebuild sequence is:
+
+```text
+1. HISTORICAL_BACKFILL_IN_PROGRESS
+   Process block 15,000,000 downward toward genesis.
+
+2. POST_BACKFILL_CATCH_UP
+   After genesis is reached, process forward from block 15,000,001 toward the chain tip.
+
+3. INCREMENTAL
+   After catch-up reaches latest, process newly produced blocks in small live cycles.
+```
+
+During rebuild:
+
+```text
+state_meta.status = REBUILDING
+rank_lookup_enabled = false until valid rank artifacts exist
+rank_shards_published = false until full rank publisher is safely run
+```
+
+The system should not claim full rank completeness until:
+
+```text
+historical backfill is complete
++
+post-backfill catch-up is complete
++
+coverage has no missing blocks
++
+all complete blocks satisfy tx_count == processed_tx_count
++
+ledger row count equals processed transaction sum
++
+state is no longer REBUILDING
+```
+
+This is the central difference between v3.7.0 and the older state that could appear synced while still having wallet/transaction gaps.
 
 ---
 
@@ -462,17 +513,19 @@ These legacy tables are retained to avoid breaking historical state, but Convict
 
 The main worker uses three synchronization phases.
 
-| Phase | Meaning | v3.6.0 runner behavior |
+| Phase | Meaning | v3.7.0 runner behavior |
 |---|---|---|
-| `HISTORICAL_BACKFILL_IN_PROGRESS` | Processes historical blocks backward toward genesis. | Large adaptive ceiling, 5,000-block safety chunks, 180s sleep. |
+| `HISTORICAL_BACKFILL_IN_PROGRESS` | Processes historical blocks backward from block 15,000,000 toward genesis. | Large adaptive ceiling, 5,000-block safety chunks, 180s sleep. |
 | `POST_BACKFILL_CATCH_UP` | Fills the forward gap created while backfill was running. | Large adaptive ceiling, 5,000-block safety chunks, 180s sleep. |
 | `INCREMENTAL` | Processes newly produced blocks after catch-up reaches the chain tip. | Small lag-aware micro-sync cycles, normally 10 blocks, 60s sleep. |
 
 During long historical backfill or post-backfill catch-up, the worker may run in adaptive checkpoint mode. In that mode, each 5,000-block chunk is treated as an evaluation point. The cycle may continue toward a larger ceiling when the chunk is light, or stop early when the chunk is dense or the device shows pressure.
 
-Worker responsibilities in v3.6.0:
+Worker responsibilities in v3.7.0:
 
 - block transactions;
+- block-level coverage accounting;
+- per-transaction ledger accounting;
 - senders and recipients;
 - native-value flow;
 - gas usage;
@@ -486,7 +539,7 @@ Worker responsibilities in v3.6.0:
 
 Lightweight status may include sync phase, last synced block, next backfill block, catch-up next block, incremental next block, latest chain block at sync, indexed wallet count, total processed transactions, state backend, feature support flags, and public rank readiness.
 
-Global rank generation is handled separately.
+Global rank generation is handled separately and should not be run as a complete public snapshot until rebuild parity is proven.
 
 ---
 
@@ -508,15 +561,24 @@ remove temporary work
 
 Temporary work may include a temporary repository clone, a consistent source database snapshot, a temporary rank-build database, a temporary snapshot repository, compressed backup work, adaptive runtime checkpoint files, and temporary manifests.
 
-This design keeps daily source work lightweight and prevents generated operational data from being accidentally committed.
+The active dashboard/runner workflow uses a temporary clone for each cycle. The runner publishes lightweight public status artifacts, cleans temporary runtime directories, cleans the temporary repository clone, then sleeps before the next cycle.
 
-The low-storage runner is phase-aware in v3.6.0. It resolves the current synchronization phase from SQLite before each run and applies the correct preset for backfill, catch-up, or incremental sync.
+Observed v3.7.0 operating pattern:
+
+```text
+MAX_BLOCKS=50000
+BALANCE_ENRICH_LIMIT=1000
+SLEEP_SECONDS=180
+ADAPTIVE_CHUNK_SIZE=5000
+```
+
+This design keeps daily source work lightweight and prevents generated operational data from being accidentally committed.
 
 ---
 
 ## SQLite Health Escalation Guard
 
-v3.6.0 includes a SQLite health guard to protect the authoritative rank-state database from silent corruption or unsafe writes.
+v3.7.0 keeps the SQLite health guard to protect the authoritative rank-state database from silent corruption or unsafe writes.
 
 The guard supports three modes:
 
@@ -573,7 +635,7 @@ restore or repair before continuing
 
 ## Adaptive Chunk Checkpoint Worker
 
-v3.6.0 adds an adaptive chunk checkpoint worker mode for the local RPC rank worker.
+v3.7.0 keeps the adaptive chunk checkpoint worker mode for the local RPC rank worker.
 
 The purpose is to make historical backfill and post-backfill catch-up faster without removing the original safety behavior of the `5,000/1000/180` worker preset.
 
@@ -636,7 +698,9 @@ publish once
 sleep 180s
 ```
 
-The sleep duration is not reduced for backfill/catch-up. Instead, the worker reduces unnecessary sleep frequency when it is processing light block ranges.
+Dense ranges may stop after one chunk, behaving like the original `5,000/1000/180` baseline.
+
+Light ranges may complete multiple chunks, reducing calendar time to reach incremental sync.
 
 ### Safety model
 
@@ -660,87 +724,13 @@ CPU idle percentage
 IO wait percentage
 ```
 
-Default threshold examples:
-
-```text
-ADAPTIVE_MAX_CHUNK_SECONDS=180
-ADAPTIVE_MAX_CHUNK_TX=5000
-ADAPTIVE_MAX_CHUNK_WALLET_ROWS=1000
-ADAPTIVE_MAX_CHUNK_STAKING_ROWS=500
-ADAPTIVE_MAX_CHUNK_WAL_GROWTH_BYTES=536870912
-ADAPTIVE_MIN_FREE_KB=26214400
-ADAPTIVE_MIN_MEM_AVAILABLE_KB=1048576
-ADAPTIVE_MAX_SWAP_USED_KB=1048576
-ADAPTIVE_MAX_WORKER_MEM_KB=768000
-ADAPTIVE_MAX_LOAD_FACTOR_X100=150
-ADAPTIVE_MIN_CPU_IDLE_PCT=15
-ADAPTIVE_MAX_IO_WAIT_PCT=20
-```
-
-If a chunk exceeds a threshold, the cycle stops early.
-
-Example stop reasons:
-
-```text
-tx_density_high_20873_gt_5000
-load_high_11.34_gt_9.00
-io_wait_high_22.00_gt_20
-cpu_idle_low_0.00_lt_15
-```
-
 A stop-early cycle is not treated as a worker failure. It means the adaptive safety layer worked as intended.
-
-### Cleanup lifecycle
-
-The adaptive runner uses explicit cycle-level cleanup:
-
-```text
-cycle starts
-↓
-create temporary repo clone
-↓
-create adaptive runtime checkpoint directory
-↓
-run chunk 1..N
-↓
-complete full ceiling or stop early
-↓
-publish completed state
-↓
-clean adaptive runtime directory
-↓
-clean temporary repo clone
-↓
-sleep 180s
-```
-
-The runner intentionally does not clean the temporary repository after a single chunk, because subsequent chunks in the same cycle still need the cloned source tree.
-
-Validated cleanup markers:
-
-```text
-cleanup_adaptive_runtime=True
-cleanup_temp_workdir=True
-```
-
-### Interpretation of 50,000-block mode
-
-The `50,000` preset should be interpreted as:
-
-```text
-Try up to 50,000 blocks when safe.
-Fall back to 5,000-block behavior when dense or resource-heavy.
-```
-
-Dense ranges may stop after one chunk, behaving like the original `5,000/1000/180` baseline.
-
-Light ranges may complete all ten chunks, significantly reducing calendar time to reach incremental sync.
 
 ---
 
 ## Phase-Aware Incremental Micro-Sync
 
-v3.6.0 adds a phase-aware runtime preset layer to the low-storage runner.
+v3.7.0 keeps the phase-aware runtime preset layer to the low-storage runner.
 
 The runner reads the current sync phase from SQLite before each cycle and applies a preset appropriate to the phase.
 
@@ -777,53 +767,6 @@ repeat
 
 This does not make WIL real-time, but it makes the freshness gap explicit and small.
 
-### Incremental lag model
-
-The UI can display:
-
-```text
-Current Incremental Position
-Chain Latest
-Incremental Lag
-```
-
-The lag is calculated as:
-
-```text
-lag_blocks = max(0, chain_latest_block - incremental_next_block + 1)
-```
-
-Example UI interpretation:
-
-```text
-Incremental Sync        INCREMENTAL
-Current Position        block 15,062,125
-Chain Latest            block 15,062,130
-Incremental Lag         6 blocks
-```
-
-This lets users understand how close the public WIL output is to the latest known chain block.
-
-### Graceful activation
-
-The phase-aware runner source becomes active after the currently running runner process is restarted or a new runner process starts from the updated source.
-
-The safe operational order is:
-
-```text
-let current catch-up chunk finish
-↓
-let worker publish completed state
-↓
-stop runner gracefully
-↓
-pull latest source locally
-↓
-restart runner
-↓
-confirm phase-aware preset log line
-```
-
 ---
 
 ## Global Rank Builder
@@ -852,18 +795,20 @@ The builder:
 
 Rank calculation occurs before sharding. A wallet stored in `ab.json` is still ranked against the complete indexed population, not only against addresses beginning with `0xab`.
 
+In v3.7.0, the full global rank builder should be run only after parity-safe rebuild conditions are satisfied.
+
 ---
 
 ## Compact Public Rank Schema V3
 
-v3.6.0 keeps Compact V3 delivery:
+v3.7.0 keeps Compact V3 delivery:
 
 ```text
 WIL_V3_COMPACT_ARRAY_V3
 SHARDED_COMPACT_V3
 ```
 
-However, v3.6.0 no longer promotes Conviction Locked as an active comparative signal.
+The v3.6.0 scoring model remains active and Conviction Locked is not promoted as an active comparative signal.
 
 The stake compatibility key may remain:
 
@@ -871,7 +816,7 @@ The stake compatibility key may remain:
 estimated_stake_before_conviction
 ```
 
-but in v3.6.0 it is displayed as:
+but in the active UI it is displayed as:
 
 ```text
 DACC Stake
@@ -900,13 +845,13 @@ WIL_V3_COMPACT_ARRAY_V2
 WIL_V3_COMPACT_ARRAY_V3
 ```
 
-Older snapshots remain readable, while v3.6.0 displays active labels according to the normal scoring model.
+Older snapshots remain readable, while v3.7.0 displays active labels according to the normal v3.6.0 scoring model.
 
 ---
 
 ## Ranking Model
 
-WIL v3.6.0 separates two related but different concepts:
+WIL v3.7.0 separates two related but different concepts:
 
 ```text
 Global comparative public rank
@@ -918,7 +863,7 @@ Live wallet reputation score
 
 ### Comparative rank cards
 
-v3.6.0 exposes normal comparative wallet signals, including:
+v3.7.0 exposes normal comparative wallet signals, including:
 
 ```text
 Native Funds
@@ -960,7 +905,7 @@ DACC Stake and Official Testnet Inception NFTs are displayed separately and are 
 
 ### Live Reputation Scoring Layer
 
-| Component | Max Points | v3.6.0 interpretation |
+| Component | Max Points | Active interpretation |
 |---|---:|---|
 | Transaction Score | 20 | Wallet activity volume |
 | NFT Diversity Score | 10 | Number of distinct NFT collections |
@@ -986,7 +931,7 @@ CURRENT_DACC_STAKE
 
 ## Dynamic Intelligence Badge
 
-The Dynamic Intelligence Badge follows monotonic progression behavior in v3.6.0.
+The Dynamic Intelligence Badge follows monotonic progression behavior.
 
 A badge update is offered only when the newly calculated tier is higher than the highest known tier already achieved.
 
@@ -997,7 +942,11 @@ This means:
 - an update is not offered for the same or lower tier;
 - the highest known badge tier is preserved locally.
 
-v3.6.0 also reads v3.5.0 preserved badge state as a fallback.
+Active badge engine label remains:
+
+```text
+DIB-v3.6.0
+```
 
 Local preserved badge keys:
 
@@ -1006,11 +955,7 @@ wil:v3.6.0:highestBadgeClass:<wallet>
 wil:v3.5.0:highestBadgeClass:<wallet>
 ```
 
-Active badge engine label:
-
-```text
-DIB-v3.6.0
-```
+These remain v3.6.0/v3.5.0 intentionally so existing badge progression state is not broken by the v3.7.0 indexing rebuild.
 
 ---
 
@@ -1065,23 +1010,36 @@ wil-v3-rank-data
 
 Safety rules prevent incomplete snapshots, limited test snapshots, or temporary fixture data from becoming production output.
 
+v3.7.0 operational rule:
+
+```text
+Do not run the dedicated full rank publisher as final production output until the parity-safe rebuild has completed historical backfill, catch-up, and coverage validation.
+```
+
+During rebuild, lightweight public status artifacts may be published to show progress without pretending the global rank dataset is complete.
+
 ---
 
 ## Public Output Files
 
-Public rank artifacts:
+Public rank/status artifacts:
 
 ```text
 wallet-intelligence-layer-v3/
-└── data/
-    ├── wallet-rank-summary.json
-    ├── wallet-rank-index.json
-    └── rank-shards/
-        ├── 00.json
-        ├── 01.json
-        ├── ...
-        └── ff.json
+├── data/
+│   ├── wallet-rank-summary.json
+│   ├── wallet-rank-index.json
+│   └── rank-shards/
+│       ├── 00.json
+│       ├── 01.json
+│       ├── ...
+│       └── ff.json
+└── rank-data-engine/
+    └── data/
+        └── latest.json
 ```
+
+During rebuild, the public summary/index/latest files may represent rebuild progress rather than final rank shards.
 
 The authoritative SQLite database is not published to GitHub.
 
@@ -1089,12 +1047,28 @@ The authoritative SQLite database is not published to GitHub.
 
 ## UI Architecture
 
-The UI version is:
+The public UI release label is:
 
 ```text
-Wallet Intelligence Layer v3.6.0
+Wallet Intelligence Layer v3.7.0
+```
+
+This appears in the browser title, topbar brand, and hero heading.
+
+The scoring/model labels remain:
+
+```text
+WIL-v3.6.0
+wallet-quality-scoring-v3.6.0-normal
 DIB-v3.6.0
 EOH-v3.6.0
+```
+
+This split is intentional:
+
+```text
+v3.7.0 = public release / parity-safe rebuild / indexing workflow
+v3.6.0 = active scoring, badge, and behavior heuristic model
 ```
 
 Browser lookup flow:
@@ -1103,26 +1077,11 @@ Browser lookup flow:
 2. load the public rank summary;
 3. load the rank index;
 4. derive the address prefix;
-5. fetch the matching rank shard;
+5. fetch the matching rank shard when rank shards are valid;
 6. decode metric values and ranks;
 7. render the Wallet Rank Intelligence section.
 
-Expected v3.6.0 UI labels:
-
-```text
-Wallet Intelligence Layer v3.6.0
-WIL-v3.6.0
-wallet-quality-scoring-v3.6.0-normal
-DIB-v3.6.0
-EOH-v3.6.0
-Native Funds Score
-DACC Stake Score
-CURRENT_NATIVE_FUNDS
-CURRENT_DACC_STAKE
-STAKE_FLOW_CLASSIFIER
-```
-
-The v3.6.0 web UI should not show the old Conviction-era active labels:
+The v3.7.0 web UI should not show old Conviction-era active labels:
 
 ```text
 Conviction Locked
@@ -1153,7 +1112,6 @@ Incremental Sync
 - Incremental Lag
 ```
 
-
 ### Pending Rank State Rendering
 
 Wallet Rank Intelligence is intentionally defensive when rank data is not publish-ready yet.
@@ -1169,18 +1127,10 @@ population pending
 Pending
 ```
 
-Typical pre-rank/catch-up display:
+Typical rebuild display:
 
 ```text
 Network snapshot live · Rank pending until incremental sync
-Rank pending / <population>
-Percentile pending
-```
-
-Typical wallet-not-indexed display:
-
-```text
-Network snapshot live · Wallet not indexed
 Rank pending / <population>
 Percentile pending
 ```
@@ -1192,13 +1142,11 @@ When rank shards are available and the wallet is indexed, the same UI returns to
 Percentile: 99.97%
 ```
 
-This means a pending global rank is shown as an understandable synchronization state, not as a broken numeric value.
-
 ### RAW OUTPUT Wallet Rank Intelligence Context
 
 Wallet Rank Intelligence is loaded asynchronously after the main wallet profile render.
 
-v3.6.0 mirrors that asynchronous rank lookup into the `RAW OUTPUT` object through:
+The UI mirrors that asynchronous rank lookup into the `RAW OUTPUT` object through:
 
 ```text
 walletRankIntelligence
@@ -1206,68 +1154,13 @@ walletRankIntelligence
 
 This makes the visual Wallet Rank Intelligence panel and the copied JSON output consistent.
 
-The RAW OUTPUT field may include:
-
-```json
-{
-  "walletRankIntelligence": {
-    "module": "Wallet Rank Intelligence",
-    "status": "LOADING | PENDING_VALID_INDEX | NOT_INDEXED | INDEXED | ERROR | NOT_REQUESTED",
-    "wallet": "0x...",
-    "hasValidIndex": false,
-    "message": null,
-    "syncStatus": {
-      "syncPhase": "POST_BACKFILL_CATCH_UP | INCREMENTAL",
-      "rankLookupEnabled": false,
-      "rankShardsPublished": false,
-      "historicalBackfillComplete": true,
-      "catchUpStatus": "IN_PROGRESS",
-      "lastSyncedBlock": 15020371,
-      "currentCatchUpPosition": 15020372,
-      "currentIncrementalPosition": null,
-      "chainLatestBlock": 15062719,
-      "incrementalLagBlocks": null,
-      "totalIndexedWallets": 4256165,
-      "totalProcessedTransactions": 24553113
-    },
-    "profile": null,
-    "metrics": [],
-    "pendingVariables": [],
-    "summary": {},
-    "networkSnapshot": {},
-    "updatedAt": "ISO-8601 timestamp"
-  }
-}
-```
-
-Full Explorer Primary behavior:
-
-```text
-initial render
-↓
-walletRankIntelligence.status = LOADING
-↓
-rank lookup completes
-↓
-RAW OUTPUT updates to PENDING_VALID_INDEX / NOT_INDEXED / INDEXED / ERROR
-```
-
-Partial, RPC fallback, or failure output uses:
-
-```text
-walletRankIntelligence.status = NOT_REQUESTED
-```
-
-The Copy JSON button uses the latest `state.lastOutput`, so copied JSON includes the updated Wallet Rank Intelligence context after the asynchronous lookup completes.
-
-
 ---
 
 ## Rank Data Status Model
 
 | State | Meaning |
 |---|---|
-| `HISTORICAL_BACKFILL_IN_PROGRESS` | The worker is processing historical blocks backward toward genesis. |
+| `HISTORICAL_BACKFILL_IN_PROGRESS` | The worker is processing historical blocks backward from the v3.7.0 deterministic anchor toward genesis. |
 | `POST_BACKFILL_CATCH_UP` | Historical backfill reached genesis and the worker is filling the forward gap. |
 | `INCREMENTAL` | The worker has caught up and is processing newly produced blocks. |
 
@@ -1275,7 +1168,8 @@ Important status fields:
 
 | Field | Meaning |
 |---|---|
-| `historical_backfill_anchor_block` | The block at which the historical backfill anchor was established. |
+| `historical_backfill_anchor_block` | The deterministic v3.7.0 backfill anchor block. |
+| `historical_backfill_anchor_source` | Expected to be `V3_7_0_DETERMINISTIC_REBUILD_ANCHOR`. |
 | `local_rpc_backfill_next_block` | The next historical block to process while backfill is active. |
 | `post_backfill_catch_up_from_block` | The first block of the forward catch-up range. |
 | `catch_up_next_block` | The next catch-up block to process. |
@@ -1300,10 +1194,37 @@ gdrive_wil_a:
 gdrive_wil_b:
 ```
 
+Backup root:
+
+```text
+gdrive_wil_a:WIL-v3-rank-state
+gdrive_wil_b:WIL-v3-rank-state
+```
+
+Phase folders:
+
+```text
+Backfill to Genesis
+Post Backfill Catch Up
+Incremental
+latest
+```
+
 Backup cadence:
 
 ```text
 0 */6 * * *
+```
+
+The backup script creates a consistent SQLite snapshot, compresses it with `zstd`, writes a SHA-256 checksum, uploads a timestamped backup to the current phase folder, and updates the `latest` pointer.
+
+v3.7.0 backup validation confirmed:
+
+```text
+snapshot_integrity_check = ok
+upload_enabled = true
+selected_remote = gdrive_wil_a
+version = v3.7.0
 ```
 
 GitHub does not upload the heavy state to Google Drive. The local environment performs backups. GitHub stores source and public rank artifacts; Google Drive stores external heavy-state recovery snapshots.
@@ -1354,7 +1275,7 @@ git add .
 
 ## Security and Trust Model
 
-Wallet Intelligence Layer v3.6.0 keeps the same safety principles as earlier versions:
+Wallet Intelligence Layer v3.7.0 keeps the same safety principles as earlier versions:
 
 ```text
 No private key handling
@@ -1376,128 +1297,159 @@ The system should be treated as a transparent community analytics layer, not an 
 
 ## Validation Status
 
-The v3.6.0 code update was validated before commit and push.
+The v3.7.0 rebuild work was validated in stages.
 
-Representative validation commands:
+### Fresh state reset validation
 
-```text
-python3 -m py_compile scripts/generate_rank_from_sqlite.py
-python3 -m py_compile rank-data-engine/scripts/local_rpc_rank_data_worker.py
-python3 -m py_compile rank-data-engine/scripts/sqlite_rank_state.py
-python3 -m py_compile rank-data-engine/scripts/adaptive_chunk_guard.py
-python3 -m py_compile rank-data-engine/scripts/sqlite_health_guard.py
-bash -n scripts/publish_rank_snapshot_branch.sh
-bash -n rank-data-engine/scripts/run_local_rpc_rank_worker_low_storage.sh
-node --check wallet-intelligence.js
-node --check rank-engine.js
-git diff --check
-```
+A fresh SQLite state was created with schema version `22` and zero stale data rows before rebuild start.
 
-Validated results across the v3.6.0 work:
+Expected fresh state properties:
 
 ```text
-py_compile_all_exit_code=0
-publish_bash_check_exit_code=0
-runner_bash_check_exit_code=0
-worker_py_compile_exit_code=0
-guard_py_compile_exit_code=0
-wallet_js_node_check_exit_code=0
-rank_engine_node_check_exit_code=0
-diff_check_exit_code=0
-commit_exit_code=0
-push_exit_code=0
+checkpoint_rows = 0
+counters_rows = 0
+state_meta_rows = 0
+wallet_metrics_rows = 0
+indexed_block_coverage_rows = 0
+indexed_transaction_ledger_rows = 0
+staking_metrics_rows = 0
+official_inception_nft_tokens_rows = 0
 ```
 
-v3.6.0 browser validation confirmed:
+### Deterministic anchor validation
 
-- header shows `Wallet Intelligence Layer v3.6.0`;
-- policy label shows `WIL-v3.6.0`;
-- policy engine shows `wallet-quality-scoring-v3.6.0-normal`;
-- Conviction Locked card is removed;
-- Native Funds Score uses current native balance;
-- DACC Stake Score uses current stake flow;
-- Wallet Rank Intelligence shows `DACC Stake`;
-- Wallet Rank Intelligence no longer shows `Estimated Stake Before Conviction`;
-- Wallet Rank Intelligence no longer shows `Conviction Locked`;
-- Dynamic Intelligence Badge still only offers update when tier increases;
-- Rank Data Engine Status shows backfill, catch-up, and incremental position rows;
-- Incremental Sync row exposes current position, chain latest, and incremental lag.
-- Wallet Rank Intelligence pending states no longer render user-facing `NaN` values.
-- Pending rank cards render `Rank pending`, `Percentile pending`, and `population pending` labels.
-- RAW OUTPUT includes `walletRankIntelligence` with rank status, sync status, profile, metrics, summary, and network snapshot context.
-- Copy JSON includes the latest asynchronous Wallet Rank Intelligence result after rank lookup completes.
+Initial v3.7.0 dry-run/short-run validation confirmed anchor behavior at block `15,000,000`.
 
-### Adaptive 50,000-Block Ceiling Validation
-
-v3.6.0 adaptive checkpoint mode was validated after explicit cleanup and syntax fixes.
-
-Validated local preset:
+Expected anchor fields:
 
 ```text
-MAX_BLOCKS=50000
-BALANCE_ENRICH_LIMIT=1000
-SLEEP_SECONDS=180
-ADAPTIVE_CHUNK_SIZE=5000
+historical_backfill_anchor_block = 15000000
+historical_backfill_anchor_source = V3_7_0_DETERMINISTIC_REBUILD_ANCHOR
+sync_phase = HISTORICAL_BACKFILL_IN_PROGRESS
 ```
 
-Validation confirmed that `MAX_BLOCKS=50000` behaves as a ceiling, not a forced workload.
+### First real cycle validation
 
-Dense-range behavior:
+A first production rebuild cycle processed 5,000 blocks from block `15,000,000` down to block `14,995,001`.
+
+Representative healthy parity values:
 
 ```text
-target_blocks=50000
-actual_blocks=5000
-chunks=1
-reason=tx_density_high_20873_gt_5000
-cleanup_adaptive_runtime=True
-cleanup_temp_workdir=True
+coverage_rows = 5000
+min_block = 14995001
+max_block = 15000000
+tx_sum = 579058
+processed_sum = 579058
+ledger_rows = 579058
+wallet_rows = 247085
+next_backfill_block = 14995000
+state_meta_project = Wallet Intelligence Layer v3.7.0
+state_meta_status = REBUILDING
 ```
 
-Light-range behavior:
+This confirmed:
 
 ```text
-target_blocks=50000
-actual_blocks=50000
-chunks=10
-chunk1..chunk10 reason=OK
-cleanup_adaptive_runtime=True
-cleanup_temp_workdir=True
+SUM(tx_count) == SUM(processed_tx_count)
+COUNT(indexed_transaction_ledger) == SUM(processed_tx_count)
 ```
 
-### Phase-Aware Incremental Validation
+### Script label normalization validation
 
-The phase-aware runner patch was validated with:
+v3.7.0 script labels were normalized after detecting stale v3.3.0/v3.6.0 release labels in scripts that describe public status, backup, rank builder, and publisher workflow.
+
+Validated outcome:
 
 ```text
-runner_bash_check_exit_code=0
-worker_py_compile_exit_code=0
-guard_py_compile_exit_code=0
-runner_diff_check_exit_code=0
+syntax_ok = YES
+final_stale_scan = NONE
 ```
 
-The incremental UI lag fields were validated with:
+Scoring/model markers are intentionally preserved separately in the public UI.
+
+### Public UI validation
+
+The hosted UI `index.html` was updated only in the public release display areas:
 
 ```text
-wallet_js_node_check_exit_code=0
-rank_engine_node_check_exit_code=0
-ui_diff_check_exit_code=0
+browser title
+brand topbar
+hero heading
 ```
 
-Relevant v3.6.0 commits:
+Updated visible release label:
 
 ```text
-bc7baa8 Update WIL v3.6.0 back to normal scoring
-6fc1f8b4 Clean WIL rank engine position layout
-5e0705b5 Add WIL catch-up and incremental positions to rank UI
-3436291f Add phase-aware incremental micro-sync runner preset
-9f5d9fda Add WIL incremental lag fields to rank UI
-4de2120c Guard WIL rank UI against pending NaN states
-0dcfa8f1 Include WIL rank intelligence in raw output
+Wallet Intelligence Layer v3.7.0
 ```
+
+Preserved model markers:
+
+```text
+EOH-v3.6.0
+DIB-v3.6.0
+WIL-v3.6.0
+```
+
+### Google Drive backup validation
+
+After reconnecting `rclone` OAuth tokens, a manual GDrive backup succeeded.
+
+Validated remote path:
+
+```text
+gdrive_wil_a:WIL-v3-rank-state/Backfill to Genesis
+gdrive_wil_a:WIL-v3-rank-state/latest
+```
+
+Validated files:
+
+```text
+wil-v3-rank-state-2026-06-26T14-11-08Z.sqlite.zst
+wil-v3-rank-state-2026-06-26T14-11-08Z.sqlite.zst.sha256
+wil-v3-rank-state.latest.sqlite.zst
+wil-v3-rank-state.latest.sqlite.zst.sha256
+```
+
+### Current operational status
+
+At the time of this README update, v3.7.0 rebuild is expected to be running through:
+
+```text
+HISTORICAL_BACKFILL_IN_PROGRESS
+↓
+POST_BACKFILL_CATCH_UP
+↓
+INCREMENTAL
+```
+
+The full dedicated rank snapshot should remain disabled until rebuild parity is complete.
 
 ---
 
 ## Changelog
+
+### v3.7.0 — Parity-Safe Rebuild
+
+- Reset the authoritative local SQLite rank state for a clean rebuild.
+- Added deterministic rebuild anchor at block `15,000,000`.
+- Added `V3_7_0_DETERMINISTIC_REBUILD_ANCHOR` as the anchor source marker.
+- Added `indexed_block_coverage` as block-level parity evidence.
+- Added `indexed_transaction_ledger` as processed transaction evidence.
+- Required complete blocks to satisfy `tx_count == processed_tx_count`.
+- Derived processed transaction totals from coverage/ledger state.
+- Kept state status as `REBUILDING` during historical backfill and catch-up.
+- Prevented premature completed/incremental public status during rebuild.
+- Reset public JSON artifacts to v3.7.0 rebuild pending/progress state.
+- Confirmed first 5,000-block production cycle with matching coverage and ledger counts.
+- Preserved v3.6.0 normal wallet-quality scoring policy.
+- Preserved `WIL-v3.6.0`, `wallet-quality-scoring-v3.6.0-normal`, `DIB-v3.6.0`, and `EOH-v3.6.0` as scoring/model markers.
+- Updated public UI title/topbar/hero labels to `Wallet Intelligence Layer v3.7.0`.
+- Normalized worker/status/backup/rank-builder script labels to v3.7.0 where they represent release or workflow status.
+- Reconnected Google Drive `rclone` remotes after OAuth token expiration/revocation.
+- Verified GDrive rollover backup to `gdrive_wil_a:WIL-v3-rank-state`.
+- Preserved low-storage temp-clone workflow and adaptive 5,000-block chunk guard.
+- Preserved phase-aware backfill → catch-up → incremental workflow.
 
 ### v3.6.0 — Back to Normal Scoring and Phase-Aware Worker Hardening
 
@@ -1521,19 +1473,13 @@ bc7baa8 Update WIL v3.6.0 back to normal scoring
 - Updated public worker staking source to `DAC_STAKE_UNSTAKE_TRANSACTION_FLOW`.
 - Disabled active Conviction worker processing with `CONVICTION_METRICS_ACTIVE = False`.
 - Preserved legacy Conviction SQLite state only for backward compatibility.
-- Documented the release as `Back to Normal — inconsistent Conviction by Official DAC Team`.
 - Added SQLite health escalation guard.
 - Added adaptive chunk checkpoint worker mode.
 - Validated the `50,000/1000/180` adaptive ceiling while preserving 5,000-block safety behavior.
 - Added phase-aware runner presets for historical backfill, post-backfill catch-up, and incremental sync.
-- Kept post-backfill catch-up on `SLEEP_SECONDS=180`.
 - Added incremental micro-sync behavior with normal `10` block cycles and `60s` sleep.
-- Added lag-aware incremental recovery for larger sync gaps.
-- Added rank status UI rows for historical backfill, post-backfill catch-up, and incremental sync.
-- Added UI freshness fields for `Chain Latest` and `Incremental Lag`.
 - Added pending-rank UI guards so unavailable rank data is shown as `Pending` / `Rank pending` / `Percentile pending` instead of user-facing `NaN`.
-- Added RAW OUTPUT enrichment for Wallet Rank Intelligence, including rank lookup status, sync status, profile, metrics, summary, and network snapshot context.
-- Updated Copy JSON behavior so copied output includes the latest asynchronous Wallet Rank Intelligence result.
+- Added RAW OUTPUT enrichment for Wallet Rank Intelligence.
 
 ### v3.5.0 — Conviction-aware Web Schema
 
