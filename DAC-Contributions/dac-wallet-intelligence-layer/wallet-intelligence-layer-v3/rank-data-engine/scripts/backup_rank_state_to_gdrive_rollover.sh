@@ -309,7 +309,7 @@ from pathlib import Path
 
 manifest = {
     "schema": "WIL_V3_GDRIVE_ROLLOVER_BACKUP_MANIFEST",
-    "version": "v3.3.0",
+    "version": "v3.7.0",
     "state_backend": "SQLITE",
     "snapshot_method": "PYTHON_SQLITE_BACKUP_API",
     "created_at": datetime.now(

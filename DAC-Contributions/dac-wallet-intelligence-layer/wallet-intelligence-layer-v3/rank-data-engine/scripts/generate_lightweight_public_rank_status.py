@@ -93,7 +93,7 @@ def main() -> None:
             "overall_rank",
         ],
         "note": (
-            "v3.3.0 lightweight publish mode. Full global rank "
+            "v3.7.0 parity-safe rebuild publish mode. Full global rank "
             "generation is deferred until the state is publish-ready."
         ),
     }
@@ -117,7 +117,7 @@ def main() -> None:
     manifest = {
         "schema": "WIL_V3_PUBLIC_RANK_MANIFEST",
         "version": VERSION,
-        "project": "Wallet Intelligence Layer v3.3.0",
+        "project": "Wallet Intelligence Layer v3.7.0",
         "engine": "rank-data-engine",
         "network": status.get("network", "DAC Testnet"),
         "chain_id": status.get("chain_id", 21894),
@@ -149,7 +149,7 @@ def main() -> None:
             "total_ranked_wallets": total_wallets,
         },
         "note": (
-            "v3.3.0 lightweight backfill publish mode. GitHub stores "
+            "v3.7.0 parity-safe rebuild publish mode. GitHub stores "
             "public manifest and summary only. Heavy wallet metrics "
             "remain local with optional Google Drive rollover backup."
         ),
