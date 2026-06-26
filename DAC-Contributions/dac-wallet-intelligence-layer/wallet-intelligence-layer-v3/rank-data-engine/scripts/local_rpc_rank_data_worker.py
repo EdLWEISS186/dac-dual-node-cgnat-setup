@@ -765,21 +765,27 @@ def main() -> None:
     sync_phase = checkpoint.get("sync_phase") or "HISTORICAL_BACKFILL_IN_PROGRESS"
     historical_complete = checkpoint.get("historical_backfill_complete") is True
 
-    # Anchor = highest block that belongs to the historical backfill boundary.
-    # It must remain stable so that post-backfill catch-up can fill the gap:
-    # anchor + 1 -> latest chain head.
+    # v3.7.0 rebuild anchor is deterministic and intentionally rounded.
+    # Backfill covers 15,000,000 -> genesis, then catch-up covers
+    # 15,000,001 -> latest, then incremental continues from latest + 1.
     anchor_block = checkpoint.get("historical_backfill_anchor_block")
 
     if anchor_block is None:
-        anchor_block = checkpoint.get("last_synced_block")
-
-    if anchor_block is None:
-        anchor_block = latest_block
+        anchor_block = V3_7_0_DETERMINISTIC_REBUILD_ANCHOR_BLOCK
+        checkpoint["historical_backfill_anchor_source"] = (
+            "V3_7_0_DETERMINISTIC_REBUILD_ANCHOR"
+        )
 
     anchor_block = int(anchor_block)
     checkpoint["historical_backfill_anchor_block"] = anchor_block
-    checkpoint.setdefault("historical_backfill_anchor_source", "INITIAL_LOCAL_RPC_BACKFILL_ANCHOR")
-    checkpoint.setdefault("post_backfill_catch_up_from_block", anchor_block + 1)
+    checkpoint.setdefault(
+        "historical_backfill_anchor_source",
+        "V3_7_0_DETERMINISTIC_REBUILD_ANCHOR",
+    )
+    checkpoint.setdefault(
+        "post_backfill_catch_up_from_block",
+        anchor_block + 1,
+    )
 
     processed_blocks = 0
     processed_transactions = 0
