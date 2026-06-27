@@ -3,7 +3,7 @@
   "report_type": "observation_window_comparison",
   "comparison_layer_version": "v1.8.1",
   "comparison_scope": "all",
-  "generated_at_utc": "2026-06-27T18:42:27.965488+00:00",
+  "generated_at_utc": "2026-06-27T19:58:14.474226+00:00",
   "window_a": {
     "label": "Window A",
     "description": "Earlier observation segment.",
@@ -572,53 +572,53 @@
     "label": "Window B",
     "description": "Later observation segment.",
     "summary": {
-      "snapshot_count": 36,
+      "snapshot_count": 37,
       "first_index": 37,
-      "latest_index": 72,
+      "latest_index": 73,
       "first_checked_at_utc": "2026-06-13T17:43:45.241764+00:00",
-      "latest_checked_at_utc": "2026-06-27T17:16:45.438386+00:00",
+      "latest_checked_at_utc": "2026-06-27T19:57:07.933682+00:00",
       "overall_status_counts": {
-        "DEGRADED": 14,
+        "DEGRADED": 15,
         "HEALTHY": 16,
         "PARTIAL_OUTAGE": 6
       },
       "endpoint_status_counts": {
         "official_public_rpc": {
-          "DEGRADED": 14,
+          "DEGRADED": 15,
           "HEALTHY": 16,
           "UNHEALTHY": 6
         },
         "explorer_web": {
-          "HEALTHY": 36
+          "HEALTHY": 37
         },
         "primary_explorer_api": {
-          "HEALTHY": 36
+          "HEALTHY": 37
         }
       },
       "endpoint_response_summary": {
         "official_public_rpc": {
-          "average_response_ms": 8141.97,
-          "max_response_ms": 27011.0,
+          "average_response_ms": 8502.95,
+          "max_response_ms": 27901.0,
           "response_class_counts": {
             "FAST": 3,
             "MODERATE": 4,
-            "SLOW": 29
+            "SLOW": 30
           }
         },
         "explorer_web": {
-          "average_response_ms": 632.0,
+          "average_response_ms": 631.73,
           "max_response_ms": 1246.0,
           "response_class_counts": {
             "FAST": 8,
-            "MODERATE": 28
+            "MODERATE": 29
           }
         },
         "primary_explorer_api": {
-          "average_response_ms": 484.81,
+          "average_response_ms": 485.97,
           "max_response_ms": 1157.0,
           "response_class_counts": {
             "FAST": 17,
-            "MODERATE": 19
+            "MODERATE": 20
           }
         }
       }
@@ -1127,18 +1127,32 @@
         "primary_explorer_api_response_class": "FAST",
         "rpc_latest_block_decimal": 15087158,
         "rpc_latest_block_hex": "0xe63636"
+      },
+      {
+        "index": 73,
+        "snapshot_file": "2026-06-27T19-57-07-933682+00-00-health.json",
+        "checked_at_utc": "2026-06-27T19:57:07.933682+00:00",
+        "overall_status": "DEGRADED",
+        "official_public_rpc_status": "DEGRADED",
+        "official_public_rpc_response_class": "SLOW",
+        "explorer_web_status": "HEALTHY",
+        "explorer_web_response_class": "MODERATE",
+        "primary_explorer_api_status": "HEALTHY",
+        "primary_explorer_api_response_class": "MODERATE",
+        "rpc_latest_block_decimal": 15087801,
+        "rpc_latest_block_hex": "0xe638b9"
       }
     ]
   },
   "comparison": {
     "availability_score_a": 0.7014,
-    "availability_score_b": 0.6917,
+    "availability_score_b": 0.6878,
     "availability_direction": "WORSENED",
     "interpretation": [
-      "Overall availability score changed from 0.7014 to 0.6917: WORSENED.",
-      "Official Public RPC average response changed from 2721.96 ms to 8141.97 ms: WORSENED.",
-      "Explorer Web average response changed from 796.08 ms to 632.0 ms: IMPROVED.",
-      "Primary Explorer API average response changed from 434.19 ms to 484.81 ms: WORSENED.",
+      "Overall availability score changed from 0.7014 to 0.6878: WORSENED.",
+      "Official Public RPC average response changed from 2721.96 ms to 8502.95 ms: WORSENED.",
+      "Explorer Web average response changed from 796.08 ms to 631.73 ms: IMPROVED.",
+      "Primary Explorer API average response changed from 434.19 ms to 485.97 ms: WORSENED.",
       "The later observation window shows weaker overall infrastructure availability."
     ]
   },
