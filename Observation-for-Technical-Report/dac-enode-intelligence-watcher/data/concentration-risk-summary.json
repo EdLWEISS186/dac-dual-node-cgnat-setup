@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-27T03:31:51.458792+00:00",
+  "generated_at_utc": "2026-06-27T06:43:36.154303+00:00",
   "source_file": "data/rotation-intelligence-summary.json",
   "method": "heuristic_concentration_assessment",
   "official_classification": false,
@@ -325,21 +325,21 @@
     "dimension": "dac_infrastructure_signal",
     "total_unique_ips": 40,
     "top_name": "Retained Infrastructure Signal",
-    "top_count": 12,
-    "top_percentage": 30.0,
-    "unknown_count": 12,
-    "unknown_percentage": 30.0,
+    "top_count": 13,
+    "top_percentage": 32.5,
+    "unknown_count": 11,
+    "unknown_percentage": 27.5,
     "concentration_label": "LOW",
     "distribution": [
       {
         "name": "Retained Infrastructure Signal",
-        "unique_ip_count": 12,
-        "percentage": 30.0
+        "unique_ip_count": 13,
+        "percentage": 32.5
       },
       {
         "name": "Unknown / No Signal",
-        "unique_ip_count": 12,
-        "percentage": 30.0
+        "unique_ip_count": 11,
+        "percentage": 27.5
       },
       {
         "name": "Community VPS-like Signal",

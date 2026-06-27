@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom Last 7 Days Report
 
-Generated at UTC: `2026-06-27T03:31:51.542799+00:00`
+Generated at UTC: `2026-06-27T06:43:36.229191+00:00`
 
 Report range: **Last 7 Days**
 
@@ -16,10 +16,10 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Range | Last 7 Days |
 | Observation count | 30 |
-| First observed source time | Jun 20, 2026 (05:00 CEST) |
-| Last observed source time | Jun 27, 2026 (05:00 CEST) |
-| Latest watcher checked_at_utc | 2026-06-27T03:31:49.385436+00:00 |
-| Latest source generated time | Sat Jun 27 05:00:01 AM CEST 2026 |
+| First observed source time | Jun 20, 2026 (16:00 CEST) |
+| Last observed source time | Jun 27, 2026 (08:00 CEST) |
+| Latest watcher checked_at_utc | 2026-06-27T06:43:32.954693+00:00 |
+| Latest source generated time | Sat Jun 27 08:00:02 AM CEST 2026 |
 
 ## 2. Enode Movement Summary
 
@@ -27,8 +27,8 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Minimum enode count | 6 |
 | Maximum enode count | 13 |
-| Average enode count | 10.37 |
-| Total added observations | 23 |
+| Average enode count | 10.4 |
+| Total added observations | 22 |
 | Total removed observations | 21 |
 | Target ports observed | 28657 |
 
@@ -43,7 +43,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 0 |
-| Global anomaly summary | 12 anomaly signals were detected across 126 observations. The highest observed anomaly severity is CRITICAL. |
+| Global anomaly summary | 12 anomaly signals were detected across 127 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
@@ -70,13 +70,12 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- | --- | --- | --- |
 | Live ASN | AS51167 | 15 | 37.5 | MODERATE |
 | Live Country | DE | 18 | 45.0 | MODERATE |
-| DAC Infrastructure Signal | Retained Infrastructure Signal | 12 | 30.0 | LOW |
+| DAC Infrastructure Signal | Retained Infrastructure Signal | 13 | 32.5 | LOW |
 
 ## 6. Observation Timeline
 
 | # | Phase | Status | Source Time | Current | Added | Removed | Unchanged | Port |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 97 | automated_watcher | changed | Jun 20, 2026 (05:00 CEST) | 10 | 2 | 0 | 8 | 28657 |
 | 98 | automated_watcher | changed | Jun 20, 2026 (16:00 CEST) | 11 | 1 | 0 | 10 | 28657 |
 | 99 | automated_watcher | changed | Jun 20, 2026 (21:00 CEST) | 11 | 1 | 1 | 10 | 28657 |
 | 100 | automated_watcher | changed | Jun 21, 2026 (00:00 CEST) | 10 | 0 | 1 | 10 | 28657 |
@@ -106,6 +105,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | 124 | automated_watcher | changed | Jun 26, 2026 (10:00 CEST) | 11 | 1 | 0 | 10 | 28657 |
 | 125 | automated_watcher | changed | Jun 26, 2026 (21:00 CEST) | 12 | 1 | 0 | 11 | 28657 |
 | 126 | automated_watcher | changed | Jun 27, 2026 (05:00 CEST) | 10 | 0 | 2 | 10 | 28657 |
+| 127 | automated_watcher | changed | Jun 27, 2026 (08:00 CEST) | 11 | 1 | 0 | 10 | 28657 |
 
 ## 7. Report-Use Notes
 
