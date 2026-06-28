@@ -14,17 +14,17 @@ This report is generated from infrastructure health snapshots and is intended fo
 |---|---|
 | Project | DAC Infrastructure Intelligence Watcher |
 | Snapshot count | 24 |
-| First snapshot | 2026-06-21T07-05-49-768754+00-00-health.json |
-| Latest snapshot | 2026-06-28T06-01-40-043636+00-00-health.json |
-| First checked at UTC | 2026-06-21T07:05:49.768754+00:00 |
-| Latest checked at UTC | 2026-06-28T06:01:40.043636+00:00 |
-| Overall status counts | DEGRADED: 11, HEALTHY: 10, PARTIAL_OUTAGE: 3 |
+| First snapshot | 2026-06-21T10-45-15-026750+00-00-health.json |
+| Latest snapshot | 2026-06-28T09-30-32-330521+00-00-health.json |
+| First checked at UTC | 2026-06-21T10:45:15.026750+00:00 |
+| Latest checked at UTC | 2026-06-28T09:30:32.330521+00:00 |
+| Overall status counts | DEGRADED: 10, HEALTHY: 11, PARTIAL_OUTAGE: 3 |
 
 ## 2. Endpoint Status Counts
 
 | Endpoint | Status counts |
 |---|---|
-| official_public_rpc | DEGRADED: 11, HEALTHY: 10, UNHEALTHY: 3 |
+| official_public_rpc | DEGRADED: 10, HEALTHY: 11, UNHEALTHY: 3 |
 | explorer_web | HEALTHY: 24 |
 | primary_explorer_api | HEALTHY: 24 |
 
@@ -32,15 +32,14 @@ This report is generated from infrastructure health snapshots and is intended fo
 
 | Endpoint | Average response | Max response | Response class counts |
 |---|---:|---:|---|
-| official_public_rpc | 11151.33 ms | 27901.0 ms | SLOW: 24 |
-| explorer_web | 626.25 ms | 1016.0 ms | FAST: 4, MODERATE: 20 |
-| primary_explorer_api | 482.38 ms | 942.0 ms | FAST: 10, MODERATE: 14 |
+| official_public_rpc | 10998.5 ms | 27901.0 ms | SLOW: 24 |
+| explorer_web | 612.75 ms | 942.0 ms | FAST: 4, MODERATE: 20 |
+| primary_explorer_api | 475.96 ms | 942.0 ms | FAST: 10, MODERATE: 14 |
 
 ## 4. Snapshot Timeline
 
 | # | Checked at UTC | Overall | RPC | RPC class | Explorer Web | Web class | Explorer API | API class |
 |---:|---|---|---|---|---|---|---|---|
-| 52 | 2026-06-21T07:05:49.768754+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
 | 53 | 2026-06-21T10:45:15.026750+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
 | 54 | 2026-06-22T16:01:14.927486+00:00 | PARTIAL_OUTAGE | UNHEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
 | 55 | 2026-06-22T21:50:02.920913+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
@@ -64,6 +63,7 @@ This report is generated from infrastructure health snapshots and is intended fo
 | 73 | 2026-06-27T19:57:07.933682+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
 | 74 | 2026-06-27T20:59:11.427839+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
 | 75 | 2026-06-28T06:01:40.043636+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
+| 76 | 2026-06-28T09:30:32.330521+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
 
 ## 5. Status & Response-Class Glossary
 
