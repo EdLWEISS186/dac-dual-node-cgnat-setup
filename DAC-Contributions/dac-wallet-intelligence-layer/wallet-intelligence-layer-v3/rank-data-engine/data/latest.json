@@ -1,18 +1,18 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 23094,
-    "last_sync_official_inception_nft_tokens_changed": 23094,
+    "last_sync_official_inception_nft_events": 6559,
+    "last_sync_official_inception_nft_tokens_changed": 6559,
     "last_sync_processed_blocks": 5000,
-    "last_sync_processed_transactions": 198661,
-    "last_sync_staking_events": 25256,
-    "last_sync_staking_wallets_changed": 18953,
-    "last_sync_wallets_changed": 111802,
-    "native_balance_snapshots": 29000,
-    "total_indexed_wallets": 2789587,
-    "total_official_inception_nft_events": 1020239,
-    "total_processed_transactions": 9885480,
-    "total_staking_events": 1195085
+    "last_sync_processed_transactions": 110396,
+    "last_sync_staking_events": 17720,
+    "last_sync_staking_wallets_changed": 13598,
+    "last_sync_wallets_changed": 61200,
+    "native_balance_snapshots": 30000,
+    "total_indexed_wallets": 2807998,
+    "total_official_inception_nft_events": 1026798,
+    "total_processed_transactions": 9995876,
+    "total_staking_events": 1212805
   },
   "engine": "rank-data-engine",
   "externalized_state": true,
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 2789587
+    "total_ranked_wallets": 2807998
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -40,12 +40,12 @@
     "historical_backfill_anchor_block": 15000000,
     "historical_backfill_complete": false,
     "incremental_next_block": null,
-    "last_sync_at": "2026-06-28T09:11:24+00:00",
-    "last_synced_block": 14855001,
-    "local_rpc_backfill_next_block": 14855000,
-    "local_rpc_latest_block_at_sync": 15090976,
+    "last_sync_at": "2026-06-28T10:13:46+00:00",
+    "last_synced_block": 14850001,
+    "local_rpc_backfill_next_block": 14850000,
+    "local_rpc_latest_block_at_sync": 15091226,
     "phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "updated_at": "2026-06-28T10:10:01+00:00",
+  "updated_at": "2026-06-28T10:43:13+00:00",
   "version": "v3.7.0"
 }
