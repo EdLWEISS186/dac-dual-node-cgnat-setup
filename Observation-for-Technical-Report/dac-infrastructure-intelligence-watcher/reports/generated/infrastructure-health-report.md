@@ -1,6 +1,6 @@
 # DAC Infrastructure Intelligence Watcher — Health Report
 
-Generated from latest watcher state UTC: **2026-06-28T12:51:16.533873+00:00**
+Generated from latest watcher state UTC: **2026-06-28T14:43:06.952490+00:00**
 
 This report is generated from DAC Infrastructure Intelligence Watcher JSON outputs.
 
@@ -15,11 +15,11 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Project | DAC Infrastructure Intelligence Watcher |
 | Watcher version | v1.0.0 |
 | Report layer version | v1.1.0 |
-| Checked at UTC | 2026-06-28T12:51:16.533873+00:00 |
-| Overall status | DEGRADED |
-| Overall summary | All monitored endpoints are reachable, but at least one endpoint is degraded. |
-| Healthy endpoints | 2 |
-| Degraded endpoints | 1 |
+| Checked at UTC | 2026-06-28T14:43:06.952490+00:00 |
+| Overall status | HEALTHY |
+| Overall summary | All monitored DAC infrastructure endpoints are healthy. |
+| Healthy endpoints | 3 |
+| Degraded endpoints | 0 |
 | Unhealthy endpoints | 0 |
 | Total endpoints | 3 |
 
@@ -36,7 +36,7 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 
 | Endpoint | Status | Summary |
 |---|---|---|
-| Official Public RPC | DEGRADED | Public RPC is reachable, but one or more JSON-RPC checks failed. |
+| Official Public RPC | HEALTHY | Public RPC responded to required and optional JSON-RPC checks. |
 | Explorer Web | HEALTHY | Explorer web returned HTTP 200 and recognizable explorer content. |
 | Primary Explorer API | HEALTHY | Explorer API responded successfully to supported stats endpoint. |
 
@@ -44,20 +44,20 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 
 | Field | Value |
 |---|---|
-| RPC status | DEGRADED |
+| RPC status | HEALTHY |
 | Chain ID | 21894 |
 | Chain ID hex | 0x5586 |
-| Latest block hex | 0xe64891 |
-| Latest block decimal | 15091857 |
-| Average response time | 12893 ms |
-| Maximum response time | 21332 ms |
+| Latest block hex | 0xe64a4f |
+| Latest block decimal | 15092303 |
+| Average response time | 4107 ms |
+| Maximum response time | 7465 ms |
 | Response class | SLOW |
 
 | Method | OK | HTTP Status | Result | Error |
 |---|---:|---:|---|---|
 | eth_chainId | True | 200 | 0x5586 | N/A |
-| eth_blockNumber | True | 200 | 0xe64891 | N/A |
-| web3_clientVersion | False | N/A | N/A | HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Read timed out. (read timeout=15) |
+| eth_blockNumber | True | 200 | 0xe64a4f | N/A |
+| web3_clientVersion | True | 200 | gdacnode/DAC Testnet RPC 02/v1.11.6-stable/linux-amd64/go1.22.12 | N/A |
 
 ## 5. Explorer Details
 
@@ -66,30 +66,29 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Status | HEALTHY | HEALTHY |
 | OK | True | True |
 | HTTP / validation | 200 | root_validation=True, stats_ok=True |
-| Response time | 531 ms | avg=433 ms, max=458 ms |
-| Response class | MODERATE | FAST |
+| Response time | 801 ms | avg=472 ms, max=502 ms |
+| Response class | MODERATE | MODERATE |
 | Title / API URL | DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats | https://exptest.dachain.tech/api |
 
 ## 6. Snapshot History Summary
 
 | Field | Value |
 |---|---|
-| Snapshot count | 77 |
+| Snapshot count | 78 |
 | First snapshot | 2026-06-04T09-54-55-772035+00-00-health.json |
-| Latest snapshot | 2026-06-28T12-51-16-533873+00-00-health.json |
-| Overall status counts | DEGRADED: 32, HEALTHY: 34, PARTIAL_OUTAGE: 11 |
+| Latest snapshot | 2026-06-28T14-43-06-952490+00-00-health.json |
+| Overall status counts | DEGRADED: 32, HEALTHY: 35, PARTIAL_OUTAGE: 11 |
 
 | Endpoint | Status counts |
 |---|---|
-| official_public_rpc | DEGRADED: 32, HEALTHY: 34, UNHEALTHY: 11 |
-| explorer_web | HEALTHY: 77 |
-| primary_explorer_api | HEALTHY: 77 |
+| official_public_rpc | DEGRADED: 32, HEALTHY: 35, UNHEALTHY: 11 |
+| explorer_web | HEALTHY: 78 |
+| primary_explorer_api | HEALTHY: 78 |
 
 ## 7. Recent Snapshot Timeline
 
 | # | Snapshot | Overall | RPC | Explorer Web | Explorer API |
 |---:|---|---|---|---|---|
-| 58 | 2026-06-24T16-00-28-478127+00-00-health.json | DEGRADED | DEGRADED | HEALTHY | HEALTHY |
 | 59 | 2026-06-24T18-06-14-278129+00-00-health.json | HEALTHY | HEALTHY | HEALTHY | HEALTHY |
 | 60 | 2026-06-25T07-53-39-662511+00-00-health.json | DEGRADED | DEGRADED | HEALTHY | HEALTHY |
 | 61 | 2026-06-25T10-36-00-952733+00-00-health.json | PARTIAL_OUTAGE | UNHEALTHY | HEALTHY | HEALTHY |
@@ -109,6 +108,7 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | 75 | 2026-06-28T06-01-40-043636+00-00-health.json | DEGRADED | DEGRADED | HEALTHY | HEALTHY |
 | 76 | 2026-06-28T09-30-32-330521+00-00-health.json | HEALTHY | HEALTHY | HEALTHY | HEALTHY |
 | 77 | 2026-06-28T12-51-16-533873+00-00-health.json | DEGRADED | DEGRADED | HEALTHY | HEALTHY |
+| 78 | 2026-06-28T14-43-06-952490+00-00-health.json | HEALTHY | HEALTHY | HEALTHY | HEALTHY |
 
 ## 8. Interpretation Notes
 
