@@ -1,6 +1,6 @@
 # DAC Infrastructure Intelligence Watcher — Health Report
 
-Generated from latest watcher state UTC: **2026-06-30T08:44:47.357691+00:00**
+Generated from latest watcher state UTC: **2026-06-30T11:33:31.986130+00:00**
 
 This report is generated from DAC Infrastructure Intelligence Watcher JSON outputs.
 
@@ -15,7 +15,7 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Project | DAC Infrastructure Intelligence Watcher |
 | Watcher version | v1.0.0 |
 | Report layer version | v1.1.0 |
-| Checked at UTC | 2026-06-30T08:44:47.357691+00:00 |
+| Checked at UTC | 2026-06-30T11:33:31.986130+00:00 |
 | Overall status | DEGRADED |
 | Overall summary | All monitored endpoints are reachable, but at least one endpoint is degraded. |
 | Healthy endpoints | 2 |
@@ -47,17 +47,17 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | RPC status | DEGRADED |
 | Chain ID | 21894 |
 | Chain ID hex | 0x5586 |
-| Latest block hex | N/A |
-| Latest block decimal | N/A |
-| Average response time | 15369 ms |
-| Maximum response time | 18180 ms |
+| Latest block hex | 0xe6745a |
+| Latest block decimal | 15103066 |
+| Average response time | 10667 ms |
+| Maximum response time | 15553 ms |
 | Response class | SLOW |
 
 | Method | OK | HTTP Status | Result | Error |
 |---|---:|---:|---|---|
 | eth_chainId | True | 200 | 0x5586 | N/A |
-| eth_blockNumber | False | N/A | N/A | HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Read timed out. (read timeout=15) |
-| web3_clientVersion | False | N/A | N/A | HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='rpctest.dachain.tech', port=443) at 0x7f5226169a10>, 'Connection to rpctest.dachain.tech timed out. (connect timeout=15)')) |
+| eth_blockNumber | True | 200 | 0xe6745a | N/A |
+| web3_clientVersion | False | N/A | N/A | HTTPSConnectionPool(host='rpctest.dachain.tech', port=443): Read timed out. (read timeout=15) |
 
 ## 5. Explorer Details
 
@@ -66,7 +66,7 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Status | HEALTHY | HEALTHY |
 | OK | True | True |
 | HTTP / validation | 200 | root_validation=True, stats_ok=True |
-| Response time | 686 ms | avg=382 ms, max=419 ms |
+| Response time | 637 ms | avg=477 ms, max=488 ms |
 | Response class | MODERATE | FAST |
 | Title / API URL | DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats | https://exptest.dachain.tech/api |
 
