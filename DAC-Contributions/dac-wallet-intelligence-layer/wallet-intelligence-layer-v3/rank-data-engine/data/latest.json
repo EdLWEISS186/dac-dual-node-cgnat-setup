@@ -1,18 +1,18 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 29964,
-    "last_sync_official_inception_nft_tokens_changed": 29964,
+    "last_sync_official_inception_nft_events": 168,
+    "last_sync_official_inception_nft_tokens_changed": 168,
     "last_sync_processed_blocks": 5000,
-    "last_sync_processed_transactions": 163398,
-    "last_sync_staking_events": 11439,
-    "last_sync_staking_wallets_changed": 4461,
-    "last_sync_wallets_changed": 43967,
-    "native_balance_snapshots": 63000,
-    "total_indexed_wallets": 4007024,
-    "total_official_inception_nft_events": 1908156,
-    "total_processed_transactions": 22145581,
-    "total_staking_events": 2669866
+    "last_sync_processed_transactions": 4849,
+    "last_sync_staking_events": 147,
+    "last_sync_staking_wallets_changed": 36,
+    "last_sync_wallets_changed": 2414,
+    "native_balance_snapshots": 64000,
+    "total_indexed_wallets": 4007233,
+    "total_official_inception_nft_events": 1908324,
+    "total_processed_transactions": 22150430,
+    "total_staking_events": 2670013
   },
   "engine": "rank-data-engine",
   "externalized_state": true,
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 4007024
+    "total_ranked_wallets": 4007233
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -40,12 +40,12 @@
     "historical_backfill_anchor_block": 15000000,
     "historical_backfill_complete": false,
     "incremental_next_block": null,
-    "last_sync_at": "2026-06-30T17:29:56+00:00",
-    "last_synced_block": 14685001,
-    "local_rpc_backfill_next_block": 14685000,
-    "local_rpc_latest_block_at_sync": 15104490,
+    "last_sync_at": "2026-06-30T18:10:31+00:00",
+    "last_synced_block": 14680001,
+    "local_rpc_backfill_next_block": 14680000,
+    "local_rpc_latest_block_at_sync": 15104653,
     "phase": "HISTORICAL_BACKFILL_IN_PROGRESS"
   },
-  "updated_at": "2026-06-30T18:06:13+00:00",
+  "updated_at": "2026-06-30T18:12:13+00:00",
   "version": "v3.7.0"
 }
