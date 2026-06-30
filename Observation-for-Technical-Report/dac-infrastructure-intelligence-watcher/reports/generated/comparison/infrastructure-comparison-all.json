@@ -3,7 +3,7 @@
   "report_type": "observation_window_comparison",
   "comparison_layer_version": "v1.8.1",
   "comparison_scope": "all",
-  "generated_at_utc": "2026-06-30T05:38:43.200006+00:00",
+  "generated_at_utc": "2026-06-30T08:45:35.297852+00:00",
   "window_a": {
     "label": "Window A",
     "description": "Earlier observation segment.",
@@ -629,52 +629,52 @@
     "label": "Window B",
     "description": "Later observation segment.",
     "summary": {
-      "snapshot_count": 40,
+      "snapshot_count": 41,
       "first_index": 41,
-      "latest_index": 80,
+      "latest_index": 81,
       "first_checked_at_utc": "2026-06-14T15:06:02.854660+00:00",
-      "latest_checked_at_utc": "2026-06-29T13:49:24.711303+00:00",
+      "latest_checked_at_utc": "2026-06-30T08:44:47.357691+00:00",
       "overall_status_counts": {
-        "DEGRADED": 18,
+        "DEGRADED": 19,
         "HEALTHY": 18,
         "PARTIAL_OUTAGE": 4
       },
       "endpoint_status_counts": {
         "official_public_rpc": {
-          "DEGRADED": 18,
+          "DEGRADED": 19,
           "HEALTHY": 18,
           "UNHEALTHY": 4
         },
         "explorer_web": {
-          "HEALTHY": 40
+          "HEALTHY": 41
         },
         "primary_explorer_api": {
-          "HEALTHY": 40
+          "HEALTHY": 41
         }
       },
       "endpoint_response_summary": {
         "official_public_rpc": {
-          "average_response_ms": 8932.6,
+          "average_response_ms": 9089.59,
           "max_response_ms": 27901.0,
           "response_class_counts": {
             "FAST": 1,
             "MODERATE": 4,
-            "SLOW": 35
+            "SLOW": 36
           }
         },
         "explorer_web": {
-          "average_response_ms": 632.05,
+          "average_response_ms": 633.37,
           "max_response_ms": 1246.0,
           "response_class_counts": {
             "FAST": 8,
-            "MODERATE": 32
+            "MODERATE": 33
           }
         },
         "primary_explorer_api": {
-          "average_response_ms": 473.95,
+          "average_response_ms": 471.71,
           "max_response_ms": 942.0,
           "response_class_counts": {
-            "FAST": 18,
+            "FAST": 19,
             "MODERATE": 22
           }
         }
@@ -1240,18 +1240,32 @@
         "primary_explorer_api_response_class": "MODERATE",
         "rpc_latest_block_decimal": 15097849,
         "rpc_latest_block_hex": "0xe65ff9"
+      },
+      {
+        "index": 81,
+        "snapshot_file": "2026-06-30T08-44-47-357691+00-00-health.json",
+        "checked_at_utc": "2026-06-30T08:44:47.357691+00:00",
+        "overall_status": "DEGRADED",
+        "official_public_rpc_status": "DEGRADED",
+        "official_public_rpc_response_class": "SLOW",
+        "explorer_web_status": "HEALTHY",
+        "explorer_web_response_class": "MODERATE",
+        "primary_explorer_api_status": "HEALTHY",
+        "primary_explorer_api_response_class": "FAST",
+        "rpc_latest_block_decimal": null,
+        "rpc_latest_block_hex": null
       }
     ]
   },
   "comparison": {
     "availability_score_a": 0.6912,
-    "availability_score_b": 0.7175,
+    "availability_score_b": 0.7134,
     "availability_direction": "IMPROVED",
     "interpretation": [
-      "Overall availability score changed from 0.6912 to 0.7175: IMPROVED.",
-      "Official Public RPC average response changed from 2528.03 ms to 8932.6 ms: WORSENED.",
-      "Explorer Web average response changed from 789.62 ms to 632.05 ms: IMPROVED.",
-      "Primary Explorer API average response changed from 456.57 ms to 473.95 ms: WORSENED.",
+      "Overall availability score changed from 0.6912 to 0.7134: IMPROVED.",
+      "Official Public RPC average response changed from 2528.03 ms to 9089.59 ms: WORSENED.",
+      "Explorer Web average response changed from 789.62 ms to 633.37 ms: IMPROVED.",
+      "Primary Explorer API average response changed from 456.57 ms to 471.71 ms: WORSENED.",
       "The later observation window shows stronger overall infrastructure availability."
     ]
   },
