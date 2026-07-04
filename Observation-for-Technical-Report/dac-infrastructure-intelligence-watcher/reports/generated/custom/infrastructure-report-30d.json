@@ -3,102 +3,60 @@
   "report_type": "custom_range_infrastructure_report",
   "report_layer_version": "v1.8.0",
   "range": "30d",
-  "generated_at_utc": "2026-07-04T16:54:58.788072+00:00",
+  "generated_at_utc": "2026-07-04T17:57:33.994715+00:00",
   "summary": {
-    "snapshot_count": 72,
-    "first_snapshot": "2026-06-04T16-59-50-793517+00-00-health.json",
+    "snapshot_count": 69,
+    "first_snapshot": "2026-06-04T19-47-12-825324+00-00-health.json",
     "latest_snapshot": "2026-06-30T13-28-33-493377+00-00-health.json",
-    "first_checked_at_utc": "2026-06-04T16:59:50.793517+00:00",
+    "first_checked_at_utc": "2026-06-04T19:47:12.825324+00:00",
     "latest_checked_at_utc": "2026-06-30T13:28:33.493377+00:00",
     "overall_status_counts": {
-      "DEGRADED": 31,
-      "HEALTHY": 34,
-      "PARTIAL_OUTAGE": 7
+      "DEGRADED": 30,
+      "HEALTHY": 33,
+      "PARTIAL_OUTAGE": 6
     },
     "endpoint_status_counts": {
       "official_public_rpc": {
-        "DEGRADED": 31,
-        "HEALTHY": 34,
-        "UNHEALTHY": 7
+        "DEGRADED": 30,
+        "HEALTHY": 33,
+        "UNHEALTHY": 6
       },
       "explorer_web": {
-        "HEALTHY": 72
+        "HEALTHY": 69
       },
       "primary_explorer_api": {
-        "HEALTHY": 72
+        "HEALTHY": 69
       }
     },
     "response_time_summary": {
       "official_public_rpc": {
-        "average_response_ms": 6299.31,
+        "average_response_ms": 6467.1,
         "max_response_ms": 27901.0,
         "response_class_counts": {
           "FAST": 3,
-          "MODERATE": 8,
-          "SLOW": 61
+          "MODERATE": 7,
+          "SLOW": 59
         }
       },
       "explorer_web": {
-        "average_response_ms": 622.35,
+        "average_response_ms": 619.59,
         "max_response_ms": 1246.0,
         "response_class_counts": {
           "FAST": 16,
-          "MODERATE": 56
+          "MODERATE": 53
         }
       },
       "primary_explorer_api": {
-        "average_response_ms": 465.29,
+        "average_response_ms": 462.71,
         "max_response_ms": 1157.0,
         "response_class_counts": {
-          "FAST": 41,
-          "MODERATE": 31
+          "FAST": 40,
+          "MODERATE": 29
         }
       }
     }
   },
   "timeline": [
-    {
-      "index": 11,
-      "snapshot_file": "2026-06-04T16-59-50-793517+00-00-health.json",
-      "checked_at_utc": "2026-06-04T16:59:50.793517+00:00",
-      "overall_status": "PARTIAL_OUTAGE",
-      "official_public_rpc_status": "UNHEALTHY",
-      "official_public_rpc_response_class": "MODERATE",
-      "explorer_web_status": "HEALTHY",
-      "explorer_web_response_class": "MODERATE",
-      "primary_explorer_api_status": "HEALTHY",
-      "primary_explorer_api_response_class": "MODERATE",
-      "rpc_latest_block_decimal": null,
-      "rpc_latest_block_hex": null
-    },
-    {
-      "index": 12,
-      "snapshot_file": "2026-06-04T17-34-38-689983+00-00-health.json",
-      "checked_at_utc": "2026-06-04T17:34:38.689983+00:00",
-      "overall_status": "HEALTHY",
-      "official_public_rpc_status": "HEALTHY",
-      "official_public_rpc_response_class": "SLOW",
-      "explorer_web_status": "HEALTHY",
-      "explorer_web_response_class": "MODERATE",
-      "primary_explorer_api_status": "HEALTHY",
-      "primary_explorer_api_response_class": "MODERATE",
-      "rpc_latest_block_decimal": 14954882,
-      "rpc_latest_block_hex": "0xe43182"
-    },
-    {
-      "index": 13,
-      "snapshot_file": "2026-06-04T17-39-38-929050+00-00-health.json",
-      "checked_at_utc": "2026-06-04T17:39:38.929050+00:00",
-      "overall_status": "DEGRADED",
-      "official_public_rpc_status": "DEGRADED",
-      "official_public_rpc_response_class": "SLOW",
-      "explorer_web_status": "HEALTHY",
-      "explorer_web_response_class": "MODERATE",
-      "primary_explorer_api_status": "HEALTHY",
-      "primary_explorer_api_response_class": "FAST",
-      "rpc_latest_block_decimal": null,
-      "rpc_latest_block_hex": null
-    },
     {
       "index": 14,
       "snapshot_file": "2026-06-04T19-47-12-825324+00-00-health.json",
