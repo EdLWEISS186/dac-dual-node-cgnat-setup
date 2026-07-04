@@ -13,37 +13,33 @@ This report is generated from infrastructure health snapshots and is intended fo
 | Field | Value |
 |---|---|
 | Project | DAC Infrastructure Intelligence Watcher |
-| Snapshot count | 77 |
-| First snapshot | 2026-06-04T11-35-39-447567+00-00-health.json |
+| Snapshot count | 73 |
+| First snapshot | 2026-06-04T11-50-50-288397+00-00-health.json |
 | Latest snapshot | 2026-06-30T13-28-33-493377+00-00-health.json |
-| First checked at UTC | 2026-06-04T11:35:39.447567+00:00 |
+| First checked at UTC | 2026-06-04T11:50:50.288397+00:00 |
 | Latest checked at UTC | 2026-06-30T13:28:33.493377+00:00 |
-| Overall status counts | DEGRADED: 34, HEALTHY: 35, PARTIAL_OUTAGE: 8 |
+| Overall status counts | DEGRADED: 31, HEALTHY: 35, PARTIAL_OUTAGE: 7 |
 
 ## 2. Endpoint Status Counts
 
 | Endpoint | Status counts |
 |---|---|
-| official_public_rpc | DEGRADED: 34, HEALTHY: 35, UNHEALTHY: 8 |
-| explorer_web | HEALTHY: 77 |
-| primary_explorer_api | HEALTHY: 77 |
+| official_public_rpc | DEGRADED: 31, HEALTHY: 35, UNHEALTHY: 7 |
+| explorer_web | HEALTHY: 73 |
+| primary_explorer_api | HEALTHY: 73 |
 
 ## 3. Response-Time Summary
 
 | Endpoint | Average response | Max response | Response class counts |
 |---|---:|---:|---|
-| official_public_rpc | 6299.31 ms | 27901.0 ms | FAST: 3, MODERATE: 8, SLOW: 61, UNKNOWN: 5 |
-| explorer_web | 671.05 ms | 2299.0 ms | FAST: 16, MODERATE: 56, UNKNOWN: 5 |
-| primary_explorer_api | 465.29 ms | 1157.0 ms | FAST: 41, MODERATE: 31, UNKNOWN: 5 |
+| official_public_rpc | 6299.31 ms | 27901.0 ms | FAST: 3, MODERATE: 8, SLOW: 61, UNKNOWN: 1 |
+| explorer_web | 626.58 ms | 1246.0 ms | FAST: 16, MODERATE: 56, UNKNOWN: 1 |
+| primary_explorer_api | 465.29 ms | 1157.0 ms | FAST: 41, MODERATE: 31, UNKNOWN: 1 |
 
 ## 4. Snapshot Timeline
 
 | # | Checked at UTC | Overall | RPC | RPC class | Explorer Web | Web class | Explorer API | API class |
 |---:|---|---|---|---|---|---|---|---|
-| 6 | 2026-06-04T11:35:39.447567+00:00 | DEGRADED | DEGRADED | N/A | HEALTHY | N/A | HEALTHY | N/A |
-| 7 | 2026-06-04T11:36:10.013189+00:00 | DEGRADED | DEGRADED | N/A | HEALTHY | N/A | HEALTHY | N/A |
-| 8 | 2026-06-04T11:38:16.082796+00:00 | PARTIAL_OUTAGE | UNHEALTHY | N/A | HEALTHY | N/A | HEALTHY | N/A |
-| 9 | 2026-06-04T11:38:26.409385+00:00 | DEGRADED | DEGRADED | N/A | HEALTHY | N/A | HEALTHY | N/A |
 | 10 | 2026-06-04T11:50:50.288397+00:00 | HEALTHY | HEALTHY | N/A | HEALTHY | N/A | HEALTHY | N/A |
 | 11 | 2026-06-04T16:59:50.793517+00:00 | PARTIAL_OUTAGE | UNHEALTHY | MODERATE | HEALTHY | MODERATE | HEALTHY | MODERATE |
 | 12 | 2026-06-04T17:34:38.689983+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
