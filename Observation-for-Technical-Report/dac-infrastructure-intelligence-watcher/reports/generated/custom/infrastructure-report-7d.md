@@ -13,34 +13,33 @@ This report is generated from infrastructure health snapshots and is intended fo
 | Field | Value |
 |---|---|
 | Project | DAC Infrastructure Intelligence Watcher |
-| Snapshot count | 6 |
-| First snapshot | 2026-06-28T12-51-16-533873+00-00-health.json |
+| Snapshot count | 5 |
+| First snapshot | 2026-06-28T14-43-06-952490+00-00-health.json |
 | Latest snapshot | 2026-06-30T13-28-33-493377+00-00-health.json |
-| First checked at UTC | 2026-06-28T12:51:16.533873+00:00 |
+| First checked at UTC | 2026-06-28T14:43:06.952490+00:00 |
 | Latest checked at UTC | 2026-06-30T13:28:33.493377+00:00 |
-| Overall status counts | DEGRADED: 3, HEALTHY: 3 |
+| Overall status counts | DEGRADED: 2, HEALTHY: 3 |
 
 ## 2. Endpoint Status Counts
 
 | Endpoint | Status counts |
 |---|---|
-| official_public_rpc | DEGRADED: 3, HEALTHY: 3 |
-| explorer_web | HEALTHY: 6 |
-| primary_explorer_api | HEALTHY: 6 |
+| official_public_rpc | DEGRADED: 2, HEALTHY: 3 |
+| explorer_web | HEALTHY: 5 |
+| primary_explorer_api | HEALTHY: 5 |
 
 ## 3. Response-Time Summary
 
 | Endpoint | Average response | Max response | Response class counts |
 |---|---:|---:|---|
-| official_public_rpc | 10044.83 ms | 21332.0 ms | SLOW: 6 |
-| explorer_web | 680.0 ms | 801.0 ms | MODERATE: 6 |
-| primary_explorer_api | 442.5 ms | 507.0 ms | FAST: 4, MODERATE: 2 |
+| official_public_rpc | 9475.2 ms | 18180.0 ms | SLOW: 5 |
+| explorer_web | 709.8 ms | 801.0 ms | MODERATE: 5 |
+| primary_explorer_api | 444.4 ms | 507.0 ms | FAST: 3, MODERATE: 2 |
 
 ## 4. Snapshot Timeline
 
 | # | Checked at UTC | Overall | RPC | RPC class | Explorer Web | Web class | Explorer API | API class |
 |---:|---|---|---|---|---|---|---|---|
-| 77 | 2026-06-28T12:51:16.533873+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | MODERATE | HEALTHY | FAST |
 | 78 | 2026-06-28T14:43:06.952490+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
 | 79 | 2026-06-29T09:24:55.311755+00:00 | DEGRADED | DEGRADED | SLOW | HEALTHY | MODERATE | HEALTHY | FAST |
 | 80 | 2026-06-29T13:49:24.711303+00:00 | HEALTHY | HEALTHY | SLOW | HEALTHY | MODERATE | HEALTHY | MODERATE |
