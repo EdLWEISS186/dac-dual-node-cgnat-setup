@@ -113,7 +113,7 @@ Full setup details and deep-dive explanations are available in the Wiki:
                                                    │
                 ┌──────────────────────────────────┴───────────────────────────────────┐
                 │                                                                      │
-    ┌───────────▼──────────┐                                            ┌──────────────▼──────────┐
+    ┌───────────▼──────────┐                                           ┌──────────────▼──────────┐
     │    Windows Node      │                                           │          WSL Node       │
     │    Hub · Anchor      │◄─────────────────────────────────────────►│    Support · Secondary  │
     │    .bat scripts      │               static · persist            │       shell scripts     │
