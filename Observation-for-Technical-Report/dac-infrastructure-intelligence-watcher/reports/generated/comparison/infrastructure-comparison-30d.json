@@ -3,77 +3,63 @@
   "report_type": "observation_window_comparison",
   "comparison_layer_version": "v1.8.1",
   "comparison_scope": "30d",
-  "generated_at_utc": "2026-07-06T09:58:31.275271+00:00",
+  "generated_at_utc": "2026-07-06T13:45:02.217174+00:00",
   "window_a": {
     "label": "Window A",
     "description": "Earlier observation segment.",
     "summary": {
-      "snapshot_count": 34,
-      "first_index": 15,
+      "snapshot_count": 33,
+      "first_index": 16,
       "latest_index": 48,
-      "first_checked_at_utc": "2026-06-06T12:16:24.339927+00:00",
+      "first_checked_at_utc": "2026-06-06T15:41:44.603473+00:00",
       "latest_checked_at_utc": "2026-06-19T00:07:49.114576+00:00",
       "overall_status_counts": {
-        "DEGRADED": 15,
+        "DEGRADED": 14,
         "HEALTHY": 16,
         "PARTIAL_OUTAGE": 3
       },
       "endpoint_status_counts": {
         "official_public_rpc": {
-          "DEGRADED": 15,
+          "DEGRADED": 14,
           "HEALTHY": 16,
           "UNHEALTHY": 3
         },
         "explorer_web": {
-          "HEALTHY": 34
+          "HEALTHY": 33
         },
         "primary_explorer_api": {
-          "HEALTHY": 34
+          "HEALTHY": 33
         }
       },
       "endpoint_response_summary": {
         "official_public_rpc": {
-          "average_response_ms": 3321.79,
+          "average_response_ms": 3377.27,
           "max_response_ms": 20946.0,
           "response_class_counts": {
             "FAST": 2,
             "MODERATE": 4,
-            "SLOW": 28
+            "SLOW": 27
           }
         },
         "explorer_web": {
-          "average_response_ms": 608.15,
+          "average_response_ms": 606.42,
           "max_response_ms": 1246.0,
           "response_class_counts": {
             "FAST": 11,
-            "MODERATE": 23
+            "MODERATE": 22
           }
         },
         "primary_explorer_api": {
-          "average_response_ms": 449.85,
+          "average_response_ms": 448.42,
           "max_response_ms": 1157.0,
           "response_class_counts": {
-            "FAST": 24,
+            "FAST": 23,
             "MODERATE": 10
           }
         }
       }
     },
     "timeline": [
-      {
-        "index": 15,
-        "snapshot_file": "2026-06-06T12-16-24-339927+00-00-health.json",
-        "checked_at_utc": "2026-06-06T12:16:24.339927+00:00",
-        "overall_status": "DEGRADED",
-        "official_public_rpc_status": "DEGRADED",
-        "official_public_rpc_response_class": "SLOW",
-        "explorer_web_status": "HEALTHY",
-        "explorer_web_response_class": "MODERATE",
-        "primary_explorer_api_status": "HEALTHY",
-        "primary_explorer_api_response_class": "FAST",
-        "rpc_latest_block_decimal": 14961923,
-        "rpc_latest_block_hex": "0xe44d03"
-      },
       {
         "index": 16,
         "snapshot_file": "2026-06-06T15-41-44-603473+00-00-health.json",
@@ -1073,15 +1059,15 @@
     ]
   },
   "comparison": {
-    "availability_score_a": 0.7309,
+    "availability_score_a": 0.7364,
     "availability_score_b": 0.7309,
-    "availability_direction": "UNCHANGED",
+    "availability_direction": "WORSENED",
     "interpretation": [
-      "Overall availability score changed from 0.7309 to 0.7309: UNCHANGED.",
-      "Official Public RPC average response changed from 3321.79 ms to 9771.24 ms: WORSENED.",
-      "Explorer Web average response changed from 608.15 ms to 629.68 ms: WORSENED.",
-      "Primary Explorer API average response changed from 449.85 ms to 473.88 ms: WORSENED.",
-      "The later observation window shows no major overall availability change."
+      "Overall availability score changed from 0.7364 to 0.7309: WORSENED.",
+      "Official Public RPC average response changed from 3377.27 ms to 9771.24 ms: WORSENED.",
+      "Explorer Web average response changed from 606.42 ms to 629.68 ms: WORSENED.",
+      "Primary Explorer API average response changed from 448.42 ms to 473.88 ms: WORSENED.",
+      "The later observation window shows weaker overall infrastructure availability."
     ]
   },
   "interpretation_guide": [
