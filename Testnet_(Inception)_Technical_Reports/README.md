@@ -21,6 +21,7 @@ The following reports document technical findings from field testing conducted d
 | 11 | [DAC Infrastructure Intelligence Watcher — Public RPC Reliability, Explorer Health, Dashboarding & Report Pipeline](./11.%20DAC%20Infrastructure%20Intelligence%20Watcher.pdf) | June 5, 2026 |
 | 12 | [DAC Domain — On-Chain .dac Identity Registry](./12.%20DAC%20Domain%20%E2%80%94%20On-Chain%20.dac%20Identity%20Registry.pdf) | June 5, 2026 |
 | 13 | [Cross-Platform Dual Node Synchronization & Peer Connectivity Validation](./13.%20Cross-Platform%20Dual%20Node%20Synchronization%20%26%20Peer%20Connectivity%20Validation.pdf) | July 5, 2026 |
+| 14 | [DAC Testnet Infrastructure Status Report — Infrastructure Evolution, Post-Upgrade Runtime Behaviour, Consensus Analysis & Preliminary Mainnet Observation](./14.%20DAC%20Testnet%20Infrastructure%20Status%20Report.pdf) | July 7, 2026 |
 
 ---
 
@@ -77,6 +78,10 @@ The following reports document technical findings from field testing conducted d
 **13. Cross-Platform Dual Node Synchronization & Peer Connectivity Validation** — *July 5, 2026*
 
 > Follow-up infrastructure validation performed on the DAC Testnet dual-node single-machine setup after both nodes were updated to the latest client release (gdacnode v1.11.6). The objective was to confirm that the Windows and Linux (WSL) deployments continued to synchronize correctly, maintain healthy peer connectivity, and remain compatible with one another and with official DAC infrastructure following the update. Both nodes completed synchronization successfully (`eth.syncing = false`, with 17 and 16 peers respectively), mutually discovered each other as active peers, and maintained stable connections to official DAC Authority and RPC nodes across protocol versions eth/66, eth/67, eth/68, and snap/1. No abnormal synchronization behaviour or network instability was observed, and the results establish a reliable baseline for the planned automated Health Check Toolkit.
+
+**14. DAC Testnet Infrastructure Status Report — Infrastructure Evolution, Post-Upgrade Runtime Behaviour, Consensus Analysis & Preliminary Mainnet Observation** — *July 7, 2026*
+
+> Consolidated infrastructure status report tracing the dual-node, single-machine deployment from its original experimental design through to a production-like validation platform, following the upgrade of both Windows and Linux (WSL) nodes to gdacnode v1.11.6. The investigation documents post-upgrade runtime behaviour (Engine API/Beacon-related logging, reward contract initialization, peer connectivity and future-block detection), consensus behaviour and chain reorganization across both platforms, and a preliminary Mainnet deployment observation. A concrete cross-node convergence example is captured directly in both nodes' runtime logs at block 15,137,500 (canonical hash 493117..88374b): the Linux node reached the canonical block immediately on first import, while the Windows node required an explicit chain reorganization roughly 3.27 seconds later — confirming deterministic, platform-independent consensus execution through direct log evidence rather than inference. The report also documents a mixed-client-version network environment coexisting without loss of protocol interoperability, and a preliminary Mainnet deployment test in which the same dual-node architecture started successfully but encountered recurring peer connectivity interruptions over a 2–3 hour window, tentatively attributed to limited active Mainnet peer availability. The report concludes with engineering recommendations feeding into the planned Health Check Toolkit.
 
 ---
 
