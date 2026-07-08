@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom All Time Report
 
-Generated at UTC: `2026-07-08T07:15:38.867351+00:00`
+Generated at UTC: `2026-07-08T09:54:53.132586+00:00`
 
 Report range: **All Time**
 
@@ -15,11 +15,11 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Range | All Time |
-| Observation count | 142 |
+| Observation count | 143 |
 | First observed source time | May 15, 2026 (00:00 CEST) |
-| Last observed source time | Jul 4, 2026 (18:00 CEST) |
-| Latest watcher checked_at_utc | 2026-07-04T16:02:27.136467+00:00 |
-| Latest source generated time | Sat Jul  4 06:00:01 PM CEST 2026 |
+| Last observed source time | Jul 8, 2026 (11:00 CEST) |
+| Latest watcher checked_at_utc | 2026-07-08T09:54:50.646653+00:00 |
+| Latest source generated time | Wed Jul  8 11:00:01 AM CEST 2026 |
 
 ## 2. Enode Movement Summary
 
@@ -27,8 +27,8 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Minimum enode count | 2 |
 | Maximum enode count | 16 |
-| Average enode count | 11.58 |
-| Total added observations | 145 |
+| Average enode count | 11.59 |
+| Total added observations | 146 |
 | Total removed observations | 118 |
 | Target ports observed | 28657 |
 
@@ -36,7 +36,7 @@ Important note: this report is observation-based. It does not make official DAC 
 
 | Phase | Observations |
 | --- | --- |
-| automated_watcher | 128 |
+| automated_watcher | 129 |
 | manual_backfill | 14 |
 
 ## 4. Anomaly Summary
@@ -44,7 +44,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 12 |
-| Global anomaly summary | 12 anomaly signals were detected across 142 observations. The highest observed anomaly severity is CRITICAL. |
+| Global anomaly summary | 12 anomaly signals were detected across 143 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
@@ -227,6 +227,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | 140 | automated_watcher | changed | Jul 3, 2026 (19:00 CEST) | 14 | 0 | 1 | 14 | 28657 |
 | 141 | automated_watcher | changed | Jul 4, 2026 (07:00 CEST) | 13 | 0 | 1 | 13 | 28657 |
 | 142 | automated_watcher | changed | Jul 4, 2026 (18:00 CEST) | 12 | 0 | 1 | 12 | 28657 |
+| 143 | automated_watcher | changed | Jul 8, 2026 (11:00 CEST) | 13 | 1 | 0 | 12 | 28657 |
 
 ## 7. Report-Use Notes
 
