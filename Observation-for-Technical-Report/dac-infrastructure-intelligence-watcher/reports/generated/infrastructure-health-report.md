@@ -1,6 +1,6 @@
 # DAC Infrastructure Intelligence Watcher — Health Report
 
-Generated from latest watcher state UTC: **2026-07-07T23:49:49.096632+00:00**
+Generated from latest watcher state UTC: **2026-07-08T01:52:48.801166+00:00**
 
 This report is generated from DAC Infrastructure Intelligence Watcher JSON outputs.
 
@@ -15,7 +15,7 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Project | DAC Infrastructure Intelligence Watcher |
 | Watcher version | v1.0.0 |
 | Report layer version | v1.1.0 |
-| Checked at UTC | 2026-07-07T23:49:49.096632+00:00 |
+| Checked at UTC | 2026-07-08T01:52:48.801166+00:00 |
 | Overall status | HEALTHY |
 | Overall summary | All monitored DAC infrastructure endpoints are healthy. |
 | Healthy endpoints | 3 |
@@ -47,16 +47,16 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | RPC status | HEALTHY |
 | Chain ID | 21894 |
 | Chain ID hex | 0x5586 |
-| Latest block hex | 0xe71d57 |
-| Latest block decimal | 15146327 |
-| Average response time | 956 ms |
-| Maximum response time | 1097 ms |
+| Latest block hex | 0xe71f43 |
+| Latest block decimal | 15146819 |
+| Average response time | 788 ms |
+| Maximum response time | 888 ms |
 | Response class | MODERATE |
 
 | Method | OK | HTTP Status | Result | Error |
 |---|---:|---:|---|---|
 | eth_chainId | True | 200 | 0x5586 | N/A |
-| eth_blockNumber | True | 200 | 0xe71d57 | N/A |
+| eth_blockNumber | True | 200 | 0xe71f43 | N/A |
 | web3_clientVersion | True | 200 | gdacnode/DAC Testnet RPC 02/v1.11.6-stable/linux-amd64/go1.22.12 | N/A |
 
 ## 5. Explorer Details
@@ -66,8 +66,8 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Status | HEALTHY | HEALTHY |
 | OK | True | True |
 | HTTP / validation | 200 | root_validation=True, stats_ok=True |
-| Response time | 637 ms | avg=491 ms, max=513 ms |
-| Response class | MODERATE | MODERATE |
+| Response time | 498 ms | avg=388 ms, max=403 ms |
+| Response class | FAST | FAST |
 | Title / API URL | DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats | https://exptest.dachain.tech/api |
 
 ## 6. Snapshot History Summary
