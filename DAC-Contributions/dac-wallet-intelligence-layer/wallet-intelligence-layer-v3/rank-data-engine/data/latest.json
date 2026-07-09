@@ -1,17 +1,17 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 78352,
-    "last_sync_official_inception_nft_tokens_changed": 78352,
+    "last_sync_official_inception_nft_events": 84440,
+    "last_sync_official_inception_nft_tokens_changed": 84440,
     "last_sync_processed_blocks": 5000,
-    "last_sync_processed_transactions": 386655,
+    "last_sync_processed_transactions": 478698,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 163510,
-    "native_balance_snapshots": 109145,
-    "total_indexed_wallets": 6342385,
-    "total_official_inception_nft_events": 2521246,
-    "total_processed_transactions": 29249011,
+    "last_sync_wallets_changed": 106967,
+    "native_balance_snapshots": 110145,
+    "total_indexed_wallets": 6381114,
+    "total_official_inception_nft_events": 2605686,
+    "total_processed_transactions": 29727709,
     "total_staking_events": 2796680
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 6342385
+    "total_ranked_wallets": 6381114
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -35,17 +35,17 @@
   "snapshot_archive_written": false,
   "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
   "sync_status": {
-    "catch_up_next_block": 15060001,
+    "catch_up_next_block": 15065001,
     "catch_up_status": "IN_PROGRESS",
     "historical_backfill_anchor_block": 15000000,
     "historical_backfill_complete": true,
     "incremental_next_block": null,
-    "last_sync_at": "2026-07-09T15:22:46+00:00",
-    "last_synced_block": 15060000,
+    "last_sync_at": "2026-07-09T16:10:36+00:00",
+    "last_synced_block": 15065000,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15155819,
+    "local_rpc_latest_block_at_sync": 15156010,
     "phase": "POST_BACKFILL_CATCH_UP"
   },
-  "updated_at": "2026-07-09T16:06:41+00:00",
+  "updated_at": "2026-07-09T16:56:59+00:00",
   "version": "v3.7.0"
 }
