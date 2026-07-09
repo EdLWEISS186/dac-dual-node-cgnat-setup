@@ -1,7 +1,7 @@
 {
   "external_state_file": "~/wil-v3-rank-state/latest-state.json",
   "externalized_state": true,
-  "generated_at": "2026-07-09T07:15:53+00:00",
+  "generated_at": "2026-07-09T08:11:07+00:00",
   "has_valid_rank_index": false,
   "metrics": [
     "native_funds",
@@ -25,19 +25,19 @@
   "schema": "WIL_V3_RANK_SUMMARY",
   "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
   "sync_status": {
-    "catch_up_next_block": 15015001,
+    "catch_up_next_block": 15020001,
     "catch_up_status": "IN_PROGRESS",
     "historical_backfill_anchor_block": 15000000,
     "historical_backfill_complete": true,
     "incremental_next_block": null,
-    "last_sync_at": "2026-07-09T06:46:17+00:00",
-    "last_synced_block": 15015000,
+    "last_sync_at": "2026-07-09T07:20:00+00:00",
+    "last_synced_block": 15020000,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15153753,
+    "local_rpc_latest_block_at_sync": 15153888,
     "phase": "POST_BACKFILL_CATCH_UP"
   },
-  "total_indexed_wallets": 4216051,
-  "total_processed_transactions": 24710085,
-  "total_ranked_wallets": 4216051,
+  "total_indexed_wallets": 4363871,
+  "total_processed_transactions": 25111449,
+  "total_ranked_wallets": 4363871,
   "version": "v3.7.0"
 }
