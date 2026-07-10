@@ -1,17 +1,17 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 1909,
-    "last_sync_official_inception_nft_tokens_changed": 1909,
-    "last_sync_processed_blocks": 1423,
-    "last_sync_processed_transactions": 121607,
+    "last_sync_official_inception_nft_events": 65,
+    "last_sync_official_inception_nft_tokens_changed": 65,
+    "last_sync_processed_blocks": 100,
+    "last_sync_processed_transactions": 8638,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 132309,
-    "native_balance_snapshots": 130145,
-    "total_indexed_wallets": 8019068,
-    "total_official_inception_nft_events": 3430017,
-    "total_processed_transactions": 35907155,
+    "last_sync_wallets_changed": 12436,
+    "native_balance_snapshots": 131145,
+    "total_indexed_wallets": 8019469,
+    "total_official_inception_nft_events": 3430082,
+    "total_processed_transactions": 35915793,
     "total_staking_events": 2796680
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 8019068
+    "total_ranked_wallets": 8019469
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -39,13 +39,13 @@
     "catch_up_status": "CAUGHT_UP",
     "historical_backfill_anchor_block": 15000000,
     "historical_backfill_complete": true,
-    "incremental_next_block": 15161424,
-    "last_sync_at": "2026-07-10T14:43:48+00:00",
-    "last_synced_block": 15161423,
+    "incremental_next_block": 15161524,
+    "last_sync_at": "2026-07-10T15:10:45+00:00",
+    "last_synced_block": 15161523,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15161423,
+    "local_rpc_latest_block_at_sync": 15161531,
     "phase": "INCREMENTAL"
   },
-  "updated_at": "2026-07-10T15:07:00+00:00",
+  "updated_at": "2026-07-10T15:13:59+00:00",
   "version": "v3.7.0"
 }
