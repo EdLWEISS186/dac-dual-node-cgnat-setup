@@ -1,17 +1,17 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 7513,
-    "last_sync_official_inception_nft_tokens_changed": 7513,
+    "last_sync_official_inception_nft_events": 8969,
+    "last_sync_official_inception_nft_tokens_changed": 8969,
     "last_sync_processed_blocks": 5000,
-    "last_sync_processed_transactions": 131081,
+    "last_sync_processed_transactions": 157956,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 49485,
-    "native_balance_snapshots": 128145,
-    "total_indexed_wallets": 7996627,
-    "total_official_inception_nft_events": 3419139,
-    "total_processed_transactions": 35627592,
+    "last_sync_wallets_changed": 76670,
+    "native_balance_snapshots": 129145,
+    "total_indexed_wallets": 8014109,
+    "total_official_inception_nft_events": 3428108,
+    "total_processed_transactions": 35785548,
     "total_staking_events": 2796680
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 7996627
+    "total_ranked_wallets": 8014109
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -35,17 +35,17 @@
   "snapshot_archive_written": false,
   "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
   "sync_status": {
-    "catch_up_next_block": 15155001,
+    "catch_up_next_block": 15160001,
     "catch_up_status": "IN_PROGRESS",
     "historical_backfill_anchor_block": 15000000,
     "historical_backfill_complete": true,
     "incremental_next_block": null,
-    "last_sync_at": "2026-07-10T11:36:05+00:00",
-    "last_synced_block": 15155000,
+    "last_sync_at": "2026-07-10T12:59:54+00:00",
+    "last_synced_block": 15160000,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15160672,
+    "local_rpc_latest_block_at_sync": 15161007,
     "phase": "POST_BACKFILL_CATCH_UP"
   },
-  "updated_at": "2026-07-10T12:56:11+00:00",
+  "updated_at": "2026-07-10T14:40:13+00:00",
   "version": "v3.7.0"
 }
