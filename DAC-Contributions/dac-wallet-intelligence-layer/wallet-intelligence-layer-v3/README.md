@@ -125,7 +125,7 @@ The shard is only a delivery format. The comparison population remains global.
 
 Version `v3.7.0` is the **Parity-Safe Rebuild** release.
 
-The release exists because previous state could claim or approach incremental sync while the indexed wallet and transaction population did not match the full explorer/network population. v3.7.0 rebuilds the state from a known deterministic anchor and adds explicit coverage accounting so this class of silent mismatch is not accepted as complete sync.
+Following the audit of the v3.6.0 incremental state, the project confirmed that portions of the indexed wallet and transaction population could diverge from the authoritative RPC data. Rather than patching the existing state, v3.7.0 rebuilds the entire authoritative SQLite state from a deterministic anchor and introduces explicit block-coverage and transaction-ledger verification so this class of mismatch cannot silently pass as a completed synchronization.
 
 Core v3.7.0 rebuild parameters:
 
@@ -198,6 +198,19 @@ v3.7.0 — Parity-safe rebuild from deterministic anchor with block coverage and
 ```
 
 Version `v3.7.0` keeps the v3.6.0 normal scoring model but rebuilds the authoritative rank-state path so full sync cannot be accepted without explicit block and transaction coverage.
+
+
+### Why v3.7.0 Was Necessary
+
+Although the v3.6.0 architecture successfully reached the `INCREMENTAL` synchronization phase, later validation revealed that the locally indexed worker state was not fully aligned with the blockchain data returned by the RPC.
+
+The initial suspicion was that this discrepancy originated from repeated architectural restructuring during the early evolution of the v3 project. As the architecture matured from multiple experimental iterations into the stable production workflow, several indexing assumptions and synchronization paths had also evolved. A comprehensive audit later confirmed that this suspicion was correct: despite reaching incremental operation, portions of the indexed state could diverge from authoritative RPC data under certain historical conditions.
+
+Rather than attempting to repair the existing state incrementally, the project adopted a more conservative approach.
+
+Version **v3.7.0 — Parity-Safe Rebuild** was introduced to rebuild the authoritative SQLite state from a deterministic and easily auditable foundation. The rebuild introduces stronger safety guards, explicit block coverage verification, transaction-level accounting, and a deterministic rebuild anchor placed at the round block height **15,000,000**. Using a round-number anchor simplifies future auditing, making it significantly easier to verify coverage boundaries or repeat a complete state audit if similar situations—or any future integrity investigation—become necessary.
+
+As part of this redesign, the worker performs a complete blockchain re-index from the rebuild anchor, ensuring that every indexed block and processed transaction can be independently verified before the project is considered fully synchronized again.
 
 “Production-ready” refers to the architecture and safety model. Rank completeness still follows the current synchronization phase. During historical backfill or catch-up, the UI must not imply that the full chain population is already finalized.
 
