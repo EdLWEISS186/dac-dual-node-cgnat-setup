@@ -1,17 +1,17 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 4,
-    "last_sync_official_inception_nft_tokens_changed": 4,
-    "last_sync_processed_blocks": 10,
-    "last_sync_processed_transactions": 145,
+    "last_sync_official_inception_nft_events": 10,
+    "last_sync_official_inception_nft_tokens_changed": 10,
+    "last_sync_processed_blocks": 25,
+    "last_sync_processed_transactions": 360,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 127,
-    "native_balance_snapshots": 369497,
-    "total_indexed_wallets": 8040309,
-    "total_official_inception_nft_events": 3440103,
-    "total_processed_transactions": 36342646,
+    "last_sync_wallets_changed": 275,
+    "native_balance_snapshots": 369772,
+    "total_indexed_wallets": 8040317,
+    "total_official_inception_nft_events": 3440113,
+    "total_processed_transactions": 36343006,
     "total_staking_events": 2796680
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 8040309
+    "total_ranked_wallets": 8040317
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -39,13 +39,13 @@
     "catch_up_status": "CAUGHT_UP",
     "historical_backfill_anchor_block": 15000000,
     "historical_backfill_complete": true,
-    "incremental_next_block": 15168944,
-    "last_sync_at": "2026-07-11T22:06:26+00:00",
-    "last_synced_block": 15168943,
+    "incremental_next_block": 15168969,
+    "last_sync_at": "2026-07-11T22:10:24+00:00",
+    "last_synced_block": 15168968,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15168953,
+    "local_rpc_latest_block_at_sync": 15168969,
     "phase": "INCREMENTAL"
   },
-  "updated_at": "2026-07-11T22:08:27+00:00",
+  "updated_at": "2026-07-11T22:12:51+00:00",
   "version": "v3.7.0"
 }
