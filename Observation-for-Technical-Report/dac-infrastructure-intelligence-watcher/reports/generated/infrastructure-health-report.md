@@ -1,6 +1,6 @@
 # DAC Infrastructure Intelligence Watcher — Health Report
 
-Generated from latest watcher state UTC: **2026-07-12T11:51:25.965270+00:00**
+Generated from latest watcher state UTC: **2026-07-12T12:59:09.785719+00:00**
 
 This report is generated from DAC Infrastructure Intelligence Watcher JSON outputs.
 
@@ -15,7 +15,7 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Project | DAC Infrastructure Intelligence Watcher |
 | Watcher version | v1.0.0 |
 | Report layer version | v1.1.0 |
-| Checked at UTC | 2026-07-12T11:51:25.965270+00:00 |
+| Checked at UTC | 2026-07-12T12:59:09.785719+00:00 |
 | Overall status | HEALTHY |
 | Overall summary | All monitored DAC infrastructure endpoints are healthy. |
 | Healthy endpoints | 3 |
@@ -47,17 +47,17 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | RPC status | HEALTHY |
 | Chain ID | 21894 |
 | Chain ID hex | 0x5586 |
-| Latest block hex | 0xe7829d |
-| Latest block decimal | 15172253 |
-| Average response time | 566 ms |
-| Maximum response time | 747 ms |
+| Latest block hex | 0xe783ac |
+| Latest block decimal | 15172524 |
+| Average response time | 491 ms |
+| Maximum response time | 549 ms |
 | Response class | MODERATE |
 
 | Method | OK | HTTP Status | Result | Error |
 |---|---:|---:|---|---|
 | eth_chainId | True | 200 | 0x5586 | N/A |
-| eth_blockNumber | True | 200 | 0xe7829d | N/A |
-| web3_clientVersion | True | 200 | gdacnode/DAC Testnet RPC 03/v1.11.6-stable/linux-amd64/go1.22.12 | N/A |
+| eth_blockNumber | True | 200 | 0xe783ac | N/A |
+| web3_clientVersion | True | 200 | gdacnode/DAC-Node 05/v1.11.6-stable/linux-amd64/go1.22.12 | N/A |
 
 ## 5. Explorer Details
 
@@ -66,7 +66,7 @@ It summarizes public RPC health, explorer web availability, explorer API reachab
 | Status | HEALTHY | HEALTHY |
 | OK | True | True |
 | HTTP / validation | 200 | root_validation=True, stats_ok=True |
-| Response time | 428 ms | avg=345 ms, max=383 ms |
+| Response time | 478 ms | avg=360 ms, max=361 ms |
 | Response class | FAST | FAST |
 | Title / API URL | DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats | https://exptest.dachain.tech/api |
 
