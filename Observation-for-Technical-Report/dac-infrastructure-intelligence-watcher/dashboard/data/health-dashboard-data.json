@@ -1,10 +1,10 @@
 {
   "project": "DAC Infrastructure Intelligence Watcher",
   "version": "v1.8.0",
-  "source_latest_checked_at_utc": "2026-07-12T15:32:22.781182+00:00",
+  "source_latest_checked_at_utc": "2026-07-12T16:33:34.999916+00:00",
   "freshness": {
     "status": "FRESH",
-    "age_minutes": 0.05,
+    "age_minutes": 0.03,
     "threshold_minutes": 30,
     "summary": "Latest watcher state is fresh."
   },
@@ -39,11 +39,11 @@
         "summary": "Public RPC responded to required and optional JSON-RPC checks.",
         "chain_id_hex": "0x5586",
         "chain_id_decimal": 21894,
-        "latest_block_hex": "0xe78611",
-        "latest_block_decimal": 15173137,
-        "latency_ms_avg": 730,
-        "latency_ms_max": 749,
-        "latency_class": "MODERATE"
+        "latest_block_hex": "0xe78705",
+        "latest_block_decimal": 15173381,
+        "latency_ms_avg": 421,
+        "latency_ms_max": 477,
+        "latency_class": "FAST"
       },
       {
         "key": "explorer_web",
@@ -67,8 +67,8 @@
         "summary": "Explorer API responded successfully to supported stats endpoint.",
         "root_expected_validation": true,
         "stats_ok": true,
-        "latency_ms_avg": 410,
-        "latency_ms_max": 412,
+        "latency_ms_avg": 362,
+        "latency_ms_max": 366,
         "latency_class": "FAST"
       }
     ],
