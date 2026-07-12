@@ -1,10 +1,10 @@
 {
   "project": "DAC Infrastructure Intelligence Watcher",
   "version": "v1.8.0",
-  "source_latest_checked_at_utc": "2026-07-12T19:48:16.567722+00:00",
+  "source_latest_checked_at_utc": "2026-07-12T20:35:46.962004+00:00",
   "freshness": {
     "status": "FRESH",
-    "age_minutes": 0.1,
+    "age_minutes": 0.05,
     "threshold_minutes": 30,
     "summary": "Latest watcher state is fresh."
   },
@@ -39,11 +39,11 @@
         "summary": "Public RPC responded to required and optional JSON-RPC checks.",
         "chain_id_hex": "0x5586",
         "chain_id_decimal": 21894,
-        "latest_block_hex": "0xe78a10",
-        "latest_block_decimal": 15174160,
-        "latency_ms_avg": 1460,
-        "latency_ms_max": 1579,
-        "latency_class": "SLOW"
+        "latest_block_hex": "0xe78ace",
+        "latest_block_decimal": 15174350,
+        "latency_ms_avg": 628,
+        "latency_ms_max": 827,
+        "latency_class": "MODERATE"
       },
       {
         "key": "explorer_web",
@@ -53,7 +53,7 @@
         "ok": true,
         "summary": "Explorer web returned HTTP 200 and recognizable explorer content.",
         "http_status": 200,
-        "latency_ms": 634,
+        "latency_ms": 649,
         "latency_class": "MODERATE",
         "title": "DAC Inception Testnet blockchain explorer - View DAC Inception Testnet stats",
         "has_explorer_signal": true
@@ -67,8 +67,8 @@
         "summary": "Explorer API responded successfully to supported stats endpoint.",
         "root_expected_validation": true,
         "stats_ok": true,
-        "latency_ms_avg": 488,
-        "latency_ms_max": 496,
+        "latency_ms_avg": 485,
+        "latency_ms_max": 487,
         "latency_class": "FAST"
       }
     ],
