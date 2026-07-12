@@ -1,17 +1,17 @@
 {
   "chain_id": 21894,
   "counters": {
-    "last_sync_official_inception_nft_events": 44,
-    "last_sync_official_inception_nft_tokens_changed": 44,
-    "last_sync_processed_blocks": 25,
-    "last_sync_processed_transactions": 851,
+    "last_sync_official_inception_nft_events": 21,
+    "last_sync_official_inception_nft_tokens_changed": 21,
+    "last_sync_processed_blocks": 10,
+    "last_sync_processed_transactions": 311,
     "last_sync_staking_events": 0,
     "last_sync_staking_wallets_changed": 0,
-    "last_sync_wallets_changed": 555,
-    "native_balance_snapshots": 436849,
-    "total_indexed_wallets": 8051038,
-    "total_official_inception_nft_events": 3449109,
-    "total_processed_transactions": 36475785,
+    "last_sync_wallets_changed": 232,
+    "native_balance_snapshots": 437081,
+    "total_indexed_wallets": 8051056,
+    "total_official_inception_nft_events": 3449130,
+    "total_processed_transactions": 36476096,
     "total_staking_events": 2796680
   },
   "engine": "rank-data-engine",
@@ -27,7 +27,7 @@
     "has_valid_rank_index": false,
     "path": "data/wallet-rank-summary.json",
     "status": "EXTERNALIZED_STATE_BACKFILL_IN_PROGRESS",
-    "total_ranked_wallets": 8051038
+    "total_ranked_wallets": 8051056
   },
   "rank_lookup_enabled": false,
   "rank_shards_published": false,
@@ -39,13 +39,13 @@
     "catch_up_status": "CAUGHT_UP",
     "historical_backfill_anchor_block": 15000000,
     "historical_backfill_complete": true,
-    "incremental_next_block": 15174072,
-    "last_sync_at": "2026-07-12T19:26:00+00:00",
-    "last_synced_block": 15174071,
+    "incremental_next_block": 15174082,
+    "last_sync_at": "2026-07-12T19:29:54+00:00",
+    "last_synced_block": 15174081,
     "local_rpc_backfill_next_block": 0,
-    "local_rpc_latest_block_at_sync": 15174071,
+    "local_rpc_latest_block_at_sync": 15174087,
     "phase": "INCREMENTAL"
   },
-  "updated_at": "2026-07-12T19:28:23+00:00",
+  "updated_at": "2026-07-12T19:31:53+00:00",
   "version": "v3.7.0"
 }
