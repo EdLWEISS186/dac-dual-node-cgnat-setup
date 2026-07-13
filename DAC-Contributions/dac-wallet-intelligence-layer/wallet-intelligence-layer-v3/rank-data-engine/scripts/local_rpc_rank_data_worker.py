@@ -76,8 +76,6 @@ def engine_dir() -> Path:
     return Path(__file__).resolve().parents[1]
 
 
-def latest_path() -> Path:
-    return engine_dir() / "data" / "latest.json"
 
 
 def snapshots_dir() -> Path:
@@ -88,8 +86,6 @@ def public_run_status_path() -> Path:
     return engine_dir() / "data" / "public-run-status.json"
 
 
-def read_json(path: Path) -> Dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def write_json(path: Path, payload: Any) -> None:
@@ -188,28 +184,8 @@ def decode_first_uint256_from_input(
         return None
 
 
-def empty_latest() -> Dict[str, Any]:
-    return {
-        "project": PROJECT,
-        "engine": "rank-data-engine",
-        "network": NETWORK,
-        "chain_id": CHAIN_ID,
-        "data_model": "NORMALIZED_WALLET_METRIC_DELTAS",
-        "raw_transaction_dump": False,
-        "status": "REBUILDING",
-        "updated_at": now_utc(),
-        "sources": {},
-        "checkpoint": {},
-        "counters": {},
-        "wallet_metrics": {},
-    }
 
 
-def load_latest() -> Dict[str, Any]:
-    if latest_path().exists():
-        return read_json(latest_path())
-
-    return empty_latest()
 
 
 def ensure_wallet(wallet_metrics: Dict[str, Any], address: str, block_number: int, tx_hash: str, timestamp: str) -> Dict[str, Any]:
@@ -702,7 +678,12 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if args.sqlite_state and not args.no_snapshot_archive:
+    if not args.sqlite_state:
+        raise SystemExit(
+            "SQLite state is now mandatory. Please provide --sqlite-state."
+        )
+
+    if not args.no_snapshot_archive:
         raise SystemExit(
             "--sqlite-state currently requires --no-snapshot-archive"
         )
@@ -743,17 +724,6 @@ def main() -> None:
             )
         except ValueError:
             heavy_state_local_path = str(sqlite_state.database)
-    else:
-        latest = load_latest()
-        working = deepcopy(latest)
-
-        checkpoint = working.setdefault("checkpoint", {})
-        counters = working.setdefault("counters", {})
-        wallet_metrics = working.setdefault("wallet_metrics", {})
-
-        state_backend = "LEGACY_JSON"
-        heavy_state_local_path = str(latest_path())
-
     chain_id = hex_to_int(rpc_call(rpc_urls, "eth_chainId", []))
 
     if chain_id != CHAIN_ID:
@@ -1439,9 +1409,6 @@ def main() -> None:
             )
 
             public_status["last_run"] = result
-        else:
-            write_json(latest_path(), working)
-
         write_json(public_run_status_path(), public_status)
 
         if snapshot_archive_written:
