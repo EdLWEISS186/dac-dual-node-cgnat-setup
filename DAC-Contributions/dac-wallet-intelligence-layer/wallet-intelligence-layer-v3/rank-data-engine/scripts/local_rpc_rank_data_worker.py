@@ -1261,7 +1261,7 @@ def main() -> None:
         "catch_up_next_block": checkpoint.get("catch_up_next_block"),
         "incremental_next_block": checkpoint.get("incremental_next_block"),
         "stop_reason": stop_reason,
-        "latest_snapshot": working["latest_snapshot"],
+        "latest_snapshot": "externalized-local-state",
         "snapshot_archive_written": snapshot_archive_written,
     }
 
