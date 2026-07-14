@@ -29,7 +29,6 @@ data/rank-shards/
 # GitHub stores only the small public manifest, not heavy state snapshots.
 !rank-data-engine/
 !rank-data-engine/data/
-!rank-data-engine/data/latest.json
 rank-data-engine/data/snapshots/
 rank-data-engine/data/*.state.json
 rank-data-engine/data/*.sqlite
