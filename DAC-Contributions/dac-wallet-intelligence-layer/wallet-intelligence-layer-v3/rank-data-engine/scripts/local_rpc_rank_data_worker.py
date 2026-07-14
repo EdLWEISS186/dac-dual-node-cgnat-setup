@@ -1209,7 +1209,7 @@ def main() -> None:
     if snapshot_archive_written:
         working["latest_snapshot"] = f"data/snapshots/{snapshot_name}"
     else:
-        working["latest_snapshot"] = "data/latest.json"
+        working["latest_snapshot"] = "externalized-local-state"
         working["latest_snapshot_name"] = snapshot_name
 
     working["snapshot_archive_written"] = snapshot_archive_written
