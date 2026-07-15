@@ -1409,6 +1409,16 @@ def main() -> None:
             )
 
             public_status["last_run"] = result
+
+        print(
+            "[DEBUG] public_status.latest_snapshot =",
+            public_status.get("latest_snapshot")
+        )
+        print(
+            "[DEBUG] last_run.latest_snapshot =",
+            public_status.get("last_run", {}).get("latest_snapshot")
+        )
+
         write_json(public_run_status_path(), public_status)
 
         if snapshot_archive_written:
