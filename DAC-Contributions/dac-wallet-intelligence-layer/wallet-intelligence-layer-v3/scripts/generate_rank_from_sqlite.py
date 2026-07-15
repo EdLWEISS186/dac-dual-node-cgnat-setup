@@ -985,10 +985,17 @@ def main() -> None:
         )
 
         publish_ready = (
-            sync_phase == "INCREMENTAL"
-            and historical_complete
-            and catch_up_status
-            in ("CAUGHT_UP", None)
+            (
+                sync_phase == "INCREMENTAL"
+                and historical_complete
+                and catch_up_status
+                in ("CAUGHT_UP", None)
+            )
+            or
+            (
+                sync_phase == "FINALIZED"
+                and checkpoint.get("final_snapshot_ready") is True
+            )
         )
 
         if not publish_ready and not args.allow_incomplete:
