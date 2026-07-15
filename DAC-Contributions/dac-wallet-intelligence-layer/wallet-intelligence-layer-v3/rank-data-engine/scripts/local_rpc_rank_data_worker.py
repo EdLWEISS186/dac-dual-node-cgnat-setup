@@ -32,6 +32,7 @@ from sqlite_rank_state import SQLiteRankState
 CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
 PROJECT = "Wallet Intelligence Layer v3.7.0"
+FINAL_INDEX_BLOCK = 15190700
 V3_7_0_DETERMINISTIC_REBUILD_ANCHOR_BLOCK = 15_000_000
 
 DEFAULT_PRIMARY_RPC = "http://127.0.0.1:8546"
@@ -1082,7 +1083,20 @@ def main() -> None:
                 "incremental_last_synced_block": end_block,
             })
 
-            stop_reason = "CAUGHT_UP_TO_LATEST" if next_incremental_block > latest_block else "MAX_BLOCKS_REACHED"
+            if end_block >= FINAL_INDEX_BLOCK:
+                checkpoint.update({
+                    "sync_phase": "FINALIZED",
+                    "final_index_block": FINAL_INDEX_BLOCK,
+                    "final_snapshot_ready": True,
+                })
+
+                stop_reason = "FINAL_SNAPSHOT_COMPLETE"
+            else:
+                stop_reason = (
+                    "CAUGHT_UP_TO_LATEST"
+                    if next_incremental_block > latest_block
+                    else "MAX_BLOCKS_REACHED"
+                )
 
     enriched_balances = enrich_balances(
         wallet_metrics=wallet_metrics,

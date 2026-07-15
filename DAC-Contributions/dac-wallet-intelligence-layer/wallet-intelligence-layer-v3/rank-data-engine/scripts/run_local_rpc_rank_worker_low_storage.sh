@@ -107,6 +107,32 @@ cleanup_active_workdir() {
   esac
 }
 
+
+is_final_snapshot_complete() {
+  if [ ! -f "$EXTERNAL_STATE_DIR/data/public-run-status.json" ]; then
+    return 1
+  fi
+
+  python3 - "$EXTERNAL_STATE_DIR/data/public-run-status.json" <<'PY_STATUS'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as f:
+    status = json.load(f)
+
+sync = status.get("sync_status", {})
+last = status.get("last_run", {})
+
+if (
+    sync.get("phase") == "FINALIZED"
+    and last.get("stop_reason") == "FINAL_SNAPSHOT_COMPLETE"
+):
+    sys.exit(0)
+
+sys.exit(1)
+PY_STATUS
+}
+
 cleanup_stale_adaptive_runtime_dirs() {
   mkdir -p "$ADAPTIVE_RUNTIME_DIR"
 
@@ -591,6 +617,17 @@ while true; do
   run_once
 
   echo "[INFO] Run finished at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+  if is_final_snapshot_complete; then
+    echo
+    echo "============================================================"
+    echo "[INFO] FINAL SNAPSHOT COMPLETE"
+    echo "[INFO] Final index block reached: 15190700"
+    echo "[INFO] Worker stopped permanently."
+    echo "[INFO] Ready for publisher."
+    echo "============================================================"
+    exit 0
+  fi
 
   if [ "$RUN_ONCE" = "1" ]; then
     echo "[INFO] RUN_ONCE=1, exiting."
