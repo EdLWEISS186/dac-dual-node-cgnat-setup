@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom Last 7 Days Report
 
-Generated at UTC: `2026-07-15T11:58:25.882565+00:00`
+Generated at UTC: `2026-07-15T14:01:29.245321+00:00`
 
 Report range: **Last 7 Days**
 
@@ -16,18 +16,18 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Range | Last 7 Days |
 | Observation count | 4 |
-| First observed source time | Jul 8, 2026 (11:00 CEST) |
-| Last observed source time | Jul 14, 2026 (17:00 CEST) |
-| Latest watcher checked_at_utc | 2026-07-14T15:56:31.450989+00:00 |
-| Latest source generated time | Tue Jul 14 05:00:01 PM CEST 2026 |
+| First observed source time | Jul 13, 2026 (08:00 CEST) |
+| Last observed source time | Jul 15, 2026 (16:00 CEST) |
+| Latest watcher checked_at_utc | 2026-07-15T14:01:15.197394+00:00 |
+| Latest source generated time | Wed Jul 15 04:00:01 PM CEST 2026 |
 
 ## 2. Enode Movement Summary
 
 | Metric | Value |
 | --- | --- |
 | Minimum enode count | 10 |
-| Maximum enode count | 13 |
-| Average enode count | 11.25 |
+| Maximum enode count | 12 |
+| Average enode count | 11.0 |
 | Total added observations | 2 |
 | Total removed observations | 3 |
 | Target ports observed | 28657 |
@@ -43,7 +43,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 0 |
-| Global anomaly summary | 12 anomaly signals were detected across 146 observations. The highest observed anomaly severity is CRITICAL. |
+| Global anomaly summary | 12 anomaly signals were detected across 147 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
@@ -76,10 +76,10 @@ Important note: this report is observation-based. It does not make official DAC 
 
 | # | Phase | Status | Source Time | Current | Added | Removed | Unchanged | Port |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 143 | automated_watcher | changed | Jul 8, 2026 (11:00 CEST) | 13 | 1 | 0 | 12 | 28657 |
 | 144 | automated_watcher | changed | Jul 13, 2026 (08:00 CEST) | 11 | 0 | 2 | 11 | 28657 |
 | 145 | automated_watcher | changed | Jul 14, 2026 (16:00 CEST) | 10 | 0 | 1 | 10 | 28657 |
 | 146 | automated_watcher | changed | Jul 14, 2026 (17:00 CEST) | 11 | 1 | 0 | 10 | 28657 |
+| 147 | automated_watcher | changed | Jul 15, 2026 (16:00 CEST) | 12 | 1 | 0 | 11 | 28657 |
 
 ## 7. Report-Use Notes
 
