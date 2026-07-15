@@ -622,7 +622,7 @@ while true; do
     echo
     echo "============================================================"
     echo "[INFO] FINAL SNAPSHOT COMPLETE"
-    echo "[INFO] Final index block reached: 15190700"
+    echo "[INFO] Final index block reached: 15190950"
     echo "[INFO] Worker stopped permanently."
     echo "[INFO] Ready for publisher."
     echo "============================================================"

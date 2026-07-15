@@ -32,7 +32,7 @@ from sqlite_rank_state import SQLiteRankState
 CHAIN_ID = 21894
 NETWORK = "DAC Testnet"
 PROJECT = "Wallet Intelligence Layer v3.7.0"
-FINAL_INDEX_BLOCK = 15190700
+FINAL_INDEX_BLOCK = 15190950
 V3_7_0_DETERMINISTIC_REBUILD_ANCHOR_BLOCK = 15_000_000
 
 DEFAULT_PRIMARY_RPC = "http://127.0.0.1:8546"
@@ -1019,7 +1019,11 @@ def main() -> None:
             })
             stop_reason = "ALREADY_CAUGHT_UP"
         else:
-            end_block = min(start_block + args.max_blocks - 1, latest_block)
+            end_block = min(
+                start_block + args.max_blocks - 1,
+                latest_block,
+                FINAL_INDEX_BLOCK,
+            )
 
             for block_number in range(start_block, end_block + 1):
                 process_block(block_number)
@@ -1068,7 +1072,11 @@ def main() -> None:
             })
             stop_reason = "NO_NEW_BLOCKS"
         else:
-            end_block = min(start_block + args.max_blocks - 1, latest_block)
+            end_block = min(
+                start_block + args.max_blocks - 1,
+                latest_block,
+                FINAL_INDEX_BLOCK,
+            )
 
             for block_number in range(start_block, end_block + 1):
                 process_block(block_number)
