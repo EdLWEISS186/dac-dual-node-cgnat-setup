@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom Last 7 Days Report
 
-Generated at UTC: `2026-07-22T23:15:14.402013+00:00`
+Generated at UTC: `2026-07-23T01:01:04.470487+00:00`
 
 Report range: **Last 7 Days**
 
@@ -15,35 +15,35 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Range | Last 7 Days |
-| Observation count | 4 |
-| First observed source time | Jul 14, 2026 (16:00 CEST) |
-| Last observed source time | Jul 20, 2026 (15:00 CEST) |
-| Latest watcher checked_at_utc | 2026-07-20T13:18:06.523135+00:00 |
-| Latest source generated time | Mon Jul 20 03:00:01 PM CEST 2026 |
+| Observation count | 2 |
+| First observed source time | Jul 20, 2026 (15:00 CEST) |
+| Last observed source time | Jul 23, 2026 (03:00 CEST) |
+| Latest watcher checked_at_utc | 2026-07-23T01:01:00.983227+00:00 |
+| Latest source generated time | Thu Jul 23 03:00:01 AM CEST 2026 |
 
 ## 2. Enode Movement Summary
 
 | Metric | Value |
 | --- | --- |
-| Minimum enode count | 10 |
-| Maximum enode count | 13 |
-| Average enode count | 11.5 |
-| Total added observations | 3 |
-| Total removed observations | 1 |
+| Minimum enode count | 13 |
+| Maximum enode count | 14 |
+| Average enode count | 13.5 |
+| Total added observations | 2 |
+| Total removed observations | 0 |
 | Target ports observed | 28657 |
 
 ## 3. Observation Source Coverage
 
 | Phase | Observations |
 | --- | --- |
-| automated_watcher | 4 |
+| automated_watcher | 2 |
 
 ## 4. Anomaly Summary
 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 0 |
-| Global anomaly summary | 12 anomaly signals were detected across 148 observations. The highest observed anomaly severity is CRITICAL. |
+| Global anomaly summary | 12 anomaly signals were detected across 149 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
@@ -61,25 +61,23 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Overall concentration label | MODERATE |
 | Headline | Observed infrastructure shows moderate concentration under the current heuristic model. |
-| Key observation | Top live ASN is AS51167 with 15 unique IPs (36.59%). |
-| Country observation | Top live ASN country code is DE with 18 unique IPs (43.9%). |
+| Key observation | Top live ASN is AS51167 with 15 unique IPs (35.71%). |
+| Country observation | Top live ASN country code is DE with 18 unique IPs (42.86%). |
 | Interpretation | Top live ASN controls at least 35% of observed unique IPs. |
 | Disclaimer | Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement. |
 
 | Dimension | Top Name | Top Count | Top % | Label |
 | --- | --- | --- | --- | --- |
-| Live ASN | AS51167 | 15 | 36.59 | MODERATE |
-| Live Country | DE | 18 | 43.9 | MODERATE |
-| DAC Infrastructure Signal | Retained Infrastructure Signal | 14 | 34.15 | LOW |
+| Live ASN | AS51167 | 15 | 35.71 | MODERATE |
+| Live Country | DE | 18 | 42.86 | MODERATE |
+| DAC Infrastructure Signal | Retained Infrastructure Signal | 14 | 33.33 | LOW |
 
 ## 6. Observation Timeline
 
 | # | Phase | Status | Source Time | Current | Added | Removed | Unchanged | Port |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 145 | automated_watcher | changed | Jul 14, 2026 (16:00 CEST) | 10 | 0 | 1 | 10 | 28657 |
-| 146 | automated_watcher | changed | Jul 14, 2026 (17:00 CEST) | 11 | 1 | 0 | 10 | 28657 |
-| 147 | automated_watcher | changed | Jul 15, 2026 (16:00 CEST) | 12 | 1 | 0 | 11 | 28657 |
 | 148 | automated_watcher | changed | Jul 20, 2026 (15:00 CEST) | 13 | 1 | 0 | 12 | 28657 |
+| 149 | automated_watcher | changed | Jul 23, 2026 (03:00 CEST) | 14 | 1 | 0 | 13 | 28657 |
 
 ## 7. Report-Use Notes
 
