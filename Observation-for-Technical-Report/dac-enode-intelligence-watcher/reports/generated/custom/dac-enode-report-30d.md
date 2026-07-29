@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom Last 30 Days Report
 
-Generated at UTC: `2026-07-29T09:21:37.811518+00:00`
+Generated at UTC: `2026-07-29T11:39:56.481987+00:00`
 
 Report range: **Last 30 Days**
 
@@ -18,8 +18,8 @@ Important note: this report is observation-based. It does not make official DAC 
 | Observation count | 37 |
 | First observed source time | Jun 23, 2026 (16:00 CEST) |
 | Last observed source time | Jul 23, 2026 (13:00 CEST) |
-| Latest watcher checked_at_utc | 2026-07-28T07:17:57.050489+00:00 |
-| Latest source generated time | 2026-07-28 09:00 CEST |
+| Latest watcher checked_at_utc | 2026-07-29T11:39:53.471520+00:00 |
+| Latest source generated time | 2026-07-29 13:00 CEST |
 
 ## 2. Enode Movement Summary
 
@@ -43,7 +43,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 0 |
-| Global anomaly summary | 12 anomaly signals were detected across 152 observations. The highest observed anomaly severity is CRITICAL. |
+| Global anomaly summary | 12 anomaly signals were detected across 153 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
