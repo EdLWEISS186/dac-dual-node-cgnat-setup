@@ -4,8 +4,8 @@
   "description": "Aggregated rotation intelligence derived from manual backfill and automated watcher snapshots.",
   "observation_scope": {
     "manual_backfill_snapshots": 14,
-    "automated_watcher_snapshots": 146,
-    "total_snapshots": 160,
+    "automated_watcher_snapshots": 147,
+    "total_snapshots": 161,
     "first_observation": {
       "observation_index": 1,
       "phase": "manual_backfill",
@@ -23,20 +23,20 @@
       "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
     },
     "latest_observation": {
-      "observation_index": 160,
+      "observation_index": 161,
       "phase": "automated_watcher",
       "status": "changed",
-      "generated_at_source": "2026-08-16 10:00 CEST",
-      "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
+      "generated_at_source": "2026-08-16 13:00 CEST",
+      "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
       "target_port": 28657,
-      "current_total": 6,
-      "previous_total": 5,
+      "current_total": 7,
+      "previous_total": 6,
       "added_count": 1,
       "removed_count": 0,
-      "unchanged_count": 5,
+      "unchanged_count": 6,
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
-      "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+      "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
     }
   },
   "coverage_note": "Manual backfill is a partial archive. Missing dates represent missed observation windows, not confirmed absence of changes.",
@@ -46,12 +46,12 @@
   "enode_count_statistics": {
     "minimum": 2,
     "maximum": 16,
-    "average": 11.42
+    "average": 11.39
   },
   "unique_enode_count": 43,
   "unique_ip_count": 42,
   "severity_counts": {
-    "LOW": 130,
+    "LOW": 131,
     "MEDIUM": 13,
     "CRITICAL": 2
   },
@@ -342,8 +342,8 @@
     "AS24940": 2,
     "AS45899": 2,
     "AS18403": 5,
-    "AS29222": 1,
     "AS40021": 1,
+    "AS29222": 1,
     "AS63949": 1,
     "AS141995": 2,
     "AS395954": 1,
@@ -359,8 +359,8 @@
     "HETZNER-AS - Hetzner Online GmbH, DE": 2,
     "VNPT-AS-VN - VNPT Corp, VN": 2,
     "FPT-VN - FPT Telecom Company, VN": 5,
-    "Infomaniak-AS - Infomaniak Network SA, CH": 1,
     "CONTABO-40021 - Contabo Inc., US": 1,
+    "Infomaniak-AS - Infomaniak Network SA, CH": 1,
     "AKAMAI-LINODE-AP - Akamai Connected Cloud, SG": 1,
     "CAPL-AS-AP - Contabo Asia Private Limited, SG": 2,
     "LEASEWEB-USA-LAX - Leaseweb USA, Inc., US": 1,
@@ -517,19 +517,6 @@
       ]
     },
     {
-      "live_asn": "AS29222",
-      "unique_ip_count": 1,
-      "asn_names": [
-        "Infomaniak-AS - Infomaniak Network SA, CH"
-      ],
-      "country_codes": [
-        "CH"
-      ],
-      "ips": [
-        "83.228.229.39"
-      ]
-    },
-    {
       "live_asn": "AS40021",
       "unique_ip_count": 1,
       "asn_names": [
@@ -540,6 +527,19 @@
       ],
       "ips": [
         "89.117.145.87"
+      ]
+    },
+    {
+      "live_asn": "AS29222",
+      "unique_ip_count": 1,
+      "asn_names": [
+        "Infomaniak-AS - Infomaniak Network SA, CH"
+      ],
+      "country_codes": [
+        "CH"
+      ],
+      "ips": [
+        "83.228.229.39"
       ]
     },
     {
@@ -824,7 +824,7 @@
       "node_id": "09b8b08d7154745cc501d03eb562a35b1bd08509d992c25266e80c558eb97c53a90df0069e637463ed85b4df072e76f0d516bb4cc16d21269570b0370a6a5c4c",
       "ip": "206.189.127.204",
       "port": 28657,
-      "appearance_count": 148,
+      "appearance_count": 149,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -833,17 +833,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 160,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-16 10:00 CEST",
-        "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
-        "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.925,
+      "appearance_ratio": 0.9255,
       "appearances": [
         {
           "observation_index": 1,
@@ -1880,6 +1880,13 @@
           "generated_at_source": "2026-08-16 10:00 CEST",
           "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
           "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ]
     },
@@ -1907,7 +1914,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.925,
+      "appearance_ratio": 0.9193,
       "appearances": [
         {
           "observation_index": 1,
@@ -2971,7 +2978,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7875,
+      "appearance_ratio": 0.7826,
       "appearances": [
         {
           "observation_index": 6,
@@ -3862,7 +3869,7 @@
       "node_id": "4ff5ceea9cf9b240cf8aa921812635b8012f7da2dc55a8312aaab9af251f8d2eeb4ca865ab744af57bcec8b00005fdadcf34edf7950ba64398ab1fbd0dcedecf",
       "ip": "152.228.141.231",
       "port": 28657,
-      "appearance_count": 120,
+      "appearance_count": 121,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -3871,17 +3878,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 160,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-16 10:00 CEST",
-        "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
-        "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.75,
+      "appearance_ratio": 0.7516,
       "appearances": [
         {
           "observation_index": 1,
@@ -4722,6 +4729,13 @@
           "generated_at_source": "2026-08-16 10:00 CEST",
           "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
           "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ]
     },
@@ -4730,7 +4744,7 @@
       "node_id": "4cd695fc27963c8b4bf6f75551442fe4839a0b66380fb1b84230973b29683df76188ecba6a72c47f75d39b4771d8a5e91154bc9d56986d4e32572a365e221b8c",
       "ip": "5.9.116.21",
       "port": 28657,
-      "appearance_count": 113,
+      "appearance_count": 114,
       "first_seen": {
         "observation_index": 11,
         "phase": "manual_backfill",
@@ -4739,17 +4753,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 155,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-05 11:00 CEST",
-        "checked_at_utc": "2026-08-05T09:06:47.018957+00:00",
-        "snapshot_file": "data/snapshots/2026-08-05T09-06-47-018957+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7063,
+      "appearance_ratio": 0.7081,
       "appearances": [
         {
           "observation_index": 11,
@@ -5541,6 +5555,13 @@
           "generated_at_source": "2026-08-05 11:00 CEST",
           "checked_at_utc": "2026-08-05T09:06:47.018957+00:00",
           "snapshot_file": "data/snapshots/2026-08-05T09-06-47-018957+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ]
     },
@@ -5568,7 +5589,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6375,
+      "appearance_ratio": 0.6335,
       "appearances": [
         {
           "observation_index": 1,
@@ -6291,7 +6312,7 @@
       "node_id": "27386ed9cc211266c676c2b9098d98f42e5381041f59cc7f93bba654afcbfaf385bed32070317f4403d477b66ce2f6df76424064b72dbcdfae8eac05b02c098d",
       "ip": "157.173.127.21",
       "port": 28657,
-      "appearance_count": 96,
+      "appearance_count": 97,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -6300,17 +6321,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 160,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-16 10:00 CEST",
-        "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
-        "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6,
+      "appearance_ratio": 0.6025,
       "appearances": [
         {
           "observation_index": 1,
@@ -6983,6 +7004,13 @@
           "generated_at_source": "2026-08-16 10:00 CEST",
           "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
           "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ]
     },
@@ -6991,7 +7019,7 @@
       "node_id": "a59112afa48142b6a9ab998c5e292ea433a6c38d45bc0fb79d038e38be9694de2b38532e893acde9672ecccd02c73df408142bb0230394d5d0af50b0ea0225e3",
       "ip": "157.173.127.31",
       "port": 28657,
-      "appearance_count": 96,
+      "appearance_count": 97,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -7000,17 +7028,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 160,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-16 10:00 CEST",
-        "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
-        "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6,
+      "appearance_ratio": 0.6025,
       "appearances": [
         {
           "observation_index": 1,
@@ -7683,6 +7711,13 @@
           "generated_at_source": "2026-08-16 10:00 CEST",
           "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
           "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ]
     },
@@ -7710,7 +7745,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.5687,
+      "appearance_ratio": 0.5652,
       "appearances": [
         {
           "observation_index": 11,
@@ -8375,7 +8410,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.5625,
+      "appearance_ratio": 0.559,
       "appearances": [
         {
           "observation_index": 1,
@@ -9063,7 +9098,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 148,
+      "appearance_count": 149,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -9072,17 +9107,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 160,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-16 10:00 CEST",
-        "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
-        "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.925,
+      "appearance_ratio": 0.9255,
       "appearances": [
         {
           "observation_index": 1,
@@ -10119,6 +10154,13 @@
           "generated_at_source": "2026-08-16 10:00 CEST",
           "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
           "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -10218,7 +10260,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.925,
+      "appearance_ratio": 0.9193,
       "appearances": [
         {
           "observation_index": 1,
@@ -11315,7 +11357,7 @@
         "signal_basis": [
           "Observed 126 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.7875",
+          "Appearance ratio: 0.7826",
           "Provider hint: Contabo"
         ],
         "official_ownership_claim": false,
@@ -11331,7 +11373,7 @@
       "signal_basis": [
         "Observed 126 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.7875",
+        "Appearance ratio: 0.7826",
         "Provider hint: Contabo"
       ],
       "official_ownership_claim": false,
@@ -11357,7 +11399,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7875,
+      "appearance_ratio": 0.7826,
       "appearances": [
         {
           "observation_index": 6,
@@ -12321,7 +12363,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 120,
+      "appearance_count": 121,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -12330,17 +12372,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 160,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-16 10:00 CEST",
-        "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
-        "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.75,
+      "appearance_ratio": 0.7516,
       "appearances": [
         {
           "observation_index": 1,
@@ -13181,6 +13223,13 @@
           "generated_at_source": "2026-08-16 10:00 CEST",
           "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
           "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -13238,9 +13287,9 @@
         "peer_identity_hint": null,
         "historical_registry_status": "High persistence across watcher observations.",
         "signal_basis": [
-          "Observed 113 times across available watcher history.",
+          "Observed 114 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.7063"
+          "Appearance ratio: 0.7081"
         ],
         "official_ownership_claim": false,
         "detection_method": "static_report_evidence_and_observation_heuristic",
@@ -13253,15 +13302,15 @@
       "peer_identity_hint": null,
       "historical_registry_status": "High persistence across watcher observations.",
       "signal_basis": [
-        "Observed 113 times across available watcher history.",
+        "Observed 114 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.7063"
+        "Appearance ratio: 0.7081"
       ],
       "official_ownership_claim": false,
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 113,
+      "appearance_count": 114,
       "first_seen": {
         "observation_index": 11,
         "phase": "manual_backfill",
@@ -13270,17 +13319,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 155,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-05 11:00 CEST",
-        "checked_at_utc": "2026-08-05T09:06:47.018957+00:00",
-        "snapshot_file": "data/snapshots/2026-08-05T09-06-47-018957+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7063,
+      "appearance_ratio": 0.7081,
       "appearances": [
         {
           "observation_index": 11,
@@ -14072,6 +14121,13 @@
           "generated_at_source": "2026-08-05 11:00 CEST",
           "checked_at_utc": "2026-08-05T09:06:47.018957+00:00",
           "snapshot_file": "data/snapshots/2026-08-05T09-06-47-018957+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -14172,7 +14228,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6375,
+      "appearance_ratio": 0.6335,
       "appearances": [
         {
           "observation_index": 1,
@@ -14967,7 +15023,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 96,
+      "appearance_count": 97,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -14976,17 +15032,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 160,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-16 10:00 CEST",
-        "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
-        "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6,
+      "appearance_ratio": 0.6025,
       "appearances": [
         {
           "observation_index": 1,
@@ -15659,6 +15715,13 @@
           "generated_at_source": "2026-08-16 10:00 CEST",
           "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
           "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -15741,7 +15804,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 96,
+      "appearance_count": 97,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -15750,17 +15813,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 160,
+        "observation_index": 161,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-16 10:00 CEST",
-        "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
-        "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        "generated_at_source": "2026-08-16 13:00 CEST",
+        "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+        "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6,
+      "appearance_ratio": 0.6025,
       "appearances": [
         {
           "observation_index": 1,
@@ -16433,6 +16496,13 @@
           "generated_at_source": "2026-08-16 10:00 CEST",
           "checked_at_utc": "2026-08-16T08:00:44.041762+00:00",
           "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+        },
+        {
+          "observation_index": 161,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-16 13:00 CEST",
+          "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+          "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -16492,7 +16562,7 @@
         "signal_basis": [
           "Observed 91 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.5687"
+          "Appearance ratio: 0.5652"
         ],
         "official_ownership_claim": false,
         "detection_method": "static_report_evidence_and_observation_heuristic",
@@ -16507,7 +16577,7 @@
       "signal_basis": [
         "Observed 91 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.5687"
+        "Appearance ratio: 0.5652"
       ],
       "official_ownership_claim": false,
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
@@ -16532,7 +16602,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.5687,
+      "appearance_ratio": 0.5652,
       "appearances": [
         {
           "observation_index": 11,
@@ -17269,7 +17339,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.5625,
+      "appearance_ratio": 0.559,
       "appearances": [
         {
           "observation_index": 1,
@@ -20645,10 +20715,26 @@
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
       "snapshot_file": "data/snapshots/2026-08-16T08-00-44-041762+00-00-changed.json"
+    },
+    {
+      "observation_index": 161,
+      "phase": "automated_watcher",
+      "status": "changed",
+      "generated_at_source": "2026-08-16 13:00 CEST",
+      "checked_at_utc": "2026-08-16T11:20:06.856062+00:00",
+      "target_port": 28657,
+      "current_total": 7,
+      "previous_total": 6,
+      "added_count": 1,
+      "removed_count": 0,
+      "unchanged_count": 6,
+      "change_severity": "LOW",
+      "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
+      "snapshot_file": "data/snapshots/2026-08-16T11-20-06-856062+00-00-changed.json"
     }
   ],
   "report_ready_summary": {
-    "short_summary": "Across 160 total observations, the DAC official enode list showed 43 unique enodes and 42 unique IPs. The observed target port remained within [28657]. Enode count ranged from 2 to 16, with an average of 11.42.",
+    "short_summary": "Across 161 total observations, the DAC official enode list showed 43 unique enodes and 42 unique IPs. The observed target port remained within [28657]. Enode count ranged from 2 to 16, with an average of 11.39.",
     "manual_to_automated_context": "The dataset combines partial manual observations from the pre-watcher period with automated GitHub Actions snapshots after the watcher was deployed.",
     "technical_value": "This summary provides a structured basis for analyzing bootstrap peer rotation, persistent observed enodes, IP recurrence, provider hints, ASN hints, DAC Infrastructure Signals, and possible infrastructure maturation patterns."
   }
