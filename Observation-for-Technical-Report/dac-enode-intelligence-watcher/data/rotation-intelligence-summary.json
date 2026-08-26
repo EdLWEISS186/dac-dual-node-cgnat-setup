@@ -4,8 +4,8 @@
   "description": "Aggregated rotation intelligence derived from manual backfill and automated watcher snapshots.",
   "observation_scope": {
     "manual_backfill_snapshots": 14,
-    "automated_watcher_snapshots": 162,
-    "total_snapshots": 176,
+    "automated_watcher_snapshots": 163,
+    "total_snapshots": 177,
     "first_observation": {
       "observation_index": 1,
       "phase": "manual_backfill",
@@ -23,20 +23,20 @@
       "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
     },
     "latest_observation": {
-      "observation_index": 176,
+      "observation_index": 177,
       "phase": "automated_watcher",
       "status": "changed",
-      "generated_at_source": "2026-08-25 05:00 CEST",
-      "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
+      "generated_at_source": "2026-08-26 21:00 CEST",
+      "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
       "target_port": 28657,
-      "current_total": 10,
-      "previous_total": 9,
+      "current_total": 11,
+      "previous_total": 10,
       "added_count": 1,
       "removed_count": 0,
-      "unchanged_count": 9,
+      "unchanged_count": 10,
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
-      "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+      "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
     }
   },
   "coverage_note": "Manual backfill is a partial archive. Missing dates represent missed observation windows, not confirmed absence of changes.",
@@ -51,7 +51,7 @@
   "unique_enode_count": 43,
   "unique_ip_count": 42,
   "severity_counts": {
-    "LOW": 146,
+    "LOW": 147,
     "MEDIUM": 13,
     "CRITICAL": 2
   },
@@ -824,7 +824,7 @@
       "node_id": "9652549979785c10c4d6bbedb7e15d333764498a33d0bcf4b56c1ec695d8dd0a128ee19cf114d6954f1a355f24ba680f4f9c69e5c25c471d9b394c1436d4e8a1",
       "ip": "157.173.127.30",
       "port": 28657,
-      "appearance_count": 162,
+      "appearance_count": 163,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -833,17 +833,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9205,
+      "appearance_ratio": 0.9209,
       "appearances": [
         {
           "observation_index": 1,
@@ -1978,6 +1978,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ]
     },
@@ -1986,7 +1993,7 @@
       "node_id": "09b8b08d7154745cc501d03eb562a35b1bd08509d992c25266e80c558eb97c53a90df0069e637463ed85b4df072e76f0d516bb4cc16d21269570b0370a6a5c4c",
       "ip": "206.189.127.204",
       "port": 28657,
-      "appearance_count": 162,
+      "appearance_count": 163,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -1995,17 +2002,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9205,
+      "appearance_ratio": 0.9209,
       "appearances": [
         {
           "observation_index": 1,
@@ -3140,6 +3147,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ]
     },
@@ -3148,7 +3162,7 @@
       "node_id": "4ff5ceea9cf9b240cf8aa921812635b8012f7da2dc55a8312aaab9af251f8d2eeb4ca865ab744af57bcec8b00005fdadcf34edf7950ba64398ab1fbd0dcedecf",
       "ip": "152.228.141.231",
       "port": 28657,
-      "appearance_count": 130,
+      "appearance_count": 131,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -3157,17 +3171,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7386,
+      "appearance_ratio": 0.7401,
       "appearances": [
         {
           "observation_index": 1,
@@ -4078,6 +4092,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ]
     },
@@ -4105,7 +4126,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7159,
+      "appearance_ratio": 0.7119,
       "appearances": [
         {
           "observation_index": 6,
@@ -5015,7 +5036,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6761,
+      "appearance_ratio": 0.6723,
       "appearances": [
         {
           "observation_index": 11,
@@ -5857,7 +5878,7 @@
       "node_id": "27386ed9cc211266c676c2b9098d98f42e5381041f59cc7f93bba654afcbfaf385bed32070317f4403d477b66ce2f6df76424064b72dbcdfae8eac05b02c098d",
       "ip": "157.173.127.21",
       "port": 28657,
-      "appearance_count": 112,
+      "appearance_count": 113,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -5866,17 +5887,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6364,
+      "appearance_ratio": 0.6384,
       "appearances": [
         {
           "observation_index": 1,
@@ -6661,6 +6682,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ]
     },
@@ -6669,7 +6697,7 @@
       "node_id": "a59112afa48142b6a9ab998c5e292ea433a6c38d45bc0fb79d038e38be9694de2b38532e893acde9672ecccd02c73df408142bb0230394d5d0af50b0ea0225e3",
       "ip": "157.173.127.31",
       "port": 28657,
-      "appearance_count": 112,
+      "appearance_count": 113,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -6678,17 +6706,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6364,
+      "appearance_ratio": 0.6384,
       "appearances": [
         {
           "observation_index": 1,
@@ -7473,6 +7501,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ]
     },
@@ -7481,7 +7516,7 @@
       "node_id": "0af12348eea96b3f421ca7b5b383ccb37d30c2000bdc73e2d155e5693fec8a0ade28dc552d551a511c14dc34822a21b7050b60f191c3b129f122f2c91884c845",
       "ip": "194.60.201.112",
       "port": 28657,
-      "appearance_count": 106,
+      "appearance_count": 107,
       "first_seen": {
         "observation_index": 11,
         "phase": "manual_backfill",
@@ -7490,17 +7525,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6023,
+      "appearance_ratio": 0.6045,
       "appearances": [
         {
           "observation_index": 11,
@@ -8243,6 +8278,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ]
     },
@@ -8270,7 +8312,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.5795,
+      "appearance_ratio": 0.5763,
       "appearances": [
         {
           "observation_index": 1,
@@ -8989,38 +9031,31 @@
       ]
     },
     {
-      "enode": "enode://52a3c25ccb600ef17b49f0d12877b41c69203fe318ec67252651e5fe008dafe15e4c3c19004e6b451ca6bda572c1fb933db71d56890f00f9b20cb3f2c1982272@217.76.53.98:28657",
-      "node_id": "52a3c25ccb600ef17b49f0d12877b41c69203fe318ec67252651e5fe008dafe15e4c3c19004e6b451ca6bda572c1fb933db71d56890f00f9b20cb3f2c1982272",
-      "ip": "217.76.53.98",
+      "enode": "enode://b3158fbb361298135c2e03d2ea9a1b10362a12c0d84ccbed92fb60af721b5a73bdaa66f82916012cdb187aea9ea4185bae8dd443ede10e26bb41811bdd8060c5@95.216.70.180:28657",
+      "node_id": "b3158fbb361298135c2e03d2ea9a1b10362a12c0d84ccbed92fb60af721b5a73bdaa66f82916012cdb187aea9ea4185bae8dd443ede10e26bb41811bdd8060c5",
+      "ip": "95.216.70.180",
       "port": 28657,
       "appearance_count": 90,
       "first_seen": {
-        "observation_index": 1,
+        "observation_index": 2,
         "phase": "manual_backfill",
-        "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
+        "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
         "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
+        "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 143,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "Wed Jul  8 11:00:01 AM CEST 2026",
-        "checked_at_utc": "2026-07-08T09:54:50.646653+00:00",
-        "snapshot_file": "data/snapshots/2026-07-08T09-54-50-646653+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.5114,
+      "appearance_ratio": 0.5085,
       "appearances": [
-        {
-          "observation_index": 1,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
-        },
         {
           "observation_index": 2,
           "phase": "manual_backfill",
@@ -9029,67 +9064,18 @@
           "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 5,
+          "observation_index": 3,
           "phase": "manual_backfill",
-          "generated_at_source": "Tue May 19 04:00:01 PM CEST 2026",
+          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-19T16-00-01-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 6,
+          "observation_index": 4,
           "phase": "manual_backfill",
-          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+          "generated_at_source": "Mon May 18 08:00:02 AM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 7,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 8,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 9,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 10,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 11,
-          "phase": "manual_backfill",
-          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 12,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 13,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-18T08-00-02-CEST-manual.json"
         },
         {
           "observation_index": 14,
@@ -9097,6 +9083,111 @@
           "generated_at_source": "Sun May 31 12:00:02 PM CEST 2026",
           "checked_at_utc": null,
           "snapshot_file": "data/manual-backfill/2026-05-31T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 15,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 04:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T02:07:09.594281+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
+        },
+        {
+          "observation_index": 16,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+        },
+        {
+          "observation_index": 18,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 10:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T21:41:19.117549+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T21-41-19-117549+00-00-changed.json"
+        },
+        {
+          "observation_index": 19,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  2 06:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-02T04:50:49.005853+00:00",
+          "snapshot_file": "data/snapshots/2026-06-02T04-50-49-005853+00-00-changed.json"
+        },
+        {
+          "observation_index": 20,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  2 12:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-02T10:50:41.887274+00:00",
+          "snapshot_file": "data/snapshots/2026-06-02T10-50-41-887274+00-00-changed.json"
+        },
+        {
+          "observation_index": 21,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  2 10:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-02T21:19:37.546922+00:00",
+          "snapshot_file": "data/snapshots/2026-06-02T21-19-37-546922+00-00-changed.json"
+        },
+        {
+          "observation_index": 22,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jun  3 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-03T10:23:29.960579+00:00",
+          "snapshot_file": "data/snapshots/2026-06-03T10-23-29-960579+00-00-changed.json"
+        },
+        {
+          "observation_index": 23,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jun  3 02:00:03 PM CEST 2026",
+          "checked_at_utc": "2026-06-03T12:20:56.647090+00:00",
+          "snapshot_file": "data/snapshots/2026-06-03T12-20-56-647090+00-00-changed.json"
+        },
+        {
+          "observation_index": 24,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jun  3 10:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-03T20:39:09.567713+00:00",
+          "snapshot_file": "data/snapshots/2026-06-03T20-39-09-567713+00-00-changed.json"
+        },
+        {
+          "observation_index": 25,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jun  4 12:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-03T22:53:33.600499+00:00",
+          "snapshot_file": "data/snapshots/2026-06-03T22-53-33-600499+00-00-changed.json"
+        },
+        {
+          "observation_index": 26,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jun  4 02:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-04T01:42:38.396686+00:00",
+          "snapshot_file": "data/snapshots/2026-06-04T01-42-38-396686+00-00-changed.json"
+        },
+        {
+          "observation_index": 27,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jun  4 12:00:03 PM CEST 2026",
+          "checked_at_utc": "2026-06-04T10:25:44.902143+00:00",
+          "snapshot_file": "data/snapshots/2026-06-04T10-25-44-902143+00-00-changed.json"
+        },
+        {
+          "observation_index": 28,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jun  4 06:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-04T16:36:44.457755+00:00",
+          "snapshot_file": "data/snapshots/2026-06-04T16-36-44-457755+00-00-changed.json"
+        },
+        {
+          "observation_index": 29,
+          "phase": "automated_watcher",
+          "generated_at_source": "Sat Jun  6 08:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-06T06:44:02.963253+00:00",
+          "snapshot_file": "data/snapshots/2026-06-06T06-44-02-963253+00-00-changed.json"
         },
         {
           "observation_index": 30,
@@ -9202,6 +9293,41 @@
           "generated_at_source": "Tue Jun  9 02:00:01 AM CEST 2026",
           "checked_at_utc": "2026-06-09T00:10:13.701528+00:00",
           "snapshot_file": "data/snapshots/2026-06-09T00-10-13-701528+00-00-changed.json"
+        },
+        {
+          "observation_index": 45,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 06:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-09T04:35:44.143706+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T04-35-44-143706+00-00-changed.json"
+        },
+        {
+          "observation_index": 46,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 10:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-09T08:22:42.525518+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T08-22-42-525518+00-00-changed.json"
+        },
+        {
+          "observation_index": 47,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 12:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-09T11:39:22.586142+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T11-39-22-586142+00-00-changed.json"
+        },
+        {
+          "observation_index": 48,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 04:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-09T14:05:33.052034+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T14-05-33-052034+00-00-changed.json"
+        },
+        {
+          "observation_index": 49,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 08:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-09T19:14:36.409581+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T19-14-36-409581+00-00-changed.json"
         },
         {
           "observation_index": 50,
@@ -9372,277 +9498,193 @@
           "snapshot_file": "data/snapshots/2026-06-15T07-39-19-639764+00-00-changed.json"
         },
         {
-          "observation_index": 74,
-          "phase": "automated_watcher",
-          "generated_at_source": "Mon Jun 15 08:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-15T18:18:01.888413+00:00",
-          "snapshot_file": "data/snapshots/2026-06-15T18-18-01-888413+00-00-changed.json"
-        },
-        {
-          "observation_index": 75,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 16 04:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-16T02:07:34.788855+00:00",
-          "snapshot_file": "data/snapshots/2026-06-16T02-07-34-788855+00-00-changed.json"
-        },
-        {
-          "observation_index": 76,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 16 02:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-16T12:32:50.463505+00:00",
-          "snapshot_file": "data/snapshots/2026-06-16T12-32-50-463505+00-00-changed.json"
-        },
-        {
-          "observation_index": 77,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 16 06:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-16T17:49:39.675701+00:00",
-          "snapshot_file": "data/snapshots/2026-06-16T17-49-39-675701+00-00-changed.json"
-        },
-        {
-          "observation_index": 78,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 16 10:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-16T20:52:12.970886+00:00",
-          "snapshot_file": "data/snapshots/2026-06-16T20-52-12-970886+00-00-changed.json"
-        },
-        {
-          "observation_index": 79,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 17 06:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-17T05:24:29.402077+00:00",
-          "snapshot_file": "data/snapshots/2026-06-17T05-24-29-402077+00-00-changed.json"
-        },
-        {
-          "observation_index": 82,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 17 06:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-17T17:24:29.584343+00:00",
-          "snapshot_file": "data/snapshots/2026-06-17T17-24-29-584343+00-00-changed.json"
-        },
-        {
-          "observation_index": 83,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 17 08:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-17T19:36:03.902947+00:00",
-          "snapshot_file": "data/snapshots/2026-06-17T19-36-03-902947+00-00-changed.json"
-        },
-        {
-          "observation_index": 84,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 12:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-17T23:08:13.117086+00:00",
-          "snapshot_file": "data/snapshots/2026-06-17T23-08-13-117086+00-00-changed.json"
-        },
-        {
-          "observation_index": 85,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 08:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-18T06:31:00.145276+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T06-31-00-145276+00-00-changed.json"
-        },
-        {
-          "observation_index": 86,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 01:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-18T11:01:06.729725+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T11-01-06-729725+00-00-changed.json"
-        },
-        {
-          "observation_index": 87,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 04:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-18T14:23:11.562293+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T14-23-11-562293+00-00-changed.json"
-        },
-        {
-          "observation_index": 88,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 07:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-18T17:41:50.587788+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T17-41-50-587788+00-00-changed.json"
-        },
-        {
-          "observation_index": 89,
-          "phase": "automated_watcher",
-          "generated_at_source": "Fri Jun 19 12:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-18T22:17:50.868527+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T22-17-50-868527+00-00-changed.json"
-        },
-        {
-          "observation_index": 96,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jun 20 12:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-19T22:38:08.044850+00:00",
-          "snapshot_file": "data/snapshots/2026-06-19T22-38-08-044850+00-00-changed.json"
-        },
-        {
-          "observation_index": 97,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jun 20 05:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-20T03:45:00.591155+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T03-45-00-591155+00-00-changed.json"
-        },
-        {
-          "observation_index": 98,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jun 20 04:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-20T14:34:32.951049+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T14-34-32-951049+00-00-changed.json"
-        },
-        {
-          "observation_index": 99,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jun 20 09:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-20T19:27:17.829217+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T19-27-17-829217+00-00-changed.json"
-        },
-        {
-          "observation_index": 100,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 12:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-20T22:07:48.987355+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T22-07-48-987355+00-00-changed.json"
-        },
-        {
-          "observation_index": 101,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 01:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-20T23:36:29.921150+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T23-36-29-921150+00-00-changed.json"
-        },
-        {
-          "observation_index": 102,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 09:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-21T07:09:00.523198+00:00",
-          "snapshot_file": "data/snapshots/2026-06-21T07-09-00-523198+00-00-changed.json"
-        },
-        {
-          "observation_index": 103,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 03:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-21T13:06:30.628179+00:00",
-          "snapshot_file": "data/snapshots/2026-06-21T13-06-30-628179+00-00-changed.json"
-        },
-        {
-          "observation_index": 104,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 10:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-21T20:25:21.609500+00:00",
-          "snapshot_file": "data/snapshots/2026-06-21T20-25-21-609500+00-00-changed.json"
-        },
-        {
-          "observation_index": 118,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 24 07:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-24T05:50:03.148715+00:00",
-          "snapshot_file": "data/snapshots/2026-06-24T05-50-03-148715+00-00-changed.json"
-        },
-        {
-          "observation_index": 119,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 24 02:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-24T12:09:33.053027+00:00",
-          "snapshot_file": "data/snapshots/2026-06-24T12-09-33-053027+00-00-changed.json"
-        },
-        {
-          "observation_index": 120,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 24 10:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-24T20:57:09.947831+00:00",
-          "snapshot_file": "data/snapshots/2026-06-24T20-57-09-947831+00-00-changed.json"
-        },
-        {
-          "observation_index": 121,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 25 12:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-24T22:22:42.215166+00:00",
-          "snapshot_file": "data/snapshots/2026-06-24T22-22-42-215166+00-00-changed.json"
-        },
-        {
-          "observation_index": 132,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 28 02:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-28T12:09:28.489609+00:00",
-          "snapshot_file": "data/snapshots/2026-06-28T12-09-28-489609+00-00-changed.json"
-        },
-        {
-          "observation_index": 133,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 28 07:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-28T17:12:44.835160+00:00",
-          "snapshot_file": "data/snapshots/2026-06-28T17-12-44-835160+00-00-changed.json"
-        },
-        {
-          "observation_index": 134,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 30 06:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-30T16:05:32.010566+00:00",
-          "snapshot_file": "data/snapshots/2026-06-30T16-05-32-010566+00-00-changed.json"
-        },
-        {
-          "observation_index": 135,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 30 10:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-30T20:22:41.093135+00:00",
-          "snapshot_file": "data/snapshots/2026-06-30T20-22-41-093135+00-00-changed.json"
-        },
-        {
-          "observation_index": 136,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jul  1 01:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-30T23:15:30.910545+00:00",
-          "snapshot_file": "data/snapshots/2026-06-30T23-15-30-910545+00-00-changed.json"
-        },
-        {
-          "observation_index": 137,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jul  1 12:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-01T10:15:18.248752+00:00",
-          "snapshot_file": "data/snapshots/2026-07-01T10-15-18-248752+00-00-changed.json"
-        },
-        {
-          "observation_index": 138,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jul  1 10:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-01T20:25:12.264521+00:00",
-          "snapshot_file": "data/snapshots/2026-07-01T20-25-12-264521+00-00-changed.json"
-        },
-        {
-          "observation_index": 139,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jul  2 01:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-02T11:54:42.739642+00:00",
-          "snapshot_file": "data/snapshots/2026-07-02T11-54-42-739642+00-00-changed.json"
-        },
-        {
-          "observation_index": 140,
-          "phase": "automated_watcher",
-          "generated_at_source": "Fri Jul  3 07:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-03T17:03:39.056358+00:00",
-          "snapshot_file": "data/snapshots/2026-07-03T17-03-39-056358+00-00-changed.json"
-        },
-        {
-          "observation_index": 141,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jul  4 07:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-07-04T05:09:56.900243+00:00",
-          "snapshot_file": "data/snapshots/2026-07-04T05-09-56-900243+00-00-changed.json"
-        },
-        {
-          "observation_index": 142,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jul  4 06:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-04T16:02:27.136467+00:00",
-          "snapshot_file": "data/snapshots/2026-07-04T16-02-27-136467+00-00-changed.json"
-        },
-        {
           "observation_index": 143,
           "phase": "automated_watcher",
           "generated_at_source": "Wed Jul  8 11:00:01 AM CEST 2026",
           "checked_at_utc": "2026-07-08T09:54:50.646653+00:00",
           "snapshot_file": "data/snapshots/2026-07-08T09-54-50-646653+00-00-changed.json"
+        },
+        {
+          "observation_index": 144,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jul 13 08:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-07-13T06:20:04.953018+00:00",
+          "snapshot_file": "data/snapshots/2026-07-13T06-20-04-953018+00-00-changed.json"
+        },
+        {
+          "observation_index": 145,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jul 14 04:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-07-14T14:15:16.750627+00:00",
+          "snapshot_file": "data/snapshots/2026-07-14T14-15-16-750627+00-00-changed.json"
+        },
+        {
+          "observation_index": 146,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jul 14 05:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-07-14T15:56:31.450989+00:00",
+          "snapshot_file": "data/snapshots/2026-07-14T15-56-31-450989+00-00-changed.json"
+        },
+        {
+          "observation_index": 147,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jul 15 04:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-07-15T14:01:15.197394+00:00",
+          "snapshot_file": "data/snapshots/2026-07-15T14-01-15-197394+00-00-changed.json"
+        },
+        {
+          "observation_index": 148,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jul 20 03:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-07-20T13:18:06.523135+00:00",
+          "snapshot_file": "data/snapshots/2026-07-20T13-18-06-523135+00-00-changed.json"
+        },
+        {
+          "observation_index": 149,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jul 23 03:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-07-23T01:01:00.983227+00:00",
+          "snapshot_file": "data/snapshots/2026-07-23T01-01-00-983227+00-00-changed.json"
+        },
+        {
+          "observation_index": 150,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jul 23 01:00:41 PM CEST 2026",
+          "checked_at_utc": "2026-07-23T11:56:05.881010+00:00",
+          "snapshot_file": "data/snapshots/2026-07-23T11-56-05-881010+00-00-changed.json"
+        },
+        {
+          "observation_index": 151,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-07-24 06:00 CEST",
+          "checked_at_utc": "2026-07-24T04:32:49.852183+00:00",
+          "snapshot_file": "data/snapshots/2026-07-24T04-32-49-852183+00-00-changed.json"
+        },
+        {
+          "observation_index": 152,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-07-28 09:00 CEST",
+          "checked_at_utc": "2026-07-28T07:17:57.050489+00:00",
+          "snapshot_file": "data/snapshots/2026-07-28T07-17-57-050489+00-00-changed.json"
+        },
+        {
+          "observation_index": 153,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-07-29 13:00 CEST",
+          "checked_at_utc": "2026-07-29T11:39:53.471520+00:00",
+          "snapshot_file": "data/snapshots/2026-07-29T11-39-53-471520+00-00-changed.json"
+        },
+        {
+          "observation_index": 154,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-07-31 11:00 CEST",
+          "checked_at_utc": "2026-07-31T09:33:26.974141+00:00",
+          "snapshot_file": "data/snapshots/2026-07-31T09-33-26-974141+00-00-changed.json"
+        },
+        {
+          "observation_index": 155,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-05 11:00 CEST",
+          "checked_at_utc": "2026-08-05T09:06:47.018957+00:00",
+          "snapshot_file": "data/snapshots/2026-08-05T09-06-47-018957+00-00-changed.json"
+        },
+        {
+          "observation_index": 164,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-18 05:00 CEST",
+          "checked_at_utc": "2026-08-18T03:24:05.128809+00:00",
+          "snapshot_file": "data/snapshots/2026-08-18T03-24-05-128809+00-00-changed.json"
+        },
+        {
+          "observation_index": 165,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-19 16:00 CEST",
+          "checked_at_utc": "2026-08-19T14:39:39.953222+00:00",
+          "snapshot_file": "data/snapshots/2026-08-19T14-39-39-953222+00-00-changed.json"
+        },
+        {
+          "observation_index": 166,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-19 21:00 CEST",
+          "checked_at_utc": "2026-08-19T19:25:13.619166+00:00",
+          "snapshot_file": "data/snapshots/2026-08-19T19-25-13-619166+00-00-changed.json"
+        },
+        {
+          "observation_index": 167,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-20 18:00 CEST",
+          "checked_at_utc": "2026-08-20T16:04:36.850465+00:00",
+          "snapshot_file": "data/snapshots/2026-08-20T16-04-36-850465+00-00-changed.json"
+        },
+        {
+          "observation_index": 168,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-21 03:00 CEST",
+          "checked_at_utc": "2026-08-21T01:17:52.710612+00:00",
+          "snapshot_file": "data/snapshots/2026-08-21T01-17-52-710612+00-00-changed.json"
+        },
+        {
+          "observation_index": 169,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-21 06:00 CEST",
+          "checked_at_utc": "2026-08-21T04:23:17.552793+00:00",
+          "snapshot_file": "data/snapshots/2026-08-21T04-23-17-552793+00-00-changed.json"
+        },
+        {
+          "observation_index": 170,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-22 06:00 CEST",
+          "checked_at_utc": "2026-08-22T04:06:03.870706+00:00",
+          "snapshot_file": "data/snapshots/2026-08-22T04-06-03-870706+00-00-changed.json"
+        },
+        {
+          "observation_index": 171,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-22 11:00 CEST",
+          "checked_at_utc": "2026-08-22T09:35:16.062093+00:00",
+          "snapshot_file": "data/snapshots/2026-08-22T09-35-16-062093+00-00-changed.json"
+        },
+        {
+          "observation_index": 172,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-23 06:00 CEST",
+          "checked_at_utc": "2026-08-23T04:22:20.923928+00:00",
+          "snapshot_file": "data/snapshots/2026-08-23T04-22-20-923928+00-00-changed.json"
+        },
+        {
+          "observation_index": 173,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-23 12:00 CEST",
+          "checked_at_utc": "2026-08-23T10:00:09.553594+00:00",
+          "snapshot_file": "data/snapshots/2026-08-23T10-00-09-553594+00-00-changed.json"
+        },
+        {
+          "observation_index": 174,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-23 12:00 CEST",
+          "checked_at_utc": "2026-08-23T10:33:21.478638+00:00",
+          "snapshot_file": "data/snapshots/2026-08-23T10-33-21-478638+00-00-changed.json"
+        },
+        {
+          "observation_index": 175,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-25 03:00 CEST",
+          "checked_at_utc": "2026-08-25T01:15:31.399621+00:00",
+          "snapshot_file": "data/snapshots/2026-08-25T01-15-31-399621+00-00-changed.json"
+        },
+        {
+          "observation_index": 176,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-25 05:00 CEST",
+          "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
+          "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ]
     }
@@ -9699,7 +9741,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 162,
+      "appearance_count": 163,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -9708,17 +9750,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9205,
+      "appearance_ratio": 0.9209,
       "appearances": [
         {
           "observation_index": 1,
@@ -10853,6 +10895,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -10934,7 +10983,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 162,
+      "appearance_count": 163,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -10943,17 +10992,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.9205,
+      "appearance_ratio": 0.9209,
       "appearances": [
         {
           "observation_index": 1,
@@ -12088,6 +12137,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -12169,7 +12225,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 130,
+      "appearance_count": 131,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -12178,17 +12234,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7386,
+      "appearance_ratio": 0.7401,
       "appearances": [
         {
           "observation_index": 1,
@@ -13099,6 +13155,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -13159,7 +13222,7 @@
         "signal_basis": [
           "Observed 126 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.7159",
+          "Appearance ratio: 0.7119",
           "Provider hint: Contabo"
         ],
         "official_ownership_claim": false,
@@ -13175,7 +13238,7 @@
       "signal_basis": [
         "Observed 126 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.7159",
+        "Appearance ratio: 0.7119",
         "Provider hint: Contabo"
       ],
       "official_ownership_claim": false,
@@ -13201,7 +13264,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.7159,
+      "appearance_ratio": 0.7119,
       "appearances": [
         {
           "observation_index": 6,
@@ -14143,7 +14206,7 @@
         "signal_basis": [
           "Observed 119 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.6761"
+          "Appearance ratio: 0.6723"
         ],
         "official_ownership_claim": false,
         "detection_method": "static_report_evidence_and_observation_heuristic",
@@ -14158,7 +14221,7 @@
       "signal_basis": [
         "Observed 119 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.6761"
+        "Appearance ratio: 0.6723"
       ],
       "official_ownership_claim": false,
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
@@ -14183,7 +14246,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6761,
+      "appearance_ratio": 0.6723,
       "appearances": [
         {
           "observation_index": 11,
@@ -15097,7 +15160,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 112,
+      "appearance_count": 113,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -15106,17 +15169,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6364,
+      "appearance_ratio": 0.6384,
       "appearances": [
         {
           "observation_index": 1,
@@ -15901,6 +15964,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -15983,7 +16053,7 @@
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 112,
+      "appearance_count": 113,
       "first_seen": {
         "observation_index": 1,
         "phase": "manual_backfill",
@@ -15992,17 +16062,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6364,
+      "appearance_ratio": 0.6384,
       "appearances": [
         {
           "observation_index": 1,
@@ -16787,6 +16857,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -16844,9 +16921,9 @@
         "peer_identity_hint": null,
         "historical_registry_status": "High persistence across watcher observations.",
         "signal_basis": [
-          "Observed 106 times across available watcher history.",
+          "Observed 107 times across available watcher history.",
           "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-          "Appearance ratio: 0.6023"
+          "Appearance ratio: 0.6045"
         ],
         "official_ownership_claim": false,
         "detection_method": "static_report_evidence_and_observation_heuristic",
@@ -16859,15 +16936,15 @@
       "peer_identity_hint": null,
       "historical_registry_status": "High persistence across watcher observations.",
       "signal_basis": [
-        "Observed 106 times across available watcher history.",
+        "Observed 107 times across available watcher history.",
         "High persistence can indicate retained infrastructure, but does not confirm ownership.",
-        "Appearance ratio: 0.6023"
+        "Appearance ratio: 0.6045"
       ],
       "official_ownership_claim": false,
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
       "signal_source_reference": "Derived from community observation evidence in Report 5: Official Enode Evolution Analysis \u2014 Infrastructure Rotation & Network Maturation, plus watcher observation history.",
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
-      "appearance_count": 106,
+      "appearance_count": 107,
       "first_seen": {
         "observation_index": 11,
         "phase": "manual_backfill",
@@ -16876,17 +16953,17 @@
         "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 176,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "2026-08-25 05:00 CEST",
-        "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
-        "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.6023,
+      "appearance_ratio": 0.6045,
       "appearances": [
         {
           "observation_index": 11,
@@ -17629,6 +17706,13 @@
           "generated_at_source": "2026-08-25 05:00 CEST",
           "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
           "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
@@ -17729,7 +17813,7 @@
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.5795,
+      "appearance_ratio": 0.5763,
       "appearances": [
         {
           "observation_index": 1,
@@ -18474,36 +18558,37 @@
       "live_asn_lookup_error": null
     },
     {
-      "ip": "217.76.53.98",
+      "ip": "95.216.70.180",
       "provider_hint": {
-        "ip": "217.76.53.98",
-        "provider_guess": "Unknown",
-        "asn_hint": null,
-        "provider_type": "Unknown",
-        "country_hint": "Unknown",
-        "confidence": "LOW",
+        "ip": "95.216.70.180",
+        "provider_guess": "Hetzner",
+        "asn_hint": "AS24940",
+        "provider_type": "VPS / Dedicated",
+        "country_hint": "Germany / Finland",
+        "confidence": "HIGH",
         "detection_method": "static_prefix_heuristic",
-        "notes": "No static provider hint matched. Use live ASN lookup for verification."
+        "matched_prefix": "95.216.0.0/16",
+        "notes": "Static prefix heuristic based on commonly observed Hetzner ranges."
       },
-      "provider_guess": "Unknown",
-      "asn_hint": null,
-      "provider_type": "Unknown",
-      "country_hint": "Unknown",
-      "provider_confidence": "LOW",
+      "provider_guess": "Hetzner",
+      "asn_hint": "AS24940",
+      "provider_type": "VPS / Dedicated",
+      "country_hint": "Germany / Finland",
+      "provider_confidence": "HIGH",
       "provider_detection_method": "static_prefix_heuristic",
-      "matched_prefix": null,
-      "provider_notes": "No static provider hint matched. Use live ASN lookup for verification.",
+      "matched_prefix": "95.216.0.0/16",
+      "provider_notes": "Static prefix heuristic based on commonly observed Hetzner ranges.",
       "dac_signal": {
-        "ip": "217.76.53.98",
+        "ip": "95.216.70.180",
         "dac_infrastructure_signal": "Community VPS-like Signal",
         "signal_category": "community_vps_like",
         "signal_confidence": "MEDIUM",
-        "peer_identity_hint": "whale-vps1",
-        "historical_registry_status": "Observed as replacement / addition in later registry phase.",
+        "peer_identity_hint": "Fertal",
+        "historical_registry_status": "Observed in prior registry phase; later removed but observed active via peer topology evidence.",
         "signal_basis": [
-          "Previously identified through admin.peers evidence as whale-vps1.",
-          "Appeared as a newer replacement / addition.",
-          "Prior analysis classified it as community VPS-like infrastructure."
+          "Previously identified through admin.peers evidence as Fertal.",
+          "Prior analysis associated it with Hetzner-style relay infrastructure.",
+          "Removed from later registry but still observed as active peer in the referenced report."
         ],
         "official_ownership_claim": false,
         "detection_method": "static_report_evidence_and_observation_heuristic",
@@ -18513,12 +18598,12 @@
       "dac_infrastructure_signal": "Community VPS-like Signal",
       "signal_category": "community_vps_like",
       "signal_confidence": "MEDIUM",
-      "peer_identity_hint": "whale-vps1",
-      "historical_registry_status": "Observed as replacement / addition in later registry phase.",
+      "peer_identity_hint": "Fertal",
+      "historical_registry_status": "Observed in prior registry phase; later removed but observed active via peer topology evidence.",
       "signal_basis": [
-        "Previously identified through admin.peers evidence as whale-vps1.",
-        "Appeared as a newer replacement / addition.",
-        "Prior analysis classified it as community VPS-like infrastructure."
+        "Previously identified through admin.peers evidence as Fertal.",
+        "Prior analysis associated it with Hetzner-style relay infrastructure.",
+        "Removed from later registry but still observed as active peer in the referenced report."
       ],
       "official_ownership_claim": false,
       "signal_detection_method": "static_report_evidence_and_observation_heuristic",
@@ -18526,32 +18611,25 @@
       "signal_disclaimer": "DAC Infrastructure Signal is a community inference layer based on observed registry history, peer identity strings, persistence, subnet patterns, and provider hints. It is not an official DAC classification and should not be treated as confirmed node ownership.",
       "appearance_count": 90,
       "first_seen": {
-        "observation_index": 1,
+        "observation_index": 2,
         "phase": "manual_backfill",
-        "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
+        "generated_at_source": "Sat May 16 08:00:01 PM CEST 2026",
         "checked_at_utc": null,
-        "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
+        "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
       },
       "last_seen": {
-        "observation_index": 143,
+        "observation_index": 177,
         "phase": "automated_watcher",
-        "generated_at_source": "Wed Jul  8 11:00:01 AM CEST 2026",
-        "checked_at_utc": "2026-07-08T09:54:50.646653+00:00",
-        "snapshot_file": "data/snapshots/2026-07-08T09-54-50-646653+00-00-changed.json"
+        "generated_at_source": "2026-08-26 21:00 CEST",
+        "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+        "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
       },
       "phases_seen": [
         "automated_watcher",
         "manual_backfill"
       ],
-      "appearance_ratio": 0.5114,
+      "appearance_ratio": 0.5085,
       "appearances": [
-        {
-          "observation_index": 1,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 15 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
-        },
         {
           "observation_index": 2,
           "phase": "manual_backfill",
@@ -18560,67 +18638,18 @@
           "snapshot_file": "data/manual-backfill/2026-05-16T20-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 5,
+          "observation_index": 3,
           "phase": "manual_backfill",
-          "generated_at_source": "Tue May 19 04:00:01 PM CEST 2026",
+          "generated_at_source": "Sun May 17 04:00:01 PM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-19T16-00-01-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-17T16-00-01-CEST-manual.json"
         },
         {
-          "observation_index": 6,
+          "observation_index": 4,
           "phase": "manual_backfill",
-          "generated_at_source": "Wed May 20 08:00:02 PM CEST 2026",
+          "generated_at_source": "Mon May 18 08:00:02 AM CEST 2026",
           "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-20T20-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 7,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 22 12:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-22T00-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 8,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 23 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-23T12-00-02-CEST-manual.json"
-        },
-        {
-          "observation_index": 9,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sun May 24 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-24T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 10,
-          "phase": "manual_backfill",
-          "generated_at_source": "Mon May 25 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-25T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 11,
-          "phase": "manual_backfill",
-          "generated_at_source": "Thu May 28 08:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-28T08-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 12,
-          "phase": "manual_backfill",
-          "generated_at_source": "Fri May 29 04:00:01 AM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-29T04-00-01-CEST-manual.json"
-        },
-        {
-          "observation_index": 13,
-          "phase": "manual_backfill",
-          "generated_at_source": "Sat May 30 12:00:02 PM CEST 2026",
-          "checked_at_utc": null,
-          "snapshot_file": "data/manual-backfill/2026-05-30T12-00-02-CEST-manual.json"
+          "snapshot_file": "data/manual-backfill/2026-05-18T08-00-02-CEST-manual.json"
         },
         {
           "observation_index": 14,
@@ -18628,6 +18657,111 @@
           "generated_at_source": "Sun May 31 12:00:02 PM CEST 2026",
           "checked_at_utc": null,
           "snapshot_file": "data/manual-backfill/2026-05-31T12-00-02-CEST-manual.json"
+        },
+        {
+          "observation_index": 15,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 04:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T02:07:09.594281+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T02-07-09-594281+00-00-initial.json"
+        },
+        {
+          "observation_index": 16,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 08:00:02 AM CEST 2026",
+          "checked_at_utc": "2026-06-01T07:27:25.922854+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T07-27-25-922854+00-00-changed.json"
+        },
+        {
+          "observation_index": 17,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T10:12:53.282169+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T10-12-53-282169+00-00-changed.json"
+        },
+        {
+          "observation_index": 18,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jun  1 10:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-01T21:41:19.117549+00:00",
+          "snapshot_file": "data/snapshots/2026-06-01T21-41-19-117549+00-00-changed.json"
+        },
+        {
+          "observation_index": 19,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  2 06:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-02T04:50:49.005853+00:00",
+          "snapshot_file": "data/snapshots/2026-06-02T04-50-49-005853+00-00-changed.json"
+        },
+        {
+          "observation_index": 20,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  2 12:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-02T10:50:41.887274+00:00",
+          "snapshot_file": "data/snapshots/2026-06-02T10-50-41-887274+00-00-changed.json"
+        },
+        {
+          "observation_index": 21,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  2 10:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-02T21:19:37.546922+00:00",
+          "snapshot_file": "data/snapshots/2026-06-02T21-19-37-546922+00-00-changed.json"
+        },
+        {
+          "observation_index": 22,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jun  3 12:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-03T10:23:29.960579+00:00",
+          "snapshot_file": "data/snapshots/2026-06-03T10-23-29-960579+00-00-changed.json"
+        },
+        {
+          "observation_index": 23,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jun  3 02:00:03 PM CEST 2026",
+          "checked_at_utc": "2026-06-03T12:20:56.647090+00:00",
+          "snapshot_file": "data/snapshots/2026-06-03T12-20-56-647090+00-00-changed.json"
+        },
+        {
+          "observation_index": 24,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jun  3 10:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-03T20:39:09.567713+00:00",
+          "snapshot_file": "data/snapshots/2026-06-03T20-39-09-567713+00-00-changed.json"
+        },
+        {
+          "observation_index": 25,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jun  4 12:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-03T22:53:33.600499+00:00",
+          "snapshot_file": "data/snapshots/2026-06-03T22-53-33-600499+00-00-changed.json"
+        },
+        {
+          "observation_index": 26,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jun  4 02:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-04T01:42:38.396686+00:00",
+          "snapshot_file": "data/snapshots/2026-06-04T01-42-38-396686+00-00-changed.json"
+        },
+        {
+          "observation_index": 27,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jun  4 12:00:03 PM CEST 2026",
+          "checked_at_utc": "2026-06-04T10:25:44.902143+00:00",
+          "snapshot_file": "data/snapshots/2026-06-04T10-25-44-902143+00-00-changed.json"
+        },
+        {
+          "observation_index": 28,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jun  4 06:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-04T16:36:44.457755+00:00",
+          "snapshot_file": "data/snapshots/2026-06-04T16-36-44-457755+00-00-changed.json"
+        },
+        {
+          "observation_index": 29,
+          "phase": "automated_watcher",
+          "generated_at_source": "Sat Jun  6 08:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-06T06:44:02.963253+00:00",
+          "snapshot_file": "data/snapshots/2026-06-06T06-44-02-963253+00-00-changed.json"
         },
         {
           "observation_index": 30,
@@ -18733,6 +18867,41 @@
           "generated_at_source": "Tue Jun  9 02:00:01 AM CEST 2026",
           "checked_at_utc": "2026-06-09T00:10:13.701528+00:00",
           "snapshot_file": "data/snapshots/2026-06-09T00-10-13-701528+00-00-changed.json"
+        },
+        {
+          "observation_index": 45,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 06:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-09T04:35:44.143706+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T04-35-44-143706+00-00-changed.json"
+        },
+        {
+          "observation_index": 46,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 10:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-06-09T08:22:42.525518+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T08-22-42-525518+00-00-changed.json"
+        },
+        {
+          "observation_index": 47,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 12:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-09T11:39:22.586142+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T11-39-22-586142+00-00-changed.json"
+        },
+        {
+          "observation_index": 48,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 04:00:02 PM CEST 2026",
+          "checked_at_utc": "2026-06-09T14:05:33.052034+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T14-05-33-052034+00-00-changed.json"
+        },
+        {
+          "observation_index": 49,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jun  9 08:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-06-09T19:14:36.409581+00:00",
+          "snapshot_file": "data/snapshots/2026-06-09T19-14-36-409581+00-00-changed.json"
         },
         {
           "observation_index": 50,
@@ -18903,302 +19072,218 @@
           "snapshot_file": "data/snapshots/2026-06-15T07-39-19-639764+00-00-changed.json"
         },
         {
-          "observation_index": 74,
-          "phase": "automated_watcher",
-          "generated_at_source": "Mon Jun 15 08:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-15T18:18:01.888413+00:00",
-          "snapshot_file": "data/snapshots/2026-06-15T18-18-01-888413+00-00-changed.json"
-        },
-        {
-          "observation_index": 75,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 16 04:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-16T02:07:34.788855+00:00",
-          "snapshot_file": "data/snapshots/2026-06-16T02-07-34-788855+00-00-changed.json"
-        },
-        {
-          "observation_index": 76,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 16 02:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-16T12:32:50.463505+00:00",
-          "snapshot_file": "data/snapshots/2026-06-16T12-32-50-463505+00-00-changed.json"
-        },
-        {
-          "observation_index": 77,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 16 06:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-16T17:49:39.675701+00:00",
-          "snapshot_file": "data/snapshots/2026-06-16T17-49-39-675701+00-00-changed.json"
-        },
-        {
-          "observation_index": 78,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 16 10:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-16T20:52:12.970886+00:00",
-          "snapshot_file": "data/snapshots/2026-06-16T20-52-12-970886+00-00-changed.json"
-        },
-        {
-          "observation_index": 79,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 17 06:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-17T05:24:29.402077+00:00",
-          "snapshot_file": "data/snapshots/2026-06-17T05-24-29-402077+00-00-changed.json"
-        },
-        {
-          "observation_index": 82,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 17 06:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-17T17:24:29.584343+00:00",
-          "snapshot_file": "data/snapshots/2026-06-17T17-24-29-584343+00-00-changed.json"
-        },
-        {
-          "observation_index": 83,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 17 08:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-17T19:36:03.902947+00:00",
-          "snapshot_file": "data/snapshots/2026-06-17T19-36-03-902947+00-00-changed.json"
-        },
-        {
-          "observation_index": 84,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 12:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-17T23:08:13.117086+00:00",
-          "snapshot_file": "data/snapshots/2026-06-17T23-08-13-117086+00-00-changed.json"
-        },
-        {
-          "observation_index": 85,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 08:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-18T06:31:00.145276+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T06-31-00-145276+00-00-changed.json"
-        },
-        {
-          "observation_index": 86,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 01:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-18T11:01:06.729725+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T11-01-06-729725+00-00-changed.json"
-        },
-        {
-          "observation_index": 87,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 04:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-18T14:23:11.562293+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T14-23-11-562293+00-00-changed.json"
-        },
-        {
-          "observation_index": 88,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 18 07:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-18T17:41:50.587788+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T17-41-50-587788+00-00-changed.json"
-        },
-        {
-          "observation_index": 89,
-          "phase": "automated_watcher",
-          "generated_at_source": "Fri Jun 19 12:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-18T22:17:50.868527+00:00",
-          "snapshot_file": "data/snapshots/2026-06-18T22-17-50-868527+00-00-changed.json"
-        },
-        {
-          "observation_index": 96,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jun 20 12:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-19T22:38:08.044850+00:00",
-          "snapshot_file": "data/snapshots/2026-06-19T22-38-08-044850+00-00-changed.json"
-        },
-        {
-          "observation_index": 97,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jun 20 05:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-20T03:45:00.591155+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T03-45-00-591155+00-00-changed.json"
-        },
-        {
-          "observation_index": 98,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jun 20 04:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-20T14:34:32.951049+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T14-34-32-951049+00-00-changed.json"
-        },
-        {
-          "observation_index": 99,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jun 20 09:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-20T19:27:17.829217+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T19-27-17-829217+00-00-changed.json"
-        },
-        {
-          "observation_index": 100,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 12:00:02 AM CEST 2026",
-          "checked_at_utc": "2026-06-20T22:07:48.987355+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T22-07-48-987355+00-00-changed.json"
-        },
-        {
-          "observation_index": 101,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 01:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-20T23:36:29.921150+00:00",
-          "snapshot_file": "data/snapshots/2026-06-20T23-36-29-921150+00-00-changed.json"
-        },
-        {
-          "observation_index": 102,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 09:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-21T07:09:00.523198+00:00",
-          "snapshot_file": "data/snapshots/2026-06-21T07-09-00-523198+00-00-changed.json"
-        },
-        {
-          "observation_index": 103,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 03:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-21T13:06:30.628179+00:00",
-          "snapshot_file": "data/snapshots/2026-06-21T13-06-30-628179+00-00-changed.json"
-        },
-        {
-          "observation_index": 104,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 21 10:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-21T20:25:21.609500+00:00",
-          "snapshot_file": "data/snapshots/2026-06-21T20-25-21-609500+00-00-changed.json"
-        },
-        {
-          "observation_index": 118,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 24 07:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-24T05:50:03.148715+00:00",
-          "snapshot_file": "data/snapshots/2026-06-24T05-50-03-148715+00-00-changed.json"
-        },
-        {
-          "observation_index": 119,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 24 02:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-24T12:09:33.053027+00:00",
-          "snapshot_file": "data/snapshots/2026-06-24T12-09-33-053027+00-00-changed.json"
-        },
-        {
-          "observation_index": 120,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jun 24 10:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-24T20:57:09.947831+00:00",
-          "snapshot_file": "data/snapshots/2026-06-24T20-57-09-947831+00-00-changed.json"
-        },
-        {
-          "observation_index": 121,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jun 25 12:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-24T22:22:42.215166+00:00",
-          "snapshot_file": "data/snapshots/2026-06-24T22-22-42-215166+00-00-changed.json"
-        },
-        {
-          "observation_index": 132,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 28 02:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-28T12:09:28.489609+00:00",
-          "snapshot_file": "data/snapshots/2026-06-28T12-09-28-489609+00-00-changed.json"
-        },
-        {
-          "observation_index": 133,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sun Jun 28 07:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-28T17:12:44.835160+00:00",
-          "snapshot_file": "data/snapshots/2026-06-28T17-12-44-835160+00-00-changed.json"
-        },
-        {
-          "observation_index": 134,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 30 06:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-06-30T16:05:32.010566+00:00",
-          "snapshot_file": "data/snapshots/2026-06-30T16-05-32-010566+00-00-changed.json"
-        },
-        {
-          "observation_index": 135,
-          "phase": "automated_watcher",
-          "generated_at_source": "Tue Jun 30 10:00:02 PM CEST 2026",
-          "checked_at_utc": "2026-06-30T20:22:41.093135+00:00",
-          "snapshot_file": "data/snapshots/2026-06-30T20-22-41-093135+00-00-changed.json"
-        },
-        {
-          "observation_index": 136,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jul  1 01:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-06-30T23:15:30.910545+00:00",
-          "snapshot_file": "data/snapshots/2026-06-30T23-15-30-910545+00-00-changed.json"
-        },
-        {
-          "observation_index": 137,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jul  1 12:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-01T10:15:18.248752+00:00",
-          "snapshot_file": "data/snapshots/2026-07-01T10-15-18-248752+00-00-changed.json"
-        },
-        {
-          "observation_index": 138,
-          "phase": "automated_watcher",
-          "generated_at_source": "Wed Jul  1 10:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-01T20:25:12.264521+00:00",
-          "snapshot_file": "data/snapshots/2026-07-01T20-25-12-264521+00-00-changed.json"
-        },
-        {
-          "observation_index": 139,
-          "phase": "automated_watcher",
-          "generated_at_source": "Thu Jul  2 01:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-02T11:54:42.739642+00:00",
-          "snapshot_file": "data/snapshots/2026-07-02T11-54-42-739642+00-00-changed.json"
-        },
-        {
-          "observation_index": 140,
-          "phase": "automated_watcher",
-          "generated_at_source": "Fri Jul  3 07:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-03T17:03:39.056358+00:00",
-          "snapshot_file": "data/snapshots/2026-07-03T17-03-39-056358+00-00-changed.json"
-        },
-        {
-          "observation_index": 141,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jul  4 07:00:01 AM CEST 2026",
-          "checked_at_utc": "2026-07-04T05:09:56.900243+00:00",
-          "snapshot_file": "data/snapshots/2026-07-04T05-09-56-900243+00-00-changed.json"
-        },
-        {
-          "observation_index": 142,
-          "phase": "automated_watcher",
-          "generated_at_source": "Sat Jul  4 06:00:01 PM CEST 2026",
-          "checked_at_utc": "2026-07-04T16:02:27.136467+00:00",
-          "snapshot_file": "data/snapshots/2026-07-04T16-02-27-136467+00-00-changed.json"
-        },
-        {
           "observation_index": 143,
           "phase": "automated_watcher",
           "generated_at_source": "Wed Jul  8 11:00:01 AM CEST 2026",
           "checked_at_utc": "2026-07-08T09:54:50.646653+00:00",
           "snapshot_file": "data/snapshots/2026-07-08T09-54-50-646653+00-00-changed.json"
+        },
+        {
+          "observation_index": 144,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jul 13 08:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-07-13T06:20:04.953018+00:00",
+          "snapshot_file": "data/snapshots/2026-07-13T06-20-04-953018+00-00-changed.json"
+        },
+        {
+          "observation_index": 145,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jul 14 04:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-07-14T14:15:16.750627+00:00",
+          "snapshot_file": "data/snapshots/2026-07-14T14-15-16-750627+00-00-changed.json"
+        },
+        {
+          "observation_index": 146,
+          "phase": "automated_watcher",
+          "generated_at_source": "Tue Jul 14 05:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-07-14T15:56:31.450989+00:00",
+          "snapshot_file": "data/snapshots/2026-07-14T15-56-31-450989+00-00-changed.json"
+        },
+        {
+          "observation_index": 147,
+          "phase": "automated_watcher",
+          "generated_at_source": "Wed Jul 15 04:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-07-15T14:01:15.197394+00:00",
+          "snapshot_file": "data/snapshots/2026-07-15T14-01-15-197394+00-00-changed.json"
+        },
+        {
+          "observation_index": 148,
+          "phase": "automated_watcher",
+          "generated_at_source": "Mon Jul 20 03:00:01 PM CEST 2026",
+          "checked_at_utc": "2026-07-20T13:18:06.523135+00:00",
+          "snapshot_file": "data/snapshots/2026-07-20T13-18-06-523135+00-00-changed.json"
+        },
+        {
+          "observation_index": 149,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jul 23 03:00:01 AM CEST 2026",
+          "checked_at_utc": "2026-07-23T01:01:00.983227+00:00",
+          "snapshot_file": "data/snapshots/2026-07-23T01-01-00-983227+00-00-changed.json"
+        },
+        {
+          "observation_index": 150,
+          "phase": "automated_watcher",
+          "generated_at_source": "Thu Jul 23 01:00:41 PM CEST 2026",
+          "checked_at_utc": "2026-07-23T11:56:05.881010+00:00",
+          "snapshot_file": "data/snapshots/2026-07-23T11-56-05-881010+00-00-changed.json"
+        },
+        {
+          "observation_index": 151,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-07-24 06:00 CEST",
+          "checked_at_utc": "2026-07-24T04:32:49.852183+00:00",
+          "snapshot_file": "data/snapshots/2026-07-24T04-32-49-852183+00-00-changed.json"
+        },
+        {
+          "observation_index": 152,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-07-28 09:00 CEST",
+          "checked_at_utc": "2026-07-28T07:17:57.050489+00:00",
+          "snapshot_file": "data/snapshots/2026-07-28T07-17-57-050489+00-00-changed.json"
+        },
+        {
+          "observation_index": 153,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-07-29 13:00 CEST",
+          "checked_at_utc": "2026-07-29T11:39:53.471520+00:00",
+          "snapshot_file": "data/snapshots/2026-07-29T11-39-53-471520+00-00-changed.json"
+        },
+        {
+          "observation_index": 154,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-07-31 11:00 CEST",
+          "checked_at_utc": "2026-07-31T09:33:26.974141+00:00",
+          "snapshot_file": "data/snapshots/2026-07-31T09-33-26-974141+00-00-changed.json"
+        },
+        {
+          "observation_index": 155,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-05 11:00 CEST",
+          "checked_at_utc": "2026-08-05T09:06:47.018957+00:00",
+          "snapshot_file": "data/snapshots/2026-08-05T09-06-47-018957+00-00-changed.json"
+        },
+        {
+          "observation_index": 164,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-18 05:00 CEST",
+          "checked_at_utc": "2026-08-18T03:24:05.128809+00:00",
+          "snapshot_file": "data/snapshots/2026-08-18T03-24-05-128809+00-00-changed.json"
+        },
+        {
+          "observation_index": 165,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-19 16:00 CEST",
+          "checked_at_utc": "2026-08-19T14:39:39.953222+00:00",
+          "snapshot_file": "data/snapshots/2026-08-19T14-39-39-953222+00-00-changed.json"
+        },
+        {
+          "observation_index": 166,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-19 21:00 CEST",
+          "checked_at_utc": "2026-08-19T19:25:13.619166+00:00",
+          "snapshot_file": "data/snapshots/2026-08-19T19-25-13-619166+00-00-changed.json"
+        },
+        {
+          "observation_index": 167,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-20 18:00 CEST",
+          "checked_at_utc": "2026-08-20T16:04:36.850465+00:00",
+          "snapshot_file": "data/snapshots/2026-08-20T16-04-36-850465+00-00-changed.json"
+        },
+        {
+          "observation_index": 168,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-21 03:00 CEST",
+          "checked_at_utc": "2026-08-21T01:17:52.710612+00:00",
+          "snapshot_file": "data/snapshots/2026-08-21T01-17-52-710612+00-00-changed.json"
+        },
+        {
+          "observation_index": 169,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-21 06:00 CEST",
+          "checked_at_utc": "2026-08-21T04:23:17.552793+00:00",
+          "snapshot_file": "data/snapshots/2026-08-21T04-23-17-552793+00-00-changed.json"
+        },
+        {
+          "observation_index": 170,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-22 06:00 CEST",
+          "checked_at_utc": "2026-08-22T04:06:03.870706+00:00",
+          "snapshot_file": "data/snapshots/2026-08-22T04-06-03-870706+00-00-changed.json"
+        },
+        {
+          "observation_index": 171,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-22 11:00 CEST",
+          "checked_at_utc": "2026-08-22T09:35:16.062093+00:00",
+          "snapshot_file": "data/snapshots/2026-08-22T09-35-16-062093+00-00-changed.json"
+        },
+        {
+          "observation_index": 172,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-23 06:00 CEST",
+          "checked_at_utc": "2026-08-23T04:22:20.923928+00:00",
+          "snapshot_file": "data/snapshots/2026-08-23T04-22-20-923928+00-00-changed.json"
+        },
+        {
+          "observation_index": 173,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-23 12:00 CEST",
+          "checked_at_utc": "2026-08-23T10:00:09.553594+00:00",
+          "snapshot_file": "data/snapshots/2026-08-23T10-00-09-553594+00-00-changed.json"
+        },
+        {
+          "observation_index": 174,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-23 12:00 CEST",
+          "checked_at_utc": "2026-08-23T10:33:21.478638+00:00",
+          "snapshot_file": "data/snapshots/2026-08-23T10-33-21-478638+00-00-changed.json"
+        },
+        {
+          "observation_index": 175,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-25 03:00 CEST",
+          "checked_at_utc": "2026-08-25T01:15:31.399621+00:00",
+          "snapshot_file": "data/snapshots/2026-08-25T01-15-31-399621+00-00-changed.json"
+        },
+        {
+          "observation_index": 176,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-25 05:00 CEST",
+          "checked_at_utc": "2026-08-25T03:31:16.872495+00:00",
+          "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+        },
+        {
+          "observation_index": 177,
+          "phase": "automated_watcher",
+          "generated_at_source": "2026-08-26 21:00 CEST",
+          "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+          "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
         }
       ],
       "live_asn_lookup": {
-        "ip": "217.76.53.98",
+        "ip": "95.216.70.180",
         "live_lookup_used": true,
         "live_lookup_success": true,
         "lookup_method": "team_cymru_whois_live_lookup",
-        "asn": "AS51167",
-        "asn_name": "CONTABO - Contabo GmbH, DE",
-        "bgp_prefix": "217.76.48.0/20",
+        "asn": "AS24940",
+        "asn_name": "HETZNER-AS - Hetzner Online GmbH, DE",
+        "bgp_prefix": "95.216.0.0/16",
         "country_code": "DE",
         "registry": "ripencc",
-        "allocated": "2003-09-29",
+        "allocated": "2009-02-24",
         "source": "team_cymru",
         "cached": true,
-        "checked_at_utc": "2026-06-03T04:32:02.383686+00:00",
+        "checked_at_utc": "2026-06-03T04:26:31.147014+00:00",
         "error": null,
         "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
       },
-      "live_asn": "AS51167",
-      "live_asn_name": "CONTABO - Contabo GmbH, DE",
-      "live_bgp_prefix": "217.76.48.0/20",
+      "live_asn": "AS24940",
+      "live_asn_name": "HETZNER-AS - Hetzner Online GmbH, DE",
+      "live_bgp_prefix": "95.216.0.0/16",
       "live_country_code": "DE",
       "live_registry": "ripencc",
-      "live_allocated": "2003-09-29",
+      "live_allocated": "2009-02-24",
       "live_asn_lookup_success": true,
       "live_asn_lookup_cached": true,
       "live_asn_lookup_error": null
@@ -22175,10 +22260,26 @@
       "change_severity": "LOW",
       "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
       "snapshot_file": "data/snapshots/2026-08-25T03-31-16-872495+00-00-changed.json"
+    },
+    {
+      "observation_index": 177,
+      "phase": "automated_watcher",
+      "status": "changed",
+      "generated_at_source": "2026-08-26 21:00 CEST",
+      "checked_at_utc": "2026-08-26T19:12:47.439764+00:00",
+      "target_port": 28657,
+      "current_total": 11,
+      "previous_total": 10,
+      "added_count": 1,
+      "removed_count": 0,
+      "unchanged_count": 10,
+      "change_severity": "LOW",
+      "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
+      "snapshot_file": "data/snapshots/2026-08-26T19-12-47-439764+00-00-changed.json"
     }
   ],
   "report_ready_summary": {
-    "short_summary": "Across 176 total observations, the DAC official enode list showed 43 unique enodes and 42 unique IPs. The observed target port remained within [28657]. Enode count ranged from 2 to 16, with an average of 11.16.",
+    "short_summary": "Across 177 total observations, the DAC official enode list showed 43 unique enodes and 42 unique IPs. The observed target port remained within [28657]. Enode count ranged from 2 to 16, with an average of 11.16.",
     "manual_to_automated_context": "The dataset combines partial manual observations from the pre-watcher period with automated GitHub Actions snapshots after the watcher was deployed.",
     "technical_value": "This summary provides a structured basis for analyzing bootstrap peer rotation, persistent observed enodes, IP recurrence, provider hints, ASN hints, DAC Infrastructure Signals, and possible infrastructure maturation patterns."
   }
