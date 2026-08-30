@@ -1,7 +1,7 @@
 {
   "project": "DAC Enode Intelligence Watcher",
   "summary_type": "custom_json_report_summary",
-  "generated_at_utc": "2026-08-30T13:08:20.319598+00:00",
+  "generated_at_utc": "2026-08-30T17:29:35.173460+00:00",
   "range": "7d",
   "range_label": "Last 7 Days",
   "source_files": {
@@ -12,16 +12,16 @@
   },
   "important_note": "This custom JSON summary is observation-based. It does not make official DAC ownership claims and should not be treated as a definitive decentralization measurement.",
   "latest_observation": {
-    "checked_at_utc": "2026-08-30T13:08:17.301240+00:00",
-    "generated_at_source": "2026-08-30 15:00 CEST",
+    "checked_at_utc": "2026-08-30T17:29:30.544357+00:00",
+    "generated_at_source": "2026-08-30 19:00 CEST",
     "target_port": 28657,
-    "current_total": 9,
-    "previous_total": 10,
-    "added_count": 0,
-    "removed_count": 1,
+    "current_total": 10,
+    "previous_total": 9,
+    "added_count": 1,
+    "removed_count": 0,
     "unchanged_count": 9,
     "change_severity": "LOW",
-    "severity_reason": "Small enode rotation detected: 0 added and 1 removed."
+    "severity_reason": "Small enode rotation detected: 1 added and 0 removed."
   },
   "observation_scope": {
     "selected_observation_count": 3,
@@ -48,7 +48,7 @@
     "selected_anomaly_signal_count": 0,
     "selected_severity_counts": {},
     "selected_anomaly_type_counts": {},
-    "global_short_summary": "17 anomaly signals were detected across 181 observations. The highest observed anomaly severity is CRITICAL.",
+    "global_short_summary": "17 anomaly signals were detected across 182 observations. The highest observed anomaly severity is CRITICAL.",
     "global_highest_severity": "CRITICAL",
     "global_recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
   },
