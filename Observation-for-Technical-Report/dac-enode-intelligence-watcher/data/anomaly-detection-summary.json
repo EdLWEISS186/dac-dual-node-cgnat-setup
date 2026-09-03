@@ -8,7 +8,7 @@
   "machine_learning_used": false,
   "coverage_note": "Manual backfill is a partial archive. Missing dates represent missed observation windows, not confirmed absence of changes.",
   "observation_scope": {
-    "total_observations": 182,
+    "total_observations": 183,
     "first_observation": {
       "observation_index": 1,
       "phase": "manual_backfill",
@@ -26,20 +26,20 @@
       "snapshot_file": "data/manual-backfill/2026-05-15T00-00-01-CEST-manual.json"
     },
     "latest_observation": {
-      "observation_index": 182,
+      "observation_index": 183,
       "phase": "automated_watcher",
       "status": "changed",
-      "generated_at_source": "2026-08-30 19:00 CEST",
-      "checked_at_utc": "2026-08-30T17:29:30.544357+00:00",
+      "generated_at_source": "2026-09-03 13:00 CEST",
+      "checked_at_utc": "2026-09-03T11:20:22.139042+00:00",
       "target_port": 28657,
-      "current_total": 10,
-      "previous_total": 9,
+      "current_total": 6,
+      "previous_total": 10,
       "added_count": 1,
-      "removed_count": 0,
-      "unchanged_count": 9,
-      "change_severity": "LOW",
-      "severity_reason": "Small enode rotation detected: 1 added and 0 removed.",
-      "snapshot_file": "data/snapshots/2026-08-30T17-29-30-544357+00-00-changed.json"
+      "removed_count": 5,
+      "unchanged_count": 5,
+      "change_severity": "HIGH",
+      "severity_reason": "5 enodes were removed from a previous total of 10.",
+      "snapshot_file": "data/snapshots/2026-09-03T11-20-22-139042+00-00-changed.json"
     }
   },
   "rules": [
@@ -90,22 +90,22 @@
     }
   ],
   "report_summary": {
-    "short_summary": "17 anomaly signals were detected across 182 observations. The highest observed anomaly severity is CRITICAL.",
+    "short_summary": "20 anomaly signals were detected across 183 observations. The highest observed anomaly severity is CRITICAL.",
     "highest_severity": "CRITICAL",
-    "anomaly_count": 17,
+    "anomaly_count": 20,
     "severity_counts": {
-      "HIGH": 10,
+      "HIGH": 12,
       "CRITICAL": 4,
-      "MEDIUM": 3
+      "MEDIUM": 4
     },
     "anomaly_type_counts": {
       "LARGE_ENODE_COUNT_DROP": 1,
-      "HIGH_REMOVAL_EVENT": 4,
+      "HIGH_REMOVAL_EVENT": 5,
       "AGGRESSIVE_ROTATION": 5,
       "SHARP_ENODE_COUNT_DROP": 2,
       "LOW_CONTINUITY_RATIO": 2,
-      "WATCHER_HIGH_SEVERITY_SIGNAL": 2,
-      "MODERATE_ROTATION_SPIKE": 1
+      "WATCHER_HIGH_SEVERITY_SIGNAL": 3,
+      "MODERATE_ROTATION_SPIKE": 2
     },
     "technical_interpretation": "The anomaly layer highlights observations that may indicate unusually large peer rotation, sharp enode count changes, low continuity, or unexpected target port behavior.",
     "recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
@@ -500,6 +500,75 @@
         "change_severity": "CRITICAL",
         "severity_reason": "Official enode count dropped sharply from 13 to 2.",
         "snapshot_file": "data/snapshots/2026-08-15T14-22-23-360132+00-00-changed.json"
+      }
+    },
+    {
+      "anomaly_type": "HIGH_REMOVAL_EVENT",
+      "severity": "HIGH",
+      "reason": "5 enodes were removed from a previous total of 10.",
+      "technical_impact": "High removal count may indicate bootstrap peer replacement or infrastructure rotation.",
+      "recommended_action": "Review removed enodes and preserve the snapshot for future report comparison.",
+      "observation": {
+        "observation_index": 183,
+        "phase": "automated_watcher",
+        "status": "changed",
+        "generated_at_source": "2026-09-03 13:00 CEST",
+        "checked_at_utc": "2026-09-03T11:20:22.139042+00:00",
+        "target_port": 28657,
+        "previous_total": 10,
+        "current_total": 6,
+        "added_count": 1,
+        "removed_count": 5,
+        "unchanged_count": 5,
+        "change_severity": "HIGH",
+        "severity_reason": "5 enodes were removed from a previous total of 10.",
+        "snapshot_file": "data/snapshots/2026-09-03T11-20-22-139042+00-00-changed.json"
+      }
+    },
+    {
+      "anomaly_type": "MODERATE_ROTATION_SPIKE",
+      "severity": "MEDIUM",
+      "reason": "Moderate rotation spike detected: 1 added and 5 removed.",
+      "technical_impact": "This may represent a normal but meaningful bootstrap peer rotation event.",
+      "recommended_action": "Keep the event as report evidence and compare with surrounding observations.",
+      "observation": {
+        "observation_index": 183,
+        "phase": "automated_watcher",
+        "status": "changed",
+        "generated_at_source": "2026-09-03 13:00 CEST",
+        "checked_at_utc": "2026-09-03T11:20:22.139042+00:00",
+        "target_port": 28657,
+        "previous_total": 10,
+        "current_total": 6,
+        "added_count": 1,
+        "removed_count": 5,
+        "unchanged_count": 5,
+        "change_severity": "HIGH",
+        "severity_reason": "5 enodes were removed from a previous total of 10.",
+        "snapshot_file": "data/snapshots/2026-09-03T11-20-22-139042+00-00-changed.json"
+      }
+    },
+    {
+      "anomaly_type": "WATCHER_HIGH_SEVERITY_SIGNAL",
+      "severity": "HIGH",
+      "reason": "5 enodes were removed from a previous total of 10.",
+      "technical_impact": "The automated watcher detected a high-severity condition.",
+      "recommended_action": "Review the generated snapshot and email alert for detailed context.",
+      "observation": {
+        "observation_index": 183,
+        "phase": "automated_watcher",
+        "status": "changed",
+        "generated_at_source": "2026-09-03 13:00 CEST",
+        "checked_at_utc": "2026-09-03T11:20:22.139042+00:00",
+        "target_port": 28657,
+        "previous_total": 10,
+        "current_total": 6,
+        "added_count": 1,
+        "removed_count": 5,
+        "unchanged_count": 5,
+        "change_severity": "HIGH",
+        "severity_reason": "5 enodes were removed from a previous total of 10.",
+        "snapshot_file": "data/snapshots/2026-09-03T11-20-22-139042+00-00-changed.json"
       }
     }
   ]
