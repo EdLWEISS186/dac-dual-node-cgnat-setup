@@ -1,7 +1,7 @@
 {
   "project": "DAC Enode Intelligence Watcher",
   "summary_type": "custom_json_report_summary",
-  "generated_at_utc": "2026-09-06T13:58:17.006078+00:00",
+  "generated_at_utc": "2026-09-06T16:52:07.337649+00:00",
   "range": "30d",
   "range_label": "Last 30 Days",
   "source_files": {
@@ -12,16 +12,16 @@
   },
   "important_note": "This custom JSON summary is observation-based. It does not make official DAC ownership claims and should not be treated as a definitive decentralization measurement.",
   "latest_observation": {
-    "checked_at_utc": "2026-09-04T18:09:21.925725+00:00",
-    "generated_at_source": "2026-09-04 20:00 CEST",
+    "checked_at_utc": "2026-09-06T16:52:04.720017+00:00",
+    "generated_at_source": "2026-09-06 18:00 CEST",
     "target_port": 28657,
-    "current_total": 6,
-    "previous_total": 7,
-    "added_count": 0,
-    "removed_count": 1,
+    "current_total": 7,
+    "previous_total": 6,
+    "added_count": 1,
+    "removed_count": 0,
     "unchanged_count": 6,
     "change_severity": "LOW",
-    "severity_reason": "Small enode rotation detected: 0 added and 1 removed."
+    "severity_reason": "Small enode rotation detected: 1 added and 0 removed."
   },
   "observation_scope": {
     "selected_observation_count": 37,
@@ -48,35 +48,35 @@
     "selected_anomaly_signal_count": 0,
     "selected_severity_counts": {},
     "selected_anomaly_type_counts": {},
-    "global_short_summary": "20 anomaly signals were detected across 185 observations. The highest observed anomaly severity is CRITICAL.",
+    "global_short_summary": "20 anomaly signals were detected across 186 observations. The highest observed anomaly severity is CRITICAL.",
     "global_highest_severity": "CRITICAL",
     "global_recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
   },
   "concentration_summary": {
     "overall_concentration_label": "MODERATE",
     "headline": "Observed infrastructure shows moderate concentration under the current heuristic model.",
-    "key_observation": "Top live ASN is AS51167 with 15 unique IPs (35.71%).",
-    "country_observation": "Top live ASN country code is DE with 18 unique IPs (42.86%).",
+    "key_observation": "Top live ASN is AS51167 with 16 unique IPs (37.21%).",
+    "country_observation": "Top live ASN country code is DE with 19 unique IPs (44.19%).",
     "interpretation": "Top live ASN controls at least 35% of observed unique IPs.",
     "recommended_action": "Use this as an observation aid only. Compare it with registry history, DAC Infrastructure Signal, manual peer identity evidence, live ASN lookup updates, and future watcher snapshots before drawing conclusions.",
     "disclaimer": "Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement.",
     "top_dimensions": {
       "live_asn": {
         "top_name": "AS51167",
-        "top_count": 15,
-        "top_percentage": 35.71,
+        "top_count": 16,
+        "top_percentage": 37.21,
         "label": "MODERATE"
       },
       "live_country": {
         "top_name": "DE",
-        "top_count": 18,
-        "top_percentage": 42.86,
+        "top_count": 19,
+        "top_percentage": 44.19,
         "label": "MODERATE"
       },
       "dac_infrastructure_signal": {
         "top_name": "Retained Infrastructure Signal",
         "top_count": 14,
-        "top_percentage": 33.33,
+        "top_percentage": 32.56,
         "label": "LOW"
       }
     }
