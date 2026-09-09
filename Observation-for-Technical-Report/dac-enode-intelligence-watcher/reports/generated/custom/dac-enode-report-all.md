@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom All Time Report
 
-Generated at UTC: `2026-09-09T15:19:40.676203+00:00`
+Generated at UTC: `2026-09-09T18:47:14.292416+00:00`
 
 Report range: **All Time**
 
@@ -15,11 +15,11 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Range | All Time |
-| Observation count | 190 |
+| Observation count | 191 |
 | First observed source time | May 15, 2026 (00:00 CEST) |
-| Last observed source time | 2026-09-09 17:00 CEST |
-| Latest watcher checked_at_utc | 2026-09-09T15:19:37.047079+00:00 |
-| Latest source generated time | 2026-09-09 17:00 CEST |
+| Last observed source time | 2026-09-09 20:00 CEST |
+| Latest watcher checked_at_utc | 2026-09-09T18:47:10.213718+00:00 |
+| Latest source generated time | 2026-09-09 20:00 CEST |
 
 ## 2. Enode Movement Summary
 
@@ -27,8 +27,8 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Minimum enode count | 2 |
 | Maximum enode count | 16 |
-| Average enode count | 10.92 |
-| Total added observations | 177 |
+| Average enode count | 10.9 |
+| Total added observations | 178 |
 | Total removed observations | 156 |
 | Target ports observed | 28657 |
 
@@ -36,7 +36,7 @@ Important note: this report is observation-based. It does not make official DAC 
 
 | Phase | Observations |
 | --- | --- |
-| automated_watcher | 176 |
+| automated_watcher | 177 |
 | manual_backfill | 14 |
 
 ## 4. Anomaly Summary
@@ -44,7 +44,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 20 |
-| Global anomaly summary | 20 anomaly signals were detected across 190 observations. The highest observed anomaly severity is CRITICAL. |
+| Global anomaly summary | 20 anomaly signals were detected across 191 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
@@ -70,16 +70,16 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Overall concentration label | MODERATE |
 | Headline | Observed infrastructure shows moderate concentration under the current heuristic model. |
-| Key observation | Top live ASN is AS51167 with 16 unique IPs (37.21%). |
-| Country observation | Top live ASN country code is DE with 19 unique IPs (44.19%). |
+| Key observation | Top live ASN is AS51167 with 16 unique IPs (36.36%). |
+| Country observation | Top live ASN country code is DE with 19 unique IPs (43.18%). |
 | Interpretation | Top live ASN controls at least 35% of observed unique IPs. |
 | Disclaimer | Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement. |
 
 | Dimension | Top Name | Top Count | Top % | Label |
 | --- | --- | --- | --- | --- |
-| Live ASN | AS51167 | 16 | 37.21 | MODERATE |
-| Live Country | DE | 19 | 44.19 | MODERATE |
-| DAC Infrastructure Signal | Retained Infrastructure Signal | 14 | 32.56 | LOW |
+| Live ASN | AS51167 | 16 | 36.36 | MODERATE |
+| Live Country | DE | 19 | 43.18 | MODERATE |
+| DAC Infrastructure Signal | Retained Infrastructure Signal | 14 | 31.82 | LOW |
 
 ## 6. Observation Timeline
 
@@ -275,6 +275,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | 188 | automated_watcher | changed | 2026-09-08 02:00 CEST | 6 | 1 | 1 | 5 | 28657 |
 | 189 | automated_watcher | changed | 2026-09-08 07:00 CEST | 7 | 1 | 0 | 6 | 28657 |
 | 190 | automated_watcher | changed | 2026-09-09 17:00 CEST | 6 | 0 | 1 | 6 | 28657 |
+| 191 | automated_watcher | changed | 2026-09-09 20:00 CEST | 7 | 1 | 0 | 6 | 28657 |
 
 ## 7. Report-Use Notes
 

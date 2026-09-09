@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom Last 7 Days Report
 
-Generated at UTC: `2026-09-09T15:19:40.577339+00:00`
+Generated at UTC: `2026-09-09T18:47:14.192691+00:00`
 
 Report range: **Last 7 Days**
 
@@ -18,8 +18,8 @@ Important note: this report is observation-based. It does not make official DAC 
 | Observation count | 3 |
 | First observed source time | Jul 20, 2026 (15:00 CEST) |
 | Last observed source time | Jul 23, 2026 (13:00 CEST) |
-| Latest watcher checked_at_utc | 2026-09-09T15:19:37.047079+00:00 |
-| Latest source generated time | 2026-09-09 17:00 CEST |
+| Latest watcher checked_at_utc | 2026-09-09T18:47:10.213718+00:00 |
+| Latest source generated time | 2026-09-09 20:00 CEST |
 
 ## 2. Enode Movement Summary
 
@@ -43,7 +43,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Selected anomaly signals | 0 |
-| Global anomaly summary | 20 anomaly signals were detected across 190 observations. The highest observed anomaly severity is CRITICAL. |
+| Global anomaly summary | 20 anomaly signals were detected across 191 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
@@ -61,16 +61,16 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Overall concentration label | MODERATE |
 | Headline | Observed infrastructure shows moderate concentration under the current heuristic model. |
-| Key observation | Top live ASN is AS51167 with 16 unique IPs (37.21%). |
-| Country observation | Top live ASN country code is DE with 19 unique IPs (44.19%). |
+| Key observation | Top live ASN is AS51167 with 16 unique IPs (36.36%). |
+| Country observation | Top live ASN country code is DE with 19 unique IPs (43.18%). |
 | Interpretation | Top live ASN controls at least 35% of observed unique IPs. |
 | Disclaimer | Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement. |
 
 | Dimension | Top Name | Top Count | Top % | Label |
 | --- | --- | --- | --- | --- |
-| Live ASN | AS51167 | 16 | 37.21 | MODERATE |
-| Live Country | DE | 19 | 44.19 | MODERATE |
-| DAC Infrastructure Signal | Retained Infrastructure Signal | 14 | 32.56 | LOW |
+| Live ASN | AS51167 | 16 | 36.36 | MODERATE |
+| Live Country | DE | 19 | 43.18 | MODERATE |
+| DAC Infrastructure Signal | Retained Infrastructure Signal | 14 | 31.82 | LOW |
 
 ## 6. Observation Timeline
 
