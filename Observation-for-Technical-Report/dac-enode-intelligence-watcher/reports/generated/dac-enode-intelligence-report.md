@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Technical Observation Report
 
-Generated at UTC: `2026-09-12T11:06:04.471597+00:00`
+Generated at UTC: `2026-09-13T06:34:55.494743+00:00`
 
 Project: **DAC Enode Intelligence Watcher**
 
@@ -14,7 +14,7 @@ Related previous report:
 
 ## 1. Executive Summary
 
-Across 195 total observations, the DAC official enode list showed 45 unique enodes and 44 unique IPs. The observed target port remained within [28657]. Enode count ranged from 2 to 16, with an average of 10.78.
+Across 196 total observations, the DAC official enode list showed 45 unique enodes and 44 unique IPs. The observed target port remained within [28657]. Enode count ranged from 2 to 16, with an average of 10.76.
 
 The dataset combines partial manual observations from the pre-watcher period with automated GitHub Actions snapshots after the watcher was deployed.
 
@@ -25,10 +25,10 @@ This summary provides a structured basis for analyzing bootstrap peer rotation, 
 | Metric | Value |
 | --- | --- |
 | Manual backfill snapshots | 14 |
-| Automated watcher snapshots | 181 |
-| Total observations | 195 |
+| Automated watcher snapshots | 182 |
+| Total observations | 196 |
 | First observation | Fri May 15 12:00:01 AM CEST 2026 |
-| Latest observation | 2026-09-12 13:00 CEST |
+| Latest observation | 2026-09-13 08:00 CEST |
 | Target ports observed | 28657 |
 | Unique enodes | 45 |
 | Unique IPs | 44 |
@@ -56,20 +56,20 @@ The manual backfill dataset preserves those earlier observations as structured J
 
 | Latest Field | Value |
 | --- | --- |
-| Generated at source | 2026-09-12 13:00 CEST |
-| Checked at UTC | 2026-09-12T11:06:04.471597+00:00 |
+| Generated at source | 2026-09-13 08:00 CEST |
+| Checked at UTC | 2026-09-13T06:34:55.494743+00:00 |
 | Target port | 28657 |
-| Previous total | 4 |
-| Current total | 6 |
-| Added count | 2 |
+| Previous total | 6 |
+| Current total | 7 |
+| Added count | 1 |
 | Removed count | 0 |
-| Unchanged count | 4 |
+| Unchanged count | 6 |
 | Change severity | LOW |
-| Severity reason | Small enode rotation detected: 2 added and 0 removed. |
+| Severity reason | Small enode rotation detected: 1 added and 0 removed. |
 
 Latest AI-style summary:
 
-> DAC official enode list changed: 2 enodes added, 0 removed, and 4 remained unchanged. Current total: 6 enodes.
+> DAC official enode list changed: 1 enodes added, 0 removed, and 6 remained unchanged. Current total: 7 enodes.
 
 Rotation interpretation: **Small bootstrap peer rotation detected.**
 
@@ -83,37 +83,37 @@ Recommended action: No urgent action is required, but the snapshot is preserved 
 | --- | --- |
 | Minimum enode count | 2 |
 | Maximum enode count | 16 |
-| Average enode count | 10.78 |
+| Average enode count | 10.76 |
 
 ## 6. Most Persistent Enodes
 
 | Enode | IP | Port | Appearances | Ratio | Phases Seen |
 | --- | --- | --- | --- | --- | --- |
-| enode://9652549979...7.30:28657 | 157.173.127.30 | 28657 | 180 | 0.9231 | automated_watcher, manual_backfill |
-| enode://09b8b08d71....204:28657 | 206.189.127.204 | 28657 | 178 | 0.9128 | automated_watcher, manual_backfill |
-| enode://21159ac612....213:28657 | 173.212.217.213 | 28657 | 139 | 0.7128 | automated_watcher, manual_backfill |
-| enode://4ff5ceea9c....231:28657 | 152.228.141.231 | 28657 | 136 | 0.6974 | automated_watcher, manual_backfill |
-| enode://0af12348ee....112:28657 | 194.60.201.112 | 28657 | 124 | 0.6359 | automated_watcher, manual_backfill |
-| enode://27386ed9cc...7.21:28657 | 157.173.127.21 | 28657 | 119 | 0.6103 | automated_watcher, manual_backfill |
-| enode://4cd695fc27...6.21:28657 | 5.9.116.21 | 28657 | 119 | 0.6103 | automated_watcher, manual_backfill |
-| enode://a59112afa4...7.31:28657 | 157.173.127.31 | 28657 | 118 | 0.6051 | automated_watcher, manual_backfill |
-| enode://b3158fbb36....180:28657 | 95.216.70.180 | 28657 | 108 | 0.5538 | automated_watcher, manual_backfill |
-| enode://637ec7dff7....243:28657 | 213.136.82.243 | 28657 | 102 | 0.5231 | automated_watcher, manual_backfill |
+| enode://9652549979...7.30:28657 | 157.173.127.30 | 28657 | 181 | 0.9235 | automated_watcher, manual_backfill |
+| enode://09b8b08d71....204:28657 | 206.189.127.204 | 28657 | 179 | 0.9133 | automated_watcher, manual_backfill |
+| enode://21159ac612....213:28657 | 173.212.217.213 | 28657 | 140 | 0.7143 | automated_watcher, manual_backfill |
+| enode://4ff5ceea9c....231:28657 | 152.228.141.231 | 28657 | 136 | 0.6939 | automated_watcher, manual_backfill |
+| enode://0af12348ee....112:28657 | 194.60.201.112 | 28657 | 125 | 0.6378 | automated_watcher, manual_backfill |
+| enode://27386ed9cc...7.21:28657 | 157.173.127.21 | 28657 | 119 | 0.6071 | automated_watcher, manual_backfill |
+| enode://4cd695fc27...6.21:28657 | 5.9.116.21 | 28657 | 119 | 0.6071 | automated_watcher, manual_backfill |
+| enode://a59112afa4...7.31:28657 | 157.173.127.31 | 28657 | 118 | 0.602 | automated_watcher, manual_backfill |
+| enode://b3158fbb36....180:28657 | 95.216.70.180 | 28657 | 109 | 0.5561 | automated_watcher, manual_backfill |
+| enode://637ec7dff7....243:28657 | 213.136.82.243 | 28657 | 102 | 0.5204 | automated_watcher, manual_backfill |
 
 ## 7. Most Persistent IPs
 
 | IP | DAC Signal | Signal Confidence | Peer Identity | Static Provider | Static ASN | Provider Confidence | Live ASN | Live ASN Name | Country | Appearances | Ratio | Phases Seen | First Seen | Last Seen |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 157.173.127.30 | Authority-like Core Signal | HIGH | DAC Testnet Authority 2 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 180 | 0.9231 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-09-12 13:00 CEST |
-| 206.189.127.204 | Relay-like DAC Node Signal | HIGH | DAC-Node 05 | DigitalOcean | AS14061 | HIGH | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC, US | US | 178 | 0.9128 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-09-12 13:00 CEST |
-| 173.212.217.213 | Retained Infrastructure Signal | MEDIUM | N/A | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 139 | 0.7128 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | 2026-09-12 13:00 CEST |
-| 152.228.141.231 | Legacy Relay-like Signal | MEDIUM | gdacnode legacy build | OVHcloud | AS16276 | HIGH | AS16276 | OVH - OVH SAS, FR | FR | 136 | 0.6974 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-08-30 19:00 CEST |
-| 194.60.201.112 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 124 | 0.6359 | automated_watcher, manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | 2026-09-12 13:00 CEST |
-| 157.173.127.21 | Authority-like Core Signal | HIGH | DAC Testnet Authority 3 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 119 | 0.6103 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-09-03 13:00 CEST |
-| 5.9.116.21 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS24940 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 119 | 0.6103 | automated_watcher, manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | 2026-08-19 21:00 CEST |
-| 157.173.127.31 | Authority-like Core Signal | HIGH | DAC Testnet Authority 1 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 118 | 0.6051 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-08-30 19:00 CEST |
-| 95.216.70.180 | Community VPS-like Signal | MEDIUM | Fertal | Hetzner | AS24940 | HIGH | AS24940 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 108 | 0.5538 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | 2026-09-12 13:00 CEST |
-| 213.136.82.243 | Unlisted Active Peer Signal | MEDIUM | SAPInode | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 102 | 0.5231 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-07-31 11:00 CEST |
+| 157.173.127.30 | Authority-like Core Signal | HIGH | DAC Testnet Authority 2 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 181 | 0.9235 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-09-13 08:00 CEST |
+| 206.189.127.204 | Relay-like DAC Node Signal | HIGH | DAC-Node 05 | DigitalOcean | AS14061 | HIGH | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC, US | US | 179 | 0.9133 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-09-13 08:00 CEST |
+| 173.212.217.213 | Retained Infrastructure Signal | MEDIUM | N/A | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 140 | 0.7143 | automated_watcher, manual_backfill | Wed May 20 08:00:02 PM CEST 2026 | 2026-09-13 08:00 CEST |
+| 152.228.141.231 | Legacy Relay-like Signal | MEDIUM | gdacnode legacy build | OVHcloud | AS16276 | HIGH | AS16276 | OVH - OVH SAS, FR | FR | 136 | 0.6939 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-08-30 19:00 CEST |
+| 194.60.201.112 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 125 | 0.6378 | automated_watcher, manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | 2026-09-13 08:00 CEST |
+| 157.173.127.21 | Authority-like Core Signal | HIGH | DAC Testnet Authority 3 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 119 | 0.6071 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-09-03 13:00 CEST |
+| 5.9.116.21 | Retained Infrastructure Signal | MEDIUM | N/A | Unknown | N/A | LOW | AS24940 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 119 | 0.6071 | automated_watcher, manual_backfill | Thu May 28 08:00:01 AM CEST 2026 | 2026-08-19 21:00 CEST |
+| 157.173.127.31 | Authority-like Core Signal | HIGH | DAC Testnet Authority 1 | Unknown | N/A | LOW | AS51167 | CONTABO - Contabo GmbH, DE | DE | 118 | 0.602 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-08-30 19:00 CEST |
+| 95.216.70.180 | Community VPS-like Signal | MEDIUM | Fertal | Hetzner | AS24940 | HIGH | AS24940 | HETZNER-AS - Hetzner Online GmbH, DE | DE | 109 | 0.5561 | automated_watcher, manual_backfill | Sat May 16 08:00:01 PM CEST 2026 | 2026-09-13 08:00 CEST |
+| 213.136.82.243 | Unlisted Active Peer Signal | MEDIUM | SAPInode | Contabo | AS51167 | HIGH | AS51167 | CONTABO - Contabo GmbH, DE | DE | 102 | 0.5204 | automated_watcher, manual_backfill | Fri May 15 12:00:01 AM CEST 2026 | 2026-07-31 11:00 CEST |
 
 ## 8. Live ASN Lookup Summary
 
@@ -456,6 +456,7 @@ Recommended action: Use these anomaly events as candidates for deeper manual rev
 | 193 | automated_watcher | 2026-09-11 13:00 CEST | 28657 | 6 | 1 | 0 | LOW |
 | 194 | automated_watcher | 2026-09-12 08:00 CEST | 28657 | 4 | 0 | 2 | LOW |
 | 195 | automated_watcher | 2026-09-12 13:00 CEST | 28657 | 6 | 2 | 0 | LOW |
+| 196 | automated_watcher | 2026-09-13 08:00 CEST | 28657 | 7 | 1 | 0 | LOW |
 
 ## 15. Technical Interpretation
 
