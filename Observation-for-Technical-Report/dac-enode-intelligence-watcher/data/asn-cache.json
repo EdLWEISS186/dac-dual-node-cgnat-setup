@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at_utc": "2026-09-17T14:43:36.917642+00:00",
+  "updated_at_utc": "2026-09-17T18:36:27.174785+00:00",
   "lookup_method": "team_cymru_whois_live_lookup",
   "entries": {
     "1.52.249.75": {
@@ -102,6 +102,23 @@
       "source": "team_cymru",
       "cached": false,
       "checked_at_utc": "2026-06-03T04:32:05.934415+00:00",
+      "error": null,
+      "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
+    },
+    "113.177.113.36": {
+      "ip": "113.177.113.36",
+      "live_lookup_used": true,
+      "live_lookup_success": true,
+      "lookup_method": "team_cymru_whois_live_lookup",
+      "asn": "AS45899",
+      "asn_name": "VNPT-AS-VN - VNPT Corp, VN",
+      "bgp_prefix": "113.177.112.0/20",
+      "country_code": "VN",
+      "registry": "apnic",
+      "allocated": "2008-11-04",
+      "source": "team_cymru",
+      "cached": false,
+      "checked_at_utc": "2026-09-17T18:36:27.174559+00:00",
       "error": null,
       "disclaimer": "Live ASN lookup is used as an enrichment layer only. ASN and provider names are based on external routing data and should be treated as operational context, not official DAC node ownership."
     },

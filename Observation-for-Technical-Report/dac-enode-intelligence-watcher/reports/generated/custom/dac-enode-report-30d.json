@@ -1,7 +1,7 @@
 {
   "project": "DAC Enode Intelligence Watcher",
   "summary_type": "custom_json_report_summary",
-  "generated_at_utc": "2026-09-17T14:43:37.069926+00:00",
+  "generated_at_utc": "2026-09-17T18:36:27.340922+00:00",
   "range": "30d",
   "range_label": "Last 30 Days",
   "source_files": {
@@ -12,14 +12,14 @@
   },
   "important_note": "This custom JSON summary is observation-based. It does not make official DAC ownership claims and should not be treated as a definitive decentralization measurement.",
   "latest_observation": {
-    "checked_at_utc": "2026-09-13T06:34:55.494743+00:00",
-    "generated_at_source": "2026-09-13 08:00 CEST",
+    "checked_at_utc": "2026-09-17T18:36:23.729628+00:00",
+    "generated_at_source": "2026-09-17 20:00 CEST",
     "target_port": 28657,
-    "current_total": 7,
-    "previous_total": 6,
+    "current_total": 8,
+    "previous_total": 7,
     "added_count": 1,
     "removed_count": 0,
-    "unchanged_count": 6,
+    "unchanged_count": 7,
     "change_severity": "LOW",
     "severity_reason": "Small enode rotation detected: 1 added and 0 removed."
   },
@@ -48,15 +48,15 @@
     "selected_anomaly_signal_count": 0,
     "selected_severity_counts": {},
     "selected_anomaly_type_counts": {},
-    "global_short_summary": "20 anomaly signals were detected across 196 observations. The highest observed anomaly severity is CRITICAL.",
+    "global_short_summary": "20 anomaly signals were detected across 197 observations. The highest observed anomaly severity is CRITICAL.",
     "global_highest_severity": "CRITICAL",
     "global_recommended_action": "Use these anomaly events as candidates for deeper manual review and future technical reporting."
   },
   "concentration_summary": {
     "overall_concentration_label": "MODERATE",
     "headline": "Observed infrastructure shows moderate concentration under the current heuristic model.",
-    "key_observation": "Top live ASN is AS51167 with 16 unique IPs (36.36%).",
-    "country_observation": "Top live ASN country code is DE with 19 unique IPs (43.18%).",
+    "key_observation": "Top live ASN is AS51167 with 16 unique IPs (35.56%).",
+    "country_observation": "Top live ASN country code is DE with 19 unique IPs (42.22%).",
     "interpretation": "Top live ASN controls at least 35% of observed unique IPs.",
     "recommended_action": "Use this as an observation aid only. Compare it with registry history, DAC Infrastructure Signal, manual peer identity evidence, live ASN lookup updates, and future watcher snapshots before drawing conclusions.",
     "disclaimer": "Provider concentration and decentralization risk summary is an observation-based heuristic. It is based on currently available watcher data, live ASN enrichment, static provider hints, and DAC Infrastructure Signal labels. It should not be treated as an official DAC classification or as a definitive decentralization measurement.",
@@ -64,19 +64,19 @@
       "live_asn": {
         "top_name": "AS51167",
         "top_count": 16,
-        "top_percentage": 36.36,
+        "top_percentage": 35.56,
         "label": "MODERATE"
       },
       "live_country": {
         "top_name": "DE",
         "top_count": 19,
-        "top_percentage": 43.18,
+        "top_percentage": 42.22,
         "label": "MODERATE"
       },
       "dac_infrastructure_signal": {
-        "top_name": "Retained Infrastructure Signal",
-        "top_count": 14,
-        "top_percentage": 31.82,
+        "top_name": "Unknown / No Signal",
+        "top_count": 15,
+        "top_percentage": 33.33,
         "label": "LOW"
       }
     }
