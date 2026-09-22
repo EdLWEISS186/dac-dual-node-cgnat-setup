@@ -1,6 +1,6 @@
 # DAC Enode Intelligence Watcher — Custom All Time Report
 
-Generated at UTC: `2026-09-22T11:46:47.616517+00:00`
+Generated at UTC: `2026-09-22T16:25:30.627011+00:00`
 
 Report range: **All Time**
 
@@ -15,11 +15,11 @@ Important note: this report is observation-based. It does not make official DAC 
 | Field | Value |
 | --- | --- |
 | Range | All Time |
-| Observation count | 199 |
+| Observation count | 200 |
 | First observed source time | May 15, 2026 (00:00 CEST) |
-| Last observed source time | 2026-09-22 13:00 CEST |
-| Latest watcher checked_at_utc | 2026-09-22T11:46:16.458828+00:00 |
-| Latest source generated time | 2026-09-22 13:00 CEST |
+| Last observed source time | 2026-09-22 18:00 CEST |
+| Latest watcher checked_at_utc | 2026-09-22T16:25:12.647305+00:00 |
+| Latest source generated time | 2026-09-22 18:00 CEST |
 
 ## 2. Enode Movement Summary
 
@@ -27,38 +27,38 @@ Important note: this report is observation-based. It does not make official DAC 
 | --- | --- |
 | Minimum enode count | 2 |
 | Maximum enode count | 16 |
-| Average enode count | 10.7 |
-| Total added observations | 183 |
-| Total removed observations | 162 |
+| Average enode count | 10.66 |
+| Total added observations | 186 |
+| Total removed observations | 168 |
 | Target ports observed | 28657 |
 
 ## 3. Observation Source Coverage
 
 | Phase | Observations |
 | --- | --- |
-| automated_watcher | 185 |
+| automated_watcher | 186 |
 | manual_backfill | 14 |
 
 ## 4. Anomaly Summary
 
 | Field | Value |
 | --- | --- |
-| Selected anomaly signals | 20 |
-| Global anomaly summary | 20 anomaly signals were detected across 199 observations. The highest observed anomaly severity is CRITICAL. |
+| Selected anomaly signals | 23 |
+| Global anomaly summary | 23 anomaly signals were detected across 200 observations. The highest observed anomaly severity is CRITICAL. |
 | Global highest severity | CRITICAL |
 | Recommended action | Use these anomaly events as candidates for deeper manual review and future technical reporting. |
 
 | Severity | Signals in selected range |
 | --- | --- |
-| HIGH | 12 |
+| HIGH | 15 |
 | CRITICAL | 4 |
 | MEDIUM | 4 |
 
 | Anomaly Type | Signals in selected range |
 | --- | --- |
-| HIGH_REMOVAL_EVENT | 5 |
-| AGGRESSIVE_ROTATION | 5 |
-| WATCHER_HIGH_SEVERITY_SIGNAL | 3 |
+| HIGH_REMOVAL_EVENT | 6 |
+| AGGRESSIVE_ROTATION | 6 |
+| WATCHER_HIGH_SEVERITY_SIGNAL | 4 |
 | SHARP_ENODE_COUNT_DROP | 2 |
 | LOW_CONTINUITY_RATIO | 2 |
 | MODERATE_ROTATION_SPIKE | 2 |
@@ -284,6 +284,7 @@ Important note: this report is observation-based. It does not make official DAC 
 | 197 | automated_watcher | changed | 2026-09-17 20:00 CEST | 8 | 1 | 0 | 7 | 28657 |
 | 198 | automated_watcher | changed | 2026-09-19 05:00 CEST | 7 | 0 | 1 | 7 | 28657 |
 | 199 | automated_watcher | changed | 2026-09-22 13:00 CEST | 6 | 0 | 1 | 6 | 28657 |
+| 200 | automated_watcher | changed | 2026-09-22 18:00 CEST | 3 | 3 | 6 | 0 | 28657 |
 
 ## 7. Report-Use Notes
 
